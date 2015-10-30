@@ -1,0 +1,232 @@
+import subprocess
+import os
+import glob
+import numpy as np
+from mpl_toolkits.basemap import Basemap, addcyclic
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+import brewer2mpl
+from discrete_cmap import discrete_cmap
+plt.close('all')
+font = {'size'   : 12}
+plt.rc('font', **font)
+from netCDF4 import Dataset
+import cdo; cdo = cdo.Cdo()
+from colormaps import viridis
+
+def default_pcolor_args(data, anom=False):
+    """Returns a dict with default pcolor params as key:value pairs"""
+
+    # Set 3-std range for colorbar to exclude outliers.
+    if anom:
+        # For anomalies, center range around 0
+        anom_max = abs(data).mean() + abs(data).std()*3.0
+        vmin = -1*anom_max
+        vmax = anom_max
+        # Anomaly cmap
+        cmap = anom_cmap()
+    else:
+        # otherwise, center around the mean
+        vmin = data.mean() - data.std()*3.0
+        vmax = data.mean() + data.std()*3.0
+        # Use true min/max if they are closer to the mean than the 3-std spread.
+        if vmax > data.max() : vmax = data.max()
+        if vmin < data.min() : vmin = data.min()
+        # New mpl, colorblind friendly, continuously varying, default cmap
+        cmap = viridis
+
+    d = {'vmin' : vmin,
+         'vmax' : vmax,
+         'cmap' : cmap,
+         'rasterized' : True
+         }
+
+    return d
+
+def anom_cmap():
+    """return a discrete blue-red cmap from colorbrewer"""
+    ncols = 11
+    cmap_anom = brewer2mpl.get_map('RdBu', 'diverging', ncols,
+                                   reverse=True).mpl_colormap
+    cmap_anom = discrete_cmap(ncols, cmap_anom)
+    return cmap_anom
+    
+def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''):
+    """Pcolor a var in a global map, using ax if supplied"""
+    # setup a basic global map
+
+    if not ax:
+        fig, ax = plt.subplots(1,1, figsize=(8,8))
+    else:
+        fig = plt.gcf()
+
+    if not pcolor_args : pcolor_args = default_pcolor_args(data)
+
+    for key, value in default_pcolor_args(data).iteritems():
+        if key not in pcolor_args or (pcolor_args[key] is None):
+            pcolor_args[key] = value
+
+    m = Basemap(projection='kav7',lon_0=-180,resolution='c', ax=ax)
+    lons, lats = np.meshgrid(lon, lat)
+    x, y = m(lons, lats)
+
+    cot = m.pcolor(x, y, data, **pcolor_args)
+
+    if ax_args:
+        plt.setp(ax, **ax_args)
+
+    ax.autoscale(enable=True, axis='both', tight=True)
+    m.drawcoastlines(linewidth=1.25, ax=ax)
+    #m.fillcontinents(color='0.8',ax=ax, zorder=2)
+    m.drawparallels(np.arange(-80,81,20),labels=[1,0,0,0], linewidth=0,
+                    ax=ax)
+    #m.drawmeridians(np.arange(0,360,90),labels=[0,0,0,1],
+                    #linewidth=0,yoffset=0.5e6, ax=ax)
+
+    m.colorbar(mappable=cot, location='right', label=cblabel)
+    vals = [data.min(), data.max(), data.mean()]
+    snam = ['min: ', 'max: ', 'mean: ']
+    vals = [s + str(np.round(v,1)) for s, v in zip(snam, vals)]
+    x, y = m(10, -88)
+    ax.text(x, y, '  '.join(vals), fontsize=8)
+
+def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''):
+
+
+    if not pcolor_args : pcolor_args = default_pcolor_args(data)
+    
+    for key, value in default_pcolor_args(data).iteritems():
+        if key not in pcolor_args or (pcolor_args[key] is None):
+            pcolor_args[key] = value  
+
+    if not ax:
+        fig, ax = plt.subplots(1,1, figsize=(8,8))
+    else:
+        fig = plt.gcf()
+    m = Basemap(projection='npstere',boundinglat=10,lon_0=270,resolution='l')
+    
+    lons, lats = np.meshgrid(lon, lat)
+    x, y = m(lons, lats)
+
+    cot = m.pcolor(x, y, data, **pcolor_args)
+
+    if ax_args:
+        plt.setp(ax, **ax_args)    
+        
+    m.drawcoastlines()
+    #m.fillcontinents(color='0.8',ax=ax)
+
+    m.drawparallels(np.arange(-80.,81.,20.))
+    m.drawmeridians(np.arange(-180.,181.,20.))
+    m.drawmapboundary(fill_color='aqua')
+    m.colorbar(mappable=cot, location='right', label=cblabel)
+    vals = [data.min(), data.max(), data.mean()]
+    snam = ['min: ', 'max: ', 'mean: ']
+    vals = [s + str(np.round(v,1)) for s, v in zip(snam, vals)]
+    x, y = m(-135, -9)
+    ax.text(x, y, '  '.join(vals), fontsize=8)
+
+def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''):
+
+
+    if not pcolor_args : pcolor_args = default_pcolor_args(data)
+    
+    for key, value in default_pcolor_args(data).iteritems():
+        if key not in pcolor_args or (pcolor_args[key] is None):
+            pcolor_args[key] = value  
+
+    if not ax:
+        fig, ax = plt.subplots(1,1, figsize=(8,8))
+    else:
+        fig = plt.gcf()
+    m = Basemap(projection='spstere',boundinglat=10,lon_0=270,resolution='l')
+    
+    lons, lats = np.meshgrid(lon, lat)
+    x, y = m(lons, lats)
+
+    cot = m.pcolor(x, y, data, **pcolor_args)
+
+    if ax_args:
+        plt.setp(ax, **ax_args)    
+        
+    m.drawcoastlines()
+    #m.fillcontinents(color='0.8',ax=ax)
+
+    m.drawparallels(np.arange(-80.,81.,20.))
+    m.drawmeridians(np.arange(-180.,181.,20.))
+    m.drawmapboundary(fill_color='aqua')
+    m.colorbar(mappable=cot, location='right', label=cblabel)
+    vals = [data.min(), data.max(), data.mean()]
+    snam = ['min: ', 'max: ', 'mean: ']
+    vals = [s + str(np.round(v,1)) for s, v in zip(snam, vals)]
+    x, y = m(-45, 28)
+    ax.text(x, y, '  '.join(vals), fontsize=8)
+
+def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='',
+             latmin=-80, latmax=80, lonmin=0, lonmax=360):
+
+    if not pcolor_args : pcolor_args = default_pcolor_args(data)
+    for key, value in default_pcolor_args(data).iteritems():
+        if key not in pcolor_args or (pcolor_args[key] is None):
+            pcolor_args[key] = value  
+
+    if not ax:
+        fig, ax = plt.subplots(1,1, figsize=(8,8))
+    else:
+        fig = plt.gcf()
+    m = Basemap(projection='merc',llcrnrlat=latmin,urcrnrlat=latmax,llcrnrlon=lonmin,urcrnrlon=lonmax,lat_ts=20,resolution='c')
+    
+    lons, lats = np.meshgrid(lon, lat)
+    x, y = m(lons, lats)
+
+    cot = m.pcolor(x, y, data, **pcolor_args)
+
+    if ax_args:
+        plt.setp(ax, **ax_args)    
+    
+    m.drawcoastlines()
+    #m.fillcontinents(color='0.8',ax=ax)
+
+    m.drawparallels(np.arange(-80.,81.,20.))
+    m.drawmeridians(np.arange(-180.,181.,20.))
+    m.drawmapboundary(fill_color='aqua')
+
+    m.colorbar(mappable=cot, location='right', label=cblabel)
+    vals = [data.min(), data.max(), data.mean()]
+    snam = ['min: ', 'max: ', 'mean: ']
+    vals = [s + str(np.round(v,1)) for s, v in zip(snam, vals)]
+    x, y = m(lonmin + 1, latmin + 1)
+    ax.text(x, y, '  '.join(vals), fontsize=8)
+
+    
+                                                                
+def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''):
+    print 'hello'
+    print pcolor_args
+    if not ax:
+        fig, ax = plt.subplots(1,1, figsize=(8,8))
+        fig.subplots_adjust(top=0.8, right=0.8)
+    else:
+        fig = plt.gcf()
+
+    if not pcolor_args : pcolor_args = default_pcolor_args(data)
+    for key, value in default_pcolor_args(data).iteritems():
+        if key not in pcolor_args or (pcolor_args[key] is None):
+            pcolor_args[key] = value
+    print pcolor_args
+
+    cot = ax.pcolormesh(x, z, data, **pcolor_args)
+    ax.contour(x, z, data, colors=['k'], vmin=pcolor_args['vmin'],
+               vmax=pcolor_args['vmax'])
+    ax.invert_yaxis()
+    ax.autoscale(True, axis='both', tight='both')
+    if ax_args:
+        plt.setp(ax, **ax_args)
+
+    box = ax.get_position()
+    tl = fig.add_axes([box.x1 + box.width * 0.05, box.y0, 0.02, box.height])
+    fig.colorbar(cot, cax=tl, label=cblabel)
+
+if __name__ == "__main__":
+    polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='')
+
