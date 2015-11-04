@@ -22,7 +22,6 @@ def _orderplots(plotnames):
     return plotdict
 
 def pdfmarks(plotnames):
-
     f = open('plots/pdfmarks','w')
     f.write("%% BeginProlog \n/pdfmark where \n{pop} {userdict /pdfmark /cleartomark load put} ifelse \n")
     f.write("%% EndProlog \n%% BeginSetup \n[/PageMode /UseOutlines \n")
@@ -39,25 +38,9 @@ def pdfmarks(plotnames):
         #plist.append(var + 'title.pdf')
         for pl, ty in plotnames[var]:   
             f.write("[ /Page "+str(page_count)+" /View [/XYZ null null null] /Title (" + ty + ") /OUT pdfmark\n")
-            plist.append(pl)
+            plist.append(pl[0])
             page_count += 1
     f.close()
     pstring = " ".join(plist)
     return pstring
-"""        
-        # use the bookmark dictionary to finish pdfmarks
-        page_count=1
-        for var in bookmark:cd 
-            # each variable set should be a bookmark
-            f.write("[ /Page "+str(page_count)+" /View [/XYZ null null null] /Title ("+var+") /Count -"+str(len(bookmark[var]))+" /OUT pdfmark\n")
-            # each plot_type for a certain variable set should be a sub-bookmark
-            for pt in bookmark[var]:
-                f.write("[ /Page "+str(page_count)+" /View [/XYZ null null null] /Title ("+pt+") /Count -"+str(len(bookmark[var][pt]))+" /OUT pdfmark\n")
-                # each site for each plot_type and variable set should be a sub-sub-bookmark
-                for site in bookmark[var][pt]:
-                    f.write("[ /Page "+str(page_count)+" /View [/XYZ null null null] /Title ("+site+") /OUT pdfmark\n")
-                    pdf_str = pdf_str + " " + re.search('^(.*)\\n$',file_list[bookmark[var][pt][site]['tag']]).group(1)
-                    page_count = page_count + 1
-        f.close()
-"""
-#pdfmarks()
+

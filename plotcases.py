@@ -346,7 +346,7 @@ def polar_map_trends(plot):
         try:
             depth_ind = np.where(np.round(depth) == plot['plot_depth'])[0][0]
         except:
-            print('Failed to extract depth ' +  p['plot_depth'] + ' for ' + v)
+            print('Failed to extract depth ' +  plot['plot_depth'] + ' for ' + v)
 
         data = data[depth_ind, :, :]
 

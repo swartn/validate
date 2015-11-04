@@ -51,7 +51,9 @@ def anom_cmap():
     cmap_anom = discrete_cmap(ncols, cmap_anom)
     return cmap_anom
     
-def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''):
+def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='',
+               latmin=-80, latmax=80, lonmin=0, lonmax=360, 
+               fill_continents=False, draw_parallels=True, draw_meridians=False):
     """Pcolor a var in a global map, using ax if supplied"""
     # setup a basic global map
 
@@ -77,11 +79,13 @@ def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=
 
     ax.autoscale(enable=True, axis='both', tight=True)
     m.drawcoastlines(linewidth=1.25, ax=ax)
-    #m.fillcontinents(color='0.8',ax=ax, zorder=2)
-    m.drawparallels(np.arange(-80,81,20),labels=[1,0,0,0], linewidth=0,
-                    ax=ax)
-    #m.drawmeridians(np.arange(0,360,90),labels=[0,0,0,1],
-                    #linewidth=0,yoffset=0.5e6, ax=ax)
+    
+    if fill_continents:
+        m.fillcontinents(color='0.8',ax=ax, zorder=2)
+    if draw_parallels:
+        m.drawparallels(np.arange(-80,81,20),labels=[1,0,0,0], linewidth=0, ax=ax)
+    if draw_meridians:
+        m.drawmeridians(np.arange(0,360,90),labels=[0,0,0,1], linewidth=0,yoffset=0.5e6, ax=ax)
 
     m.colorbar(mappable=cot, location='right', label=cblabel)
     vals = [data.min(), data.max(), data.mean()]
@@ -90,20 +94,24 @@ def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=
     x, y = m(10, -88)
     ax.text(x, y, '  '.join(vals), fontsize=8)
 
-def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''):
+def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='',
+              latmin=-80, latmax=80, lonmin=0, lonmax=360,
+              fill_continents=False, draw_parallels=True, draw_meridians=True):
 
 
+    if not ax:
+        fig, ax = plt.subplots(1,1, figsize=(8,8))
+    else:
+        fig = plt.gcf()
+        
     if not pcolor_args : pcolor_args = default_pcolor_args(data)
     
     for key, value in default_pcolor_args(data).iteritems():
         if key not in pcolor_args or (pcolor_args[key] is None):
             pcolor_args[key] = value  
 
-    if not ax:
-        fig, ax = plt.subplots(1,1, figsize=(8,8))
-    else:
-        fig = plt.gcf()
-    m = Basemap(projection='npstere',boundinglat=10,lon_0=270,resolution='l')
+
+    m = Basemap(projection='npstere',boundinglat=10,lon_0=270,resolution='l', ax=ax)
     
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
@@ -114,10 +122,12 @@ def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='
         plt.setp(ax, **ax_args)    
         
     m.drawcoastlines()
-    #m.fillcontinents(color='0.8',ax=ax)
-
-    m.drawparallels(np.arange(-80.,81.,20.))
-    m.drawmeridians(np.arange(-180.,181.,20.))
+    if fill_continents:
+        m.fillcontinents(color='0.8',ax=ax)
+    if draw_parallels:
+        m.drawparallels(np.arange(-80.,81.,20.))
+    if draw_meridians:
+        m.drawmeridians(np.arange(-180.,181.,20.))
     m.drawmapboundary(fill_color='aqua')
     m.colorbar(mappable=cot, location='right', label=cblabel)
     vals = [data.min(), data.max(), data.mean()]
@@ -126,7 +136,9 @@ def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='
     x, y = m(-135, -9)
     ax.text(x, y, '  '.join(vals), fontsize=8)
 
-def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''):
+def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='',
+                    latmin=-80, latmax=80, lonmin=0, lonmax=360,
+                    fill_continents=True, draw_parallels=True, draw_meridians=True):
 
 
     if not pcolor_args : pcolor_args = default_pcolor_args(data)
@@ -150,10 +162,12 @@ def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cbl
         plt.setp(ax, **ax_args)    
         
     m.drawcoastlines()
-    #m.fillcontinents(color='0.8',ax=ax)
-
-    m.drawparallels(np.arange(-80.,81.,20.))
-    m.drawmeridians(np.arange(-180.,181.,20.))
+    if fill_continents:
+        m.fillcontinents(color='0.8',ax=ax)
+    if draw_parallels:
+        m.drawparallels(np.arange(-80.,81.,20.))
+    if draw_meridians:
+        m.drawmeridians(np.arange(-180.,181.,20.))
     m.drawmapboundary(fill_color='aqua')
     m.colorbar(mappable=cot, location='right', label=cblabel)
     vals = [data.min(), data.max(), data.mean()]
@@ -163,7 +177,8 @@ def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cbl
     ax.text(x, y, '  '.join(vals), fontsize=8)
 
 def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='',
-             latmin=-80, latmax=80, lonmin=0, lonmax=360):
+             latmin=-80, latmax=80, lonmin=0, lonmax=360,
+             fill_continents=False, draw_parallels=True, draw_meridians=True):
 
     if not pcolor_args : pcolor_args = default_pcolor_args(data)
     for key, value in default_pcolor_args(data).iteritems():
@@ -185,10 +200,12 @@ def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''
         plt.setp(ax, **ax_args)    
     
     m.drawcoastlines()
-    #m.fillcontinents(color='0.8',ax=ax)
-
-    m.drawparallels(np.arange(-80.,81.,20.))
-    m.drawmeridians(np.arange(-180.,181.,20.))
+    if fill_continents:
+        m.fillcontinents(color='0.8',ax=ax)
+    if draw_parallels:
+        m.drawparallels(np.arange(-80.,81.,20.))
+    if draw_meridians:
+        m.drawmeridians(np.arange(-180.,181.,20.))
     m.drawmapboundary(fill_color='aqua')
 
     m.colorbar(mappable=cot, location='right', label=cblabel)
@@ -201,7 +218,6 @@ def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''
     
                                                                 
 def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''):
-    print 'hello'
     print pcolor_args
     if not ax:
         fig, ax = plt.subplots(1,1, figsize=(8,8))
@@ -227,6 +243,18 @@ def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''):
     tl = fig.add_axes([box.x1 + box.width * 0.05, box.y0, 0.02, box.height])
     fig.colorbar(cot, cax=tl, label=cblabel)
 
+def timeseries(x, data, ax=None, ax_args=None,):
+    if not ax:
+        fig, ax = plt.subplots(1,1, figsize=(8,8))
+    else:
+        fig = plt.gcf()
+    
+    ax.plot(x, data)
+
+    plt.setp(ax, **ax_args)    
+    
+    
+    
 if __name__ == "__main__":
     polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='')
 

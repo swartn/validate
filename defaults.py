@@ -13,21 +13,25 @@ def fill(plots, obs, defaults):
         if 'climatology' not in p:
             p['climatology'] = False
         if 'climatology_dates' not in p:
-            p['climatology_dates'] = {}
+            p['climatology_dates'] = None
         if 'compare_climatology' not in p:
             p['compare_climatology'] = False
         if 'trends' not in p:
             p['trends'] = False
         if 'trends_dates' not in p:
-            p['trends_dates'] = {}
+            p['trends_dates'] = None
         if 'compare_trends' not in p:
             p['compare_trends'] = False
         if 'frequency' not in p:
             p['frequency'] = 'mon'
         if 'realization' not in p:
-            p['realization'] = '1'
-        if 'position' not in p:
-            p['position'] = {}
+            p['realization'] = 1
+        if 'depth_type' not in p:
+            p['depth_type'] = ""
+        if 'depths' not in p:
+            p['depths'] = [0]
+        if 'plot_args' not in p:
+            p['plot_args'] = {}
         if p['compare_climatology'] or p['compare_trends']:
             if 'comp_file' not in p:
                 try:
@@ -35,33 +39,52 @@ def fill(plots, obs, defaults):
                     p['comp_file'] = obs[lvar]
                 except:
                     uvar = p['variable'].upper()
-                    p['comp_file'] = obs[uvar]
-                
-        if 'data1_args' not in p:
-            p['data1_args'] = {}
-        if 'pcolor_args' not in p['data1_args']:
-            p['data1_args']['pcolor_args'] = None       
-        if 'ax_args' not in p['data1_args']:
-            p['data1_args']['ax_args'] = {} 
-        if 'data2_args' not in p:
-            p['data2_args'] = {}            
-        if 'pcolor_args' not in p['data2_args']:
-            p['data2_args']['pcolor_args'] = None 
-        if 'ax_args' not in p['data2_args']:
-            p['data2_args']['ax_args'] = {}            
-        if 'comp_args' not in p:
-            p['comp_args'] = {}                   
-        if 'pcolor_args' not in p['comp_args']:
-            p['comp_args']['pcolor_args'] = None
-        if 'ax_args' not in p['comp_args']:
-            p['comp_args']['ax_args'] = {}            
-                                          
+                    p['comp_file'] = obs[uvar]    
+        
+        def _fill_args(data):
+           if data + '_args' not in p:
+               p[data + '_args'] = {}
+           if 'climatology_args' not in p[data + '_args']:
+               p[data + '_args']['climatology_args'] = {}
+           if 'trends_args' not in p[data + '_args']:
+               p[data + '_args']['trends_args'] = {}
+               
+           if 'pcolor_args' not in p[data + '_args']['climatology_args']:
+               p[data + '_args']['climatology_args']['pcolor_args'] = {} 
+           if 'ax_args' not in p[data + '_args']['climatology_args']:
+               p[data + '_args']['climatology_args']['ax_args'] = {}           
+           
+           if 'pcolor_args' not in p[data + '_args']['trends_args']:
+               p[data + '_args']['trends_args']['pcolor_args'] = {} 
+           if 'ax_args' not in p[data + '_args']['trends_args']:
+               p[data + '_args']['trends_args']['ax_args'] = {}
+           
+           if 'title' not in p[data + '_args']['climatology_args']['ax_args']:
+               p[data + '_args']['climatology_args']['title_flag'] = False
+           else:
+               p[data + '_args']['climatology_args']['title_flag'] = True
+           if 'title' not in p[data + '_args']['trends_args']['ax_args']:
+               p[data + '_args']['trends_args']['title_flag'] = False
+           else:
+               p[data + '_args']['trends_args']['title_flag'] = True 
+                      
+        _fill_args('data1')
+        _fill_args('data2')
+        _fill_args('comp')
+        
+                                             
     return plots
 
-def filltitle(p, t):
-    p['data1_args']['ax_args']['title'] = p['variable'] + ' ' + t
-    p['data2_args']['ax_args']['title'] = p['variable'] + ' ' + t 
-    p['comp_args']['ax_args']['title'] = p['variable'] + ' ' + t
+def filltitle(p, t, d, depth):
+    if 'Climatology' in t:
+        if not p[d + '_args']['climatology_args']['title_flag']:
+            if p['climatology_dates']:
+                p[d + '_args']['climatology_args']['ax_args']['title'] = p['variable'] + ' ' + t + ' ' + p['climatology_dates']['start_date'] + '_' + p['climatology_dates']['end_date'] + ' ' + p['depth_type'] + ': ' + depth
+    elif t is 'Trends':
+        if not p[d + '_args']['trends_args']['title_flag']:
+            if p['trends_dates']:
+                p[d + '_args']['trends_args']['ax_args']['title'] = p['variable'] + ' Trends ' + p['trends_dates']['start_date'] + '_' + p['trends_dates']['end_date'] + ' ' + p['depth_type'] + ': ' + depth              
+
     return p 
     
 

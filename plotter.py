@@ -3,44 +3,48 @@ import glob
 
 import plotregions as pr
 import defaults as dft
-import plotcases as pc
+import plotcase as pc
+import matplotlib.pyplot as plt
 
 def _climatology(plot):
     print 'climatology plot'
-    plot = dft.filltitle(plot, 'Climatology')
     def pregion_standard(pl):
-        return {'global_map': pc.global_map_climatology,
-                'section': pc.section_climatology,
-                'polar_map': pc.polar_map_climatology,
-                'polar_map_south': pc.polar_map_south_climatology,
-                'mercator': pc.mercator_climatology,
+        return {'global_map': (pr.global_map, pc.map_climatology),
+                'section': (pr.section, pc.section_climatology),
+                'polar_map': (pr.polar_map, pc.map_climatology),
+                'polar_map_south': (pr.polar_map_south, pc.map_climatology),
+                'mercator': (pr.mercator, pc.map_climatology),
+                'time_series': (pr.timeseries, pc.timeseries)
                 }[pl]
-    return pregion_standard(plot['plot_projection'])(plot)
+    func_region, func_case = pregion_standard(plot['plot_projection']) 
+    return func_case(plot, func_region), 
 
     
 def _compare_climatology(plot):
     print 'climatology comparison plot'    
     def pregion_comp(pl):
-        return {'global_map': pc.global_map_comparison,
-                'section': pc.section_comparison,
-                #'polar_map': pc.polar_map_comparison,
-                #'polar_map_south': pc.polar_map_south_comparison,
-                #'mercator': pc.mercator_comparison,
+        return {'global_map': (pr.global_map, pc.map_climatology_comparison),
+                'section': (pr.section, pc.section_climatology_comparison),
+                'polar_map': (pr.polar_map, pc.map_climatology_comparison),
+                'polar_map_south': (pr.polar_map, pc.map_climatology_comparison),
+                'mercator': (pr.polar_map, pc.map_climatology_comparison),
                 }[pl]
-    return pregion_comp(plot['plot_projection'])(plot)
+    func_region, func_case = pregion_comp(plot['plot_projection']) 
+    print  func_case
+    return func_case(plot, func_region),
     
 def _trends(plot):
     print 'trend plot'
-    plot = dft.filltitle(plot, 'Trends')
     def pregion_trends(pl):
-        return {'global_map': pc.global_map_trends,
-                'section': pc.section_trends,
-                'polar_map': pc.polar_map_trends,
-                'polar_map_south': pc.polar_map_south_trends,
-                'mercator': pc.mercator_trends,
+        return {'global_map': (pr.global_map, pc.map_trends),
+                #'section': (pr.section, pc.section_trends),
+                'polar_map': (pr.polar_map, pc.map_trends),
+                'polar_map_south': (pr.polar_map_south, pc.map_trends),
+                'mercator': (pr.mercator, pc.map_trends),
+                'time_series': (pr.timeseries, pc.timeseries)
                 }[pl]
-    print plot['plot_projection']
-    return pregion_trends(plot['plot_projection'])(plot)    
+    func_region, func_case = pregion_trends(plot['plot_projection']) 
+    return func_case(plot, func_region),   
     
 def _compare_trends(plot):
     print 'trend comparison plot'
@@ -65,16 +69,28 @@ def loop(plots):
             
     plotnames = []
     for p in plots:
-        print 'plotfile' + p['ifile']
-        if p['climatology'] == True:
-            plotnames.append((_climatology(p), p, 'climatology'))
-        if p['trends'] == True:
-            plotnames.append((_trends(p), p, 'trends'))
-        if p['compare_climatology'] == True:
-            plotnames.append((_compare_climatology(p), p, 'compare_climatology'))
-        if p['compare_trends'] == True:
-            plotnames.append((_compare_trends(p), p, 'compare_trends'))
-    
+        if p['depths'] == []:
+            print 'plotfile' + p['ifile']
+            if p['climatology'] == True:
+                plotnames.append((_climatology(p), p, 'climatology'))
+            if p['trends'] == True:
+                plotnames.append((_trends(p), p, 'trends'))
+            if p['compare_climatology'] == True:
+                plotnames.append((_compare_climatology(p), p, 'compare_climatology'))
+            if p['compare_trends'] == True:
+                plotnames.append((_compare_trends(p), p, 'compare_trends'))
+        else:
+            for d in p['depths']:
+                p['depth'] = int(d)
+                if p['climatology'] == True:
+                    plotnames.append((_climatology(p), p, 'climatology'))
+                if p['trends'] == True:
+                    plotnames.append((_trends(p), p, 'trends'))
+                if p['compare_climatology'] == True:
+                    plotnames.append((_compare_climatology(p), p, 'compare_climatology'))
+                if p['compare_trends'] == True:
+                   plotnames.append((_compare_trends(p), p, 'compare_trends'))                
+        plt.close('all')
     return plotnames
 
 
