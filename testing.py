@@ -1,7 +1,7 @@
 import control as con
 import os
 
-model_run = 'aaa'
+model_run = 'edr'
 
 defaults = {
             'climatology': True,
@@ -17,14 +17,21 @@ defaults = {
             }
 
 plots = [
- 
+
+         {    
+          'variable': 'thetao',
+          'plot_projection': 'global_map',
+          'depth_type': 'lev', 
+          'depths': [0,5000],
+          #'plot_args': {'fill_continents': False}                       
+          },
          {    
           'variable': 'thetao',
           'plot_projection': 'mercator',
           'depth_type': 'lev', 
-          'depths': [0,200,500,2000,5000],
+          'depths': [0,5000],
           #'plot_args': {'fill_continents': False}                       
-          }, 
+          },            
         ]
 
 obs_root = '/raid/ra40/data/ncs/nemo_out/obs4comp/'

@@ -1,11 +1,12 @@
 import os
 
-def _traverse(root):
+def _traverse(root, plots):
     files = []
     directories = []
     filedict = {}
     for dirname, subdirlist, filelist in os.walk(root):
         if len(filelist) > 0:
+            if checvariable(dirname, plots
             filedict[dirname] = [dirname + '/' + f for f in filelist]
         for f in filelist:
             files.append(dirname + '/' + f)
@@ -86,10 +87,10 @@ def getrealmcat(realm):
 def getfiles(plots, run):
     #returns the plots with the locations of the correct files
     filedict, files, directories = _traverse('/raid/rc40/data/ncs/historical-' + run)
-    #vardict = _make_variable_dictionary(filedict)
-    #_fill_frequency(plots)
-    #withoutvardict = _remove_variables(vardict, plots)
-    #filedict = _cat_file_slices(withoutvardict)    
+    vardict = _make_variable_dictionary(filedict)
+    _fill_frequency(plots)
+    withoutvardict = _remove_variables(vardict, plots)
+    filedict = _cat_file_slices(withoutvardict)    
     os.system('ln -s /raid/rc40/data/ncs/historical-edr/fx/ocean/sftof/r0i0p0/*.nc ./areacella/ocean')
     vf = {'day': {},
           'mon': {},

@@ -110,7 +110,7 @@ def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='
             pcolor_args[key] = value  
 
 
-    m = Basemap(projection='npstere',boundinglat=10,lon_0=270,resolution='l', ax=ax)
+    m = Basemap(projection='npstere',boundinglat=10,lon_0=270,resolution='c', ax=ax)
     
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
@@ -150,7 +150,7 @@ def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cbl
         fig, ax = plt.subplots(1,1, figsize=(8,8))
     else:
         fig = plt.gcf()
-    m = Basemap(projection='spstere',boundinglat=10,lon_0=270,resolution='l')
+    m = Basemap(projection='spstere',boundinglat=10,lon_0=270,resolution='c')
     
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
