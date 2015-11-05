@@ -30,8 +30,8 @@ def fill(plots, obs, defaults):
             p['depth_type'] = ""
         if 'depths' not in p:
             p['depths'] = [0]
-        if 'plot_args' not in p:
-            p['plot_args'] = {}
+
+            
         if p['compare_climatology'] or p['compare_trends']:
             if 'comp_file' not in p:
                 try:
@@ -78,13 +78,18 @@ def fill(plots, obs, defaults):
 def filltitle(p, t, d, depth):
     if 'Climatology' in t:
         if not p[d + '_args']['climatology_args']['title_flag']:
+            p[d + '_args']['climatology_args']['ax_args']['title'] = p['variable'] + ' ' + t 
             if p['climatology_dates']:
-                p[d + '_args']['climatology_args']['ax_args']['title'] = p['variable'] + ' ' + t + ' ' + p['climatology_dates']['start_date'] + '_' + p['climatology_dates']['end_date'] + ' ' + p['depth_type'] + ': ' + depth
-    elif t is 'Trends':
+                p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['climatology_dates']['start_date'] + '_' + p['climatology_dates']['end_date']
+            if depth:
+                p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth        
+    elif 'Trends' in t:
         if not p[d + '_args']['trends_args']['title_flag']:
+            p[d + '_args']['trends_args']['ax_args']['title'] = p['variable'] + ' Trends'
             if p['trends_dates']:
-                p[d + '_args']['trends_args']['ax_args']['title'] = p['variable'] + ' Trends ' + p['trends_dates']['start_date'] + '_' + p['trends_dates']['end_date'] + ' ' + p['depth_type'] + ': ' + depth              
-
+                p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['trends_dates']['start_date'] + '_' + p['trends_dates']['end_date']              
+            if depth:
+                p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth
     return p 
     
 

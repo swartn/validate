@@ -51,18 +51,18 @@ def anom_cmap():
     cmap_anom = discrete_cmap(ncols, cmap_anom)
     return cmap_anom
     
-def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='',
+def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom = False,
                latmin=-80, latmax=80, lonmin=0, lonmax=360, 
                fill_continents=False, draw_parallels=True, draw_meridians=False):
     """Pcolor a var in a global map, using ax if supplied"""
     # setup a basic global map
-
+    print fill_continents
     if not ax:
         fig, ax = plt.subplots(1,1, figsize=(8,8))
     else:
         fig = plt.gcf()
 
-    if not pcolor_args : pcolor_args = default_pcolor_args(data)
+    if not pcolor_args : pcolor_args = default_pcolor_args(data, anom)
 
     for key, value in default_pcolor_args(data).iteritems():
         if key not in pcolor_args or (pcolor_args[key] is None):
@@ -86,7 +86,6 @@ def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=
         m.drawparallels(np.arange(-80,81,20),labels=[1,0,0,0], linewidth=0, ax=ax)
     if draw_meridians:
         m.drawmeridians(np.arange(0,360,90),labels=[0,0,0,1], linewidth=0,yoffset=0.5e6, ax=ax)
-
     m.colorbar(mappable=cot, location='right', label=cblabel)
     vals = [data.min(), data.max(), data.mean()]
     snam = ['min: ', 'max: ', 'mean: ']
@@ -94,7 +93,7 @@ def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=
     x, y = m(10, -88)
     ax.text(x, y, '  '.join(vals), fontsize=8)
 
-def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='',
+def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom = False,
               latmin=-80, latmax=80, lonmin=0, lonmax=360,
               fill_continents=False, draw_parallels=True, draw_meridians=True):
 
@@ -104,7 +103,7 @@ def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='
     else:
         fig = plt.gcf()
         
-    if not pcolor_args : pcolor_args = default_pcolor_args(data)
+    if not pcolor_args : pcolor_args = default_pcolor_args(data, anom)
     
     for key, value in default_pcolor_args(data).iteritems():
         if key not in pcolor_args or (pcolor_args[key] is None):
@@ -128,7 +127,7 @@ def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='
         m.drawparallels(np.arange(-80.,81.,20.))
     if draw_meridians:
         m.drawmeridians(np.arange(-180.,181.,20.))
-    m.drawmapboundary(fill_color='aqua')
+    m.drawmapboundary()
     m.colorbar(mappable=cot, location='right', label=cblabel)
     vals = [data.min(), data.max(), data.mean()]
     snam = ['min: ', 'max: ', 'mean: ']
@@ -136,12 +135,12 @@ def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='
     x, y = m(-135, -9)
     ax.text(x, y, '  '.join(vals), fontsize=8)
 
-def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='',
+def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom = False,
                     latmin=-80, latmax=80, lonmin=0, lonmax=360,
                     fill_continents=True, draw_parallels=True, draw_meridians=True):
 
 
-    if not pcolor_args : pcolor_args = default_pcolor_args(data)
+    if not pcolor_args : pcolor_args = default_pcolor_args(data, anom)
     
     for key, value in default_pcolor_args(data).iteritems():
         if key not in pcolor_args or (pcolor_args[key] is None):
@@ -168,7 +167,7 @@ def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cbl
         m.drawparallels(np.arange(-80.,81.,20.))
     if draw_meridians:
         m.drawmeridians(np.arange(-180.,181.,20.))
-    m.drawmapboundary(fill_color='aqua')
+    m.drawmapboundary()
     m.colorbar(mappable=cot, location='right', label=cblabel)
     vals = [data.min(), data.max(), data.mean()]
     snam = ['min: ', 'max: ', 'mean: ']
@@ -176,11 +175,11 @@ def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cbl
     x, y = m(-45, 28)
     ax.text(x, y, '  '.join(vals), fontsize=8)
 
-def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='',
+def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False,
              latmin=-80, latmax=80, lonmin=0, lonmax=360,
              fill_continents=False, draw_parallels=True, draw_meridians=True):
 
-    if not pcolor_args : pcolor_args = default_pcolor_args(data)
+    if not pcolor_args : pcolor_args = default_pcolor_args(data, anom)
     for key, value in default_pcolor_args(data).iteritems():
         if key not in pcolor_args or (pcolor_args[key] is None):
             pcolor_args[key] = value  
@@ -206,7 +205,7 @@ def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''
         m.drawparallels(np.arange(-80.,81.,20.))
     if draw_meridians:
         m.drawmeridians(np.arange(-180.,181.,20.))
-    m.drawmapboundary(fill_color='aqua')
+    m.drawmapboundary()
 
     m.colorbar(mappable=cot, location='right', label=cblabel)
     vals = [data.min(), data.max(), data.mean()]
@@ -216,20 +215,29 @@ def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''
     ax.text(x, y, '  '.join(vals), fontsize=8)
 
     
+def _fix_1Ddata(z, data, ax_args):
+    newdata = range(0,5)
+    for n in range(0,5):
+        newdata[n] = data
+    ax_args['ylabel'] = ''
+    ax_args['yticks'] = []
+    return np.array(range(0,5)), np.array(newdata), ax_args
+    
                                                                 
-def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''):
-    print pcolor_args
+def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False):
+    if len(z) == 1:
+       z, data, ax_args = _fix_1Ddata(z, data, ax_args)
     if not ax:
         fig, ax = plt.subplots(1,1, figsize=(8,8))
         fig.subplots_adjust(top=0.8, right=0.8)
     else:
         fig = plt.gcf()
 
-    if not pcolor_args : pcolor_args = default_pcolor_args(data)
+    if not pcolor_args : pcolor_args = default_pcolor_args(data, anom)
     for key, value in default_pcolor_args(data).iteritems():
         if key not in pcolor_args or (pcolor_args[key] is None):
             pcolor_args[key] = value
-    print pcolor_args
+
 
     cot = ax.pcolormesh(x, z, data, **pcolor_args)
     ax.contour(x, z, data, colors=['k'], vmin=pcolor_args['vmin'],

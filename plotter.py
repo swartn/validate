@@ -37,7 +37,7 @@ def _trends(plot):
     print 'trend plot'
     def pregion_trends(pl):
         return {'global_map': (pr.global_map, pc.map_trends),
-                #'section': (pr.section, pc.section_trends),
+                'section': (pr.section, pc.section_trends),
                 'polar_map': (pr.polar_map, pc.map_trends),
                 'polar_map_south': (pr.polar_map_south, pc.map_trends),
                 'mercator': (pr.mercator, pc.map_trends),
@@ -69,8 +69,9 @@ def loop(plots):
             
     plotnames = []
     for p in plots:
+        print p['realm']
+        print p['realm_cat']
         if p['depths'] == []:
-            print 'plotfile' + p['ifile']
             if p['climatology'] == True:
                 plotnames.append((_climatology(p), p, 'climatology'))
             if p['trends'] == True:
@@ -91,6 +92,7 @@ def loop(plots):
                 if p['compare_trends'] == True:
                    plotnames.append((_compare_trends(p), p, 'compare_trends'))                
         plt.close('all')
+                
     return plotnames
 
 

@@ -9,8 +9,8 @@ def timeaverage_load(ifile, var, depth_type, dates):
     path, ifile = os.path.split(ifile)
     if dates:
         if not os.path.isfile('remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc'):
-            
-            cdo.remapdis('r360x180', input='-timmean -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + path + '/' + ifile, output='remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
+            cdo.mul(input='-divc,100 areacella/ocean ' + path + '/' + ifile, output='remapfiles/remapfile.nc')
+            cdo.remapdis('r360x180', input='-setctomiss,0 -timmean -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' remapfiles/remapfile.nc', output='remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
         nc = Dataset('remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
     else:
         if not os.path.isfile('remapfiles/remap_' + ifile):
@@ -59,10 +59,10 @@ def timeaverage_load(ifile, var, depth_type, dates):
     #print lon.shape
     #print lat
     #print lat.shape
-    #print data.shape
-    #print depth
+    print data.shape
+    print depth
     #print 'SHAPE__________________________________________'
-
+    depth = np.round(depth)
     return data, units, lon, lat, depth
     
 def trends_load(ifile, var, depth_type, dates):
@@ -105,8 +105,8 @@ def trends_load(ifile, var, depth_type, dates):
     #print data.shape      
     #lon = np.linspace(0, 359, 360)
     #lat = np.linspace(-90,90,180)
-    lon = nc.variables['lon']
-    lat = nc.variables['lat']
+    lon = nc.variables['lon'][:].squeeze()
+    lat = nc.variables['lat'][:].squeeze()
     #print lon
     #print lon.shape
     #print lat
@@ -118,6 +118,7 @@ def trends_load(ifile, var, depth_type, dates):
     #for n in data[0][2]:
         #print n
     #print 'SHAPE__________________________________________'
+    depth = np.round(depth)
     return data, units, lon, lat, depth    
     
 def timeseries_load(ifile, var, depth_type, dates):
@@ -181,6 +182,7 @@ def timeseries_load(ifile, var, depth_type, dates):
     #print depth
     #print 'SHAPE__________________________________________'
     print x
+    depth = np.round(depth)
     return data, units, x, depth    
 
 if __name__ == "__main__":

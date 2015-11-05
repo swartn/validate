@@ -22,46 +22,47 @@ plots = [
           'variable': 'ta',
           'plot_projection': 'global_map',
           'depth_type': 'plev',
-          'depths':[200000, 850000, 1000000]                              
+          'depths':[20000, 85000, 100000]                              
           },           
          {    
           'variable': 'hus',
           'plot_projection': 'global_map',
           'depth_type': 'plev',
-          'depths':[200000, 850000, 1000000]                              
+          'depths':[20000, 85000, 100000]                              
           },
          {    
           'variable': 'ua',
           'plot_projection': 'global_map',
           'depth_type': 'plev',
-          'depths':[200000, 850000, 1000000]                              
+          'depths':[20000, 85000, 100000]                              
           },           
          {    
           'variable': 'va',
           'plot_projection': 'global_map',
           'depth_type': 'plev',
-          'depths':[200000, 850000, 1000000]                              
+          'depths':[20000, 85000, 100000]                              
           },
         
          {    
           'variable': 'ta',
           'plot_projection': 'section',
+          'depth_type': 'plev',
                              
           },           
          {    
           'variable': 'hus',
           'plot_projection': 'section',
-                            
+          'depth_type': 'plev',                  
           },
          {    
           'variable': 'ua',
           'plot_projection': 'section',
-                             
+          'depth_type': 'plev',                  
           },           
          {    
           'variable': 'va',
           'plot_projection': 'section',
-                             
+          'depth_type': 'plev',                   
           },
 
 
@@ -123,19 +124,23 @@ plots = [
           
          {    
           'variable': 'thetao',
-          'plot_projection': 'section',                                       
+          'plot_projection': 'section',
+          'depth_type': 'lev',                                       
           },  
          {    
           'variable': 'so',
-          'plot_projection': 'section',                                     
+          'plot_projection': 'section',
+          'depth_type': 'lev',                                     
           }, 
          {    
           'variable': 'uo',
-          'plot_projection': 'section',                                       
+          'plot_projection': 'section', 
+          'depth_type': 'lev',                                      
           }, 
          {    
           'variable': 'vo',
-          'plot_projection': 'section',                                       
+          'plot_projection': 'section', 
+          'depth_type': 'lev',                                      
           }, 
           
           
@@ -166,34 +171,34 @@ plots = [
 
          {    
           'variable': 'intdic',
-          'plot_projection': 'section',                                       
+          'plot_projection': 'section',
+          'depth_type': 'lev',                                       
           },  
          {    
           'variable': 'no3',
-          'plot_projection': 'section',                                     
+          'plot_projection': 'section',
+          'depth_type': 'lev',                                     
           }, 
          {    
           'variable': 'ph',
-          'plot_projection': 'section',                                       
+          'plot_projection': 'section',
+          'depth_type': 'lev',                                       
           }, 
          {    
           'variable': 'talk',
-          'plot_projection': 'section',                                       
+          'plot_projection': 'section',
+          'depth_type': 'lev',                                       
           }, 
 
 
 
          {    
           'variable': 'zooc',
-          'plot_projection': 'global_map',
-          'depth_type': 'lev',
-          'depths': [0,200],                                        
+          'plot_projection': 'global_map',                                        
           },  
          {    
           'variable': 'phyc',
-          'plot_projection': 'global_map',
-          'depth_type': 'lev',
-          'depths': [0,200],                                        
+          'plot_projection': 'global_map',                                       
           },
          {    
           'variable': 'zooc',
@@ -361,10 +366,7 @@ plots = [
          {    
           'variable': 'tsice',
           'plot_projection': 'polar_map_south',                                       
-          }, 
-
-
-                                                                                                                                                                                                                   
+          },                                                                                                                                                                                                                    
         ]
         
 obs_root = '/raid/ra40/data/ncs/nemo_out/obs4comp/'
