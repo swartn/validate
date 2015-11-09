@@ -8,12 +8,10 @@ import datetime
 
 def map_climatology(plot, func):
     print 'plotting map of ' + plot['variable']
-    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['climatology_dates'])
+    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat'])
     plot['plot_depth'] = 0   
     if data.ndim > 2:
         plot['plot_depth'] = min(depth, key=lambda x:abs(x-plot['depth']))
-        print plot['plot_depth']
-        print depth
         try:
             depth_ind = np.where(np.round(depth) == np.round(plot['plot_depth']))[0][0]
         except:
@@ -32,7 +30,7 @@ def map_climatology(plot, func):
 
 def map_climatology_comparison(plot, func):
     print 'plotting map of ' + plot['variable']
-    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['climatology_dates'])
+    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat'])
     plot['plot_depth'] = 0       
     if data.ndim > 2:
         plot['plot_depth'] = min(depth, key=lambda x:abs(x-plot['depth']))
@@ -82,16 +80,12 @@ def section_climatology(plot, func):
     plot['data1_args']['climatology_args']['ax_args']['xlabel'] = 'Latitude'
     plot['data1_args']['climatology_args']['ax_args']['xticks'] = np.arange(-80, 81, 20)
     plot['data1_args']['climatology_args']['ax_args']['ylabel'] = plot['depth_type']
-    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['climatology_dates'])
-    print data.shape
+    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat'])
     try:
         if data.ndim == 3:
-            print 'here'
             zonmean = data.mean(axis=2)
         elif data.ndim == 2:
-            print ' or here'
             zonmean = data.mean(axis=1)
-        print zonmean.shape
     except:
         print 'proc_plot cannot zonal mean for section ' + plot['ifile'] + ' ' + plot['variable']
 
@@ -136,8 +130,7 @@ def map_trends(plot, func):
 
     data, units = _trend_units(data, units, plot)
 
-    plot = dft.filltitle(plot, 'Trends', 'data1', str(plot['plot_depth']))  
-    print plot['plot_args']          
+    plot = dft.filltitle(plot, 'Trends', 'data1', str(plot['plot_depth']))            
     func(lon, lat, data, anom=True, ax_args=plot['data1_args']['trends_args']['ax_args'],
                   pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units,
                   **plot['plot_args'])
@@ -152,15 +145,11 @@ def section_trends(plot, func):
     plot['data1_args']['trends_args']['ax_args']['xticks'] = np.arange(-80, 81, 20)
     plot['data1_args']['trends_args']['ax_args']['ylabel'] = plot['depth_type']
     data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['trends_dates'])
-    print data.shape
     try:
         if data.ndim == 3:
-            print 'here'
             zonmean = data.mean(axis=2)
         elif data.ndim == 2:
-            print ' or here'
             zonmean = data.mean(axis=1)
-        print zonmean.shape
     except:
         print 'proc_plot cannot zonal mean for section ' + plot['ifile'] + ' ' + plot['variable']
 
@@ -190,9 +179,7 @@ def timeseries(plot, func):
             print('Failed to extract depth ' +  plot['plot_depth'] + ' for ' + plot['variable'])
             depth_ind = 0
         data = data[:,depth_ind]   
-
-    print 'shape'
-    print data.shape    
+   
     plot = dft.filltitle(plot, 'Climatology', 'data1', plot['plot_depth'])        
     func(x, data, ax_args=plot['data1_args']['climatology_args']['ax_args'])
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology' + str(plot['depth']) + '.pdf'

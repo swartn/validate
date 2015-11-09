@@ -5,11 +5,11 @@ model_run = 'edr'
 
 defaults = {
             'climatology': True,
-            'climatology_dates': {'start_date': '1990-01', 'end_date': '2000-01'},
+            'climatology_dates': {'start_date': '1991-01', 'end_date': '2000-01'},
             'compare_climatology': False,
             
             'trends': True,
-            'trends_dates': {'start_date': '1990-01', 'end_date': '2000-01'},
+            'trends_dates': {'start_date': '1991-01', 'end_date': '2000-01'},
             'compare_trends': False,
             
             'realization': '1',
@@ -19,19 +19,9 @@ defaults = {
 plots = [
 
          {    
-          'variable': 'thetao',
-          'plot_projection': 'global_map',
-          'depth_type': 'lev', 
-          'depths': [0,5000],
-          #'plot_args': {'fill_continents': False}                       
-          },
-         {    
-          'variable': 'thetao',
-          'plot_projection': 'mercator',
-          'depth_type': 'lev', 
-          'depths': [0,5000],
-          #'plot_args': {'fill_continents': False}                       
-          },            
+          'variable': 'sic',
+          'plot_projection': 'polar_map',                     
+          },                                
         ]
 
 obs_root = '/raid/ra40/data/ncs/nemo_out/obs4comp/'

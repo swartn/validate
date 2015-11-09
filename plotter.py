@@ -30,7 +30,6 @@ def _compare_climatology(plot):
                 'mercator': (pr.polar_map, pc.map_climatology_comparison),
                 }[pl]
     func_region, func_case = pregion_comp(plot['plot_projection']) 
-    print  func_case
     return func_case(plot, func_region),
     
 def _trends(plot):
@@ -69,28 +68,27 @@ def loop(plots):
             
     plotnames = []
     for p in plots:
-        print p['realm']
-        print p['realm_cat']
         if p['depths'] == []:
+            p['depth'] = 0
             if p['climatology'] == True:
-                plotnames.append((_climatology(p), p, 'climatology'))
+                plotnames.append((_climatology(p), dict(p), 'climatology'))
             if p['trends'] == True:
-                plotnames.append((_trends(p), p, 'trends'))
+                plotnames.append((_trends(p), dict(p), 'trends'))
             if p['compare_climatology'] == True:
-                plotnames.append((_compare_climatology(p), p, 'compare_climatology'))
+                plotnames.append((_compare_climatology(p), dict(p), 'compare_climatology'))
             if p['compare_trends'] == True:
-                plotnames.append((_compare_trends(p), p, 'compare_trends'))
+                plotnames.append((_compare_trends(p), dict(p), 'compare_trends'))
         else:
             for d in p['depths']:
                 p['depth'] = int(d)
                 if p['climatology'] == True:
-                    plotnames.append((_climatology(p), p, 'climatology'))
+                    plotnames.append((_climatology(p), dict(p), 'climatology'))
                 if p['trends'] == True:
-                    plotnames.append((_trends(p), p, 'trends'))
+                    plotnames.append((_trends(p), dict(p), 'trends'))
                 if p['compare_climatology'] == True:
-                    plotnames.append((_compare_climatology(p), p, 'compare_climatology'))
+                    plotnames.append((_compare_climatology(p), dict(p), 'compare_climatology'))
                 if p['compare_trends'] == True:
-                   plotnames.append((_compare_trends(p), p, 'compare_trends'))                
+                   plotnames.append((_compare_trends(p), dict(p), 'compare_trends'))                
         plt.close('all')
                 
     return plotnames

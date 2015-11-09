@@ -52,7 +52,6 @@ def section_climatology(plot):
 def polar_map_climatology(plot):
     print 'plotting polar map of ' + plot['variable']
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'])    
-    #print depth
     if data.ndim > 2:
         if 'depth' in plot:
             plot['plot_depth'] = np.round(plot['depth'])
@@ -78,7 +77,6 @@ def polar_map_climatology(plot):
 def polar_map_south_climatology(plot):
     print 'plotting polar map of ' + plot['variable']
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'])    
-    print depth
     if data.ndim > 2:
         if 'depth' in plot:
             plot['plot_depth'] = np.round(plot['depth'])
@@ -104,7 +102,6 @@ def polar_map_south_climatology(plot):
 def mercator_climatology(plot): 
     print 'plotting meractor projection of ' + plot['variable']
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'])    
-    #print depth
     if data.ndim > 2:
         if 'depth' in plot:
             plot['plot_depth'] = np.round(plot['depth'])
@@ -402,7 +399,6 @@ def mercator_trends(plot):
             print('Failed to extract depth ' +  p['plot_depth'] + ' for ' + v)
 
         data = data[depth_ind, :, :]
-        print data.shape
 
 
     data, units = _trend_units(data, units, plot)

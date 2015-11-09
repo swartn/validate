@@ -4,13 +4,19 @@ import cdo; cdo = cdo.Cdo()
 import numpy as np
 import datetime
 
-def timeaverage_load(ifile, var, depth_type, dates):
+def timeaverage_load(ifile, var, depth_type, dates, realm):
 
     path, ifile = os.path.split(ifile)
     if dates:
         if not os.path.isfile('remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc'):
-            cdo.mul(input='-divc,100 areacella/ocean ' + path + '/' + ifile, output='remapfiles/remapfile.nc')
-            cdo.remapdis('r360x180', input='-setctomiss,0 -timmean -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' remapfiles/remapfile.nc', output='remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
+            out='remapfiles/remapfile.nc'
+            if realm == 'ocean':
+                cdo.mul(input='-divc,100 mask/ocean ' + path + '/' + ifile, output=out)
+            elif realm == 'land':
+                cdo.mul(input='-divc,100 mask/land ' + path + '/' + ifile, output=out)
+            else:
+                out = path + '/' + ifile
+            cdo.remapdis('r360x180', input='-setctomiss,0 -timmean -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output='remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
         nc = Dataset('remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
     else:
         if not os.path.isfile('remapfiles/remap_' + ifile):
@@ -18,16 +24,11 @@ def timeaverage_load(ifile, var, depth_type, dates):
         nc = Dataset('remapfiles/remap_' + ifile, 'r')
     
     
-    for key in nc.variables:
-        print '<<' + key + '>>'
     try:
         ncvar = nc.variables[var]
 
     except:
         varu = var.upper()
-        #print '-----------'
-        #print '>>' + varu +'<<'
-        #print '---------'
         ncvar = nc.variable[varu]
     data = ncvar[:].squeeze()
 
@@ -40,28 +41,16 @@ def timeaverage_load(ifile, var, depth_type, dates):
     if depth_type != "":
         try:
             for dimension in ncvar.dimensions:
-            #print dimension
                 if depth_type in dimension.lower():
                     depth = nc.variables[dimension][:]
                     break
         except:
             depth = [0]
-    #print depth
     
     #lon = np.linspace(0,359, 360)
     #lat = np.linspace(-90,90,180)
     lon = nc.variables['lon'][:].squeeze()
     lat = nc.variables['lat'][:].squeeze()
-    #print '____________________________________________________'
-    #print lon
-    #print lat    
-    #print lon
-    #print lon.shape
-    #print lat
-    #print lat.shape
-    print data.shape
-    print depth
-    #print 'SHAPE__________________________________________'
     depth = np.round(depth)
     return data, units, lon, lat, depth
     
@@ -85,39 +74,26 @@ def trends_load(ifile, var, depth_type, dates):
     ncvar = nc.variables[var]
     data = ncvar[:].squeeze() 
 
-    #for key in nc.variables:
-    #    print '<<' + key + '>>'
     try:
         units = ncvar.units
     except:
         units = '' 
       
-    depth = [0]    
-    try:
-        for dimension in ncvar.dimensions:
-            if depth_type in dimension.lower():
+    depth = [0]
+    if depth_type != "":
+        try:
+            for dimension in ncvar.dimensions:
+
+                if depth_type in dimension.lower():
                     depth = nc.variables[dimension][:]
                     break
-            else:
-                depth = [0]
-    except:
-        depth = [0]
-    #print data.shape      
+        except:
+            depth = [0]     
     #lon = np.linspace(0, 359, 360)
     #lat = np.linspace(-90,90,180)
     lon = nc.variables['lon'][:].squeeze()
     lat = nc.variables['lat'][:].squeeze()
-    #print lon
-    #print lon.shape
-    #print lat
-    #print lat.shape
-    #print data.shape
-    #for n in data[0][0]:
-        #print n
-    #print 'DDDAAATTTAAA2'
-    #for n in data[0][2]:
-        #print n
-    #print 'SHAPE__________________________________________'
+
     depth = np.round(depth)
     return data, units, lon, lat, depth    
     
@@ -146,9 +122,6 @@ def timeseries_load(ifile, var, depth_type, dates):
         ncvar = nc.variable[varu]
     data = ncvar[:].squeeze()
 
-    #for key in nc.variables:
-    #    print '<<' + key + '>>' 
-    print data.shape   
     try:
         units = ncvar.units
     except:
@@ -158,13 +131,11 @@ def timeseries_load(ifile, var, depth_type, dates):
     if depth_type != "":
         try:
             for dimension in ncvar.dimensions:
-            #print dimension
                 if depth_type in dimension.lower():
                     depth = nc.variables[dimension][:]
                     break
         except:
             depth = [0]
-    #print depth
     
     nc_time = nc.variables['time']
     try: 
@@ -174,14 +145,7 @@ def timeseries_load(ifile, var, depth_type, dates):
     x = num2date(nc_time[:], nc_time.units, cal)
     x = [datetime.datetime(*item.timetuple()[:6]) for item in x]
     x = np.array(x)
-    #print lon
-    #print lon.shape
-    #print lat
-    #print lat.shape
-    #print data.shape
-    #print depth
-    #print 'SHAPE__________________________________________'
-    print x
+
     depth = np.round(depth)
     return data, units, x, depth    
 

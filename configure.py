@@ -1,17 +1,17 @@
 import control as con
 import os
 
-model_run = 'aaa'
+model_run = 'edr'
 
 #os.system('ln -s /raid/ra40/CMIP5_OTHER_DOWNLOADS/tas/tas_Amon_CanESM2_historical_r1i1p1_185001-200512.nc .')
 
 defaults = {
             'climatology': True,
-            'climatology_dates': {'start_date': '1990-01', 'end_date': '2000-01'},
+            'climatology_dates': {'start_date': '1991-01', 'end_date': '2000-01'},
             'compare_climatology': False,
             
             'trends': True,
-            'trends_dates': {'start_date': '1990-01', 'end_date': '2000-01'},
+            'trends_dates': {'start_date': '1991-01', 'end_date': '2000-01'},
             'compare_trends': False,
             
             'realization': '1',
@@ -86,10 +86,10 @@ plots = [
           'variable': 'sfcWind',
           'plot_projection': 'global_map',                             
           }, 
-         {    
-          'variable': 'pr',
-          'plot_projection': 'global_map',                             
-          }, 
+#         {    
+#          'variable': 'pr',
+#          'plot_projection': 'global_map',                             
+#          }, 
          {    
           'variable': 'psl',
           'plot_projection': 'global_map',                             
@@ -169,26 +169,26 @@ plots = [
           'depths': [0,200,500,2000,5000],                                        
           }, 
 
-         {    
-          'variable': 'intdic',
-          'plot_projection': 'section',
-          'depth_type': 'lev',                                       
-          },  
-         {    
-          'variable': 'no3',
-          'plot_projection': 'section',
-          'depth_type': 'lev',                                     
-          }, 
-         {    
-          'variable': 'ph',
-          'plot_projection': 'section',
-          'depth_type': 'lev',                                       
-          }, 
-         {    
-          'variable': 'talk',
-          'plot_projection': 'section',
-          'depth_type': 'lev',                                       
-          }, 
+#         {    
+#          'variable': 'intdic',
+#          'plot_projection': 'section',
+#          'depth_type': 'lev',                                       
+#          },  
+#         {    
+#          'variable': 'no3',
+#          'plot_projection': 'section',
+#          'depth_type': 'lev',                                     
+#          }, 
+#         {    
+#          'variable': 'ph',
+#          'plot_projection': 'section',
+#          'depth_type': 'lev',                                       
+#          }, 
+#         {    
+#          'variable': 'talk',
+#          'plot_projection': 'section',
+#          'depth_type': 'lev',                                       
+#          }, 
 
 
 
@@ -200,14 +200,14 @@ plots = [
           'variable': 'phyc',
           'plot_projection': 'global_map',                                       
           },
-         {    
-          'variable': 'zooc',
-          'plot_projection': 'section',                                       
-          }, 
-         {    
-          'variable': 'phyc',
-          'plot_projection': 'section',                                       
-          }, 
+#         {    
+#          'variable': 'zooc',
+#          'plot_projection': 'section',                                       
+#          }, 
+#         {    
+#          'variable': 'phyc',
+#          'plot_projection': 'section',                                       
+#          }, 
  
  
          {    
@@ -351,14 +351,14 @@ plots = [
           'variable': 'sit',
           'plot_projection': 'polar_map_south',                                       
           }, 
-         {    
-          'variable': 'snd',
-          'plot_projection': 'polar_map',                                       
-          }, 
-         {    
-          'variable': 'snd',
-          'plot_projection': 'polar_map_south',                                       
-          }, 
+#         {    
+#          'variable': 'snd',
+#          'plot_projection': 'polar_map',                                       
+#          }, 
+#         {    
+#          'variable': 'snd',
+#          'plot_projection': 'polar_map_south',                                       
+#          }, 
          {    
           'variable': 'tsice',
           'plot_projection': 'polar_map',                                       
