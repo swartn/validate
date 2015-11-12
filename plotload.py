@@ -53,7 +53,54 @@ def timeaverage_load(ifile, var, depth_type, dates, realm):
     lat = nc.variables['lat'][:].squeeze()
     depth = np.round(depth)
     return data, units, lon, lat, depth
+
+def timeaverage_load_comp(ifile, var, depth_type, dates, realm):
+
+    path, ifile = os.path.split(ifile)
+
+    if dates:
+        if not os.path.isfile('remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc'):
+            cdo.selvar(var, input=path + '/' + ifile, output='remapfiles/selvar.nc')
+            out='remapfiles/selvar.nc'
+            cdo.remapdis('r360x180', input='-setctomiss,0 -timmean -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output='remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
+        nc = Dataset('remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
+    else:
+        if not os.path.isfile('remapfiles/remap_' + ifile):
+            cdo.selvar(var, input=path + '/' + ifile, output='remapfiles/selvar.nc')
+            out='remapfiles/selvar.nc'
+            cdo.remapdis('r360x180', input='-timmean ' + 'remapfiles/selvar.nc', output='remapfiles/remap_' + ifile)
+        nc = Dataset('remapfiles/remap_' + ifile, 'r')
     
+    
+    try:
+        ncvar = nc.variables[var]
+
+    except:
+        varu = var.upper()
+        ncvar = nc.variable[varu]
+    data = ncvar[:].squeeze()
+
+    try:
+        units = ncvar.units
+    except:
+        units = ''
+    
+    depth = [0]
+    if depth_type != "":
+        try:
+            for dimension in ncvar.dimensions:
+                if depth_type in dimension.lower():
+                    depth = nc.variables[dimension][:]
+                    break
+        except:
+            depth = [0]
+    
+    #lon = np.linspace(0,359, 360)
+    #lat = np.linspace(-90,90,180)
+    lon = nc.variables['lon'][:].squeeze()
+    lat = nc.variables['lat'][:].squeeze()
+    depth = np.round(depth)
+    return data, units, lon, lat, depth    
 def trends_load(ifile, var, depth_type, dates):
     path, ifile = os.path.split(ifile)
     if dates:   

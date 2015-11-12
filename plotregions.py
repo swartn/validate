@@ -192,7 +192,7 @@ def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''
         fig, ax = plt.subplots(1,1, figsize=(8,8))
     else:
         fig = plt.gcf()
-    m = Basemap(projection='merc',llcrnrlat=latmin,urcrnrlat=latmax,llcrnrlon=lonmin,urcrnrlon=lonmax,lat_ts=20,resolution='c')
+    m = Basemap(projection='merc',llcrnrlat=latmin,urcrnrlat=latmax,llcrnrlon=lonmin,urcrnrlon=lonmax,lat_ts=20,resolution='c',ax=ax)
     
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)

@@ -29,7 +29,7 @@ def map_climatology(plot, func):
     return plot_name    
 
 def map_climatology_comparison(plot, func):
-    print 'plotting map of ' + plot['variable']
+    print 'plotting comparison map of ' + plot['variable']
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat'])
     plot['plot_depth'] = 0       
     if data.ndim > 2:
@@ -42,7 +42,7 @@ def map_climatology_comparison(plot, func):
             depth_ind = 0
         data = data[depth_ind, :, :]
     
-    data2, units, lon, lat, depth = pl.timeaverage_load(plot['comp_file'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat']) 
+    data2, units, lon, lat, depth = pl.timeaverage_load_comp(plot['comp_file'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat']) 
     
   
     if data2.ndim > 2:
@@ -60,7 +60,7 @@ def map_climatology_comparison(plot, func):
     
     plot = dft.filltitle(plot, 'Climatology', 'data1', str(plot['plot_depth']))
     plot = dft.filltitle(plot, 'Climatology Observations', 'data2', str(plot['plot_depth'])) 
-    plot = dft.filltitle(plot, 'Climatology Comparison', 'comp', str(plot['plot_depth']))  
+    plot = dft.filltitle(plot, 'Climatology Model - Obs', 'comp', str(plot['plot_depth']))  
          
     func(lon, lat, data, ax=axl, ax_args=plot['data1_args']['climatology_args']['ax_args'],
          pcolor_args=plot['data1_args']['climatology_args']['pcolor_args'], cblabel=units,
@@ -68,7 +68,7 @@ def map_climatology_comparison(plot, func):
     func(lon, lat, data2, ax=axm, ax_args=plot['data2_args']['climatology_args']['ax_args'],
          pcolor_args=plot['data2_args']['climatology_args']['pcolor_args'], cblabel=units,
          **plot['plot_args'])
-    func(lon, lat, compdata, ax=axr, ax_args=plot['comp_args']['climatology_args']['ax_args'],
+    func(lon, lat, compdata, anom=True, ax=axr, ax_args=plot['comp_args']['climatology_args']['ax_args'],
          pcolor_args=plot['comp_args']['climatology_args']['pcolor_args'], cblabel=units,
          **plot['plot_args'])                              
     plot_name = 'plots/' + plot['variable'] + '_' + plot['plot_projection'] + '_climatology_comparison' + str(plot['plot_depth']) + '.pdf'

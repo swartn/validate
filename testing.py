@@ -20,7 +20,7 @@ plots = [
 
          {    
           'variable': 'ta',
-          'plot_projection': 'mercator', 
+          'plot_projection': 'global_map', 
                   
           },  
                                
@@ -31,7 +31,9 @@ obs = {'NO3' : obs_root + 'uncs_orca2_data_data_n_an_nomask.nc',
        'DIC' : obs_root + 'uncs_orca2_data_data_TCO2_nomask.nc',
        'NCHL': obs_root + 'uncs_seawifs_mean_1998_2005.nc',
        'tas': './tas_Amon_CanESM2_historical_r1i1p1_185001-200512.nc',
-       'ta': '/raid/rc40/data/ncs/obs4comp/20CR/mon/ta_Amon_20CR_historical_ens-mean_187101-201212.nc'
+       'ta': '/raid/rc40/data/ncs/obs4comp/20CR/mon/ta_Amon_20CR_historical_ens-mean_187101-201212.nc',
+       'tauu': '/raid/rc40/data/ncs/obs4comp/20CR/mon/tauu_Amon_20CR_historical_ens-mean_187101-201212.nc'
+       
        }                 
          
 if __name__ == "__main__":

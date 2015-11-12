@@ -26,8 +26,8 @@ def _compare_climatology(plot):
         return {'global_map': (pr.global_map, pc.map_climatology_comparison),
                 'section': (pr.section, pc.section_climatology_comparison),
                 'polar_map': (pr.polar_map, pc.map_climatology_comparison),
-                'polar_map_south': (pr.polar_map, pc.map_climatology_comparison),
-                'mercator': (pr.polar_map, pc.map_climatology_comparison),
+                'polar_map_south': (pr.polar_map_south, pc.map_climatology_comparison),
+                'mercator': (pr.mercator, pc.map_climatology_comparison),
                 }[pl]
     func_region, func_case = pregion_comp(plot['plot_projection']) 
     return func_case(plot, func_region),
