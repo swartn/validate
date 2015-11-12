@@ -17,22 +17,19 @@ def _orderplots(plotnames):
     plotdict = {}
     for name, p, t in plotnames:
         plotdict[p['variable']] = {}
-        if p['climatology']:
-            plotdict[p['variable']]['climatology'] = {}
-        if p['trends']:
-            plotdict[p['variable']]['trends'] = {}                                  
-        if p['compare_climatology']:
-            plotdict[p['variable']]['compare_climatology'] = {}                                  
-        if p['compare_trends']:
-            plotdict[p['variable']]['compare_trends'] = {}
-        for ptype in plotdict[p['variable']]:
-            plotdict[p['variable']][ptype] = {'sorteddepthlist': [],
-                                              'depthfile': {},}        
     for name, p, t in plotnames:
-        plotdict[p['variable']][t]['sorteddepthlist'].append(p['plot_depth'])
-        plotdict[p['variable']][t]['sorteddepthlist'].sort()
-        
-        plotdict[p['variable']][t]['depthfile'][p['plot_depth']] = name[0]  
+        plotdict[p['variable']][t] = {}
+
+
+    for name, p, t in plotnames:
+        plotdict[p['variable']][t][p['plot_projection']] = {'sorteddepthlist': [],
+                                                           'depthfile': {},}
+    for name, p, t in plotnames:
+        plotdict[p['variable']][t][p['plot_projection']]['sorteddepthlist'].append(p['plot_depth']) 
+        plotdict[p['variable']][t][p['plot_projection']]['sorteddepthlist'].sort()
+        plotdict[p['variable']][t][p['plot_projection']]['depthfile'][p['plot_depth']] = name[0]        
+       
+
     #print 'here'      
     #print plotdict
     return plotdict
@@ -48,11 +45,14 @@ def pdfmarks(plotdict):
     for var in plotdict:    
         f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + var + ") /Count -"+str(len(plotdict[var].keys())) + " /OUT pdfmark\n")
         for ptype in plotdict[var]:
-            if len(plotdict[var][ptype]['sorteddepthlist']) > 0:          
-                f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + ptype + ") /Count -" + str(len(plotdict[var][ptype]['sorteddepthlist'])) + " /OUT pdfmark\n")
-                for depth in plotdict[var][ptype]['sorteddepthlist']:
+            f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + ptype + ") /Count -" + str(len(plotdict[var][ptype].keys())) + " /OUT pdfmark\n")
+            for pp in plotdict[var][ptype]:
+                f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + pp + ") /Count -" + str(len(plotdict[var][ptype][pp]['sorteddepthlist'])) + " /OUT pdfmark\n")
+                for depth in plotdict[var][ptype][pp]['sorteddepthlist']:
+                    plotdict[var][ptype][pp]['sorteddepthlist'] = list(set(plotdict[var][ptype][pp]['sorteddepthlist']))
                     f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + str(depth) + ") /OUT pdfmark\n")
-                    plist.append(plotdict[var][ptype]['depthfile'][depth])
+                    print plotdict[var][ptype][pp]['depthfile'][depth]
+                    plist.append(str(plotdict[var][ptype][pp]['depthfile'][depth]))
                     page_count += 1
 
     f.close()

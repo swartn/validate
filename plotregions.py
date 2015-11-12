@@ -95,8 +95,8 @@ def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=
     ax.text(x, y, '  '.join(vals), fontsize=8)
 
 def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom = False,
-              latmin=-80, latmax=80, lonmin=0, lonmax=360,
-              fill_continents=False, fill_oceans = False, draw_parallels=True, draw_meridians=True):
+              latmin=30, latmax=80, lonmin=0, lonmax=360,
+              fill_continents=True, fill_oceans = False, draw_parallels=True, draw_meridians=True):
 
 
     if not ax:
@@ -111,7 +111,7 @@ def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='
             pcolor_args[key] = value  
 
 
-    m = Basemap(projection='npstere',boundinglat=50,lon_0=270,resolution='c', ax=ax)
+    m = Basemap(projection='npstere',boundinglat=latmin,lon_0=270,resolution='c', ax=ax)
     
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
@@ -134,11 +134,11 @@ def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='
     snam = ['min: ', 'max: ', 'mean: ']
 
     vals = [s + str(np.round(v,1)) for s, v in zip(snam, vals)]
-    x, y = m(-135, -9)
+    x, y = m(-135, 12)
     ax.text(x, y, '  '.join(vals), fontsize=8)
 
 def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom = False,
-                    latmin=-80, latmax=80, lonmin=0, lonmax=360,
+                    latmin=-90, latmax=-30, lonmin=0, lonmax=360,
                     fill_continents=True, fill_oceans = False, draw_parallels=True, draw_meridians=True):
 
 
@@ -152,7 +152,7 @@ def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cbl
         fig, ax = plt.subplots(1,1, figsize=(8,8))
     else:
         fig = plt.gcf()
-    m = Basemap(projection='spstere',boundinglat=10,lon_0=270,resolution='c')
+    m = Basemap(projection='spstere',boundinglat=latmax,lon_0=270,resolution='c')
     
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
@@ -176,7 +176,7 @@ def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cbl
     vals = [data.min(), data.max(), data.mean()]
     snam = ['min: ', 'max: ', 'mean: ']
     vals = [s + str(np.round(v,1)) for s, v in zip(snam, vals)]
-    x, y = m(-45, 28)
+    x, y = m(-45, -12)
     ax.text(x, y, '  '.join(vals), fontsize=8)
 
 def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False,

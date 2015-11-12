@@ -335,21 +335,23 @@ plots = [
           'plot_projection': 'global_map',                                       
           }, 
           
+#         {    
+#          'variable': 'sic',
+#          'plot_projection': 'polar_map',                                       
+#          }, 
+#         {    
+#          'variable': 'sic',
+#          'plot_projection': 'polar_map_south',                                       
+#          }, 
          {    
-          'variable': 'sic',
-          'plot_projection': 'polar_map',                                       
-          }, 
-         {    
-          'variable': 'sic',
-          'plot_projection': 'polar_map_south',                                       
+          'variable': 'sit',
+          'plot_projection': 'polar_map', 
+          'plot_args': {'fill_continents': True}                                                
           }, 
          {    
           'variable': 'sit',
-          'plot_projection': 'polar_map',                                       
-          }, 
-         {    
-          'variable': 'sit',
-          'plot_projection': 'polar_map_south',                                       
+          'plot_projection': 'polar_map_south',
+          'plot_args': {'fill_continents': True}                                       
           }, 
 #         {    
 #          'variable': 'snd',
@@ -361,11 +363,13 @@ plots = [
 #          }, 
          {    
           'variable': 'tsice',
-          'plot_projection': 'polar_map',                                       
+          'plot_projection': 'polar_map', 
+          'plot_args': {'fill_continents': True}                                                  
           }, 
          {    
           'variable': 'tsice',
-          'plot_projection': 'polar_map_south',                                       
+          'plot_projection': 'polar_map_south',  
+          'plot_args': {'fill_continents': True}                                                 
           },                                                                                                                                                                                                                    
         ]
         

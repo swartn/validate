@@ -42,7 +42,7 @@ def map_climatology_comparison(plot, func):
             depth_ind = 0
         data = data[depth_ind, :, :]
     
-    data2, units, lon, lat, depth = pl.timeaverage_load(plot['comp_file'], plot['variable'], plot['depth_type'], plot['climatology_dates']) 
+    data2, units, lon, lat, depth = pl.timeaverage_load(plot['comp_file'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat']) 
     
   
     if data2.ndim > 2:
@@ -95,22 +95,19 @@ def section_climatology(plot, func):
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology' + '.pdf'
     plt.savefig(plot_name, bbox_inches='tight')
     
+    plot['plot_depth'] = 0
     return plot_name
     
 def section_climatology_comparison(plot, func):
     pass
 
 def _trend_units(data, units, plot):
-    dates = plot['trends_dates']
-    if dates:
-        syear = dates['start_date'][:4] 
-        smonth = dates['start_date'][5:7]
-        eyear = dates['end_date'][:4] 
-        emonth = dates['end_date'][5:7]
-        months = (int(eyear)*12 + int(emonth)) - (int(syear)*12 + int(smonth))
-    else:
-        pass
-    data = data*120    
+    if plot['frequency'] == 'day':
+        data = data*3652.5
+    if plot['frequency'] == 'mon':
+        data = data*120
+    if plot['frequency'] == 'year':
+        data = data*10
     units = units + '/decade'
     return data, units
     
@@ -159,7 +156,8 @@ def section_trends(plot, func):
                pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units)
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_trends' + '.pdf'
     plt.savefig(plot_name, bbox_inches='tight')
-    
+
+    plot['plot_depth'] = 0    
     return plot_name
 def timeseries(plot, func):
     print 'plotting timeseries of ' + plot['variable']
