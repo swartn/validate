@@ -234,11 +234,9 @@ def _fix_1Ddata(z, data, ax_args):
 def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False):
     print len(x)
     print len(z)
-    print data[5]
     if len(data.shape) == 1:
        z, data, ax_args = _fix_1Ddata(z, data, ax_args)
     print data.shape
-    print data[5][:]
     if not ax:
         fig, ax = plt.subplots(1,1, figsize=(8,8))
         fig.subplots_adjust(top=0.8, right=0.8)

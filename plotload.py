@@ -72,6 +72,7 @@ def timeaverage_load_comp(ifile, var, depth_type, dates, realm, depthneeded, sca
 
     if dates:
         if not os.path.isfile('remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc'):
+            print 'got here'
             cdo.selvar(var, input=path + '/' + ifile, output='remapfiles/selvar.nc')
             out='remapfiles/selvar.nc'
             cdo.remapdis('r360x180', options='-L', input='-setctomiss,0 -timmean -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output='remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
@@ -114,7 +115,8 @@ def timeaverage_load_comp(ifile, var, depth_type, dates, realm, depthneeded, sca
                     depth = nc.variables[dimension][:]
                     break
         except:
-            depth = [0]   
+            depth = [0]  
+    print depth 
     #lon = np.linspace(0,359, 360)
     #lat = np.linspace(-90,90,180)
     lon = nc.variables['lon'][:].squeeze()

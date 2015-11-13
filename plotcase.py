@@ -126,37 +126,33 @@ def section_climatology_comparison(plot, func):
     
     data2, units2, lon2, lat2, depth2 = pl.timeaverage_load_comp(plot['comp_file'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat'], depth, plot['scale'])  
     print zonmean.shape
-    print 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww'
-    print zonmean[5][:]     
+    print 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww'   
     try:
         if data2.ndim == 3:
-            zonmean2 = data.mean(axis=2)
+            zonmean2 = data2.mean(axis=2)
         elif data2.ndim == 2:
-            zonmean2 = data
+            zonmean2 = data2
     except:
         print 'proc_plot cannot zonal mean for section comparison ' + plot['ifile'] + ' ' + plot['variable']   
     print zonmean2.shape  
-    print '======================================================'
-    print zonmean2[5][:]                 
+    print '======================================================'                
     plot = dft.filltitle(plot, 'Climatology', 'data1', '')  
     plot = dft.filltitle(plot, 'Climatology Observations', 'data2', '') 
     plot = dft.filltitle(plot, 'Climatology Model - Obs', 'comp', '')               
 
     compdata = zonmean - zonmean2    
     fig, (axl, axm, axr) = plt.subplots(3,1)
-    print '=================================='
-    print zonmean2[5][:]  
+    print '==================================' 
     func(lat, depth, zonmean, ax=axl, ax_args=plot['data1_args']['climatology_args']['ax_args'],
                pcolor_args=plot['data1_args']['climatology_args']['pcolor_args'], cblabel=units)
-    print '===================aaaaaaaaaaaa======'
-    print zonmean2[5][:]                 
+                
     func(lat, depth, zonmean2, ax=axm, ax_args=plot['data2_args']['climatology_args']['ax_args'],
                pcolor_args=plot['data2_args']['climatology_args']['pcolor_args'], cblabel=units)
-    plt.show()
     func(lat, depth, compdata, ax=axr, ax_args=plot['comp_args']['climatology_args']['ax_args'],
                pcolor_args=plot['comp_args']['climatology_args']['pcolor_args'], cblabel=units)
                               
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_comparison' + '.pdf'
+    plt.tight_layout()
     plt.savefig(plot_name, bbox_inches='tight')
     
     plot['plot_depth'] = 0
