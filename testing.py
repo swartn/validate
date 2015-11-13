@@ -14,11 +14,11 @@ import os
 model_run = 'edr'
 
 defaults = {
-            'climatology': False,
+            'climatology': True,
             'climatology_dates': {'start_date': '1991-01', 'end_date': '2000-01'},
-            'compare_climatology': True,
+            'compare_climatology': False,
             
-            'trends': False,
+            'trends': True,
             'trends_dates': {'start_date': '1991-01', 'end_date': '2000-01'},
             'compare_trends': False,
             
@@ -28,13 +28,85 @@ defaults = {
             }
 
 plots = [
- 
+         {    
+          'variable': 'ta',         
+          'plot_projection': 'mercator',
+          'climatology': True,
+          'climatology_dates': {'start_date': '1985-01', 'end_date': '2000-01'}, 
+          'trends': True,
+          'trends_dates': {'start_date': '1991-01', 'end_date': '2000-01'},                   
+          'compare_climatology': True,   
+          'compare_trends': True, 
+          'realization': '1',
+          'data1_args': {'climatology_args': {'pcolor_args': {'vmin': 250, 'vmax': 300},
+                                              'ax_args': {'title': 'The title'}},
+                         'trends_args':      {}},
+          'data2_args': {},
+          'comp_args': {},
+          'plot_args': {'fill_continents': True},                                                       
+          'depth_type': 'plev',
+          'depths':[20000, 85000, 100000],
+          'frequency': 'mon'                             
+          }, 
+         {    
+          'variable': 'ta',
+          'plot_projection': 'time_series',
+          'depth_type': 'plev',
+          'depths':[20000, 85000, 100000]                              
+          }, 
+         {    
+          'variable': 'ta',
+          'plot_projection': 'zonal_mean',
+          'trends': False,
+          'depth_type': 'plev',
+          'depths':[20000, 85000, 100000]                              
+          },                                
+         {    
+          'variable': 'hus',
+          'plot_projection': 'mercator',
+          'depth_type': 'plev',
+          'depths':[20000, 85000, 100000]                              
+          }, 
+        
          {    
           'variable': 'ta',
           'plot_projection': 'section',
-          'depth_type': 'plev',                             
+          'depth_type': 'plev',                            
+          },           
+         {    
+          'variable': 'hus',
+          'plot_projection': 'section',
+          'depth_type': 'plev',                  
+          },  
+          
+         {    
+          'variable': 'thetao',
+          'plot_projection': 'global_map',
+          'depth_type': 'lev',
+          'depths': [0,200,500,2000,5000]                                        
+          },  
+         {    
+          'variable': 'so',
+          'plot_projection': 'mercator',
+          'depth_type': 'lev',
+          'depths': [0,200,500,2000,5000],                                        
           }, 
-                                                      
+         {    
+          'variable': 'thetao',
+          'plot_projection': 'section',
+          'depth_type': 'lev',                                        
+          }, 
+        
+         {    
+          'variable': 'sit',
+          'plot_projection': 'polar_map', 
+          'plot_args': {'fill_continents': True}                                                
+          }, 
+         {    
+          'variable': 'sit',
+          'plot_projection': 'polar_map_south',
+          'plot_args': {'fill_continents': True}                                       
+          },                                                       
         ]
 
 obs_root = '/raid/ra40/data/ncs/nemo_out/obs4comp/'
