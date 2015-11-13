@@ -215,11 +215,11 @@ def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''
     m.drawmapboundary()
 
     m.colorbar(mappable=cot, location='right', label=cblabel)
-    vals = [data.min(), data.max(), data.mean()]
-    snam = ['min: ', 'max: ', 'mean: ']
-    vals = [s + str(np.round(v,1)) for s, v in zip(snam, vals)]
-    x, y = m(lonmin + 1, latmin + 1)
-    ax.text(x, y, '  '.join(vals), fontsize=8)
+    #vals = [data.min(), data.max(), data.mean()]
+    #snam = ['min: ', 'max: ', 'mean: ']
+    #vals = [s + str(np.round(v,1)) for s, v in zip(snam, vals)]
+    #x, y = m(lonmin + 1, latmin + 1)
+    #ax.text(x, y, '  '.join(vals), fontsize=8)
 
     
 def _fix_1Ddata(z, data, ax_args):
@@ -232,8 +232,13 @@ def _fix_1Ddata(z, data, ax_args):
     
                                                                 
 def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False):
-    if len(z) == 1:
+    print len(x)
+    print len(z)
+    print data[5]
+    if len(data.shape) == 1:
        z, data, ax_args = _fix_1Ddata(z, data, ax_args)
+    print data.shape
+    print data[5][:]
     if not ax:
         fig, ax = plt.subplots(1,1, figsize=(8,8))
         fig.subplots_adjust(top=0.8, right=0.8)
@@ -245,7 +250,7 @@ def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', ano
         if key not in pcolor_args or (pcolor_args[key] is None):
             pcolor_args[key] = value
 
-
+    print data.shape
     cot = ax.pcolormesh(x, z, data, **pcolor_args)
     ax.contour(x, z, data, colors=['k'], vmin=pcolor_args['vmin'],
                vmax=pcolor_args['vmax'])
@@ -257,7 +262,6 @@ def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', ano
     box = ax.get_position()
     tl = fig.add_axes([box.x1 + box.width * 0.05, box.y0, 0.02, box.height])
     fig.colorbar(cot, cax=tl, label=cblabel)
-
 def timeseries(x, data, ax=None, ax_args=None,):
     if not ax:
         fig, ax = plt.subplots(1,1, figsize=(8,8))
@@ -268,7 +272,15 @@ def timeseries(x, data, ax=None, ax_args=None,):
 
     plt.setp(ax, **ax_args)    
     
+def zonalmean(x, data, ax=None, ax_args=None,):
+    if not ax:
+        fig, ax = plt.subplots(1,1, figsize=(8,8))
+    else:
+        fig = plt.gcf()
     
+    ax.plot(x, data)
+
+    plt.setp(ax, **ax_args)       
     
 if __name__ == "__main__":
     global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='')

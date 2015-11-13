@@ -30,6 +30,8 @@ def fill(plots, obs, defaults):
             p['depth_type'] = ""
         if 'depths' not in p:
             p['depths'] = [0]
+        if 'scale' not in p:
+            p['scale'] = 1
 
             
         if p['compare_climatology'] or p['compare_trends']:

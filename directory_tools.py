@@ -86,10 +86,14 @@ def _mkdir():
         os.makedirs('plots')
     except:
         pass
-
-def _load_masks():
-    os.system('ln -s /raid/rc40/data/ncs/historical-edr/fx/ocean/sftof/r0i0p0/*.nc ./mask/ocean')
-    os.system('ln -s /raid/rc40/data/ncs/historical-edr/fx/atmos/sftlf/r0i0p0/sftlf_fx_DevAM4-2_historical-edr_r0i0p0.nc ./mask/land')  
+    try:
+        os.makedirs('zonalfiles')
+    except:
+        pass
+        
+def _load_masks(run):
+    os.system('ln -s /raid/rc40/data/ncs/historical-' + run + '/fx/ocean/sftof/r0i0p0/*.nc ./mask/ocean')
+    os.system('ln -s /raid/rc40/data/ncs/historical-' + run + '/fx/atmos/sftlf/r0i0p0/sftlf_fx_DevAM4-2_historical-edr_r0i0p0.nc ./mask/land')  
     
 def _remove_files_out_of_date_range(filedict, start_dates, end_dates):
     for d in filedict:
@@ -157,7 +161,7 @@ def getrealmcat(realm):
 def getfiles(plots, run):
     _mkdir()
     files, directories = _traverse('/raid/rc40/data/ncs/historical-' + run, plots)   
-    _load_masks()
+    _load_masks(run)
     
     realms = {}
     for f in files:

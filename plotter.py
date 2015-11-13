@@ -14,7 +14,8 @@ def _climatology(plot):
                 'polar_map': (pr.polar_map, pc.map_climatology),
                 'polar_map_south': (pr.polar_map_south, pc.map_climatology),
                 'mercator': (pr.mercator, pc.map_climatology),
-                'time_series': (pr.timeseries, pc.timeseries)
+                'time_series': (pr.timeseries, pc.timeseries),
+                'zonal_mean': (pr.zonalmean, pc.zonalmean),                
                 }[pl]
     func_region, func_case = pregion_standard(plot['plot_projection']) 
     return func_case(plot, func_region), 
@@ -47,15 +48,15 @@ def _trends(plot):
     
 def _compare_trends(plot):
     print 'trend comparison plot'
-    def pregion_cc(pl):
-        return {#'global_map': pc.global_map_compare_trends,
-                #'section': pc.section_compare_trends,
-                #'polar_map': pc.polar_map_compare_trends,
-                #'polar_map_south': pc.polar_map_south_compare_trends,
-                #'mercator': pc.mercator_compare_trends,
+    def pregion_ct(pl):
+        return {'global_map': (pr.global_map, pc.map_trends_comp),
+                #'section': (pr.section, pc.section_trends_comp),
+                'polar_map': (pr.polar_map, pc.map_trends_comp),
+                'polar_map_south': (pr.polar_map_south, pc.map_trends_comp),
+                'mercator': (pr.mercator, pc.map_trends_comp),
                 }[pl]
-    print plot['plot_projection']
-    return pregion_cc(plot['plot_projection'])(plot) 
+    func_region, func_case = pregion_ct(plot['plot_projection']) 
+    return func_case(plot, func_region),
 
 def loop(plots):
     #outputs the plots as pdfs
