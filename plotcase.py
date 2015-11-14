@@ -262,6 +262,66 @@ def section_trends(plot, func):
 
     plot['plot_depth'] = 0    
     return plot_name
+
+def section_trends_comp(plot, func):
+    print 'plotting section trends of ' + plot['variable']
+    plot['data1_args']['trends_args']['ax_args']['xlabel'] = 'Latitude'
+    plot['data1_args']['trends_args']['ax_args']['xticks'] = np.arange(-80, 81, 20)
+    plot['data1_args']['trends_args']['ax_args']['ylabel'] = plot['depth_type']
+    
+    plot['data2_args']['trends_args']['ax_args']['xlabel'] = 'Latitude'
+    plot['data2_args']['trends_args']['ax_args']['xticks'] = np.arange(-80, 81, 20)
+    plot['data2_args']['trends_args']['ax_args']['ylabel'] = plot['depth_type']
+
+    plot['comp_args']['trends_args']['ax_args']['xlabel'] = 'Latitude'
+    plot['comp_args']['trends_args']['ax_args']['xticks'] = np.arange(-80, 81, 20)
+    plot['comp_args']['trends_args']['ax_args']['ylabel'] = plot['depth_type']     
+       
+    data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['trends_dates'], plot['scale'])
+    try:
+        if data.ndim == 3:
+            zonmean = data.mean(axis=2)
+        elif data.ndim == 2:
+            zonmean = data.mean(axis=1)
+    except:
+        print 'proc_plot cannot zonal mean for section ' + plot['ifile'] + ' ' + plot['variable']
+
+    data2, units2, lon2, lat2, depth2 = pl.trends_load_comp(plot['comp_file'], plot['variable'], plot['depth_type'], plot['trends_dates'], depth, plot['scale'])
+    try:
+        if data2.ndim == 3:
+            zonmean2 = data2.mean(axis=2)
+        elif data.ndim == 2:
+            zonmean2 = data2.mean(axis=1)
+    except:
+        print 'proc_plot cannot zonal mean for section ' + plot['comp_file'] + ' ' + plot['variable']
+        
+    zonmean, units = _trend_units(zonmean, units, plot)
+    zonmean2, units2 = _trend_units(zonmean2, units2, plot)   
+    
+    compdata = zonmean - zonmean2
+     
+    plot = dft.filltitle(plot, 'Trends', 'data1', '')   
+    plot = dft.filltitle(plot, 'Observations Trends', 'data2', '')  
+    plot = dft.filltitle(plot, 'Trends Model-Obs', 'comp', '')
+             
+    fig, (axl, axm, axr) = plt.subplots(3,1, figsize=(8,8)) 
+                       
+    func(lat, depth, zonmean, ax=axl, anom=True, ax_args=plot['data1_args']['trends_args']['ax_args'],
+                  pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units,
+                  **plot['plot_args'])
+    func(lat, depth, zonmean2, ax=axm, anom=True, ax_args=plot['data2_args']['trends_args']['ax_args'],
+                  pcolor_args=plot['data2_args']['trends_args']['pcolor_args'], cblabel=units,
+                  **plot['plot_args'])
+    func(lat, depth, compdata, ax=axr, anom=True, ax_args=plot['comp_args']['trends_args']['ax_args'],
+                  pcolor_args=plot['comp_args']['trends_args']['pcolor_args'], cblabel=units,
+                  **plot['plot_args']) 
+    plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_trends' + '.pdf'
+    plt.savefig(plot_name, bbox_inches='tight')
+
+    plot['plot_depth'] = 0    
+    return plot_name
+
+
     
 def timeseries(plot, func):
     print 'plotting timeseries of ' + plot['variable']
