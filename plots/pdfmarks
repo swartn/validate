@@ -8,6 +8,6 @@
 /DOCVIEW pdfmark 
 %% EndSetup
 [ /Page 1 /View [/XYZ null null null] /Title (ta) /Count -1 /OUT pdfmark
-[ /Page 1 /View [/XYZ null null null] /Title (compare_climatology) /Count -1 /OUT pdfmark
+[ /Page 1 /View [/XYZ null null null] /Title (compare_trends) /Count -1 /OUT pdfmark
 [ /Page 1 /View [/XYZ null null null] /Title (section) /Count -1 /OUT pdfmark
 [ /Page 1 /View [/XYZ null null null] /Title (0) /OUT pdfmark

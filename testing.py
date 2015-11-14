@@ -20,7 +20,7 @@ defaults = {
             
             'trends': True,
             'trends_dates': {'start_date': '1991-01', 'end_date': '2000-01'},
-            'compare_trends': False,
+            'compare_trends': True,
             
             'realization': '1',
             'scale': 1,

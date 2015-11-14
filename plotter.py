@@ -50,7 +50,7 @@ def _compare_trends(plot):
     print 'trend comparison plot'
     def pregion_ct(pl):
         return {'global_map': (pr.global_map, pc.map_trends_comp),
-                #'section': (pr.section, pc.section_trends_comp),
+                'section': (pr.section, pc.section_trends_comp),
                 'polar_map': (pr.polar_map, pc.map_trends_comp),
                 'polar_map_south': (pr.polar_map_south, pc.map_trends_comp),
                 'mercator': (pr.mercator, pc.map_trends_comp),
