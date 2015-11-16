@@ -196,10 +196,7 @@ def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''
     
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
-                    
-                
-         
-        
+       
     cot = m.pcolor(x, y, data, **pcolor_args)
 
     if ax_args:
