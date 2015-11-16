@@ -129,9 +129,9 @@ def getdates(f):
     return x[0][:4], x[1][:4] 
                    
 def getvariable(f):
-    x = f.rsplit('/',2)
-    x = x[0].rsplit('/',1)
-    return x[1] 
+    x = f.rsplit('/',1)
+    x = x[1].split('_',1)
+    return x[0] 
 
 def getfrequency(f):
     x = f.rsplit('/',4)
@@ -140,8 +140,9 @@ def getfrequency(f):
 
 def getrealization(f):
     x = f.rsplit('/',1)
-    x = x[0].rsplit('/',1)
-    x = x[1][1:2]
+    x = x[1].rsplit('_',2)
+    x = x[1].split('_',1)
+    x = x[0][1:2]
     return x
 
 def getrealm(f):
@@ -211,77 +212,9 @@ def remfiles(del_fldmeanfiles=True, del_mask=True, del_ncstore=True, del_remapfi
                     
     
 if __name__ == "__main__":    
-    plots = [ 
-             {    
-              'variable': 'vo',
-              'plot_projection': 'global_map',
-              'depth_type': 'lev',
-              'frequency': 'mon', 
-              'realization': '1',
-              'climatology': True,
-              'climatology_dates': {'start_date': '1950-01', 'end_date': '1955-01'},
-              'trends': False,
-              'compare_trends': False,
-              'compare_climatology': False,
-              },
-             {    
-              'variable': 'vo',
-              'plot_projection': 'section',
-              'depth_type': 'lev',
-              'frequency': 'mon', 
-              'realization': '1',
-              'climatology': True,
-              'climatology_dates': {'start_date': '1930-01', 'end_date': '1940-01'},
-              'trends': False,
-              'compare_trends': False,
-              'compare_climatology': False,
-              },                
-             {    
-              'variable': 'ta',
-              'plot_projection': 'section',
-              'depth_type': 'lev',
-              'frequency': 'mon', 
-              'realization': '1',
-              'climatology': True, 
-              'climatology_dates': {'start_date': '1990-01', 'end_date': '2000-01'},
-              'trends': False,
-              'compare_trends': False,
-              'compare_climatology': False,                                                
-              }, 
-             {    
-              'variable': 'ta',
-              'plot_projection': 'section',
-              'depth_type': 'lev',
-              'frequency': 'mon', 
-              'realization': '1',
-              'climatology': True, 
-              'climatology_dates': {'start_date': '1990-01', 'end_date': '2000-01'},
-              'trends': False,
-              'compare_trends': False,
-              'compare_climatology': False,  
-              'trends_dates': {'start_date': '1950-01', 'end_date': '2000-01'},                                              
-              }, 
-            ]
-    files, directories = _traverse('/raid/rc40/data/ncs/historical-edr', plots)   
-    vf = {}
-    fvr = []
-    for f in files:
-        vf[(getfrequency(f), getvariable(f), getrealization(f))] = []
-    for f in files:
-        vf[(getfrequency(f), getvariable(f), getrealization(f))].append(f)        
-    for p in plots:
-        fvr.append((p['frequency'], p['variable'], str(p['realization']))) 
-    for key in vf.keys():
-        if key not in fvr:
-            del vf[key]
-    for key in vf:
-        for f in vf[key]:
-            print '\t' + f
-    startdates = min_start_dates(plots)
-    enddates = max_end_dates(plots)
-    filedict = _remove_files_out_of_date_range(vf, startdates, enddates)
-    for f in filedict:
-        print f
-        print filedict[f]
-    filedict = _cat_file_slices(filedict)
-    print filedict
+    f = '/raid/rc40/data/ncs/historical-edr/mon/ocean/tos/r1i1p1/tos_Omon_DevAM4-2_historical-edr_r1i1p1_185001-200012.nc'
+    print getdates(f)
+    print getvariable(f)
+    print getfrequency(f)
+    print getrealization(f)
+    print getrealm(f)
