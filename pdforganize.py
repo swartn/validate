@@ -1,19 +1,41 @@
+"""
+pdforganize
+===============
+
+.. moduleauthor:: David Fallis
+"""
+
 import subprocess
 import os
 def arrange(plotnames):
-    print '\n\n\n\n\n'
-    #outputs a pdf with all of the plots organized and bookmarked
+    """ Outputs a pdf named plots/joined.pdf with all of the plots
+        organized and bookmarked
+    
+    Parameters
+    ----------
+    plotnames : list of tuples
+                (name of plot, plot dictionary, plot type)
+    
+    """
     dictionary = _orderplots(plotnames)
     
-    pstring = pdfmarks(dictionary)
-    #subprocess.Popen(('pdfunite ' + ' '.join(plotnames) +
-    #                  ' plots/joined.pdf'), shell=True).wait()    
+    pstring = pdfmarks(dictionary)   
     combine_str ='gs -sDEVICE=pdfwrite -sOutputFile=plots/joined.pdf -dQUIET -dNOPAUSE -dBATCH -dAutoRotatePages=/None -f '+pstring+' plots/pdfmarks\n'
 
     os.system(combine_str)
-    #os.system('rm -f plots/pdfmarks')
+    os.system('rm -f plots/pdfmarks')
     
 def _orderplots(plotnames):
+    """ Organizes the names into a dictionary that can be used to cycle through the plots
+    
+    Parameters
+    ----------
+    plotnames : list of tuples
+                (name of plot, plot dictionary, plot type) 
+    Returns
+    -------
+    dictionary
+    """   
     plotdict = {}
     for name, p, t in plotnames:
         plotdict[p['variable']] = {}
@@ -28,13 +50,19 @@ def _orderplots(plotnames):
         plotdict[p['variable']][t][p['plot_projection']]['sorteddepthlist'].append(p['plot_depth']) 
         plotdict[p['variable']][t][p['plot_projection']]['sorteddepthlist'].sort()
         plotdict[p['variable']][t][p['plot_projection']]['depthfile'][p['plot_depth']] = name[0]        
-       
-
-    #print 'here'      
-    #print plotdict
     return plotdict
 
 def pdfmarks(plotdict):
+    """ Writes to pdfmarks file to organize the plots under bookmarks
+    
+    Parameters
+    ----------
+    plotdict : dictionary
+               organized into the bookmark levels
+    Returns
+    -------
+    string with all of the plot names in the order they will be in joined.pdf
+    """ 
     f = open('plots/pdfmarks','w')
     f.write("%% BeginProlog \n/pdfmark where \n{pop} {userdict /pdfmark /cleartomark load put} ifelse \n")
     f.write("%% EndProlog \n%% BeginSetup \n[/PageMode /UseOutlines \n")
