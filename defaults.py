@@ -1,5 +1,25 @@
+"""
+defaults
+===============
+
+.. moduleauthor:: David Fallis
+"""
+
 def fill(plots, obs, defaults):
-    # fills the blank spaces in plots with default values and returns the list
+    """ Fills the blank spaces in plots with default values and returns the list
+    
+    Parameters
+    ----------
+    plots : list of dictionaries
+    obs : dictionary
+          maps variable name to the name of observations file
+    defaults : dictionary
+               values to fill plots
+    
+    Returns
+    -------
+    list of dictionaries
+    """
     for p in plots:
         for key in defaults:
             if key not in p:
@@ -78,6 +98,19 @@ def fill(plots, obs, defaults):
     return plots
 
 def filltitle(p, t, d, depth):
+    """ Gives appropriate title to plot if no title is provided
+    
+    Parameters
+    ----------
+    p : dictionary
+        the plot information
+    t : string
+        part of title
+    d : string
+        the type of data
+    depth : string
+            the depth of the plot
+    """
     if 'Climatology' in t:
         if not p[d + '_args']['climatology_args']['title_flag']:
             p[d + '_args']['climatology_args']['ax_args']['title'] = p['variable'] + ' ' + t 
