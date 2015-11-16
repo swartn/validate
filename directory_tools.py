@@ -1,13 +1,44 @@
+"""
+directory_tools
+===============
+
+.. moduleauthor:: David Fallis
+"""
+
+
+
 import os
 import cdo; cdo = cdo.Cdo()
        
 def _variable_dictionary(plots):
+    """ Creates a dictionary with the variable names as keys
+        mapped to empty lists
+    
+    Parameters
+    ----------
+    plots : list of dictionaries with 'variable' key
+    
+    Returns
+    -------
+    dictionary
+    """
     variables = {}
     for p in plots:
         variables[p['variable']] = []
     return variables
 
 def min_start_dates(plots):
+    """ Returns a dictionary which maps the variable names
+        to the earliest year needed for that variable in all of the plots
+    
+    Parameters
+    ----------
+    plots : list of dictionaries
+    
+    Returns
+    -------
+    dictionary  
+    """
     start_dates = _variable_dictionary(plots)
     for p in plots:
         if p['climatology'] or p['compare_climatology']:
@@ -29,6 +60,17 @@ def min_start_dates(plots):
     return start_dates
         
 def max_end_dates(plots):
+    """ Returns a dictionary which maps the variable names
+        to the latest year needed for that variable in all of the plots
+    
+    Parameters
+    ----------
+    plots : list of dictionaries
+    
+    Returns
+    -------
+    dictionary  
+    """
     end_dates = _variable_dictionary(plots)
     for p in plots:
         if p['climatology'] or p['compare_climatology']:
@@ -49,16 +91,29 @@ def max_end_dates(plots):
         end_dates[var] = max(end_dates[var])
     return end_dates    
 
-def _traverse(root, plots):
+def _traverse(root):
+    """ Returns a list of all filenames including the path
+        within a directory or any subdirectories
+    
+    Parameters
+    ----------
+    root : string
+           directory path
+    
+    Returns
+    -------
+    list of strings
+    
+    """
     files = []
-    directories = []
     for dirname, subdirlist, filelist in os.walk(root):
         for f in filelist:
             files.append(dirname + '/' + f)
-            directories.append(dirname + '/')
-    return files, directories
+    return files
 
 def _mkdir():
+    """ Tries to make directories used to store processed *.nc files
+    """
     try:
         os.makedirs('ncstore')
     except:
@@ -66,36 +121,47 @@ def _mkdir():
             os.system('rm ncstore/*.nc')
         except:
             pass
-    try:
-        os.makedirs('fldmeanfiles')
-    except:
-        pass
-    try:
-        os.makedirs('remapfiles')
-    except:
-        pass
-    try:
-        os.makedirs('trendfiles')
-    except:
-        pass
-    try:
-        os.makedirs('mask')
-    except:
-        pass
-    try:
-        os.makedirs('plots')
-    except:
-        pass
-    try:
-        os.makedirs('zonalfiles')
-    except:
-        pass
+    def mkthedir(name):
+        try:
+            os.makedir(name)
+        except:
+            pass
+    mkthedir('fldmeanfiles')
+    mkthedir('remapfiles')
+    mkthedir('trendfiles')
+    mkthedir('mask')
+    mkthedir('plots')
+    mkthedir('zonalfiles')
         
 def _load_masks(run):
+    """Loads the land and sea masks for a specified run
+    
+    Parameters
+    ----------
+    run : string
+          the model run
+    """
     os.system('ln -s /raid/rc40/data/ncs/historical-' + run + '/fx/ocean/sftof/r0i0p0/*.nc ./mask/ocean')
     os.system('ln -s /raid/rc40/data/ncs/historical-' + run + '/fx/atmos/sftlf/r0i0p0/sftlf_fx_DevAM4-2_historical-edr_r0i0p0.nc ./mask/land')  
     
 def _remove_files_out_of_date_range(filedict, start_dates, end_dates):
+    """ Removes file names from a dictionary which will not be needed because
+        they are outside the date range
+    
+    Parameters
+    ----------
+    filedict : dictionary
+               maps tuple to a list of file names
+    start_dates : dictionary
+                  maps variable name to ealiest year needed
+    end_dates : dictionary
+                maps variable name to latest year needed
+    
+    Returns
+    -------
+    dictionary with some file names removed 
+    
+    """  
     for d in filedict:
         if len(filedict[d]) > 1:
             for infile in filedict[d][:]:
@@ -106,6 +172,18 @@ def _remove_files_out_of_date_range(filedict, start_dates, end_dates):
 
                       
 def _cat_file_slices(filedict):
+    """ Catenates the list of files under each key
+        the dictionary now maps to the new filename
+    
+    Parameters
+    ----------
+    filedict : dictionary
+               maps tuple to a list of file names
+    
+    Returns
+    -------
+    dictionary mapping to new file name
+    """
     count = 0
     for d in filedict:
         if len(filedict[d]) > 1:
@@ -122,6 +200,17 @@ def _cat_file_slices(filedict):
     return filedict
 
 def getdates(f):
+    """ Returns the years from a filename and directory path
+    
+    Parameters
+    ----------
+    string : name of file including path
+    
+    Returns
+    -------
+    string of start year
+    string of end year
+    """
     x = f.rsplit('/',1)
     x = x[1].rsplit('.',1)
     x = x[0].rsplit('_',1)
@@ -129,16 +218,50 @@ def getdates(f):
     return x[0][:4], x[1][:4] 
                    
 def getvariable(f):
+    """ Returns the years from a filename and directory path
+        This is dependant on the cmip naming convention
+    Parameters
+    ----------
+    string : name of file including path
+    
+    Returns
+    -------
+    string of start year
+    string of end year
+    """
     x = f.rsplit('/',1)
     x = x[1].split('_',1)
     return x[0] 
 
 def getfrequency(f):
+    """ Returns the frequency from a filename and directory path.
+        ex. 'day', 'mon', 'yr', 'fx'
+        This is dependant on a specific directory organization
+           
+    Parameters
+    ----------
+    string : name of file including path
+    
+    Returns
+    -------
+    string of frequency
+    """
     x = f.rsplit('/',4)
     x = x[0].rsplit('/',1)
     return x[1]
 
 def getrealization(f):
+    """ Returns the realization from a filename and directory path.
+        This is dependant on the cmip naming convention
+           
+    Parameters
+    ----------
+    string : name of file including path
+    
+    Returns
+    -------
+    string of realization number
+    """
     x = f.rsplit('/',1)
     x = x[1].rsplit('_',2)
     x = x[1].split('_',1)
@@ -146,11 +269,32 @@ def getrealization(f):
     return x
 
 def getrealm(f):
+    """ Returns the realm from a filename and directory path.
+        This is dependant on a specific directory organization
+           
+    Parameters
+    ----------
+    string : name of file including path
+    
+    Returns
+    -------
+    string of realm
+    """
     x = f.rsplit('/',3)
     x = x[0].rsplit('/',1)
     return x[1]
     
 def getrealmcat(realm):
+    """ Returns the category of the realm
+    
+    Parameters
+    ----------
+    string : realm
+    
+    Returns
+    -------
+    string of realm category
+    """
     if realm == 'aerosol' or realm == 'atmos' or realm == 'seaIce':
         realm_cat = 'atmos'
     elif realm == 'land' or realm == 'landIce':
@@ -160,8 +304,22 @@ def getrealmcat(realm):
     return realm_cat 
             
 def getfiles(plots, run):
+    """ For every plot in the dictionary of plots
+        maps the key 'ifile' to the name of the file 
+        needed to make the plot
+    
+    Parameters
+    ----------
+    plots : list of dictionaries
+    run : string
+          name of model run
+
+    Returns
+    -------
+    list of dictionaries
+    """
     _mkdir()
-    files, directories = _traverse('/raid/rc40/data/ncs/historical-' + run, plots)   
+    files = _traverse('/raid/rc40/data/ncs/historical-' + run)   
     _load_masks(run)
     
     realms = {}
@@ -196,6 +354,17 @@ def getfiles(plots, run):
     return plots
 
 def remfiles(del_fldmeanfiles=True, del_mask=True, del_ncstore=True, del_remapfiles=True, del_trendfiles=True, del_zonalfiles=True, **kwargs):
+    """ Option to delete the directories used to store processed .nc files
+    
+    Paremeters
+    ----------
+    del_fldmeanfiles : boolean    
+    del_mask : boolean
+    del_ncstore : boolean
+    del_remapfiles : boolean
+    del_trendfiles : boolean
+    del_zonalfiles : boolean
+    """
     if del_fldmeanfiles:
         os.system('rm -rf fldmeanfiles')
     if del_mask:
