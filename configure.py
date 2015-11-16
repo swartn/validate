@@ -372,7 +372,16 @@ plots = [
           'plot_args': {'fill_continents': True}                                                 
           },                                                                                                                                                                                                                    
         ]
-        
+
+delete = {
+          'del_fldmeanfiles': True,
+          'del_mask': True,
+          'del_ncstore': True,
+          'del_remapfiles': True,
+          'del_trendfiles': True,
+          'del_zonalfiles': False,
+          }
+                  
 obs_root = '/raid/ra40/data/ncs/nemo_out/obs4comp/'
 obs = {'NO3' : obs_root + 'uncs_orca2_data_data_n_an_nomask.nc',
        'DIC' : obs_root + 'uncs_orca2_data_data_TCO2_nomask.nc',
@@ -382,4 +391,4 @@ obs = {'NO3' : obs_root + 'uncs_orca2_data_data_n_an_nomask.nc',
        
 
 if __name__ == "__main__":
-       plots_with_files = con.execute(plots, model_run, obs, defaults)
+       plots_with_files = con.execute(plots, model_run, obs, defaults, delete)

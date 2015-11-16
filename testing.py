@@ -14,14 +14,14 @@ import os
 model_run = 'edr'
 
 defaults = {
-            'climatology': True,
+'climatology': True,
             'climatology_dates': {'start_date': '1991-01', 'end_date': '2000-01'},
             'compare_climatology': False,
-            
+
             'trends': True,
             'trends_dates': {'start_date': '1991-01', 'end_date': '2000-01'},
             'compare_trends': False,
-            
+
             'realization': '1',
             'scale': 1,
             #'plot_args': {'fill_continents': True}
@@ -95,8 +95,7 @@ plots = [
           'variable': 'thetao',
           'plot_projection': 'section',
           'depth_type': 'lev',                                        
-          }, 
-        
+          },         
          {    
           'variable': 'sit',
           'plot_projection': 'polar_map', 
@@ -109,6 +108,15 @@ plots = [
           },                                                       
         ]
 
+delete = {
+          'del_fldmeanfiles': True,
+          'del_mask': True,
+          'del_ncstore': True,
+          'del_remapfiles': True,
+          'del_trendfiles': True,
+          'del_zonalfiles': True,
+          }
+          
 obs_root = '/raid/ra40/data/ncs/nemo_out/obs4comp/'
 obs = {'tas': './tas_Amon_CanESM2_historical_r1i1p1_185001-200512.nc',
        'ta': '/raid/rc40/data/ncs/obs4comp/20CR/mon/ta_Amon_20CR_historical_ens-mean_187101-201212.nc',
@@ -126,4 +134,4 @@ obs = {'tas': './tas_Amon_CanESM2_historical_r1i1p1_185001-200512.nc',
        }                 
          
 if __name__ == "__main__":
-       plots_with_files = con.execute(plots, model_run, obs, defaults)
+       plots_with_files = con.execute(plots, model_run, obs, defaults, delete)

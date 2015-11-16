@@ -193,6 +193,22 @@ def getfiles(plots, run):
             if p['realm_cat'] == 'ocean':
                 p['plot_args']['fill_continents'] = True
     return plots
+
+def remfiles(del_fldmeanfiles=True, del_mask=True, del_ncstore=True, del_remapfiles=True, del_trendfiles=True, del_zonalfiles=True, **kwargs):
+    if del_fldmeanfiles:
+        os.system('rm -rf fldmeanfiles')
+    if del_mask:
+        os.system('rm -rf mask')
+    if del_ncstore:
+        os.system('rm -rf ncstore')
+    if del_remapfiles:
+        os.system('rm -rf remapfiles')        
+    if del_trendfiles:
+        os.system('rm -rf trendfiles')        
+    if del_zonalfiles:
+        os.system('rm -rf zonalfiles')        
+        
+                    
     
 if __name__ == "__main__":    
     plots = [ 
