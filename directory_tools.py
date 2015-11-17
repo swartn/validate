@@ -314,9 +314,6 @@ def getfiles(plots, run):
     run : string
           name of model run
 
-    Returns
-    -------
-    list of dictionaries
     """
     _mkdir()
     files = _traverse('/raid/rc40/data/ncs/historical-' + run)   
@@ -351,7 +348,6 @@ def getfiles(plots, run):
         if 'fill_continents' not in p['plot_args']:
             if p['realm_cat'] == 'ocean':
                 p['plot_args']['fill_continents'] = True
-    return plots
 
 def remfiles(del_fldmeanfiles=True, del_mask=True, del_ncstore=True, del_remapfiles=True, del_trendfiles=True, del_zonalfiles=True, **kwargs):
     """ Option to delete the directories used to store processed .nc files
@@ -390,10 +386,6 @@ def getobsfiles(plots, obsroot):
     plots : list of dictionaries
     obsroot : string
               directory path to find observations
-
-    Returns
-    -------
-    list of dictionaries
     """
     obsfiles = _traverse(obsroot)
     variables = _variable_dictionary(plots)
@@ -409,8 +401,7 @@ def getobsfiles(plots, obsroot):
                 except:
                     print 'No observations file was found for ' + p['variable']
                     p['compare_climatology'] = False
-                    p['compare_trends'] = False                  
-    return plots                    
+                    p['compare_trends'] = False                                    
     
 if __name__ == "__main__": 
     plots =[ 
