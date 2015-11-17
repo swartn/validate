@@ -6,11 +6,38 @@ import datetime
 
 
 def _scale_units(units, scale):
+    """ Corrects the units to match the scale applied to the data
+    
+    Parameters
+    ----------
+    units : string
+    scale : int
+    
+    Returns
+    -------
+    string
+    """
     if scale != 1:
         units = units + ' * ' + str(scale)
     return units
        
 def _load(nc, var, depth_type):
+    """ Extracts the data from a netCDF4 Dataset along
+        with the units and associated depths
+    
+    Parameters
+    ----------
+    nc : netCDF4.Dataset
+    var : string
+    depth_type : string
+    
+    Returns
+    -------
+    numpy array
+    string
+    list
+    """
+     
     try:
         ncvar = nc.variables[var]
     except:
@@ -35,6 +62,25 @@ def _load(nc, var, depth_type):
     return data, units, depth
 
 def _load2(data, nc, units, depth, scale):
+    """ Extracts the data from a netCDF4 Dataset along
+        with the units and associated depths
+    
+    Parameters
+    ----------
+    data : numpy array
+    nc : netCDF4.Dataset
+    units : string
+    depth : numpy array
+    scale : int
+    
+    Returns
+    -------
+    numpy array
+    numpy array
+    numpy array
+    numpy array
+    string
+    """
     lon = nc.variables['lon'][:].squeeze()
     lat = nc.variables['lat'][:].squeeze()
     depth = np.round(depth)
@@ -43,7 +89,31 @@ def _load2(data, nc, units, depth, scale):
     return data, lon, lat, depth, units
     
 def timeaverage_load(ifile, var, depth_type, dates, realm, scale):
-
+    """ Loads the data from a file and remaps it.
+        Applies a time average over specified dates and scales the data.
+        
+    Parameters
+    ----------
+    ifile : string
+            filename to load data from
+    var : string
+    depth_type : string
+                 the name the depth is labelled as in the file
+    dates : dictionary
+            maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
+    realm : string
+            either 'ocean', 'land' or 'atmos'
+    scale : int
+            scale the data by this factor
+    
+    Returns
+    -------
+    numpy array
+    string
+    numpy array
+    numpy array
+    numpy array
+    """
     path, ifile = os.path.split(ifile)
     if dates:
         if not os.path.isfile('remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc'):
@@ -68,6 +138,33 @@ def timeaverage_load(ifile, var, depth_type, dates, realm, scale):
     return data, units, lon, lat, depth
 
 def timeaverage_load_comp(ifile, var, depth_type, dates, realm, depthneeded, scale):
+    """ Loads the data from a file and remaps it to 360x180.
+        Also remaps the vertical axis to specified depths for easy comparison
+        Applies a time average over specified dates and scales the data.
+        
+    Parameters
+    ----------
+    ifile : string
+            filename to load data from
+    var : string
+    depth_type : string
+                 the name the depth is labelled as in the file
+    dates : dictionary
+            maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
+    realm : string
+            either 'ocean', 'land' or 'atmos'
+    depthneeded : numpy array
+    scale : int
+            scale the data by this factor
+    
+    Returns
+    -------
+    numpy array
+    string
+    numpy array
+    numpy array
+    numpy array
+    """
     depthneeded = ["%.2f" % number for number in depthneeded]
     for i in xrange(len(depthneeded)):
         depthneeded[i] = str(depthneeded[i])
@@ -96,15 +193,33 @@ def timeaverage_load_comp(ifile, var, depth_type, dates, realm, depthneeded, sca
                 nc = Dataset('remapfiles/remap_' + ifile, 'r')          
 
     data, units, depth = _load(nc, var, 'level') 
-    #lon = np.linspace(0,359, 360)
-    #lat = np.linspace(-90,90,180)
-    lon = nc.variables['lon'][:].squeeze()
-    lat = nc.variables['lat'][:].squeeze()
-    depth = np.round(depth)
-    units = _scale_units(units, scale)
-    return data*scale, units, lon, lat, depth    
+    data, lon, lat, depth, units = _load2(data, nc, units, depth, scale)
+    return data, units, lon, lat, depth    
 
 def trends_load(ifile, var, depth_type, dates, scale):
+    """ Loads the trend data over specified dates from a file 
+        Remaps and scales the data.
+        
+    Parameters
+    ----------
+    ifile : string
+            filename to load data from
+    var : string
+    depth_type : string
+                 the name the depth is labelled as in the file
+    dates : dictionary
+            maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
+    scale : int
+            scale the data by this factor
+    
+    Returns
+    -------
+    numpy array
+    string
+    numpy array
+    numpy array
+    numpy array
+    """
     path, ifile = os.path.split(ifile)
     if dates:   
         if not os.path.isfile('trendfiles/slope_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc'):
@@ -128,7 +243,31 @@ def trends_load(ifile, var, depth_type, dates, scale):
     return data, units, lon, lat, depth    
 
 def trends_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
-
+    """ Loads the trend data over specified dates from a file 
+        Remaps and scales the data. Also remaps the vertical axis to 
+        specified depths for easy comparison.
+                
+    Parameters
+    ----------
+    ifile : string
+            filename to load data from
+    var : string
+    depth_type : string
+                 the name the depth is labelled as in the file
+    dates : dictionary
+            maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
+    depthneeded : numpy array
+    scale : int
+            scale the data by this factor
+    
+    Returns
+    -------
+    numpy array
+    string
+    numpy array
+    numpy array
+    numpy array
+    """
     depthneeded = ["%.2f" % number for number in depthneeded]
     for i in xrange(len(depthneeded)):
         depthneeded[i] = str(depthneeded[i])
@@ -162,6 +301,28 @@ def trends_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
 
    
 def timeseries_load(ifile, var, depth_type, dates, scale):
+    """ Loads the field mean data over specified dates from a file.
+        Remaps and scales the data. 
+                
+    Parameters
+    ----------
+    ifile : string
+            filename to load data from
+    var : string
+    depth_type : string
+                 the name the depth is labelled as in the file
+    dates : dictionary
+            maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
+    scale : int
+            scale the data by this factor
+    
+    Returns
+    -------
+    numpy array
+    string
+    numpy array
+    numpy array
+    """
     path, ifile = os.path.split(ifile)
 #    if not os.path.isfile('fldmeanfiles/fldmean_' + ifile):
 #        cdo.fldmean(input=path + '/' + ifile, output='fldmeanfiles/fldmean_' + ifile)
@@ -192,6 +353,28 @@ def timeseries_load(ifile, var, depth_type, dates, scale):
 
 
 def zonal_load(ifile, var, depth_type, dates, scale):
+    """ Loads the zonal mean data over specified dates from a file.
+        Remaps and scales the data. 
+                
+    Parameters
+    ----------
+    ifile : string
+            filename to load data from
+    var : string
+    depth_type : string
+                 the name the depth is labelled as in the file
+    dates : dictionary
+            maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
+    scale : int
+            scale the data by this factor
+    
+    Returns
+    -------
+    numpy array
+    string
+    numpy array
+    numpy array
+    """
     path, ifile = os.path.split(ifile)
     
     if dates:           
