@@ -1,3 +1,10 @@
+"""
+plotcase
+===============
+
+.. moduleauthor:: David Fallis
+"""
+
 import plotload as pl
 import plotregions as pr
 import numpy as np
@@ -6,6 +13,20 @@ import defaults as dft
 import datetime
 
 def _depth_data(data, depth, plot):
+    """ Makes a numpy array only containing data at the desired depth
+    
+    Parameters
+    ----------
+    data : numpy array
+    depth : numpy array
+            the depth needed
+    plot : dictionary
+    
+    Returns
+    -------
+    dictionary
+    """
+    print type(depth)
     if data.ndim > 2:
         plot['plot_depth'] = min(depth, key=lambda x:abs(x-plot['depth']))
         try:
@@ -17,6 +38,17 @@ def _depth_data(data, depth, plot):
     return data
 
 def _section_data(data, plot):
+    """ Averages the data for each latitude
+    
+    Parameters
+    ----------
+    data : numpy array
+    plot : dictionary
+    
+    Returns
+    -------
+    numpy array
+    """
     try:
         if data.ndim == 3:
             zonmean = data.mean(axis=2)
@@ -28,6 +60,17 @@ def _section_data(data, plot):
     return zonmean
 
 def map_climatology(plot, func):
+    """ Loads and plots the data for a time averaged map
+    
+    Parameters
+    ----------
+    plot : dictionary
+    func : a method that will plot the data on a specified map
+    
+    Returns
+    -------
+    string : name of the plot
+    """
     print 'plotting map of ' + plot['variable']
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat'], plot['scale'])
     plot['plot_depth'] = 0
@@ -44,6 +87,19 @@ def map_climatology(plot, func):
     return plot_name    
 
 def map_climatology_comparison(plot, func):
+    """ Loads and plots the data for a time averaged map.
+        Loads and plots the data for comparison and plots the 
+        difference between the data and the comparison data.
+    
+    Parameters
+    ----------
+    plot : dictionary
+    func : a method that will plot the data on a specified map
+    
+    Returns
+    -------
+    string : name of the plot
+    """
     print 'plotting comparison map of ' + plot['variable']
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat'], plot['scale'])
     plot['plot_depth'] = 0 
@@ -75,12 +131,35 @@ def map_climatology_comparison(plot, func):
 
 
 def _section_labels(datanumber, plot):
+    """ Gives the axes of a section appropriate labels
+    
+    Parameters
+    ----------
+    datanumber : string
+                 name of the data
+    plot : dictionary
+    
+    Returns
+    -------
+    dictionary
+    """
     plot[datanumber]['climatology_args']['ax_args']['xlabel'] = 'Latitude'
     plot[datanumber]['climatology_args']['ax_args']['xticks'] = np.arange(-80, 81, 20)
     plot[datanumber]['climatology_args']['ax_args']['ylabel'] = plot['depth_type'] 
     return plot   
         
-def section_climatology(plot, func):    
+def section_climatology(plot, func):
+    """ Loads and plots the data for a time average section map.
+    
+    Parameters
+    ----------
+    plot : dictionary
+    func : a method that will plot the data on a specified map
+    
+    Returns
+    -------
+    string : name of the plot
+    """    
     print 'plotting section of ' + plot['variable']
     plot = _section_labels('data1_args', plot)
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat'], plot['scale'])
@@ -97,6 +176,19 @@ def section_climatology(plot, func):
     return plot_name
     
 def section_climatology_comparison(plot, func):
+    """ Loads and plots the data for a time averaged section map.
+        Loads and plots the data for comparison and plots the 
+        difference between the data and the comparison data.
+    
+    Parameters
+    ----------
+    plot : dictionary
+    func : a method that will plot the data on a specified map
+    
+    Returns
+    -------
+    string : name of the plot
+    """
     print 'plotting section comparison of ' + plot['variable']
     _section_labels('data1_args', plot)
     _section_labels('data2_args', plot)
@@ -132,6 +224,19 @@ def section_climatology_comparison(plot, func):
     return plot_name
 
 def _trend_units(data, units, plot):
+    """ Multiplies the data by a scalar factor based on the frequency
+    
+    Parameters
+    ----------
+    data : numpy array
+    units : string
+    plot : dictionary
+    
+    Returns
+    -------
+    numpy array
+    string
+    """
     if plot['frequency'] == 'day':
         data = data*3652.5
     if plot['frequency'] == 'mon':
@@ -141,7 +246,18 @@ def _trend_units(data, units, plot):
     units = units + '/decade'
     return data, units
     
-def map_trends(plot, func):    
+def map_trends(plot, func):
+    """ Loads and plots the trend data on a map.
+    
+    Parameters
+    ----------
+    plot : dictionary
+    func : a method that will plot the data on a specified map
+    
+    Returns
+    -------
+    string : name of the plot
+    """     
     print 'plotting trends map of ' + plot['variable']
     data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['trends_dates'], plot['scale'])  
     plot['plot_depth'] = 0  
@@ -159,7 +275,20 @@ def map_trends(plot, func):
     plt.savefig(plot_name, bbox_inches='tight')
     return plot_name 
 
-def map_trends_comp(plot, func):    
+def map_trends_comp(plot, func):
+    """ Loads and plots the trend data on a map.
+        Loads and plots the data for comparison and plots the 
+        difference between the data and the comparison data.
+    
+    Parameters
+    ----------
+    plot : dictionary
+    func : a method that will plot the data on a specified map
+    
+    Returns
+    -------
+    string : name of the plot
+    """    
     print 'plotting trends map comparison of ' + plot['variable']
     data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['trends_dates'], plot['scale'])  
     plot['plot_depth'] = 0 
@@ -198,6 +327,17 @@ def map_trends_comp(plot, func):
 
 
 def section_trends(plot, func):
+    """ Loads and plots the trend data for a section map.
+    
+    Parameters
+    ----------
+    plot : dictionary
+    func : a method that will plot the data on a specified map
+    
+    Returns
+    -------
+    string : name of the plot
+    """  
     print 'plotting section trends of ' + plot['variable']
     _section_labels('data1_args', plot)
     
@@ -214,6 +354,19 @@ def section_trends(plot, func):
     return plot_name
 
 def section_trends_comp(plot, func):
+    """ Loads and plots the trend data for a section map.
+        Loads and plots the data for comparison and plots the 
+        difference between the data and the comparison data.
+            
+    Parameters
+    ----------
+    plot : dictionary
+    func : a method that will plot the data on a specified map
+    
+    Returns
+    -------
+    string : name of the plot
+    """ 
     print 'plotting section trends of ' + plot['variable']
     _section_labels('data1_args', plot)    
     _section_labels('data2_args', plot)
@@ -254,6 +407,17 @@ def section_trends_comp(plot, func):
 
     
 def timeseries(plot, func):
+    """ Loads and plots a global mean timeseries.
+    
+    Parameters
+    ----------
+    plot : dictionary
+    func : a method that will plot the data on a specified map
+    
+    Returns
+    -------
+    string : name of the plot
+    """  
     print 'plotting timeseries of ' + plot['variable']
     data, units, x, depth = pl.timeseries_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['scale'])
     plot['data1_args']['climatology_args']['ax_args']['xlabel'] = 'Time'
@@ -277,6 +441,18 @@ def timeseries(plot, func):
     return plot_name
     
 def zonalmean(plot, func): 
+    """ Loads and plots a time average of the zonal means
+        for each latitude. 
+    
+    Parameters
+    ----------
+    plot : dictionary
+    func : a method that will plot the data on a specified map
+    
+    Returns
+    -------
+    string : name of the plot
+    """      
     print 'plotting zonal mean of ' + plot['variable']
     data, units, x, depth = pl.zonal_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['scale'])
     plot['data1_args']['climatology_args']['ax_args']['xlabel'] = 'Latitude'
