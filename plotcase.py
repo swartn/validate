@@ -26,7 +26,6 @@ def _depth_data(data, depth, plot):
     -------
     dictionary
     """
-    print type(depth)
     if data.ndim > 2:
         plot['plot_depth'] = min(depth, key=lambda x:abs(x-plot['depth']))
         try:
