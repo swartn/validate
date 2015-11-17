@@ -29,10 +29,10 @@ def execute(plots, run, obsroot, defaults, delete):
              maps directory name to boolean, will delete the directoy if True
     """
                   
-    filled_plots = fill(plots, obs, defaults)
-    plots_with_files = getfiles(filled_plots, run) 
-    plots_with_obs = getobsfiles(plots_with_files, obsroot)   
-    plotnames = loop(plots_with_obs)
+    fill(plots, defaults)
+    getfiles(plots, run) 
+    getobsfiles(plots, obsroot)   
+    plotnames = loop(plots)
     remfiles(**delete)
     arrange(plotnames)
     

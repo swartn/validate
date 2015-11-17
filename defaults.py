@@ -5,7 +5,7 @@ defaults
 .. moduleauthor:: David Fallis
 """
 
-def fill(plots, obs, defaults):
+def fill(plots, defaults):
     """ Fills the blank spaces in plots with default values and returns the list
     
     Parameters
