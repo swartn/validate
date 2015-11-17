@@ -11,6 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import defaults as dft
 import datetime
+from plotregions import default_pcolor_args
 
 def _depth_data(data, depth, plot):
     """ Makes a numpy array only containing data at the desired depth
@@ -58,6 +59,33 @@ def _section_data(data, plot):
         return data
     return zonmean
 
+def _comp_pcolor(data, obs, plot, ptype, anom=False):
+    """ Gives the data and observations the same colorbar
+        for comparison
+    
+    Parameters
+    ----------
+    data : numpy array
+    obs : numpy array
+    plot : dictionary
+    ptype : string
+            'climatology' or 'trends'
+    """
+    if ('vmin' not in plot['data1_args'][ptype + '_args']['pcolor_args'] and
+        'vmin' not in plot['data2_args'][ptype + '_args']['pcolor_args']):
+        d1pca = default_pcolor_args(data, anom)
+        d2pca = default_pcolor_args(obs, anom)
+
+        vmin = np.min([d1pca['vmin'], d2pca['vmin']])
+        vmax = np.max([d1pca['vmax'], d2pca['vmax']])
+
+        d1pca['vmin'] = vmin
+        d1pca['vmax'] = vmax
+        
+        plot['data1_args'][ptype + '_args']['pcolor_args'] = d1pca
+        plot['data2_args'][ptype + '_args']['pcolor_args'] = d1pca 
+
+            
 def map_climatology(plot, func):
     """ Loads and plots the data for a time averaged map
     
@@ -108,7 +136,8 @@ def map_climatology_comparison(plot, func):
     
     data2 = _depth_data(data2, depth, plot)
   
-    compdata = data - data2    
+    compdata = data - data2
+    _comp_pcolor(data, data2, plot, 'climatology')    
     fig, (axl, axm, axr) = plt.subplots(3,1, figsize=(8,8))        
     
     plot = dft.filltitle(plot, 'Climatology', 'data1', str(plot['plot_depth']))
@@ -204,15 +233,17 @@ def section_climatology_comparison(plot, func):
     plot = dft.filltitle(plot, 'Climatology', 'data1', '')  
     plot = dft.filltitle(plot, 'Climatology Observations', 'data2', '') 
     plot = dft.filltitle(plot, 'Climatology Model - Obs', 'comp', '')               
-
+    _comp_pcolor(zonmean, zonmean2, plot, 'climatology') 
     compdata = zonmean - zonmean2    
     fig, (axl, axm, axr) = plt.subplots(3,1)
-
+    print 'here'
+    print plot['data1_args']['climatology_args']['pcolor_args']
+    print plot['data2_args']['climatology_args']['pcolor_args']
     func(lat, depth, zonmean, ax=axl, ax_args=plot['data1_args']['climatology_args']['ax_args'],
                pcolor_args=plot['data1_args']['climatology_args']['pcolor_args'], cblabel=units)
     func(lat, depth, zonmean2, ax=axm, ax_args=plot['data2_args']['climatology_args']['ax_args'],
                pcolor_args=plot['data2_args']['climatology_args']['pcolor_args'], cblabel=units)
-    func(lat, depth, compdata, ax=axr, ax_args=plot['comp_args']['climatology_args']['ax_args'],
+    func(lat, depth, compdata, anom=True, ax=axr, ax_args=plot['comp_args']['climatology_args']['ax_args'],
                pcolor_args=plot['comp_args']['climatology_args']['pcolor_args'], cblabel=units)
                               
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_comparison' + '.pdf'
@@ -309,6 +340,7 @@ def map_trends_comp(plot, func):
     plot = dft.filltitle(plot, 'Observations Trends', 'data2', str(plot['plot_depth']))
     plot = dft.filltitle(plot, 'Trends Model - Obs', 'comp', str(plot['plot_depth']))
 
+    _comp_pcolor(data, data2, plot, 'trends', anom=True)
     fig, (axl, axm, axr) = plt.subplots(3,1, figsize=(8,8)) 
                        
     func(lon, lat, data, ax=axl, anom=True, ax_args=plot['data1_args']['trends_args']['ax_args'],
@@ -385,7 +417,7 @@ def section_trends_comp(plot, func):
     plot = dft.filltitle(plot, 'Trends', 'data1', '')   
     plot = dft.filltitle(plot, 'Observations Trends', 'data2', '')  
     plot = dft.filltitle(plot, 'Trends Model-Obs', 'comp', '')
-             
+    _comp_pcolor(zonmean, zonmean2, plot, 'trends', anom=True)             
     fig, (axl, axm, axr) = plt.subplots(3,1, figsize=(8,8)) 
                        
     func(lat, depth, zonmean, ax=axl, anom=True, ax_args=plot['data1_args']['trends_args']['ax_args'],
@@ -397,7 +429,7 @@ def section_trends_comp(plot, func):
     func(lat, depth, compdata, ax=axr, anom=True, ax_args=plot['comp_args']['trends_args']['ax_args'],
                   pcolor_args=plot['comp_args']['trends_args']['pcolor_args'], cblabel=units,
                   **plot['plot_args']) 
-    plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_trends' + '.pdf'
+    plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_trends_comparison' + '.pdf'
     plt.savefig(plot_name, bbox_inches='tight')
 
     plot['plot_depth'] = 0    

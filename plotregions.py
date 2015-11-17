@@ -20,8 +20,20 @@ plt.rc('font', **font)
 from netCDF4 import Dataset
 import cdo; cdo = cdo.Cdo()
 from colormaps import viridis
+
 def default_pcolor_args(data, anom=False):
-    """Returns a dict with default pcolor params as key:value pairs"""
+    """Returns a dict with default pcolor params as key:value pairs
+    
+    Parameters
+    ----------
+    data : numpy array
+    anom : boolean
+           True if positive/negative display is wanted
+    
+    Returns
+    -------
+    dictionary
+    """
 
     # Set 3-std range for colorbar to exclude outliers.
     if anom:
@@ -31,6 +43,7 @@ def default_pcolor_args(data, anom=False):
         vmax = anom_max
         # Anomaly cmap
         cmap = anom_cmap()
+
     else:
         # otherwise, center around the mean
         vmin = data.mean() - data.std()*3.0
@@ -238,11 +251,8 @@ def _fix_1Ddata(z, data, ax_args):
                                                                 
 def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False):
     """Pcolor a var in a section, using ax if supplied"""
-    print len(x)
-    print len(z)
     if len(data.shape) == 1:
        z, data, ax_args = _fix_1Ddata(z, data, ax_args)
-    print data.shape
     if not ax:
         fig, ax = plt.subplots(1,1, figsize=(8,8))
         fig.subplots_adjust(top=0.8, right=0.8)
@@ -254,7 +264,6 @@ def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', ano
         if key not in pcolor_args or (pcolor_args[key] is None):
             pcolor_args[key] = value
 
-    print data.shape
     cot = ax.pcolormesh(x, z, data, **pcolor_args)
     ax.contour(x, z, data, colors=['k'], vmin=pcolor_args['vmin'],
                vmax=pcolor_args['vmax'])
