@@ -54,14 +54,14 @@ def fill(plots, obs, defaults):
             p['scale'] = 1
 
             
-        if p['compare_climatology'] or p['compare_trends']:
-            if 'comp_file' not in p:
-                try:
-                    lvar = p['variable'].lower()
-                    p['comp_file'] = obs[lvar]
-                except:
-                    uvar = p['variable'].upper()
-                    p['comp_file'] = obs[uvar]    
+#        if p['compare_climatology'] or p['compare_trends']:
+#            if 'comp_file' not in p:
+#                try:
+#                    lvar = p['variable'].lower()
+#                    p['comp_file'] = obs[lvar]
+#                except:
+#                    uvar = p['variable'].upper()
+#                    p['comp_file'] = obs[uvar]    
         
         def _fill_args(data):
            if data + '_args' not in p:

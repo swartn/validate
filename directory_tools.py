@@ -378,7 +378,61 @@ def remfiles(del_fldmeanfiles=True, del_mask=True, del_ncstore=True, del_remapfi
     if del_zonalfiles:
         os.system('rm -rf zonalfiles')        
         
-                    
+def getobsfiles(plots, obsroot):
+    """ For every plot in the dictionary of plots
+        if an observations file is needed it
+        maps the key 'comp_file' to a file containg observations.
+        If no observations file is found it changes the comparison
+        plots to false and prints out a warning.
     
-if __name__ == "__main__":    
-    _mkdir()
+    Parameters
+    ----------
+    plots : list of dictionaries
+    obsroot : string
+              directory path to find observations
+
+    Returns
+    -------
+    list of dictionaries
+    """
+    obsfiles = _traverse(obsroot)
+    variables = _variable_dictionary(plots)
+    for f in obsfiles:
+        var = getvariable(f)
+        if var in variables:
+            variables[var].append(f)
+    for p in plots:
+        if p['compare_climatology'] or p['compare_trends']:
+            if 'comp_file' not in p:
+                try:
+                    p['comp_file'] = variables[p['variable']][0]
+                except:
+                    print 'No observations file was found for ' + p['variable']
+                    p['compare_climatology'] = False
+                    p['compare_trends'] = False                  
+    return plots                    
+    
+if __name__ == "__main__": 
+    plots =[ 
+         {
+          'compare_climatology': False, 
+          'compare_trends': True,                      
+          'variable': 'tas',
+          'plot_projection': 'zonal_mean',
+          'trends': False,
+          'depth_type': 'plev',
+          'depths':[20000, 85000, 100000]                              
+          },                                
+         { 
+          'compare_climatology': False, 
+          'compare_trends': True,            
+          'variable': 'va',
+          'plot_projection': 'mercator',
+          'depth_type': 'plev',
+          'depths':[20000, 85000, 100000]                              
+          }, 
+          
+          ]   
+    for p in getobsfiles(plots):
+        if p['compare_climatology'] or p['compare_trends']:
+            print p['comp_file']
