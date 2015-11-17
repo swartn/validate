@@ -123,11 +123,11 @@ def _mkdir():
             pass
     def mkthedir(name):
         try:
-            os.makedir(name)
+            os.makedirs(name)
         except:
             pass
     mkthedir('fldmeanfiles')
-    mkthedir('remapfiles')
+    mkthedir('remapfiles')  
     mkthedir('trendfiles')
     mkthedir('mask')
     mkthedir('plots')
@@ -381,9 +381,4 @@ def remfiles(del_fldmeanfiles=True, del_mask=True, del_ncstore=True, del_remapfi
                     
     
 if __name__ == "__main__":    
-    f = '/raid/rc40/data/ncs/historical-edr/mon/ocean/tos/r1i1p1/tos_Omon_DevAM4-2_historical-edr_r1i1p1_185001-200012.nc'
-    print getdates(f)
-    print getvariable(f)
-    print getfrequency(f)
-    print getrealization(f)
-    print getrealm(f)
+    _mkdir()

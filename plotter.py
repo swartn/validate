@@ -1,3 +1,10 @@
+"""
+plotter
+===============
+
+.. moduleauthor:: David Fallis
+"""
+
 import os
 import glob
 
@@ -7,6 +14,8 @@ import plotcase as pc
 import matplotlib.pyplot as plt
 
 def _climatology(plot):
+    """ Calls the appropriate functions to output the plot
+    """
     print 'climatology plot'
     def pregion_standard(pl):
         return {'global_map': (pr.global_map, pc.map_climatology),
@@ -22,6 +31,8 @@ def _climatology(plot):
 
     
 def _compare_climatology(plot):
+    """ Calls the appropriate functions to output the plot
+    """
     print 'climatology comparison plot'    
     def pregion_comp(pl):
         return {'global_map': (pr.global_map, pc.map_climatology_comparison),
@@ -34,6 +45,8 @@ def _compare_climatology(plot):
     return func_case(plot, func_region),
     
 def _trends(plot):
+    """ Calls the appropriate functions to output the plot
+    """
     print 'trend plot'
     def pregion_trends(pl):
         return {'global_map': (pr.global_map, pc.map_trends),
@@ -47,6 +60,8 @@ def _trends(plot):
     return func_case(plot, func_region),   
     
 def _compare_trends(plot):
+    """ Calls the appropriate functions to output the plot
+    """
     print 'trend comparison plot'
     def pregion_ct(pl):
         return {'global_map': (pr.global_map, pc.map_trends_comp),
@@ -59,7 +74,17 @@ def _compare_trends(plot):
     return func_case(plot, func_region),
 
 def loop(plots):
-    #outputs the plots as pdfs
+    """ Loops though the list of plots and the depths within
+        the plots and outputs each to a pdf
+        
+    Parameters
+    ----------
+    plots : list of dictionaries
+    
+    Returns
+    -------
+    list of tuples with (plotname, plot dictionary, plot type)
+    """
     
     #remove old plots
     plots_out = []

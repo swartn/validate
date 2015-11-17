@@ -1,3 +1,10 @@
+"""
+plotregions
+===============
+
+.. moduleauthor:: David Fallis
+"""
+
 import subprocess
 import os
 import glob
@@ -97,7 +104,7 @@ def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=
 def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom = False,
               latmin=30, latmax=80, lonmin=0, lonmax=360,
               fill_continents=True, fill_oceans = False, draw_parallels=True, draw_meridians=True):
-
+    """Pcolor a var in a north polar map, using ax if supplied"""
 
     if not ax:
         fig, ax = plt.subplots(1,1, figsize=(8,8))
@@ -140,8 +147,7 @@ def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='
 def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom = False,
                     latmin=-90, latmax=-30, lonmin=0, lonmax=360,
                     fill_continents=True, fill_oceans = False, draw_parallels=True, draw_meridians=True):
-
-
+    """Pcolor a var in a south polar map, using ax if supplied"""
     if not pcolor_args : pcolor_args = default_pcolor_args(data, anom)
     
     for key, value in default_pcolor_args(data).iteritems():
@@ -182,7 +188,7 @@ def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cbl
 def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False,
              latmin=-80, latmax=80, lonmin=0, lonmax=360,
              fill_continents=False, fill_oceans=False, draw_parallels=True, draw_meridians=True):
-
+    """Pcolor a var in a mercator plot, using ax if supplied"""
     if not pcolor_args : pcolor_args = default_pcolor_args(data, anom)
     for key, value in default_pcolor_args(data).iteritems():
         if key not in pcolor_args or (pcolor_args[key] is None):
@@ -220,6 +226,8 @@ def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''
 
     
 def _fix_1Ddata(z, data, ax_args):
+    """ Extends section data if it is in only on dimension
+    """
     newdata = range(0,5)
     for n in range(0,5):
         newdata[n] = data
@@ -229,6 +237,7 @@ def _fix_1Ddata(z, data, ax_args):
     
                                                                 
 def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False):
+    """Pcolor a var in a section, using ax if supplied"""
     print len(x)
     print len(z)
     if len(data.shape) == 1:
@@ -257,7 +266,10 @@ def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', ano
     box = ax.get_position()
     tl = fig.add_axes([box.x1 + box.width * 0.05, box.y0, 0.02, box.height])
     fig.colorbar(cot, cax=tl, label=cblabel)
+    
 def timeseries(x, data, ax=None, ax_args=None,):
+    """ Makes a timeseries line plot, using ax if supplied
+    """
     if not ax:
         fig, ax = plt.subplots(1,1, figsize=(8,8))
     else:
@@ -268,6 +280,8 @@ def timeseries(x, data, ax=None, ax_args=None,):
     plt.setp(ax, **ax_args)    
     
 def zonalmean(x, data, ax=None, ax_args=None,):
+    """ Makes a zonal mean line plot, using ax if supplied
+    """
     if not ax:
         fig, ax = plt.subplots(1,1, figsize=(8,8))
     else:

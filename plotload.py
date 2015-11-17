@@ -1,3 +1,10 @@
+"""
+plotload
+===============
+
+.. moduleauthor:: David Fallis
+"""
+
 import os
 from netCDF4 import Dataset, num2date
 import cdo; cdo = cdo.Cdo()
