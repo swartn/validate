@@ -132,6 +132,8 @@ def _mkdir():
     mkthedir('mask')
     mkthedir('plots')
     mkthedir('zonalfiles')
+    mkthedir('logs')
+    with open('logs/log.txt', 'w') as outfile: pass
         
 def _load_masks(run):
     """Loads the land and sea masks for a specified run

@@ -13,7 +13,7 @@ import defaults as dft
 import plotcase as pc
 import matplotlib.pyplot as plt
 
-def _climatology(plot):
+def climatology(plot):
     """ Calls the appropriate functions to output the plot
     """
     print 'climatology plot'
@@ -27,10 +27,10 @@ def _climatology(plot):
                 'zonal_mean': (pr.zonalmean, pc.zonalmean),                
                 }[pl]
     func_region, func_case = pregion_standard(plot['plot_projection']) 
-    return func_case(plot, func_region), 
+    return func_case(plot, func_region) 
 
     
-def _compare_climatology(plot):
+def compare_climatology(plot):
     """ Calls the appropriate functions to output the plot
     """
     print 'climatology comparison plot'    
@@ -42,9 +42,9 @@ def _compare_climatology(plot):
                 'mercator': (pr.mercator, pc.map_climatology_comparison),
                 }[pl]
     func_region, func_case = pregion_comp(plot['plot_projection']) 
-    return func_case(plot, func_region),
+    return func_case(plot, func_region)
     
-def _trends(plot):
+def trends(plot):
     """ Calls the appropriate functions to output the plot
     """
     print 'trend plot'
@@ -57,9 +57,9 @@ def _trends(plot):
                 'time_series': (pr.timeseries, pc.timeseries)
                 }[pl]
     func_region, func_case = pregion_trends(plot['plot_projection']) 
-    return func_case(plot, func_region),   
+    return func_case(plot, func_region)   
     
-def _compare_trends(plot):
+def compare_trends(plot):
     """ Calls the appropriate functions to output the plot
     """
     print 'trend comparison plot'
@@ -71,8 +71,54 @@ def _compare_trends(plot):
                 'mercator': (pr.mercator, pc.map_trends_comp),
                 }[pl]
     func_region, func_case = pregion_ct(plot['plot_projection']) 
-    return func_case(plot, func_region),
+    return func_case(plot, func_region)
 
+def _remove_plots():
+    """ Removes old plots
+    """
+    plots_out = []
+    old_plots = glob.glob('plots/*.pdf')    
+    for f in old_plots:
+        os.remove(f)
+"""
+def plot_output(**p):
+    def trytoplot(func):
+        def inner(*args,**kwargs):
+            try:
+                func(*args, **kwargs)
+            except:
+                with open('logs/log.txt', 'a') as outfile:
+                    outfile.write('Failed to plot ' + p['variable'] + ', ' + p['plot_projection'] + ', compare trends, at depth:' + str(p['depth']) + '\n')
+            else:
+                with open('logs/log.txt', 'a') as outfile:
+                    outfile.write('Successfully plotted ' + p['variable'] + ', ' + p['plot_projection'] + ', compare trends, at depth:' + str(p['depth']) + '\n')
+        return inner
+    return trytoplot        
+"""
+def makeplot(p, plotnames, func):
+    try:
+        p['plot_name'] = func(p)
+    except:
+        with open('logs/log.txt', 'a') as outfile:
+            outfile.write('Failed to plot ' + p['variable'] + ', ' + p['plot_projection'] + ', ' + p['plot_type'] + ', at depth:' + str(p['depth']) + '\n\n')
+    else:
+        p['plot_type'] = func.__name__
+        plotnames.append(dict(p))
+        with open('logs/log.txt', 'a') as outfile:
+            outfile.write('Successfully plotted ' + p['variable'] + ', ' + p['plot_projection'] + ', ' + p['plot_type'] + ', at depth:' + str(p['depth']) + '\n\n')    
+    
+
+def loop_plot_types(plot, plotnames):
+    types = ['climatology', 'trends', 'compare_climatology', 'compare_trends']
+    funcs = {'climatology': climatology,
+             'trends': trends,
+             'compare_climatology': compare_climatology,
+             'compare_trends': compare_trends,}
+    for ptype in types:
+        if plot[ptype]:
+            makeplot(plot, plotnames, funcs[ptype])
+            
+            
 def loop(plots):
     """ Loops though the list of plots and the depths within
         the plots and outputs each to a pdf
@@ -87,36 +133,16 @@ def loop(plots):
     """
     
     #remove old plots
-    plots_out = []
-    old_plots = glob.glob('plots/*.pdf')    
-    for f in old_plots:
-        os.remove(f)
+    _remove_plots()
             
     plotnames = []
     for p in plots:
         if p['depths'] == []:
-            p['depth'] = 0
-            if p['climatology'] == True:
-                plotnames.append((_climatology(p), dict(p), 'climatology'))
-            if p['trends'] == True:
-                plotnames.append((_trends(p), dict(p), 'trends'))
-            if p['compare_climatology'] == True:
-                plotnames.append((_compare_climatology(p), dict(p), 'compare_climatology'))
-            if p['compare_trends'] == True:
-                plotnames.append((_compare_trends(p), dict(p), 'compare_trends'))
-        else:
-            for d in p['depths']:
-                p['depth'] = int(d)
-                if p['climatology'] == True:
-                    plotnames.append((_climatology(p), dict(p), 'climatology'))
-                if p['trends'] == True:
-                    plotnames.append((_trends(p), dict(p), 'trends'))
-                if p['compare_climatology'] == True:
-                    plotnames.append((_compare_climatology(p), dict(p), 'compare_climatology'))
-                if p['compare_trends'] == True:
-                   plotnames.append((_compare_trends(p), dict(p), 'compare_trends'))                
-        plt.close('all')
-                
+            p['depths'] = [0]
+        for d in p['depths']:
+            p['depth'] = int(d) 
+            loop_plot_types(p, plotnames)
+        plt.close('all')              
     return plotnames
 
 

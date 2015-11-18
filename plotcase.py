@@ -301,7 +301,7 @@ def map_trends(plot, func):
                   pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units,
                   **plot['plot_args'])
                   
-    plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_trends' + str(plot['plot_depth']) + '.pdf'
+    plot_name = 'plots/' + plot['variable'] + '_' + plot['plot_projection'] + '_trends' + str(plot['plot_depth']) + '.pdf'
     plt.savefig(plot_name, bbox_inches='tight')
     return plot_name 
 

@@ -1,15 +1,21 @@
-from mpl_toolkits.basemap import Basemap
-import numpy as np
-import matplotlib.pyplot as plt
+x = {'a': 'b', 'b': 'c'}
 
-fig, ax = plt.subplots(1,1, figsize=(8,8))
-m = Basemap(projection='merc',llcrnrlat=-80,urcrnrlat=80,llcrnrlon=-180,urcrnrlon=180,lat_ts=20,resolution='c')
-m.drawcoastlines()
-m.fillcontinents(color='0.8',ax=ax)
+def decorator(**kw):
+    def trytoplot(func):
+        def inner(*args, **kwargs):
+            try:
+                func(*args, **kwargs)
+            except:
+                print "It didn't work" + kw['z']
+            else:
+                print 'It did work'
+        return inner
+    return trytoplot
+    
+@decorator(z='aaa')
+def hello(y):
+    print y['c']
 
-m.drawparallels(np.arange(-80.,81.,20.))
-m.drawmeridians(np.arange(-180.,181.,20.))
-m.drawmapboundary(fill_color='aqua')
+hello(x)
 
-ax = plt.gca()
-plt.show()
+print hello.__name__

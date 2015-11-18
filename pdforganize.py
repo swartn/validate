@@ -8,6 +8,8 @@ pdforganize
 import subprocess
 import os
 def arrange(plotnames):
+    for p in plotnames:
+        print p['plot_name']
     """ Outputs a pdf named plots/joined.pdf with all of the plots
         organized and bookmarked
     
@@ -23,7 +25,7 @@ def arrange(plotnames):
     combine_str ='gs -sDEVICE=pdfwrite -sOutputFile=plots/joined.pdf -dQUIET -dNOPAUSE -dBATCH -dAutoRotatePages=/None -f '+pstring+' plots/pdfmarks\n'
 
     os.system(combine_str)
-    os.system('rm -f plots/pdfmarks')
+    #os.system('rm -f plots/pdfmarks')
     
 def _orderplots(plotnames):
     """ Organizes the names into a dictionary that can be used to cycle through the plots
@@ -37,19 +39,18 @@ def _orderplots(plotnames):
     dictionary
     """   
     plotdict = {}
-    for name, p, t in plotnames:
+    for p in plotnames:
         plotdict[p['variable']] = {}
-    for name, p, t in plotnames:
-        plotdict[p['variable']][t] = {}
+    for p in plotnames:
+        plotdict[p['variable']][p['plot_type']] = {}
 
-
-    for name, p, t in plotnames:
-        plotdict[p['variable']][t][p['plot_projection']] = {'sorteddepthlist': [],
-                                                           'depthfile': {},}
-    for name, p, t in plotnames:
-        plotdict[p['variable']][t][p['plot_projection']]['sorteddepthlist'].append(p['plot_depth']) 
-        plotdict[p['variable']][t][p['plot_projection']]['sorteddepthlist'].sort()
-        plotdict[p['variable']][t][p['plot_projection']]['depthfile'][p['plot_depth']] = name[0]        
+    for p in plotnames:
+        plotdict[p['variable']][p['plot_type']][p['plot_projection']] = {'sorteddepthlist': [],
+                                                                         'depthfile': {},}
+    for p in plotnames:
+        plotdict[p['variable']][p['plot_type']][p['plot_projection']]['sorteddepthlist'].append(p['plot_depth']) 
+        plotdict[p['variable']][p['plot_type']][p['plot_projection']]['sorteddepthlist'].sort()
+        plotdict[p['variable']][p['plot_type']][p['plot_projection']]['depthfile'][p['plot_depth']] = p['plot_name']       
     return plotdict
 
 def pdfmarks(plotdict):
