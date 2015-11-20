@@ -16,13 +16,36 @@ def _check_averaged(ifile):
     time = nc.variables['time'][:].squeeze()
     return time.size == 1
 
-def _check_dates_outside(ifile, start_date, end_date)
+def _check_dates_outside(ifile, start_date, end_date):
+    nc = Dataset(ifile, 'r')
+    time = nc.variables['time_bnds'][:].squeeze()
+    nc_time = nc.variables['time']
+    try: 
+        cal = nc_time.calendar
+    except:
+        cal = 'standard'
+    start = datetime.datetime(*year_mon_day(start_date))
+    end = datetime.datetime(*year_mon_day(end_date))
+    start = date2num(start, nc_time.units)
+    end = date2num(end, nc_time.units) 
+    compstart = nc_time[:][0]
+    compend = nc_time[:][-1]
+    if compstart > start and compend < end:
+        return True
+    elif compstart > start or compend < end:
+        with open('logs/log.txt', 'a') as outfile:
+            outfile.write('WARNING: Comparison data does not cover entire time period... Used subset')        
+        return False
+    return False
 
 def _check_dates(ifile, dates):
+
     if _check_averaged(ifile):
         with open('logs/log.txt', 'a') as outfile:
             outfile.write('WARNING: Comparison data is time averaged')
-    elif _check_dates_outside(ifile, **dates):        
+    elif _check_dates_outside(ifile, **dates):
+        datestring = _check_dates_outside(ifile, **dates)
+        if         
     
     
 def _scale_units(units, scale):
