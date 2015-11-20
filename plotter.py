@@ -80,21 +80,7 @@ def _remove_plots():
     old_plots = glob.glob('plots/*.pdf')    
     for f in old_plots:
         os.remove(f)
-"""
-def plot_output(**p):
-    def trytoplot(func):
-        def inner(*args,**kwargs):
-            try:
-                func(*args, **kwargs)
-            except:
-                with open('logs/log.txt', 'a') as outfile:
-                    outfile.write('Failed to plot ' + p['variable'] + ', ' + p['plot_projection'] + ', compare trends, at depth:' + str(p['depth']) + '\n')
-            else:
-                with open('logs/log.txt', 'a') as outfile:
-                    outfile.write('Successfully plotted ' + p['variable'] + ', ' + p['plot_projection'] + ', compare trends, at depth:' + str(p['depth']) + '\n')
-        return inner
-    return trytoplot        
-"""
+
 def makeplot(p, plotnames, func):
     try:
         p['plot_name'] = func(p)
@@ -144,12 +130,6 @@ def loop(plots):
             loop_plot_types(p, plotnames)
         plt.close('all')              
     return plotnames
-
-
-
-
-
-
 
         
 if __name__ == "__main__":

@@ -11,7 +11,20 @@ import cdo; cdo = cdo.Cdo()
 import numpy as np
 import datetime
 
+def _check_averaged(ifile):
+    nc = Dataset(ifile, 'r')
+    time = nc.variables['time'][:].squeeze()
+    return time.size == 1
 
+def _check_dates_outside(ifile, start_date, end_date)
+
+def _check_dates(ifile, dates):
+    if _check_averaged(ifile):
+        with open('logs/log.txt', 'a') as outfile:
+            outfile.write('WARNING: Comparison data is time averaged')
+    elif _check_dates_outside(ifile, **dates):        
+    
+    
 def _scale_units(units, scale):
     """ Corrects the units to match the scale applied to the data
     

@@ -8,8 +8,6 @@ pdforganize
 import subprocess
 import os
 def arrange(plotnames):
-    for p in plotnames:
-        print p['plot_name']
     """ Outputs a pdf named plots/joined.pdf with all of the plots
         organized and bookmarked
     
@@ -25,7 +23,7 @@ def arrange(plotnames):
     combine_str ='gs -sDEVICE=pdfwrite -sOutputFile=plots/joined.pdf -dQUIET -dNOPAUSE -dBATCH -dAutoRotatePages=/None -f '+pstring+' plots/pdfmarks\n'
 
     os.system(combine_str)
-    #os.system('rm -f plots/pdfmarks')
+    os.system('rm -f plots/pdfmarks')
     
 def _orderplots(plotnames):
     """ Organizes the names into a dictionary that can be used to cycle through the plots

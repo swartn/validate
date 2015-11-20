@@ -120,7 +120,7 @@ def filltitle(p, t, d, depth):
                 p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth        
     elif 'Trends' in t:
         if not p[d + '_args']['trends_args']['title_flag']:
-            p[d + '_args']['trends_args']['ax_args']['title'] = p['variable'] + ' Trends'
+            p[d + '_args']['trends_args']['ax_args']['title'] = p['variable'] + ' ' + t
             if p['trends_dates']:
                 p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['trends_dates']['start_date'] + '_' + p['trends_dates']['end_date']              
             if depth:
