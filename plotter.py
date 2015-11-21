@@ -82,18 +82,23 @@ def _remove_plots():
         os.remove(f)
 
 def makeplot(p, plotnames, func):
-    try:
+    p['plot_type'] = func.__name__
+    try:    
         p['plot_name'] = func(p)
     except:
         with open('logs/log.txt', 'a') as outfile:
             outfile.write('Failed to plot ' + p['variable'] + ', ' + p['plot_projection'] + ', ' + p['plot_type'] + ', at depth:' + str(p['depth']) + '\n\n')
     else:
-        p['plot_type'] = func.__name__
+
         plotnames.append(dict(p))
         with open('logs/log.txt', 'a') as outfile:
             outfile.write('Successfully plotted ' + p['variable'] + ', ' + p['plot_projection'] + ', ' + p['plot_type'] + ', at depth:' + str(p['depth']) + '\n\n')    
     
-
+def makeplot_without_catching(p, plotnames, func):
+    p['plot_type'] = func.__name__
+    p['plot_name'] = func(p)
+    plotnames.append(dict(p))
+    
 def loop_plot_types(plot, plotnames):
     types = ['climatology', 'trends', 'compare_climatology', 'compare_trends']
     funcs = {'climatology': climatology,
@@ -103,6 +108,7 @@ def loop_plot_types(plot, plotnames):
     for ptype in types:
         if plot[ptype]:
             makeplot(plot, plotnames, funcs[ptype])
+            #makeplot_without_catching(plot, plotnames, funcs[ptype])
             
             
 def loop(plots):

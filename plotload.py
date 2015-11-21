@@ -6,7 +6,7 @@ plotload
 """
 
 import os
-from netCDF4 import Dataset, num2date
+from netCDF4 import Dataset, num2date, date2num
 import cdo; cdo = cdo.Cdo()
 import numpy as np
 import datetime
@@ -16,6 +16,18 @@ def _check_averaged(ifile):
     time = nc.variables['time'][:].squeeze()
     return time.size == 1
 
+def year_mon_day(datestring):
+    year = datestring.split('-')[0]
+    try:
+        mon = datestring.split('-')[1]
+    except:
+        mon = '01'
+    try:
+        day = datestring.split('-')[2]
+    except:
+        day = '01'
+    return int(year), int(mon), int(day)
+    
 def _check_dates_outside(ifile, start_date, end_date):
     nc = Dataset(ifile, 'r')
     time = nc.variables['time_bnds'][:].squeeze()
@@ -30,22 +42,27 @@ def _check_dates_outside(ifile, start_date, end_date):
     end = date2num(end, nc_time.units) 
     compstart = nc_time[:][0]
     compend = nc_time[:][-1]
-    if compstart > start and compend < end:
+    if compstart > end or compend < start:
         return True
     elif compstart > start or compend < end:
         with open('logs/log.txt', 'a') as outfile:
-            outfile.write('WARNING: Comparison data does not cover entire time period... Used subset')        
-        return False
+            outfile.write('WARNING: Comparison data does not cover entire time period... Used subset\n')        
     return False
 
 def _check_dates(ifile, dates):
-
-    if _check_averaged(ifile):
-        with open('logs/log.txt', 'a') as outfile:
-            outfile.write('WARNING: Comparison data is time averaged')
-    elif _check_dates_outside(ifile, **dates):
-        datestring = _check_dates_outside(ifile, **dates)
-        if         
+    if dates:
+        if _check_averaged(ifile):
+            with open('logs/log.txt', 'a') as outfile:
+                outfile.write('WARNING: Comparison data is time averaged\n')
+            return False
+        elif _check_dates_outside(ifile, **dates):
+            with open('logs/log.txt', 'a') as outfile:
+                outfile.write('WARNING: Comparison data is not from time period\n')        
+            raise 
+        else:
+            return True
+    else:
+        return False          
     
     
 def _scale_units(units, scale):
@@ -214,7 +231,7 @@ def timeaverage_load_comp(ifile, var, depth_type, dates, realm, depthneeded, sca
     depthneededstr = ','.join(depthneeded)
     path, ifile = os.path.split(ifile)
 
-    if dates:
+    if _check_dates(path + '/' + ifile, dates):
         if not os.path.isfile('remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc'):
             cdo.selvar(var, input=path + '/' + ifile, output='remapfiles/selvar.nc')
             out='remapfiles/selvar.nc'

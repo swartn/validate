@@ -133,8 +133,12 @@ def _mkdir():
     mkthedir('plots')
     mkthedir('zonalfiles')
     mkthedir('logs')
-    with open('logs/log.txt', 'w') as outfile: pass
-        
+
+    
+def _logfile(run):
+    with open('logs/log.txt', 'w') as outfile:
+        outfile.write('Model: ' + run + '\n\n')
+                  
 def _load_masks(run):
     """Loads the land and sea masks for a specified run
     
@@ -318,6 +322,7 @@ def getfiles(plots, run):
 
     """
     _mkdir()
+    _logfile(run)
     files = _traverse('/raid/rc40/data/ncs/historical-' + run)   
     _load_masks(run)
     
