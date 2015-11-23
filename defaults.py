@@ -89,6 +89,15 @@ def fill(plots, defaults):
                p[data + '_args']['trends_args']['title_flag'] = False
            else:
                p[data + '_args']['trends_args']['title_flag'] = True 
+
+           if 'vmin' not in p[data + '_args']['climatology_args']['pcolor_args']:
+               p[data + '_args']['climatology_args']['pcolor_flag'] = False
+           else:
+               p[data + '_args']['climatology_args']['pcolor_flag'] = True
+           if 'vmin' not in p[data + '_args']['trends_args']['pcolor_args']:
+               p[data + '_args']['trends_args']['pcolor_flag'] = False
+           else:
+               p[data + '_args']['trends_args']['pcolor_flag'] = True                
                       
         _fill_args('data1')
         _fill_args('data2')
