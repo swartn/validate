@@ -334,7 +334,7 @@ def trends_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
     depthneededstr = ','.join(depthneeded)
     
     path, ifile = os.path.split(ifile)
-    if dates:   
+    if _check_dates(path + '/' + ifile, dates):   
         if not os.path.isfile('trendfiles/slope_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc'):
             cdo.selvar(var, input=path + '/' + ifile, output='trendfiles/selvar.nc')
             out='trendfiles/selvar.nc'        
