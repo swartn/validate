@@ -276,7 +276,7 @@ def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', ano
     tl = fig.add_axes([box.x1 + box.width * 0.05, box.y0, 0.02, box.height])
     fig.colorbar(cot, cax=tl, label=cblabel)
     
-def timeseries(x, data, ax=None, ax_args=None,):
+def timeseries(x, data, ax=None, ax_args=None, label='model'):
     """ Makes a timeseries line plot, using ax if supplied
     """
     if not ax:
@@ -284,11 +284,11 @@ def timeseries(x, data, ax=None, ax_args=None,):
     else:
         fig = plt.gcf()
     
-    ax.plot(x, data)
+    ax.plot(x, data, label=label)
 
-    plt.setp(ax, **ax_args)    
+    plt.setp(ax, **ax_args)   
     
-def zonalmean(x, data, ax=None, ax_args=None,):
+def zonalmean(x, data, ax=None, ax_args=None, label='model'):
     """ Makes a zonal mean line plot, using ax if supplied
     """
     if not ax:
@@ -296,7 +296,7 @@ def zonalmean(x, data, ax=None, ax_args=None,):
     else:
         fig = plt.gcf()
     
-    ax.plot(x, data)
+    ax.plot(x, data, label=label)
 
     plt.setp(ax, **ax_args)       
     

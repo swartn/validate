@@ -45,12 +45,16 @@ def min_start_dates(plots):
             if 'climatology_dates' in p:
                 if 'start_date' in p['climatology_dates']:
                     start_dates[p['variable']].append(p['climatology_dates']['start_date'])
+                else:
+                    start_dates[p['variable']].append('0')
             else:
                 start_dates[p['variable']].append('0')
         if p['trends'] or p['compare_trends']:
             if 'trends_dates' in p:
                 if 'start_date' in p['trends_dates']:
                     start_dates[p['variable']].append(p['trends_dates']['start_date'])
+                else:
+                    start_dates[p['variable']].append('0')    
             else:
                 start_dates[p['variable']].append('0')
         
@@ -77,12 +81,16 @@ def max_end_dates(plots):
             if 'climatology_dates' in p:
                 if 'end_date' in p['climatology_dates']:
                     end_dates[p['variable']].append(p['climatology_dates']['end_date'])
+                else:
+                    end_dates[p['variable']].append('3000')    
             else:
                 end_dates[p['variable']].append('3000')
         if p['trends'] or p['compare_trends']:
             if 'trends_dates' in p:
                 if 'end_date' in p['trends_dates']:
                     end_dates[p['variable']].append(p['trends_dates']['end_date'])
+                else:
+                    end_dates[p['variable']].append('3000')
             else:
                 end_dates[p['variable']].append('3000')
         

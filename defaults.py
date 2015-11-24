@@ -33,13 +33,13 @@ def fill(plots, defaults):
         if 'climatology' not in p:
             p['climatology'] = False
         if 'climatology_dates' not in p:
-            p['climatology_dates'] = None
+            p['climatology_dates'] = {}
         if 'compare_climatology' not in p:
             p['compare_climatology'] = False
         if 'trends' not in p:
             p['trends'] = False
         if 'trends_dates' not in p:
-            p['trends_dates'] = None
+            p['trends_dates'] = {}
         if 'compare_trends' not in p:
             p['compare_trends'] = False
         if 'frequency' not in p:

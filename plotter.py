@@ -40,6 +40,8 @@ def compare_climatology(plot):
                 'polar_map': (pr.polar_map, pc.map_climatology_comparison),
                 'polar_map_south': (pr.polar_map_south, pc.map_climatology_comparison),
                 'mercator': (pr.mercator, pc.map_climatology_comparison),
+                'time_series': (pr.timeseries, pc.timeseries_comparison),
+                'zonal_mean': (pr.zonalmean, pc.zonalmean_comparison), 
                 }[pl]
     func_region, func_case = pregion_comp(plot['plot_projection']) 
     return func_case(plot, func_region)
@@ -107,8 +109,8 @@ def loop_plot_types(plot, plotnames):
              'compare_trends': compare_trends,}
     for ptype in types:
         if plot[ptype]:
-            makeplot(plot, plotnames, funcs[ptype])
-            #makeplot_without_catching(plot, plotnames, funcs[ptype])
+            #makeplot(plot, plotnames, funcs[ptype])
+            makeplot_without_catching(plot, plotnames, funcs[ptype])
             
             
 def loop(plots):

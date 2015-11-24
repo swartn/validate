@@ -387,7 +387,7 @@ def timeseries_load(ifile, var, depth_type, dates, scale):
 #    if not os.path.isfile('fldmeanfiles/fldmean_' + ifile):
 #        cdo.fldmean(input=path + '/' + ifile, output='fldmeanfiles/fldmean_' + ifile)
     
-    if dates:           
+    if _check_dates(path + '/' + ifile, dates):           
         if not os.path.isfile('fldmeanfiles/fldmean_' + ifile +  str(dates['start_date']) + str(dates['end_date']) + '.nc'):
             cdo.fldmean(input='-seldate,' + str(dates['start_date']) + ',' +str(dates['end_date']) + ' ' + path + '/' + ifile, output='fldmeanfiles/fldmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
         nc = Dataset('fldmeanfiles/fldmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
@@ -411,8 +411,111 @@ def timeseries_load(ifile, var, depth_type, dates, scale):
     units = _scale_units(units, scale)
     return data*scale, units, x, depth    
 
+def timeseries_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
+    """ Loads the field mean data over specified dates from a file.
+        Remaps and scales the data. 
+                
+    Parameters
+    ----------
+    ifile : string
+            filename to load data from
+    var : string
+    depth_type : string
+                 the name the depth is labelled as in the file
+    dates : dictionary
+            maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
+    scale : int
+            scale the data by this factor
+    
+    Returns
+    -------
+    numpy array
+    string
+    numpy array
+    numpy array
+    """
+    depthneeded = ["%.2f" % number for number in depthneeded]
+    for i in xrange(len(depthneeded)):
+        depthneeded[i] = str(depthneeded[i])
+    depthneededstr = ','.join(depthneeded)
+        
+    path, ifile = os.path.split(ifile)
+#    if not os.path.isfile('fldmeanfiles/fldmean_' + ifile):
+#        cdo.fldmean(input=path + '/' + ifile, output='fldmeanfiles/fldmean_' + ifile)
+    
+    if _check_dates(path + '/' + ifile, dates):           
+        if not os.path.isfile('fldmeanfiles/fldmean_' + ifile +  str(dates['start_date']) + str(dates['end_date']) + '.nc'):
+            out = 'fldmeanfiles/selvar.nc'
+            cdo.selvar(var, input=path + '/' + ifile, output=out)
+            cdo.fldmean(options='-L', input='-seldate,' + str(dates['start_date']) + ',' +str(dates['end_date']) + ' ' + out, output='fldmeanfiles/fldmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
+        cdo.intlevelx(str(depthneededstr), input='fldmeanfiles/fldmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', output='fldmeanfiles/fldmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc')
+        nc = Dataset('fldmeanfiles/fldmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc', 'r')
+    else:
+        if not os.path.isfile('fldmeanfiles/fldmean_' + ifile):
+            cdo.fldmean(input=path + '/' + ifile, output='fldmeanfiles/fldmean_' + ifile)
+        cdo.intlevelx(str(depthneededstr), input='fldmeanfiles/fldmean_' + ifile, output='fldmeanfiles/fldmean_'  + ifile + str(depthneeded[0]) + '.nc')
+        nc = Dataset('fldmeanfiles/fldmean_' + ifile + str(depthneeded[0]) + '.nc', 'r')
+   
+    data, units, depth = _load(nc, var, depth_type) 
+    
+    nc_time = nc.variables['time']
+    try: 
+        cal = nc_time.calendar
+    except:
+        cal = 'standard'
+    x = num2date(nc_time[:], nc_time.units, cal)
+    x = [datetime.datetime(*item.timetuple()[:6]) for item in x]
+    x = np.array(x)
+
+    depth = np.round(depth)
+    units = _scale_units(units, scale)
+    return data*scale, units, x, depth 
+    
+   
 
 def zonal_load(ifile, var, depth_type, dates, scale):
+    """ Loads the zonal mean data over specified dates from a file.
+        Remaps and scales the data. 
+                
+    Parameters
+    ----------
+    ifile : string
+            filename to load data from
+    var : string
+    depth_type : string
+                 the name the depth is labelled as in the file
+    dates : dictionary
+            maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
+    depthneeded : numpy array
+    scale : int
+            scale the data by this factor
+    
+    Returns
+    -------
+    numpy array
+    string
+    numpy array
+    numpy array
+    """
+    path, ifile = os.path.split(ifile)
+    
+    if dates:           
+        if not os.path.isfile('zonalfiles/zonmean_' + ifile +  str(dates['start_date']) + str(dates['end_date']) + '.nc'):
+            cdo.zonmean(options='-L', input='-timmean -seldate,' + str(dates['start_date']) + ',' +str(dates['end_date']) + ' ' + path + '/' + ifile, output='zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
+        nc = Dataset('zonalfiles/zonmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
+    else:
+        if not os.path.isfile('zonalfiles/zonmean_' + ifile):
+            cdo.zonmean(input='-timmean ' + path + '/' + ifile, output='zonalfiles/zonmean_' + ifile)
+        nc = Dataset('zonalfiles/zonmean_' + ifile, 'r')   
+    data, units, depth = _load(nc, var, depth_type) 
+    
+    x = nc.variables['lat'][:].squeeze()
+
+    depth = np.round(depth)
+    units = _scale_units(units, scale)
+    return data*scale, units, x, depth   
+    
+def zonal_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
     """ Loads the zonal mean data over specified dates from a file.
         Remaps and scales the data. 
                 
@@ -435,15 +538,25 @@ def zonal_load(ifile, var, depth_type, dates, scale):
     numpy array
     numpy array
     """
+    depthneeded = ["%.2f" % number for number in depthneeded]
+    for i in xrange(len(depthneeded)):
+        depthneeded[i] = str(depthneeded[i])
+    depthneededstr = ','.join(depthneeded)
     path, ifile = os.path.split(ifile)
     
-    if dates:           
+    if _check_dates(path + '/' + ifile, dates):           
         if not os.path.isfile('zonalfiles/zonmean_' + ifile +  str(dates['start_date']) + str(dates['end_date']) + '.nc'):
-            cdo.zonmean(input='-timmean -seldate,' + str(dates['start_date']) + ',' +str(dates['end_date']) + ' ' + path + '/' + ifile, output='zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
-        nc = Dataset('zonalfiles/zonmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
+            out = 'zonalfiles/selvar.nc'
+            cdo.selvar(var, input=path + '/' + ifile, output=out)
+            cdo.zonmean(input='-timmean -seldate,' + str(dates['start_date']) + ',' +str(dates['end_date']) + ' ' + out, output='zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
+        cdo.intlevelx(str(depthneededstr), input='zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', output='zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc')
+        nc = Dataset('zonalfiles/zonmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc', 'r')
     else:
         if not os.path.isfile('zonalfiles/zonmean_' + ifile):
-            cdo.zonmean(input='-timmean' + path + '/' + ifile, output='zonalfiles/zonmean_' + ifile)
+            out = 'zonalfiles/selvar.nc'
+            cdo.selvar(var, input=path + '/' + ifile, output=out)
+            cdo.zonmean(options='-L', input='-timmean ' + out, output='zonalfiles/zonmean_' + ifile)
+        cdo.intlevelx(str(depthneededstr), input='zonalfiles/zonmean_'  + ifile, output='zonalfiles/zonmean_'  + ifile + str(depthneeded[0]) + '.nc')    
         nc = Dataset('zonalfiles/zonmean_' + ifile, 'r')   
     data, units, depth = _load(nc, var, depth_type) 
     
@@ -451,8 +564,8 @@ def zonal_load(ifile, var, depth_type, dates, scale):
 
     depth = np.round(depth)
     units = _scale_units(units, scale)
-    return data*scale, units, x, depth    
-
+    return data*scale, units, x, depth 
+        
 if __name__ == "__main__":
     ifile = '/raid/rc40/data/ncs/historical-edr/mon/atmos/ta/r1i1p1/ta_Amon_DevAM4-2_historical-edr_r1i1p1_185001-200012.nc'
     timeseries_load(ifile,'ta','plev')        
