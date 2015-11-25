@@ -37,7 +37,11 @@ def check_date(date):
     redate1 = re.compile(r'\b[0-9][0-9][0-9][0-9]\b')
     redate2 = re.compile(r'\b[0-9][0-9][0-9][0-9]-[0-9][0-9]\b')
     redate3 = re.compile(r'\b[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\b')
-    if redate1.match(date) or redate2.match(date) or redate3.match(date):
+    if redate1.match(date) and len(date) == 4:
+        return True
+    if redate2.match(date) and len(date) == 7: 
+        return True
+    if redate3.match(date) and len(date) == 10:
         return True
     return False
     
@@ -49,11 +53,18 @@ def check_dates(dates, thekey):
         if key is not 'start_date' and key is not 'end_date':
             raise ValueError("'" + thekey + "' key's must be either 'start_date' or 'end_date'")
     if 'start_date' in dates:
+        if type(dates['start_date']) is not str:
+            raise TypeError("'" + thekey + "': 'start_date must be 'str' type")
         if not check_date(dates['start_date']):
-            raise ValueError("'" + thekey + "': 'start_date' must of from yyyy-mm or yyyy-mm-dd")
+            raise ValueError("'" + thekey + "': 'start_date' must of formm yyyy-mm or yyyy-mm-dd")
     if 'end_date' in dates:
+        print dates
+        if type(dates['end_date']) is not str:
+            print 'here'
+            raise TypeError("'" + thekey + "': 'end_date must be 'str' type")
         if not check_date(dates['end_date']):
-            raise ValueError("'" + thekey + "': 'end_date' must of from yyyy-mm or yyyy-mm-dd")    
+            print 'or here'
+            raise ValueError("'" + thekey + "': 'end_date' must of form yyyy-mm or yyyy-mm-dd")    
 
 def check_realization(real):
     if type(real) is str:
@@ -87,7 +98,7 @@ def check_frequency(freq):
     if type(freq) is not str:
         raise TypeError("'frequency' must be 'str' type")
     possible_values = ['day','mon','yr']
-    if freq not in posible_values:
+    if freq not in possible_values:
         raise ValueError("'frequency' must be one of 'day', 'mon', or 'yr'")
 
 def check_scale(scale):
@@ -143,7 +154,7 @@ def check_data_args(dargs, data):
         
     
  
-def check_plot(plot):
+def check_plot(plot):   
     possible_keys = ['variable',
                      'plot_projection',
                      'climatology',
@@ -223,7 +234,7 @@ def check_model_run(model_run):
 
 def check_obsroot(obsroot):
     if type(obsroot) is not str:
-        raise TypeError("'obs_root' needs to be 'str' type")
+        raise TypeError("'obs_root' needs to be 'str' type")   
     if not os.path.exists(obsroot):
         raise ValueError("obsroot: " + obsroot + " does not exist")
 
@@ -239,6 +250,8 @@ def check_obs(obs):
             raise ValueError("obs[" + key + "] '" + obs[key] + "' does not exist")
 
 def check_delete(delete):
+    if type(delete) is not dict:
+        raise TypeError("'delete' needs to be 'dict' type")
     possible_keys = ['del_fldmeanfiles',
                      'del_mask',
                      'del_ncstore',
@@ -251,55 +264,20 @@ def check_delete(delete):
         if type(delete[key]) is not bool:
             raise TypeError('delete[' + key + "] needs to be 'bool' type")
         
-        
+def check_defaults(defaults):
+    if type(defaults) is not dict:
+       raise TypeError("'defaults' must be 'dict' type")
+    check_plot(defaults)        
 
 def check_input(plots, model_run, obsroot, obs, defaults, delete):
     check_plots(plots)
     check_model_run(model_run)
-    check_obsroot(obsroot)
+    if obsroot:
+        check_obsroot(obsroot)
     check_obs(obs)
-    check_plot(defaults)
+    check_defaults(defaults)
     check_delete(delete)
     
     
 if __name__ == "__main__":
- model_run = 'edr'
-
- defaults = {
-            'climatology': True,
-            #'climatology_dates': {'start_date': '1881-01', 'end_date': '1890-01'},
-            'compare_climatology': True,
-
-            'trends': False,
-            'trends_dates': {'start_date': '1991-01', 'end_date': '2000-01'},
-            'compare_trends': False,
-
-            'realization': '1',
-            'scale': 1,
-            #'plot_args': {'fill_continents': True}
-            }
-
- plots = [
-
-         {    
-          'variable': 'ta',
-          'plot_projection': 'time_series',
-          'depth_type': 'plev',
-          'depths':[20000, 85000, 100000], 
-          'realization': '1'                                              
-          }, 
-         {}
-        ]
- delete = {
-          'del_fldmeanfiles': False,
-          'del_mask': True,
-          'del_ncstore': True,
-          'del_remapfiles': True,
-          'del_trendfiles': True,
-          'del_zonalfiles': True,
-          }
-          
- obsroot = '/raid/rc40/data/ncs/obs4comp'               
-
- obs = {}         
- check_input(plots, model_run, obsroot, obs, defaults, delete)
+    pass
