@@ -1,6 +1,9 @@
 """
 defaults
 ===============
+This module fills the plots with values specified in defaults
+and fills the remaining options with placeholders so that 
+existence checks will not be needed later.
 
 .. moduleauthor:: David Fallis
 """

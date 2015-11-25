@@ -2,6 +2,11 @@
 plotload
 ===============
 
+THis module contains functions that will load data from 
+netCDF files needed to produce plots. It uses various cdo 
+commands to manipulate the netCDF files if they need to be
+processed before the data is extracted.
+
 .. moduleauthor:: David Fallis
 """
 

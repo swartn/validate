@@ -2,6 +2,9 @@
 plotter
 ===============
 
+This module contains functions needed to efficiently loop
+through all of the specified plots that will be produced.
+
 .. moduleauthor:: David Fallis
 """
 

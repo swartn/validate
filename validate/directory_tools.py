@@ -2,6 +2,9 @@
 directory_tools
 ===============
 
+This module contains several functions associated with traversing 
+directories and gathering information from files.
+
 .. moduleauthor:: David Fallis
 """
 

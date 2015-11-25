@@ -1,6 +1,10 @@
 """
 check
 ===============
+This module is used to check to the validity of the options setup
+in configure.py. Exceptions will be raised if the options are
+incorrectly formatted. This gives the user the opportunity to make 
+the corrections before producing the plots.
 
 .. moduleauthor:: David Fallis
 """

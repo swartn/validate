@@ -1,6 +1,8 @@
 """
 plotregions
 ===============
+This module contains the functions that will produce the plots
+using matplotlib.
 
 .. moduleauthor:: David Fallis
 """

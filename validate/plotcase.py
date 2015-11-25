@@ -2,6 +2,11 @@
 plotcase
 ===============
 
+This module contains functinos for different cases of
+plots. The functinos will load the appropriate data. Do
+any manipulations needed for the data and direct the data
+to the correct plot.
+
 .. moduleauthor:: David Fallis
 """
 

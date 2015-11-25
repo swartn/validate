@@ -1,6 +1,9 @@
 """
 control
 ===============
+This module has one function 'execute()' which calls functions
+from various modules to produce the plots layed out in configure.py
+
 
 .. moduleauthor:: David Fallis
 """
