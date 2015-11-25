@@ -58,7 +58,7 @@ def _check_dates(ifile, dates):
         elif _check_dates_outside(ifile, **dates):
             with open('logs/log.txt', 'a') as outfile:
                 outfile.write('WARNING: Comparison data is not from time period\n')        
-            raise 
+            raise Exception
         else:
             return True
     else:

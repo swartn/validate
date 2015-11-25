@@ -29,7 +29,7 @@ def execute(plots, run, obsroot=None, defaults={}, delete={}, obs={}):
     delete : dictionary
              maps directory name to boolean, will delete the directoy if True
     """
-    checkinput(plots, run, obsroot, obs, defaults, delete)              
+    check_input(plots, run, obsroot, obs, defaults, delete)              
     fill(plots, defaults)
     getfiles(plots, run) 
     getobsfiles(plots, obsroot)   

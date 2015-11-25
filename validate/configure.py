@@ -90,7 +90,7 @@ delete : A dictionary mapping directories to booleans. The booleans are set
              }             
 
 obs : A dictionary mapping the name of the variable to the name of a netCDF
-      file with observations data for that variable. THe name must include
+      file with observations data for that variable. The name must include
       the filepath. This will be overwritten if a file is specified in the 
       plot dictionary within plots.
       

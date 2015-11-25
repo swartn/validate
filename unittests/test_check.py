@@ -281,7 +281,7 @@ class Test_check_obs:
             ch.check_obs({'aa': 'filethatdoesntexist'})     
     
     def test_obs_is_right(self):
-        assert ch.check_obs({'aa': './test_check.py'}) == None
+        assert ch.check_obs({'aa': 'unittests/test_check.py'}) == None
     
 class Test_check_delete:
     def test_delete_is_wrong_type(self):
