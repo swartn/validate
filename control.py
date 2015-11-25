@@ -11,8 +11,9 @@ from directory_tools import getfiles, remfiles, getobsfiles
 from plotter import loop
 from pdforganize import arrange
 from defaults import fill
+from check import check_input
 
-def execute(plots, run, obsroot, defaults, delete):
+def execute(plots, run, obsroot=None, defaults={}, delete={}, obs={}):
     """ Calls modules required to find the data, 
         process the data, and output the plots and figures
         
@@ -28,7 +29,7 @@ def execute(plots, run, obsroot, defaults, delete):
     delete : dictionary
              maps directory name to boolean, will delete the directoy if True
     """
-                  
+    checkinput(plots, run, obsroot, obs, defaults, delete)              
     fill(plots, defaults)
     getfiles(plots, run) 
     getobsfiles(plots, obsroot)   
