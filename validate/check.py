@@ -58,12 +58,9 @@ def check_dates(dates, thekey):
         if not check_date(dates['start_date']):
             raise ValueError("'" + thekey + "': 'start_date' must of formm yyyy-mm or yyyy-mm-dd")
     if 'end_date' in dates:
-        print dates
         if type(dates['end_date']) is not str:
-            print 'here'
             raise TypeError("'" + thekey + "': 'end_date must be 'str' type")
         if not check_date(dates['end_date']):
-            print 'or here'
             raise ValueError("'" + thekey + "': 'end_date' must of form yyyy-mm or yyyy-mm-dd")    
 
 def check_realization(real):
