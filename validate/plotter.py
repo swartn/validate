@@ -86,25 +86,41 @@ def _remove_plots():
     old_plots = glob.glob('plots/*.pdf')    
     for f in old_plots:
         os.remove(f)
-
+    old_plots = glob.glob('plots/*.png')    
+    for f in old_plots:
+        os.remove(f)
+        
 def makeplot(p, plotnames, func):
     p['plot_type'] = func.__name__
     try:    
-        p['plot_name'] = func(p)
+        plot_name = func(p)
     except:
         with open('logs/log.txt', 'a') as outfile:
             outfile.write('Failed to plot ' + p['variable'] + ', ' + p['plot_projection'] + ', ' + p['plot_type'] + ', at depth:' + str(p['depth']) + '\n\n')
     else:
-
-        plotnames.append(dict(p))
+        p['plot_name'] = plot_name + '.pdf'
+        p['png_name'] = plot_name + '.png'    
+        if p['pdf']:
+            plotnames.append(dict(p))
+            log(p)
+        if p['png']:
+            p['plot_name'] = p['png_name']
+            log(p)
         with open('logs/log.txt', 'a') as outfile:
             outfile.write('Successfully plotted ' + p['variable'] + ', ' + p['plot_projection'] + ', ' + p['plot_type'] + ', at depth:' + str(p['depth']) + '\n\n')    
     
 def makeplot_without_catching(p, plotnames, func):
     p['plot_type'] = func.__name__
-    p['plot_name'] = func(p)
-    plotnames.append(dict(p))
-    
+    plot_name = func(p)
+    p['plot_name'] = plot_name + '.pdf'
+    p['png_name'] = plot_name + '.png'
+
+    if p['pdf']:
+        plotnames.append(dict(p))
+        log(p) 
+    if p['png']:
+        p['plot_name'] = p['png_name']
+        log(p)
 def loop_plot_types(plot, plotnames):
     types = ['climatology', 'trends', 'compare_climatology', 'compare_trends']
     funcs = {'climatology': climatology,
@@ -140,7 +156,6 @@ def loop(plots):
         for d in p['depths']:
             p['depth'] = int(d) 
             loop_plot_types(p, plotnames)
-            log(p)
         plt.close('all')             
     return plotnames
 

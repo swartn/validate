@@ -48,7 +48,6 @@ def check_date(date):
     if redate3.match(date) and len(date) == 10:
         return True
     return False
-    
 
 def check_dates(dates, thekey):
     if type(dates) is not dict:
@@ -136,8 +135,7 @@ def check_projection_args(pargs, data):
         check_dict(pargs['pcolor_args'], 'pcolor_args')
     if 'ax_args' in pargs:
         check_dict(pargs['ax_args'], 'ax_args')
-        
-                     
+                        
 def check_data_args(dargs, data):
     if type(dargs) is not dict:
        raise TypeError("'" + data + "' must be 'dict' type")
@@ -151,9 +149,7 @@ def check_data_args(dargs, data):
     if 'climatology_args' in dargs:
         check_projection_args(dargs['climatology_args'], 'climatology_args')
     if 'trends_args' in dargs:
-        check_projection_args(dargs['trends_args'], 'trends_args')
-        
-    
+        check_projection_args(dargs['trends_args'], 'trends_args')    
  
 def check_plot(plot):   
     possible_keys = ['variable',
@@ -172,10 +168,12 @@ def check_plot(plot):
                      'data1_args',
                      'data2_args',
                      'comp_args',
-                     'plot_args',]  
+                     'plot_args',
+                     'pdf',
+                     'png',]  
     for key in plot:
         if key not in possible_keys:
-            raise ValueError(str(key) + ' is not a valid key for a dictionary in plot')
+            raise ValueError(str(key) + ' is not a valid key for a dictionary in plots')
     if 'variable' in plot:
         check_variable(plot['variable'])
     if 'plot_projection' in plot:
@@ -212,9 +210,10 @@ def check_plot(plot):
         check_data_args(plot['data2_args'], 'data2_args')
     if 'comp_args' in plot:
         check_data_args(plot['comp_args'], 'comp_args')
-    
-    
-        
+    if 'pdf' in plot:
+        check_bool(plot['pdf'], 'pdf')
+    if 'png' in plot:
+        check_bool(plot['png'], 'pdf')
 
 def check_plots(plots):
     if type(plots) is not list:

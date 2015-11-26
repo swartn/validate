@@ -12,8 +12,8 @@ model_run = 'edr'
 
 defaults = {
             'climatology': True,
-            'climatology_dates': {'start_date': '1861-01', 'end_date': '1870-01'},
-            'compare_climatology': True,
+            'climatology_dates': {'start_date': '1991-01', 'end_date': '2000-01'},
+            'compare_climatology': False,
 
             'trends': False,
             'trends_dates': {'start_date': '1991-01', 'end_date': '2000-01'},
@@ -22,6 +22,8 @@ defaults = {
             'realization': '1',
             'scale': 1,
             #'plot_args': {'fill_continents': True}
+            'pdf': True,
+            'png': True,
             }
 
 plots = [
@@ -45,6 +47,7 @@ delete = {
           }
           
 obsroot = '/raid/rc40/data/ncs/obs4comp'               
-         
+
+        
 if __name__ == "__main__":
        plots_with_files = con.execute(plots, model_run, obsroot, defaults, delete)

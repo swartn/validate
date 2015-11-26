@@ -55,6 +55,10 @@ def fill(plots, defaults):
             p['depths'] = [0]
         if 'scale' not in p:
             p['scale'] = 1
+        if 'pdf' not in p:
+            p['pdf'] = True
+        if 'png' not in p:
+            p['png'] = False
 
             
 #        if p['compare_climatology'] or p['compare_trends']:

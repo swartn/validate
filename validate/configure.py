@@ -500,7 +500,9 @@ obs = {'NO3' : obs_root + 'uncs_orca2_data_data_n_an_nomask.nc',
        'NCHL': obs_root + 'uncs_seawifs_mean_1998_2005.nc',
        'tas': './tas_Amon_CanESM2_historical_r1i1p1_185001-200512.nc'
        }
-       
+
+output = {'pdf': True,
+          'png': True,}       
 
 if __name__ == "__main__":
-       plots_with_files = con.execute(plots, model_run, obs, defaults, delete)
+       plots_with_files = con.execute(plots, model_run, obs, defaults, delete, output)

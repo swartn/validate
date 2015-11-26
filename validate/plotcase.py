@@ -18,6 +18,8 @@ import defaults as dft
 import datetime
 from plotregions import default_pcolor_args
 
+ 
+
 def _depth_data(data, depth, plot):
     """ Makes a numpy array only containing data at the desired depth
     
@@ -95,6 +97,14 @@ def _comp_pcolor(data, obs, plot, ptype, anom=False):
         plot['data1_args'][ptype + '_args']['pcolor_args'] = d1pca
         plot['data2_args'][ptype + '_args']['pcolor_args'] = d1pca 
 
+
+def savefigures(plotname, png=False, pdf=False, **kwargs):
+    pdfname = plotname + '.pdf'
+    pngname = plotname + '.png'
+    if png:
+        plt.savefig(pngname, bbox_inches='tight')
+    if pdf:
+        plt.savefig(pdfname, bbox_inches='tight')
             
 def map_climatology(plot, func):
     """ Loads and plots the data for a time averaged map
@@ -120,8 +130,9 @@ def map_climatology(plot, func):
          pcolor_args=plot['data1_args']['climatology_args']['pcolor_args'], cblabel=units,
          **plot['plot_args'])
                   
-    plot_name = 'plots/' + plot['variable'] + '_' + plot['plot_projection'] + '_climatology' + str(plot['plot_depth']) + '.pdf'
-    plt.savefig(plot_name, bbox_inches='tight')
+    plot_name = 'plots/' + plot['variable'] + '_' + plot['plot_projection'] + '_climatology' + str(plot['plot_depth'])    
+    savefigures(plot_name, **plot)
+    #plt.savefig(plot_name, bbox_inches='tight')
     return plot_name    
 
 def map_climatology_comparison(plot, func):
