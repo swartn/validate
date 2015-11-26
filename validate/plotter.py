@@ -15,6 +15,7 @@ import plotregions as pr
 import defaults as dft
 import plotcase as pc
 import matplotlib.pyplot as plt
+from yamllog import log
 
 def climatology(plot):
     """ Calls the appropriate functions to output the plot
@@ -139,7 +140,8 @@ def loop(plots):
         for d in p['depths']:
             p['depth'] = int(d) 
             loop_plot_types(p, plotnames)
-        plt.close('all')              
+            log(p)
+        plt.close('all')             
     return plotnames
 
         

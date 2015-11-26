@@ -149,7 +149,10 @@ def _mkdir():
 def _logfile(run):
     with open('logs/log.txt', 'w') as outfile:
         outfile.write('Model: ' + run + '\n\n')
-                  
+
+    with open('logs/log.yml', 'w') as outfile:
+        outfile.write('Model: ' + run + '\n\n')
+                          
 def _load_masks(run):
     """Loads the land and sea masks for a specified run
     
