@@ -129,8 +129,8 @@ def loop_plot_types(plot, plotnames):
              'compare_trends': compare_trends,}
     for ptype in types:
         if plot[ptype]:
-            makeplot(plot, plotnames, funcs[ptype])
-            #makeplot_without_catching(plot, plotnames, funcs[ptype])
+            #makeplot(plot, plotnames, funcs[ptype])
+            makeplot_without_catching(plot, plotnames, funcs[ptype])
             
             
 def loop(plots):

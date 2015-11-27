@@ -13,7 +13,7 @@ model_run = 'edr'
 defaults = {
             'climatology': True,
             'climatology_dates': {'start_date': '1991-01', 'end_date': '2000-01'},
-            'compare_climatology': False,
+            'compare_climatology': True,
 
             'trends': False,
             'trends_dates': {'start_date': '1991-01', 'end_date': '2000-01'},
@@ -41,7 +41,7 @@ delete = {
           'del_fldmeanfiles': True,
           'del_mask': True,
           'del_ncstore': True,
-          'del_remapfiles': True,
+          'del_remapfiles': False,
           'del_trendfiles': True,
           'del_zonalfiles': True,
           }
