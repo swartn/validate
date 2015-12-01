@@ -492,6 +492,9 @@ delete = {
           'del_remapfiles': True,
           'del_trendfiles': True,
           'del_zonalfiles': False,
+          'del_cmipfiles': False,
+          'del_ENS_MEAN_cmipfiles': True,
+          'del_ENS_STD_cmipfiles': True,
           }
                   
 obsroot = '/raid/ra40/data/ncs/nemo_out/obs4comp/'

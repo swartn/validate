@@ -136,6 +136,15 @@ def map_climatology(plot, func):
     #plt.savefig(plot_name, bbox_inches='tight')
     return plot_name    
 
+def climatology_comparison_name(plot):
+    if plot['comp_flag'] == 'obs':
+        plot_name = 'plots/' + plot['variable'] + '_' + plot['plot_projection'] + '_climatology_comparison_obs' + str(plot['plot_depth'])
+    if plot['comp_flag'] == 'cmip5':
+        plot_name = 'plots/' + plot['variable'] + '_' + plot['plot_projection'] + '_climatology_comparison_cmip5_' + str(plot['plot_depth'])
+    if plot['comp_flag'] == 'model':
+        plot_name = 'plots/' + plot['variable'] + '_' + plot['plot_projection'] + '_climatology_comparison_' + plot['comp_model'] + str(plot['plot_depth'])
+    return plot_name
+
 def map_climatology_comparison(plot, func):
     """ Loads and plots the data for a time averaged map.
         Loads and plots the data for comparison and plots the 
@@ -176,7 +185,7 @@ def map_climatology_comparison(plot, func):
     func(lon, lat, compdata, anom=True, ax=axr, ax_args=plot['comp_args']['climatology_args']['ax_args'],
          pcolor_args=plot['comp_args']['climatology_args']['pcolor_args'], cblabel=units,
          **plot['plot_args'])                              
-    plot_name = 'plots/' + plot['variable'] + '_' + plot['plot_projection'] + '_climatology_comparison' + str(plot['plot_depth'])
+    plot_name = climatology_comparison_name(plot)
     savefigures(plot_name, **plot)
     return plot_name   
 

@@ -121,16 +121,45 @@ def makeplot_without_catching(p, plotnames, func):
     if p['png']:
         p['plot_name'] = p['png_name']
         log(p)
+
+def calltheplot(plot, plotnames, ptype):
+    funcs = {'climatology': climatology,
+             'trends': trends,
+             'compare_climatology': compare_climatology,
+             'compare_trends': compare_trends,}   
+    #makeplot(plot, plotnames, funcs[ptype])
+    makeplot_without_catching(plot, plotnames, funcs[ptype])            
+
+def comp_loop(plot, plotnames, ptype):
+    comp = plot['compare']
+    if comp['obs']:
+        plot['comp_flag'] = 'obs'
+        plot['comp_file'] = plot['obs_file']
+        calltheplot(plot, plotnames, ptype)
+    if comp['cmip5']:
+        plot['comp_flag'] = 'cmip5'
+        plot['comp_file'] = plot['cmip5_file']
+        calltheplot(plot, plotnames, ptype)
+    if comp['model']:
+        plot['comp_flag'] = 'model'
+        for model in plot['comp_models']:
+            plot['comp_model'] = model
+            plot['comp_file'] = plot['model_file'][model]
+            calltheplot(plot, plotnames, ptype)
+    
 def loop_plot_types(plot, plotnames):
     types = ['climatology', 'trends', 'compare_climatology', 'compare_trends']
+    comptypes = ['compare_climatology', 'compare_trends']
     funcs = {'climatology': climatology,
              'trends': trends,
              'compare_climatology': compare_climatology,
              'compare_trends': compare_trends,}
     for ptype in types:
         if plot[ptype]:
-            #makeplot(plot, plotnames, funcs[ptype])
-            makeplot_without_catching(plot, plotnames, funcs[ptype])
+            if ptype in comptypes:
+                comp_loop(plot, plotnames, ptype)
+            else:
+                calltheplot(plot, plotnames, ptype)              
             
             
 def loop(plots):

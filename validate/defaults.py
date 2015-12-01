@@ -59,17 +59,19 @@ def fill(plots, defaults):
             p['pdf'] = True
         if 'png' not in p:
             p['png'] = False
+        p['comp_flag'] = None
+        if 'compare' not in p:
+            p['compare'] = {'cmip5': False,
+                            'model': False,
+                            'obs': True,}
+        else:
+            if 'cmip5' not in p['compare']:
+                p['compare']['cmip5'] = False
+            if 'model' not in p['compare']:
+                p['compare']['model'] = False        
+            if 'obs' not in p['compare']:
+                p['compare']['cmip5'] = False
 
-            
-#        if p['compare_climatology'] or p['compare_trends']:
-#            if 'comp_file' not in p:
-#                try:
-#                    lvar = p['variable'].lower()
-#                    p['comp_file'] = obs[lvar]
-#                except:
-#                    uvar = p['variable'].upper()
-#                    p['comp_file'] = obs[uvar]    
-        
         def _fill_args(data):
            if data + '_args' not in p:
                p[data + '_args'] = {}
@@ -127,20 +129,70 @@ def filltitle(p, t, d, depth):
     depth : string
             the depth of the plot
     """
-    if 'Climatology' in t:
-        if not p[d + '_args']['climatology_args']['title_flag']:
-            p[d + '_args']['climatology_args']['ax_args']['title'] = p['variable'] + ' ' + t 
-            if p['climatology_dates']:
-                p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['climatology_dates']['start_date'] + '_' + p['climatology_dates']['end_date']
-            if depth:
-                p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth        
-    elif 'Trends' in t:
-        if not p[d + '_args']['trends_args']['title_flag']:
-            p[d + '_args']['trends_args']['ax_args']['title'] = p['variable'] + ' ' + t
-            if p['trends_dates']:
-                p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['trends_dates']['start_date'] + '_' + p['trends_dates']['end_date']              
-            if depth:
-                p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth
+    if p['comp_flag'] == 'obs':
+        if 'Climatology' in t:
+            if not p[d + '_args']['climatology_args']['title_flag']:
+                p[d + '_args']['climatology_args']['ax_args']['title'] = p['variable'] + ' ' + t  
+                if p['climatology_dates']:
+                    p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['climatology_dates']['start_date'] + '_' + p['climatology_dates']['end_date']
+                if depth:
+                    p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth        
+        elif 'Trends' in t:
+            if not p[d + '_args']['trends_args']['title_flag']:
+                p[d + '_args']['trends_args']['ax_args']['title'] = p['variable'] + ' ' + t
+                if p['trends_dates']:
+                    p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['trends_dates']['start_date'] + '_' + p['trends_dates']['end_date']              
+                if depth:
+                    p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth
+    
+    elif p['comp_flag'] == 'cmip5':
+        if 'Climatology' in t:
+            if not p[d + '_args']['climatology_args']['title_flag']:
+                p[d + '_args']['climatology_args']['ax_args']['title'] = p['variable'] + ' ' + t + 'cmip5' 
+                if p['climatology_dates']:
+                    p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['climatology_dates']['start_date'] + '_' + p['climatology_dates']['end_date']
+                if depth:
+                    p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth        
+        elif 'Trends' in t:
+            if not p[d + '_args']['trends_args']['title_flag']:
+                p[d + '_args']['trends_args']['ax_args']['title'] = p['variable'] + ' ' + t +'cmip5'
+                if p['trends_dates']:
+                    p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['trends_dates']['start_date'] + '_' + p['trends_dates']['end_date']              
+                if depth:
+                    p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth
+    
+    elif p['comp_flag'] == 'model':                
+        if 'Climatology' in t:
+            if not p[d + '_args']['climatology_args']['title_flag']:
+                p[d + '_args']['climatology_args']['ax_args']['title'] = p['variable'] + ' ' + t + ' Model:  ' + p['comp_model'] 
+                if p['climatology_dates']:
+                    p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['climatology_dates']['start_date'] + '_' + p['climatology_dates']['end_date']
+                if depth:
+                    p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth        
+        elif 'Trends' in t:
+            if not p[d + '_args']['trends_args']['title_flag']:
+                p[d + '_args']['trends_args']['ax_args']['title'] = p['variable'] + ' ' + t + ' Model:  ' + p['comp_model']
+                if p['trends_dates']:
+                    p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['trends_dates']['start_date'] + '_' + p['trends_dates']['end_date']              
+                if depth:
+                    p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth 
+                    
+    else:
+        if 'Climatology' in t:
+            if not p[d + '_args']['climatology_args']['title_flag']:
+                p[d + '_args']['climatology_args']['ax_args']['title'] = p['variable'] + ' ' + t 
+                if p['climatology_dates']:
+                    p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['climatology_dates']['start_date'] + '_' + p['climatology_dates']['end_date']
+                if depth:
+                    p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth        
+        elif 'Trends' in t:
+            if not p[d + '_args']['trends_args']['title_flag']:
+                p[d + '_args']['trends_args']['ax_args']['title'] = p['variable'] + ' ' + t
+                if p['trends_dates']:
+                    p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['trends_dates']['start_date'] + '_' + p['trends_dates']['end_date']              
+                if depth:
+                    p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth
+           
     return p 
     
 

@@ -102,7 +102,7 @@ def max_end_dates(plots):
         end_dates[var] = max(end_dates[var])
     return end_dates    
 
-def _traverse(root):
+def traverse(root):
     """ Returns a list of all filenames including the path
         within a directory or any subdirectories
     
@@ -144,8 +144,10 @@ def _mkdir():
     mkthedir('plots')
     mkthedir('zonalfiles')
     mkthedir('logs')
-
-    
+    mkthedir('cmipfiles')
+    mkthedir('ENS-MEAN_cmipfiles')
+    mkthedir('ENS-STD_cmipfiles')
+        
 def _logfile(run):
     with open('logs/log.txt', 'w') as outfile:
         outfile.write('Model: ' + run + '\n\n')
@@ -337,7 +339,7 @@ def getfiles(plots, run):
     """
     _mkdir()
     _logfile(run)
-    files = _traverse('/raid/rc40/data/ncs/historical-' + run)   
+    files = traverse('/raid/rc40/data/ncs/historical-' + run)   
     _load_masks(run)
     
     realms = {}
@@ -370,7 +372,9 @@ def getfiles(plots, run):
             if p['realm_cat'] == 'ocean':
                 p['plot_args']['fill_continents'] = True
 
-def remfiles(del_fldmeanfiles=True, del_mask=True, del_ncstore=True, del_remapfiles=True, del_trendfiles=True, del_zonalfiles=True, **kwargs):
+
+def remfiles(del_fldmeanfiles=True, del_mask=True, del_ncstore=True, del_remapfiles=True, del_trendfiles=True, del_zonalfiles=True, 
+             del_cmipfiles=True, del_ENS_MEAN_cmipfiles=True, del_ENS_STD_cmipfiles=True, **kwargs):
     """ Option to delete the directories used to store processed .nc files
     
     Paremeters
@@ -393,8 +397,14 @@ def remfiles(del_fldmeanfiles=True, del_mask=True, del_ncstore=True, del_remapfi
     if del_trendfiles:
         os.system('rm -rf trendfiles')        
     if del_zonalfiles:
-        os.system('rm -rf zonalfiles')        
-        
+        os.system('rm -rf zonalfiles')     
+    if del_cmipfiles:
+        os.system('rm -rf cmipfiles')
+    if del_ENS_MEAN_cmipfiles:
+        os.system('rm -rf ENS-MEAN_cmipfiles')
+    if del_ENS_STD_cmipfiles:
+        os.system('rm -rf ENS-STD_cmipfiles')  
+              
 def getobsfiles(plots, obsroot):
     """ For every plot in the dictionary of plots
         if an observations file is needed it
@@ -408,7 +418,7 @@ def getobsfiles(plots, obsroot):
     obsroot : string
               directory path to find observations
     """
-    obsfiles = _traverse(obsroot)
+    obsfiles = traverse(obsroot)
     variables = _variable_dictionary(plots)
     for f in obsfiles:
         var = getvariable(f)
@@ -418,11 +428,12 @@ def getobsfiles(plots, obsroot):
         if p['compare_climatology'] or p['compare_trends']:
             if 'comp_file' not in p:
                 try:
-                    p['comp_file'] = variables[p['variable']][0]
+                    p['obs_file'] = variables[p['variable']][0]
                 except:
                     print 'No observations file was found for ' + p['variable']
-                    p['compare_climatology'] = False
-                    p['compare_trends'] = False                                    
+                    p['compare']['obs'] = False
+                    #p['compare_climatology'] = False
+                    #p['compare_trends'] = False                                    
     
 if __name__ == "__main__": 
     plots =[ 

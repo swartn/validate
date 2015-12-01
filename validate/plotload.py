@@ -257,7 +257,7 @@ def timeaverage_load_comp(ifile, var, depth_type, dates, realm, depthneeded, sca
             except:
                 nc = Dataset('remapfiles/remap_' + ifile, 'r')          
 
-    data, units, depth = _load(nc, var, 'level') 
+    data, units, depth = _load(nc, var, 'lev') 
     data, lon, lat, depth, units = _load2(data, nc, units, depth, scale)
     return data, units, lon, lat, depth    
 

@@ -257,7 +257,10 @@ def check_delete(delete):
                      'del_ncstore',
                      'del_remapfiles',
                      'del_trendfiles',
-                     'del_zonalfiles',]
+                     'del_zonalfiles',
+                     'del_cmipfiles',
+                     'del_ENS_MEAN_cmipfiles',
+                     'del_ENS_STD_cmipfiles',]
     for key in delete:
         if key not in possible_keys:
             raise ValueError(str(key) + ' is not a valid key for delete{}')

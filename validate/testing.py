@@ -23,18 +23,19 @@ defaults = {
             'scale': 1,
             #'plot_args': {'fill_continents': True}
             'pdf': True,
-            'png': True,
             }
 
 plots = [
-
          {    
-          'variable': 'ta',
+          'variable': 'psl',
           'plot_projection': 'mercator',
-          'depth_type': 'plev',
-          'depths':[20000, 85000, 100000],                                               
+#          'depth_type': 'lev',
+#          'depths':[2000, 850, 1000],
+          'compare': {'cmip5': False,
+                      'model': True,
+                      'obs': True,},
+          'comp_models': ['CanCM4', 'NorESM1-M'],
           }, 
-
         ]
 
 delete = {
@@ -44,10 +45,11 @@ delete = {
           'del_remapfiles': False,
           'del_trendfiles': True,
           'del_zonalfiles': True,
+          'del_ENS_MEAN_cmipfiles': True,
           }
           
 obsroot = '/raid/rc40/data/ncs/obs4comp'               
-
+cmiproot = '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
         
 if __name__ == "__main__":
-       plots_with_files = con.execute(plots, model_run, obsroot, defaults, delete)
+       plots_with_files = con.execute(plots, model_run, obsroot, cmiproot, defaults, delete)
