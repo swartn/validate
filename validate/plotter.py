@@ -46,6 +46,7 @@ def compare_climatology(plot):
                 'mercator': (pr.mercator, pc.map_climatology_comparison),
                 'time_series': (pr.timeseries, pc.timeseries_comparison),
                 'zonal_mean': (pr.zonalmean, pc.zonalmean_comparison), 
+                'taylor': (pr.taylordiagram, pc.taylor),
                 }[pl]
     func_region, func_case = pregion_comp(plot['plot_projection']) 
     return func_case(plot, func_region)
@@ -155,7 +156,7 @@ def loop_plot_types(plot, plotnames):
              'trends': trends,
              'compare_climatology': compare_climatology,
              'compare_trends': compare_trends,}
-    if plot['plot_projection'] == 'time_series' or plot['plot_projection'] == 'zonal_mean':
+    if plot['plot_projection'] == 'time_series' or plot['plot_projection'] == 'zonal_mean' or plot['plot_projection'] == 'taylor':
         plot['comp_model'] = 'Model'
         calltheplot(plot, plotnames, 'compare_climatology')
     

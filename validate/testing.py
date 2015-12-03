@@ -28,7 +28,7 @@ defaults = {
 plots = [
          {    
           'variable': 'psl',
-          'plot_projection': 'time_series',
+          'plot_projection': 'taylor',
 #          'depth_type': 'lev',
 #          'depths':[2000, 850, 1000],
           'compare': {'cmip5': True,
@@ -36,53 +36,7 @@ plots = [
                       'obs': True,},
           'comp_models': ['CanCM4', 'NorESM1-M'],
           },
-         {    
-          'variable': 'tos',
-          'plot_projection': 'time_series',
-          'depth_type': 'lev',
-          'depths':[0],
-          'compare': {'cmip5': True,
-                      'model': True,
-                      'obs': True,},
-          'comp_models': ['CanCM4', 'NorESM1-M', 'MPI-ESM-LR', 'CanESM2'],
-          },
-         {    
-          'variable': 'tos',
-          'plot_projection': 'mercator',
-          'compare': {'cmip5': True,
-                      'model': True,
-                      'obs': True,},
-          'comp_models': ['CanCM4', 'NorESM1-M', 'MPI-ESM-LR', 'CanESM2'],
-          }, 
-         {    
-          'variable': 'tos',
-          'plot_projection': 'zonal_mean',
-
-          'compare': {'cmip5': True,
-                      'model': True,
-                      'obs': True,},
-          'comp_models': ['CanCM4', 'NorESM1-M', 'MPI-ESM-LR', 'CanESM2'],
-          },                                
-         {    
-          'variable': 'psl',
-          'plot_projection': 'zonal_mean',
-#          'depth_type': 'lev',
-#          'depths':[2000, 850, 1000],
-          'compare': {'cmip5': False,
-                      'model': True,
-                      'obs': True,},
-          'comp_models': ['CanCM4', 'NorESM1-M'],
-          },
-         {    
-          'variable': 'tas',
-          'plot_projection': 'time_series',
-#          'depth_type': 'lev',
-#          'depths':[2000, 850, 1000],
-          'compare': {'cmip5': False,
-                      'model': True,
-                      'obs': True,},
-          'comp_models': ['CanCM4', 'NorESM1-M'],
-          },          
+         
         ]
 
 delete = {

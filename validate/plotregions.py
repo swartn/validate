@@ -22,6 +22,9 @@ plt.rc('font', **font)
 from netCDF4 import Dataset
 import cdo; cdo = cdo.Cdo()
 from colormaps import viridis
+from taylor import TaylorDiagram
+from operator import itemgetter
+
 
 def default_pcolor_args(data, anom=False):
     """Returns a dict with default pcolor params as key:value pairs
@@ -303,8 +306,45 @@ def zonalmean(x, data, ax=None, ax_args=None, label='model'):
     
     ax.plot(x, data, label=label)
 
-    plt.setp(ax, **ax_args)       
+    plt.setp(ax, **ax_args)
     
+def taylordiagram(refdata, plotdata, fig=None, ax_args=None):
+    refdata = refdata.flatten()
+    refstd = refdata.std(ddof=1)
+    for i,(d,n) in enumerate(plotdata):
+        plotdata[i] = d.flatten(), n
+    
+    samples = [ [m.std(ddof=1), np.corrcoef(refdata, m)[0,1], n] for m,n in plotdata]
+    if not fig:
+        fig = plt.figure()
+    else:
+        fig = plt.gcf()
+    
+    stdrange = max(samples, key=itemgetter(1))[0]*1.3/refstd
+        
+    dia = TaylorDiagram(refstd, fig=fig, label='obs', srange=(0,stdrange))
+    colors= plt.matplotlib.cm.jet(np.linspace(0,1,len(samples)))
+    
+    for i,(stddev,corrcoef, n) in enumerate(samples):
+        dia.add_sample(stddev, corrcoef,
+                       marker='$%d$' % (i+1), ms=10, ls='',
+                       mfc=colors[i], mec=colors[i],
+                       label=n)
+    dia.add_grid()
+
+    contours = dia.add_contours(colors='0.5')
+    plt.clabel(contours, inline=1, fontsize=10) 
+    fig.legend(dia.samplePoints,
+               [ p.get_label() for p in dia.samplePoints ],
+               numpoints=1, prop=dict(size='small'), loc='upper right')
+    if 'title' in ax_args:
+        plt.title(ax_args['title'])        
 if __name__ == "__main__":
-    global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='')
+    ref  = np.array([2,3,2,4,2,3,2,4,3,4,2,4,2,4,2])
+    data = [np.array([2,3,2,4,2,3,2,4,4,4,2,4,2,4,2]),
+            np.array([2,4,3,2,3,4,3,2,4,2,4,2,3,2,3]),
+            np.array([3,5,3,2,3,2,5,6,3,3,5,3,5,3,4]),
+            ]
+    taylordiagram(ref, data)
+    plt.show()
 

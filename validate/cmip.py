@@ -111,7 +111,7 @@ def getfiles(plots):
 def cmip(plots, cmipdir):
     for p in plots:
         if p['compare']['cmip5'] == True or p['compare']['model'] == True:
-            importcmip(cmipdir)
+            #importcmip(cmipdir)
             getfiles(plots)
             break
             
