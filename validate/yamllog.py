@@ -24,9 +24,9 @@ def convert(plot):
     yamplot['depth'] = str(plot['plot_depth'])    
     yamplot['plot_projection'] = plot['plot_projection']
     yamplot['plot_type'] = plot['plot_type']
-    if plot['plot_type'] == 'compare_trends' or plot['plot_type'] == 'compare_climatology':
+    try:
         yamplot['comp_file'] = plot['comp_file']
-    else:
+    except:
         yamplot['comp_file'] = 'N/A'     
     if plot['plot_type'] == 'climatology' or plot['plot_type'] == 'compare_climatology':
         yamplot['dates'] = plot['climatology_dates']

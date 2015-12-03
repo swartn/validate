@@ -40,17 +40,22 @@ def _orderplots(plotnames):
     """   
     plotdict = {}
     for p in plotnames:
-        plotdict[p['variable']] = {}
+        plotdict[p['realm']] = {}
     for p in plotnames:
-        plotdict[p['variable']][p['plot_type']] = {}
+        plotdict[p['realm']][p['variable']] = {}
+    for p in plotnames:
+        plotdict[p['realm']][p['variable']][p['plot_type']] = {}
 
     for p in plotnames:
-        plotdict[p['variable']][p['plot_type']][p['plot_projection']] = {'sorteddepthlist': [],
-                                                                         'depthfile': {},}
+        plotdict[p['realm']][p['variable']][p['plot_type']][p['plot_projection']] = {'sorteddepthlist': [],
+                                                                                     'depthfile': {},}
     for p in plotnames:
-        plotdict[p['variable']][p['plot_type']][p['plot_projection']]['sorteddepthlist'].append(p['plot_depth']) 
-        plotdict[p['variable']][p['plot_type']][p['plot_projection']]['sorteddepthlist'].sort()
-        plotdict[p['variable']][p['plot_type']][p['plot_projection']]['depthfile'][p['plot_depth']] = p['plot_name']       
+        plotdict[p['realm']][p['variable']][p['plot_type']][p['plot_projection']]['sorteddepthlist'].append(p['plot_depth']) 
+        plotdict[p['realm']][p['variable']][p['plot_type']][p['plot_projection']]['sorteddepthlist'].sort()
+        plotdict[p['realm']][p['variable']][p['plot_type']][p['plot_projection']]['depthfile'][p['plot_depth']] = {}
+        
+    for p in plotnames:   
+        plotdict[p['realm']][p['variable']][p['plot_type']][p['plot_projection']]['depthfile'][p['plot_depth']][p['comp_model']] = p['plot_name']
     return plotdict
 
 def pdfmarks(plotdict):
@@ -71,18 +76,23 @@ def pdfmarks(plotdict):
     
     plist = []
     page_count = 1
-    for var in plotdict:    
-        f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + var + ") /Count -"+str(len(plotdict[var].keys())) + " /OUT pdfmark\n")
-        for ptype in plotdict[var]:
-            f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + ptype + ") /Count -" + str(len(plotdict[var][ptype].keys())) + " /OUT pdfmark\n")
-            for pp in plotdict[var][ptype]:
-                f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + pp + ") /Count -" + str(len(plotdict[var][ptype][pp]['sorteddepthlist'])) + " /OUT pdfmark\n")
-                for depth in plotdict[var][ptype][pp]['sorteddepthlist']:
-                    plotdict[var][ptype][pp]['sorteddepthlist'] = list(set(plotdict[var][ptype][pp]['sorteddepthlist']))
-                    f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + str(depth) + ") /OUT pdfmark\n")
-                    print plotdict[var][ptype][pp]['depthfile'][depth]
-                    plist.append(str(plotdict[var][ptype][pp]['depthfile'][depth]))
-                    page_count += 1
+    for realm in plotdict:
+        f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + realm + ") /Count -"+str(len(plotdict[realm].keys())) + " /OUT pdfmark\n")
+        for var in plotdict[realm]:    
+            f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + var + ") /Count -"+str(len(plotdict[realm][var].keys())) + " /OUT pdfmark\n")
+            for ptype in plotdict[realm][var]:
+                f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + ptype + ") /Count -" + str(len(plotdict[realm][var][ptype].keys())) + " /OUT pdfmark\n")
+                for pp in plotdict[realm][var][ptype]:
+                    f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + pp + ") /Count -" + str(len(plotdict[realm][var][ptype][pp]['depthfile'].keys())) + " /OUT pdfmark\n")
+                    for depth in list(set(plotdict[realm][var][ptype][pp]['sorteddepthlist'])):
+                        
+                        plotdict[realm][var][ptype][pp]['sorteddepthlist'] = list(set(plotdict[realm][var][ptype][pp]['sorteddepthlist']))
+                        f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + str(depth) + ") /Count -" + str(len(plotdict[realm][var][ptype][pp]['depthfile'][depth])) +" /OUT pdfmark\n")
+                        for model in plotdict[realm][var][ptype][pp]['depthfile'][depth]:
+                            f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + model + ") /OUT pdfmark\n")
+                            print plotdict[realm][var][ptype][pp]['depthfile'][depth][model]
+                            plist.append(str(plotdict[realm][var][ptype][pp]['depthfile'][depth][model]))
+                            page_count += 1
 
     f.close()
     pstring = " ".join(plist)

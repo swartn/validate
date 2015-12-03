@@ -7,8 +7,9 @@ cmip
 
 
 import cmipdata as cd
+import cdo; cdo = cdo.Cdo()
 import os
-from directory_tools import traverse
+from directory_tools import traverse, max_end_dates, min_start_dates
 
 def importcmip(directory='/raid/ra40/CMIP5_OTHER_DOWNLOADS/'):
     files = traverse(directory)
@@ -23,16 +24,13 @@ def importcmip(directory='/raid/ra40/CMIP5_OTHER_DOWNLOADS/'):
         os.system('ln -s ' + f + ' ./cmipfiles/' + newfile)  
     
 def model_average(var, model):
-    ens = cd.mkensemble('cmipfiles/' + var + '_*' + model + '_*historical_*.nc', prefix='cmipfiles/')
-    ens.fulldetails()
-    ens = cd.cat_exp_slices(ens)
-    ens.fulldetails()
-    means, stdevs = cd.ens_stats(ens, var)
-    try:
-        new = means[0].replace('.nc', model + '.nc')
+    new = 'ENS-MEAN_cmipfiles/' + var + '_' + model + '.nc'
+    if not os.path.isfile(new):
+        ens = cd.mkensemble('cmipfiles/' + var + '_*' + model + '_*historical_*.nc', prefix='cmipfiles/')
+        ens = cd.cat_exp_slices(ens)
+        means, stdevs = cd.ens_stats(ens, var)
+        new = 'ENS-MEAN_cmipfiles/' + var + '_' + model + '.nc'
         os.rename(means[0], new)
-    except: 
-        pass
     return new
 
 def models(var, model):
@@ -41,17 +39,37 @@ def models(var, model):
     ens = cd.cat_exp_slices(ens)
     return ens.lister('ncfile')
     
-def cmip_average(var):
-    ens = cd.mkensemble('cmipfiles/' + var + '_*historical_*.nc', prefix='cmipfiles/')
-    models = ens.lister('model')
-    print models
-    model_averages = []
-    for m in models:
-        model_average = model_average(var, m)
-        new = model_average.replace('.nc', var + '.nc')
-        os.rename(model_average, new)
-        model_averages.append(new)
-    return model_averages
+def cmipaverage(var, model_file, sd, ed):    
+    out = 'ENS-MEAN_cmipfiles/' + var + '_' + 'cmip5.nc'
+    if not os.path.isfile(out):
+        filelist = list(set(model_file.values()))
+        newfilelist = []
+        newerfilelist = []
+        for f in filelist:
+            print f + '\n\n\n\n'
+            print sd
+            print ed
+            time = f.replace('.nc', '_time.nc')
+#            try:
+            os.system('cdo -L seldate,' + sd + ',' + ed + ' -selvar,' + var + ' ' + f + ' ' + time)
+#            cdo.seldate(sd+','+ed, options = '-L', input='-selvar,' + var + ' ' + f, output=time)
+#            except:
+#                pass
+#            else: 
+            newfilelist.append(time)  
+        for f in newfilelist:
+            remap = f.replace('.nc', '_remap.nc')
+ #           try:
+            cdo.remapdis('r360x180', input=f, output=remap)
+#            except:
+#                pass
+#            else: 
+            newerfilelist.append(remap)
+              
+        filestring = ' '.join(newerfilelist)
+        cdo.ensmean(input = filestring, output = out)
+    return out
+
 
 #def cmips(var):
 #    ens = cd.mkensemble('cmipfiles/' + var + '_*historical_*.nc', prefix='cmipfiles/')
@@ -62,40 +80,47 @@ def cmip_average(var):
 #        model_averages.append(model_average(var, m))
 #    print model_averages    
 #    return model_averages
-    
-def cmip(plots, cmipdir):
-    for p in plots:
-        if p['compare']['cmip5'] == True or p['compare']['model'] == True:
-            importcmip(cmipdir)
-            break
+
+
+def getfiles(plots):
+    startdates = min_start_dates(plots)
+    enddates = max_end_dates(plots)    
+    cmip5_variables = {}
     for p in plots:
         p['model_files'] = {}
         p['model_file'] = {}
         p['cmip5_files'] = {}
         p['cmip5_file'] = {}
         comp = p['compare']
-        if comp['cmip5']:
-            pass
-        if comp['model']:
-            for model in p['comp_models']:
-                p['model_file'][model] = model_average(p['variable'], model)
-            print p['model_file']
+        if comp['model'] or comp['cmip5']:
+            for model in p['comp_models'][:]:
+                try:
+                    p['model_file'][model] = model_average(p['variable'], model)
+                except:
+                    with open('logs/log.txt', 'a') as outfile:
+                        outfile.write('No cmip5 files were found for ' + p['variable'] + ': ' + model + '\n\n')
+                    print 'No cmip5 files were found for ' + p['variable'] + ': ' + model
+                    p['comp_models'].remove(model)
+    for p in plots:
+        if p['compare']['cmip5']:
+            try:
+                p['cmip5_file'] = cmipaverage(p['variable'], p['model_file'], str(startdates[p['variable']]) + '-01', str(enddates[p['variable']])+ '-01')
+            except:
+                p['compare']['cmip5'] = False
+                   
+def cmip(plots, cmipdir):
+    for p in plots:
+        if p['compare']['cmip5'] == True or p['compare']['model'] == True:
+            importcmip(cmipdir)
+            getfiles(plots)
+            break
+            
 
                               
 
 if __name__=="__main__":
     plots = [
-         {    
-          'variable': 'no3',
-          'plot_projection': 'time_series',
-          'compare_climatology': True,
-          'depth_type': 'plev',
-          'depths':[20000, 85000, 100000],
-          'compare': {#'cmip5': True,
-                      #'cmip5_average': True,
-                      'model': ['CanESM2',],
-                      'model_average': ['CanESM2']},                                            
-          }, 
+
         ]
     
     cmip(plots, '/raid/ra40/CMIP5_OTHER_DOWNLOADS/')

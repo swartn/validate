@@ -60,7 +60,6 @@ def trends(plot):
                 'polar_map': (pr.polar_map, pc.map_trends),
                 'polar_map_south': (pr.polar_map_south, pc.map_trends),
                 'mercator': (pr.mercator, pc.map_trends),
-                'time_series': (pr.timeseries, pc.timeseries)
                 }[pl]
     func_region, func_case = pregion_trends(plot['plot_projection']) 
     return func_case(plot, func_region)   
@@ -96,7 +95,7 @@ def makeplot(p, plotnames, func):
         plot_name = func(p)
     except:
         with open('logs/log.txt', 'a') as outfile:
-            outfile.write('Failed to plot ' + p['variable'] + ', ' + p['plot_projection'] + ', ' + p['plot_type'] + ', at depth:' + str(p['depth']) + '\n\n')
+            outfile.write('Failed to plot ' + p['variable'] + ', ' + p['plot_projection'] + ', ' + p['plot_type'] + ', ' + p['comp_model'] + ', at depth:' + str(p['depth']) + '\n\n')
     else:
         p['plot_name'] = plot_name + '.pdf'
         p['png_name'] = plot_name + '.png'    
@@ -107,7 +106,7 @@ def makeplot(p, plotnames, func):
             p['plot_name'] = p['png_name']
             log(p)
         with open('logs/log.txt', 'a') as outfile:
-            outfile.write('Successfully plotted ' + p['variable'] + ', ' + p['plot_projection'] + ', ' + p['plot_type'] + ', at depth:' + str(p['depth']) + '\n\n')    
+            outfile.write('Successfully plotted ' + p['variable'] + ', ' + p['plot_projection'] + ', ' + p['plot_type'] + ', ' + p['comp_model'] + ', at depth:' + str(p['depth']) + '\n\n')    
     
 def makeplot_without_catching(p, plotnames, func):
     p['plot_type'] = func.__name__
@@ -133,11 +132,13 @@ def calltheplot(plot, plotnames, ptype):
 def comp_loop(plot, plotnames, ptype):
     comp = plot['compare']
     if comp['obs']:
+        plot['comp_model'] = 'Observations'
         plot['comp_flag'] = 'obs'
         plot['comp_file'] = plot['obs_file']
         calltheplot(plot, plotnames, ptype)
     if comp['cmip5']:
         plot['comp_flag'] = 'cmip5'
+        plot['comp_model'] = 'cmip5'
         plot['comp_file'] = plot['cmip5_file']
         calltheplot(plot, plotnames, ptype)
     if comp['model']:
@@ -154,12 +155,18 @@ def loop_plot_types(plot, plotnames):
              'trends': trends,
              'compare_climatology': compare_climatology,
              'compare_trends': compare_trends,}
-    for ptype in types:
-        if plot[ptype]:
-            if ptype in comptypes:
-                comp_loop(plot, plotnames, ptype)
-            else:
-                calltheplot(plot, plotnames, ptype)              
+    if plot['plot_projection'] == 'time_series' or plot['plot_projection'] == 'zonal_mean':
+        plot['comp_model'] = 'Model'
+        calltheplot(plot, plotnames, 'compare_climatology')
+    
+    else:
+        for ptype in types:
+            if plot[ptype]:
+                if ptype in comptypes:
+                    comp_loop(plot, plotnames, ptype)
+                else:
+                    plot['comp_model'] = 'Model'
+                    calltheplot(plot, plotnames, ptype)              
             
             
 def loop(plots):

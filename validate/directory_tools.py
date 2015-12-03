@@ -9,10 +9,9 @@ directories and gathering information from files.
 """
 
 
-
 import os
 import cdo; cdo = cdo.Cdo()
-       
+
 def _variable_dictionary(plots):
     """ Creates a dictionary with the variable names as keys
         mapped to empty lists
@@ -430,6 +429,8 @@ def getobsfiles(plots, obsroot):
                 try:
                     p['obs_file'] = variables[p['variable']][0]
                 except:
+                    with open('logs/log.txt', 'a') as outfile:
+                        outfile.write('No observations file was found for ' + p['variable'] + '\n\n')
                     print 'No observations file was found for ' + p['variable']
                     p['compare']['obs'] = False
                     #p['compare_climatology'] = False

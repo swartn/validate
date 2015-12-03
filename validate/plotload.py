@@ -365,7 +365,7 @@ def trends_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
     return data, units, lon, lat, depth  
 
    
-def timeseries_load(ifile, var, depth_type, dates, scale):
+def timeseries_load(ifile, var, depth_type, dates, realm, scale):
     """ Loads the field mean data over specified dates from a file.
         Remaps and scales the data. 
                 
@@ -391,10 +391,18 @@ def timeseries_load(ifile, var, depth_type, dates, scale):
     path, ifile = os.path.split(ifile)
 #    if not os.path.isfile('fldmeanfiles/fldmean_' + ifile):
 #        cdo.fldmean(input=path + '/' + ifile, output='fldmeanfiles/fldmean_' + ifile)
-    
+
     if _check_dates(path + '/' + ifile, dates):           
         if not os.path.isfile('fldmeanfiles/fldmean_' + ifile +  str(dates['start_date']) + str(dates['end_date']) + '.nc'):
-            cdo.fldmean(input='-seldate,' + str(dates['start_date']) + ',' +str(dates['end_date']) + ' ' + path + '/' + ifile, output='fldmeanfiles/fldmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
+            out = 'fldmeanfiles/fldmean.nc'
+            if realm == 'ocean':
+                cdo.mul(input='-divc,100 mask/ocean ' + path + '/' + ifile, output=out)
+            elif realm == 'land':
+                cdo.mul(input='-divc,100 mask/land ' + path + '/' + ifile, output=out)
+            else:
+                out = path + '/' + ifile  
+                       
+            cdo.fldmean(input='-setctomiss,0 -seldate,' + str(dates['start_date']) + ',' +str(dates['end_date']) + ' ' + out, output='fldmeanfiles/fldmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
         nc = Dataset('fldmeanfiles/fldmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
     else:
         if not os.path.isfile('fldmeanfiles/fldmean_' + ifile):
@@ -453,8 +461,11 @@ def timeseries_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
             out = 'fldmeanfiles/selvar.nc'
             cdo.selvar(var, input=path + '/' + ifile, output=out)
             cdo.fldmean(options='-L', input='-seldate,' + str(dates['start_date']) + ',' +str(dates['end_date']) + ' ' + out, output='fldmeanfiles/fldmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
-        cdo.intlevelx(str(depthneededstr), input='fldmeanfiles/fldmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', output='fldmeanfiles/fldmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc')
-        nc = Dataset('fldmeanfiles/fldmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc', 'r')
+        try:    
+            cdo.intlevelx(str(depthneededstr), input='fldmeanfiles/fldmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', output='fldmeanfiles/fldmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc')
+            nc = Dataset('fldmeanfiles/fldmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc', 'r')
+        except:
+            nc = Dataset('fldmeanfiles/fldmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
     else:
         if not os.path.isfile('fldmeanfiles/fldmean_' + ifile):
             cdo.fldmean(input=path + '/' + ifile, output='fldmeanfiles/fldmean_' + ifile)
@@ -478,7 +489,7 @@ def timeseries_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
     
    
 
-def zonal_load(ifile, var, depth_type, dates, scale):
+def zonal_load(ifile, var, depth_type, dates, realm, scale):
     """ Loads the zonal mean data over specified dates from a file.
         Remaps and scales the data. 
                 
@@ -504,9 +515,17 @@ def zonal_load(ifile, var, depth_type, dates, scale):
     """
     path, ifile = os.path.split(ifile)
     
-    if dates:           
+    if _check_dates(path + '/' + ifile, dates):          
         if not os.path.isfile('zonalfiles/zonmean_' + ifile +  str(dates['start_date']) + str(dates['end_date']) + '.nc'):
-            cdo.zonmean(options='-L', input='-timmean -seldate,' + str(dates['start_date']) + ',' +str(dates['end_date']) + ' ' + path + '/' + ifile, output='zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
+            out = 'zonalfiles/zonmean.nc'
+            if realm == 'ocean':
+                cdo.mul(input='-divc,100 mask/ocean ' + path + '/' + ifile, output=out)
+            elif realm == 'land':
+                cdo.mul(input='-divc,100 mask/land ' + path + '/' + ifile, output=out)
+            else:
+                out = path + '/' + ifile  
+                        
+            cdo.zonmean(options='-L', input='-timmean -setctomiss,0 -seldate,' + str(dates['start_date']) + ',' +str(dates['end_date']) + ' ' + out, output='zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
         nc = Dataset('zonalfiles/zonmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
     else:
         if not os.path.isfile('zonalfiles/zonmean_' + ifile):
@@ -553,9 +572,14 @@ def zonal_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
         if not os.path.isfile('zonalfiles/zonmean_' + ifile +  str(dates['start_date']) + str(dates['end_date']) + '.nc'):
             out = 'zonalfiles/selvar.nc'
             cdo.selvar(var, input=path + '/' + ifile, output=out)
-            cdo.zonmean(input='-timmean -seldate,' + str(dates['start_date']) + ',' +str(dates['end_date']) + ' ' + out, output='zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
-        cdo.intlevelx(str(depthneededstr), input='zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', output='zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc')
-        nc = Dataset('zonalfiles/zonmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc', 'r')
+            out2 = 'zonalfiles/selvarremap.nc'            
+            cdo.remapdis('r360x180', input=out, output=out2)
+            cdo.zonmean(options= '-L', input='-timmean -seldate,' + str(dates['start_date']) + ',' +str(dates['end_date']) + ' ' + out2, output='zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
+        try:    
+            cdo.intlevelx(str(depthneededstr), input='zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', output='zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc')
+            nc = Dataset('zonalfiles/zonmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc', 'r')
+        except:
+            nc = Dataset('zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
     else:
         if not os.path.isfile('zonalfiles/zonmean_' + ifile):
             out = 'zonalfiles/selvar.nc'
