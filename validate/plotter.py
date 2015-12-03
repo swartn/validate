@@ -158,8 +158,7 @@ def loop_plot_types(plot, plotnames):
              'compare_trends': compare_trends,}
     if plot['plot_projection'] == 'time_series' or plot['plot_projection'] == 'zonal_mean' or plot['plot_projection'] == 'taylor':
         plot['comp_model'] = 'Model'
-        calltheplot(plot, plotnames, 'compare_climatology')
-    
+        calltheplot(plot, plotnames, 'compare_climatology')   
     else:
         for ptype in types:
             if plot[ptype]:
@@ -198,22 +197,4 @@ def loop(plots):
 
         
 if __name__ == "__main__":
-    ifile_ptrc = ('/raid/ra40/data/ncs/nemo_out/nue/' +
-                  'mc_nue_1m_20000101_20001231_ptrc_t.nc.001')    
-    plots = [
-         {'ifile': ifile_ptrc,
-          'variable': 'DIC',
-          'plot_projection': 'global_map',
-          'plot_type': 'standard',
-          'plot _args': {'data1_args': {'pcolor_args': {'vmin' : 1800, 'vmax' : 2300}}
-                         }                       
-          },
-
-         {'ifile' : ifile_ptrc,
-          'variable' : 'NO3',
-          'plot_projection' : 'global_map',
-          'plot_type': 'comparison',          
-          },
-         ]
-    loop(plots)
-
+    pass

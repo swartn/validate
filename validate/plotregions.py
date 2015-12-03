@@ -338,7 +338,10 @@ def taylordiagram(refdata, plotdata, fig=None, ax_args=None):
                [ p.get_label() for p in dia.samplePoints ],
                numpoints=1, prop=dict(size='small'), loc='upper right')
     if 'title' in ax_args:
-        plt.title(ax_args['title'])        
+        plt.title(ax_args['title']) 
+        
+        
+             
 if __name__ == "__main__":
     ref  = np.array([2,3,2,4,2,3,2,4,3,4,2,4,2,4,2])
     data = [np.array([2,3,2,4,2,3,2,4,4,4,2,4,2,4,2]),

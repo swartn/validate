@@ -23,8 +23,8 @@ class TaylorDiagram(object):
         """
 
         from matplotlib.projections import PolarAxes
-        import mpl_toolkits.axisartist.floating_axes as FA
-        import mpl_toolkits.axisartist.grid_finder as GF
+        import mpl_toolkits.axisartist.floating_axes as fa
+        import mpl_toolkits.axisartist.grid_finder as gf
 
         self.refstd = refstd            # Reference standard deviation
 
@@ -33,14 +33,14 @@ class TaylorDiagram(object):
         # Correlation labels
         rlocs = np.concatenate((np.arange(10)/10.,[0.95,0.99]))
         tlocs = np.arccos(rlocs)        # Conversion to polar angles
-        gl1 = GF.FixedLocator(tlocs)    # Positions
-        tf1 = GF.DictFormatter(dict(zip(tlocs, map(str,rlocs))))
+        gl1 = gf.FixedLocator(tlocs)    # Positions
+        tf1 = gf.DictFormatter(dict(zip(tlocs, map(str,rlocs))))
 
         # Standard deviation axis extent (in units of reference stddev)
         self.smin = srange[0]*self.refstd
         self.smax = srange[1]*self.refstd
 
-        ghelper = FA.GridHelperCurveLinear(tr,
+        ghelper = fa.GridHelperCurveLinear(tr,
                                            extremes=(0, np.pi/2, # 1st quadrant
                                                      self.smin, self.smax),
                                            grid_locator1=gl1,
@@ -49,7 +49,7 @@ class TaylorDiagram(object):
         if fig is None:
             fig = plt.figure()
 
-        ax = FA.FloatingSubplot(fig, rect, grid_helper=ghelper)
+        ax = fa.FloatingSubplot(fig, rect, grid_helper=ghelper)
         fig.add_subplot(ax)
 
         # Adjust axes

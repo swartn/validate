@@ -655,7 +655,7 @@ def zonalmean_comparison(plot, func):
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_zonalmean_comparison' + str(plot['plot_depth'])
     savefigures(plot_name, **plot)
     return plot_name
-
+    
 def taylor_time(plot, func):
     print 'plotting taylor diagram of ' + plot['variable']
     data, units, x, depth = pl.timeseries_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat'], plot['scale'])
