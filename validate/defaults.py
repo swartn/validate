@@ -7,7 +7,6 @@ existence checks will not be needed later.
 
 .. moduleauthor:: David Fallis
 """
-
 def fill(plots, defaults):
     """ Fills the blank spaces in plots with default values and returns the list
     
@@ -35,14 +34,10 @@ def fill(plots, defaults):
             p['plot_projection'] = 'global_map'
         if 'climatology' not in p:
             p['climatology'] = False
-        if 'climatology_dates' not in p:
-            p['climatology_dates'] = {}
         if 'compare_climatology' not in p:
             p['compare_climatology'] = False
         if 'trends' not in p:
             p['trends'] = False
-        if 'trends_dates' not in p:
-            p['trends_dates'] = {}
         if 'compare_trends' not in p:
             p['compare_trends'] = False
         if 'frequency' not in p:
@@ -71,6 +66,8 @@ def fill(plots, defaults):
                 p['compare']['model'] = False        
             if 'obs' not in p['compare']:
                 p['compare']['cmip5'] = False
+
+            
 
         def _fill_args(data):
            if data + '_args' not in p:

@@ -189,7 +189,10 @@ def timeaverage_load(ifile, var, depth_type, dates, realm, scale):
                 cdo.mul(input='-divc,100 mask/land ' + path + '/' + ifile, output=out)
             else:
                 out = path + '/' + ifile
-            cdo.remapdis('r360x180', input='-setctomiss,0 -timmean -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output='remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
+            cdo.selvar(var, input=out, output='remapfiles/selvar.nc')
+            out='remapfiles/selvar.nc'
+            cdo.timmean(input ='-seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output='remapfiles/seldate.nc')
+            cdo.remapdis('r360x180', options='-L', input='-setctomiss,0 remapfiles/seldate.nc', output='remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
         nc = Dataset('remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
     else:
         if not os.path.isfile('remapfiles/remap_' + ifile):

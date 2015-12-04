@@ -29,6 +29,8 @@ def _variable_dictionary(plots):
         variables[p['variable']] = []
     return variables
 
+
+
 def min_start_dates(plots):
     """ Returns a dictionary which maps the variable names
         to the earliest year needed for that variable in all of the plots
@@ -47,24 +49,19 @@ def min_start_dates(plots):
             if 'climatology_dates' in p:
                 if 'start_date' in p['climatology_dates']:
                     start_dates[p['variable']].append(p['climatology_dates']['start_date'])
-                else:
-                    start_dates[p['variable']].append('0')
-            else:
-                start_dates[p['variable']].append('0')
         if p['trends'] or p['compare_trends']:
             if 'trends_dates' in p:
                 if 'start_date' in p['trends_dates']:
                     start_dates[p['variable']].append(p['trends_dates']['start_date'])
-                else:
-                    start_dates[p['variable']].append('0')    
-            else:
-                start_dates[p['variable']].append('0')
-        
     for var in start_dates:
         start_dates[var] = [int(date[:4]) for date in start_dates[var]]
-        start_dates[var] = min(start_dates[var])
+        try:
+            start_dates[var] = min(start_dates[var])
+        except:
+            start_dates[var] = None
     return start_dates
-        
+     
+
 def max_end_dates(plots):
     """ Returns a dictionary which maps the variable names
         to the latest year needed for that variable in all of the plots
@@ -83,24 +80,19 @@ def max_end_dates(plots):
             if 'climatology_dates' in p:
                 if 'end_date' in p['climatology_dates']:
                     end_dates[p['variable']].append(p['climatology_dates']['end_date'])
-                else:
-                    end_dates[p['variable']].append('3000')    
-            else:
-                end_dates[p['variable']].append('3000')
         if p['trends'] or p['compare_trends']:
             if 'trends_dates' in p:
                 if 'end_date' in p['trends_dates']:
                     end_dates[p['variable']].append(p['trends_dates']['end_date'])
-                else:
-                    end_dates[p['variable']].append('3000')
-            else:
-                end_dates[p['variable']].append('3000')
         
     for var in end_dates:
         end_dates[var] = [int(date[:4]) for date in end_dates[var]]
-        end_dates[var] = max(end_dates[var])
-    return end_dates    
-
+        try:
+            end_dates[var] = max(end_dates[var])
+        except:
+            end_dates[var] = None
+    return end_dates 
+      
 def traverse(root):
     """ Returns a list of all filenames including the path
         within a directory or any subdirectories
@@ -186,8 +178,15 @@ def _remove_files_out_of_date_range(filedict, start_dates, end_dates):
         if len(filedict[d]) > 1:
             for infile in filedict[d][:]:
                 sd, ed = getdates(infile)
-                if int(sd) > int (end_dates[d[1]]) or int(ed) < int(start_dates[d[1]]):
-                    filedict[d].remove(infile)
+                if end_dates[d[1]]:
+                    if int(sd) > int(end_dates[d[1]]):
+                        filedict[d].remove(infile)
+                if start_dates[d[1]]:
+                    if int(ed) < int(start_dates[d[1]]):
+                        try:
+                            filedict[d].remove(infile)
+                        except:
+                            pass
     return filedict  
 
                       
@@ -248,16 +247,15 @@ def getdates(f):
     return start, end
     
 def getvariable(f):
-    """ Returns the years from a filename and directory path
-        This is dependant on the cmip naming convention
+    """ Returns the variable from a filename and directory path
+    
     Parameters
     ----------
     string : name of file including path
     
     Returns
     -------
-    string of start year
-    string of end year
+    string of var
     """
     x = f.rsplit('/',1)
     x = x[1].split('_',1)
@@ -441,7 +439,17 @@ def getobsfiles(plots, obsroot):
                     with open('logs/log.txt', 'a') as outfile:
                         outfile.write('No observations file was found for ' + p['variable'] + '\n\n')
                     print 'No observations file was found for ' + p['variable']
-                    p['compare']['obs'] = False                                 
+                    p['compare']['obs'] = False  
+    
+    def fill_dates(dtype, p):
+        sd, ed = getdates(p['ifile'])
+        p[dtype + '_dates'] = {'start_date': str(sd) + '-01',
+                                   'end_date': str(ed) + '-01'}
+    for p in plots:
+        if 'climatology_dates' not in p:
+            fill_dates('climatology', p)
+        if 'trends_dates' not in p:
+            fill_dates('trends', p)                               
     
 if __name__ == "__main__": 
-    print getdates('/raid/ra40/CMIP5_OTHER_DOWNLOADS/tas/tas_Amon_MPI-ESM-MR_piControl_r1i1p1_185001-200512.nc')
+    pass

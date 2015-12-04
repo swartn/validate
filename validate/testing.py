@@ -12,11 +12,11 @@ model_run = 'edr'
 
 defaults = {
             'climatology': True,
-            'climatology_dates': {'start_date': '1991-01', 'end_date': '2000-01'},
+#            'climatology_dates': {'start_date': '1850-01', 'end_date': '2000-01'},
             'compare_climatology': True,
 
             'trends': False,
-            'trends_dates': {'start_date': '1991-01', 'end_date': '2000-01'},
+#            'trends_dates': {'start_date': '1991-01', 'end_date': '2000-01'},
             'compare_trends': False,
 
             'realization': '1',
@@ -30,54 +30,14 @@ plots = [
          {    
           'variable': 'psl',
           'plot_projection': 'mercator',
-          'depth_type': 'lev',
-#          'depths':[2000, 850, 1000],
-          'compare': {'cmip5': True,
-                      'model': True,
-                      'obs': True,},
-          'comp_models': ['CanCM4', 'NorESM1-M'],
-          },
-         {    
-          'variable': 'psl',
-          'plot_projection': 'taylor',
 #          'depth_type': 'lev',
 #          'depths':[2000, 850, 1000],
           'compare': {'cmip5': True,
                       'model': True,
                       'obs': True,},
           'comp_models': ['CanCM4', 'NorESM1-M'],
-          },
-         {    
-          'variable': 'psl',
-          'plot_projection': 'mercator',
-          'depth_type': 'lev',
-#          'depths':[2000, 850, 1000],
-          'compare': {'cmip5': True,
-                      'model': True,
-                      'obs': True,},
-          'comp_models': ['CanCM4', 'NorESM1-M'],
-          },
-         {    
-          'variable': 'ta',
-          'plot_projection': 'section',
-          'compare_trends': True,
-          'depth_type': 'lev',
-#          'depths':[2000, 850, 1000],
-          'compare': {'cmip5': True,
-                      'model': True,
-                      'obs': True,},
-          'comp_models': ['CanCM4', 'NorESM1-M'],
-          },
-         {    
-          'variable': 'psl',
-          'plot_projection': 'zonal_mean',
-          'depth_type': 'lev',
-#          'depths':[2000, 850, 1000],
-          'compare': {'cmip5': True,
-                      'model': True,
-                      'obs': True,},
-          'comp_models': ['CanCM4', 'NorESM1-M'],
-          },          
+          'frequency': 'mon'
+          },         
         ]
 
 delete = {
@@ -96,4 +56,4 @@ obsroot = '/raid/rc40/data/ncs/obs4comp'
 cmiproot = '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
         
 if __name__ == "__main__":
-       plots_with_files = con.execute(plots, model_run, obsroot, cmiproot, defaults, delete)
+       plots_with_files = con.execute(plots, model_run, obsroot, cmiproot, defaults, delete, debugging=True)
