@@ -9,6 +9,8 @@ directories and gathering information from files.
 """
 import os
 import cdo; cdo = cdo.Cdo()
+from netCDF4 import Dataset, num2date, date2num
+import datetime
 
 def _variable_dictionary(plots):
     """ Creates a dictionary with the variable names as keys
@@ -217,6 +219,7 @@ def _cat_file_slices(filedict):
             filedict[d] = filedict[d][0]
     return filedict
 
+
 def getdates(f):
     """ Returns the years from a filename and directory path
     
@@ -229,13 +232,21 @@ def getdates(f):
     string of start year
     string of end year
     """
-    x = f.rsplit('/',1)
-    x = x[1].rsplit('.',1)
-    x = x[0].rsplit('_',1)
-    x = x[1].split('-',1)
-    return x[0][:4], x[1][:4] 
-
-                          
+    nc = Dataset(f, 'r')
+    time = nc.variables['time_bnds'][:].squeeze()
+    nc_time = nc.variables['time']
+    try: 
+        cal = nc_time.calendar
+    except:
+        cal = 'standard'
+    start = nc_time[:][0]
+    end = nc_time[:][-1]
+    start = num2date(start, nc_time.units, cal)
+    end = num2date(end, nc_time.units, cal)
+    start = start.year
+    end = end.year
+    return start, end
+    
 def getvariable(f):
     """ Returns the years from a filename and directory path
         This is dependant on the cmip naming convention
@@ -433,4 +444,4 @@ def getobsfiles(plots, obsroot):
                     p['compare']['obs'] = False                                 
     
 if __name__ == "__main__": 
-    pass
+    print getdates('/raid/ra40/CMIP5_OTHER_DOWNLOADS/tas/tas_Amon_MPI-ESM-MR_piControl_r1i1p1_185001-200512.nc')
