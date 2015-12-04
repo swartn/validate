@@ -11,7 +11,12 @@ import cdo; cdo = cdo.Cdo()
 import os
 from directory_tools import traverse, max_end_dates, min_start_dates
 
+
 def importcmip(directory='/raid/ra40/CMIP5_OTHER_DOWNLOADS/'):
+    try:
+        os.makedirs('cmipfiles')
+    except:
+        pass
     files = traverse(directory)
 
     print len(files)    
@@ -110,8 +115,8 @@ def getfiles(plots):
                    
 def cmip(plots, cmipdir, load):
     for p in plots:
-        if p['compare']['cmip5'] == True or p['compare']['model'] == True:
-            if load:
+        if p['compare']['cmip5'] == True or p['compare']['model'] == True:            
+            if (not os.path.exists('cmipfiles')) or load:
                 importcmip(cmipdir)
             getfiles(plots)
             break

@@ -17,7 +17,7 @@ from defaults import fill
 from check import check_inputs
 from cmip import cmip
 
-def execute(plots, run, obsroot=None, cmiproot=None, defaults={}, delete={}, obs={}, load_cmip5=True, check_input=True):
+def execute(plots, run, obsroot=None, cmiproot=None, defaults={}, delete={}, obs={}, load_cmip5=False, check_input=True):
     """ Calls modules required to find the data, 
         process the data, and output the plots and figures
         

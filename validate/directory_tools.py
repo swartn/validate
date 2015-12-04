@@ -141,7 +141,6 @@ def _mkdir():
     mkthedir('plots')
     mkthedir('zonalfiles')
     mkthedir('logs')
-    mkthedir('cmipfiles')
     mkthedir('ENS-MEAN_cmipfiles')
     mkthedir('ENS-STD_cmipfiles')
         
