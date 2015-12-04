@@ -24,7 +24,8 @@ def check_plot_projection(pp):
                        'polar_map_south',
                        'section',
                        'time_series',
-                       'zonal_mean',]
+                       'zonal_mean',
+                       'taylor',]
     if pp not in possible_values:
         raise ValueError("plot_projection: " + pp + " is not a valid 'plot_projection'")
 
@@ -149,7 +150,29 @@ def check_data_args(dargs, data):
     if 'climatology_args' in dargs:
         check_projection_args(dargs['climatology_args'], 'climatology_args')
     if 'trends_args' in dargs:
-        check_projection_args(dargs['trends_args'], 'trends_args')    
+        check_projection_args(dargs['trends_args'], 'trends_args')   
+
+def check_compare(comp):
+    if type(comp) is not dict:
+        raise TypeError("'compare' must be 'dict' type")
+    possible_keys = ['cmip5',
+                     'model',
+                     'obs',
+                     'runID']
+    for key in comp:
+        if type(key) is not str:
+            raise TypeError("'compare' keys must be 'str' type")
+        if key not in possible_keys:
+            raise ValueError("'compare' keys must be either one of 'cmip5', 'model', or 'obs'")
+    for key in comp:
+        check_bool(comp[key], "'compare': " + key)
+
+def check_comp_models(models):
+    if type(models) is not list:
+        raise TypeError("'comp_models' must be 'list' type")
+    for model in models:
+        if type(model) is not str:
+            raise TypeError("models in 'comp_models' must be 'str' type")      
  
 def check_plot(plot):   
     possible_keys = ['variable',
@@ -170,7 +193,9 @@ def check_plot(plot):
                      'comp_args',
                      'plot_args',
                      'pdf',
-                     'png',]  
+                     'png',
+                     'compare',
+                     'comp_models',]  
     for key in plot:
         if key not in possible_keys:
             raise ValueError(str(key) + ' is not a valid key for a dictionary in plots')
@@ -186,7 +211,7 @@ def check_plot(plot):
     if 'trends' in plot:
         check_bool(plot['trends'], 'trends')
     if 'compare_trends' in plot:
-        check_bool(plot['trends'], 'compare_trends')
+        check_bool(plot['compare_trends'], 'compare_trends')
     if 'climatology_dates' in plot:
         check_dates(plot['climatology_dates'], 'climatology_dates')
     if 'trends_dates' in plot:
@@ -214,7 +239,11 @@ def check_plot(plot):
         check_bool(plot['pdf'], 'pdf')
     if 'png' in plot:
         check_bool(plot['png'], 'pdf')
-
+    if 'compare' in plot:
+        check_compare(plot['compare'])
+    if 'comp_models' in plot:
+        check_comp_models(plot['comp_models'])
+        
 def check_plots(plots):
     if type(plots) is not list:
         raise TypeError("plots needs to be 'list' type")
@@ -237,6 +266,12 @@ def check_obsroot(obsroot):
         raise TypeError("'obs_root' needs to be 'str' type")   
     if not os.path.exists(obsroot):
         raise ValueError("obsroot: " + obsroot + " does not exist")
+
+def check_cmiproot(cmiproot):
+    if type(cmiproot) is not str:
+        raise TypeError("'cmiproot_root' needs to be 'str' type")   
+    if not os.path.exists(cmiproot):
+        raise ValueError("cmiproot: " + cmiproot + " does not exist")
 
 def check_obs(obs):
     if type(obs) is not dict:
@@ -272,14 +307,17 @@ def check_defaults(defaults):
        raise TypeError("'defaults' must be 'dict' type")
     check_plot(defaults)        
 
-def check_input(plots, model_run, obsroot, obs, defaults, delete):
+def check_inputs(plots, model_run, obsroot, cmiproot, obs, defaults, delete):
     check_plots(plots)
     check_model_run(model_run)
     if obsroot:
         check_obsroot(obsroot)
+    if cmiproot:
+        check_cmiproot(cmiproot)
     check_obs(obs)
     check_defaults(defaults)
     check_delete(delete)
+    
     
     
 if __name__ == "__main__":

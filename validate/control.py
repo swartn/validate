@@ -14,10 +14,10 @@ from directory_tools import getfiles, remfiles, getobsfiles
 from plotter import loop
 from pdforganize import arrange
 from defaults import fill
-from check import check_input
+from check import check_inputs
 from cmip import cmip
 
-def execute(plots, run, obsroot=None, cmiproot=None, defaults={}, delete={}, obs={}, load_cmip5=True, check_input=False):
+def execute(plots, run, obsroot=None, cmiproot=None, defaults={}, delete={}, obs={}, load_cmip5=True, check_input=True):
     """ Calls modules required to find the data, 
         process the data, and output the plots and figures
         
@@ -34,7 +34,7 @@ def execute(plots, run, obsroot=None, cmiproot=None, defaults={}, delete={}, obs
              maps directory name to boolean, will delete the directoy if True
     """
     if check_input:
-        check_input(plots, run, obsroot, obs, defaults, delete)              
+        check_inputs(plots, run, obsroot, cmiproot, obs, defaults, delete)              
     fill(plots, defaults)
     getfiles(plots, run) 
     getobsfiles(plots, obsroot)
