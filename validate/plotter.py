@@ -17,6 +17,8 @@ import plotcase as pc
 import matplotlib.pyplot as plt
 from yamllog import log
 
+DEBUGGING = False
+
 def climatology(plot):
     """ Calls the appropriate functions to output the plot
     """
@@ -126,9 +128,11 @@ def calltheplot(plot, plotnames, ptype):
     funcs = {'climatology': climatology,
              'trends': trends,
              'compare_climatology': compare_climatology,
-             'compare_trends': compare_trends,}   
-    makeplot(plot, plotnames, funcs[ptype])
-    #makeplot_without_catching(plot, plotnames, funcs[ptype])            
+             'compare_trends': compare_trends,}
+    if DEBUGGING:
+        makeplot_without_catching(plot, plotnames, funcs[ptype])
+    else:
+        makeplot(plot, plotnames, funcs[ptype])           
 
 def comp_loop(plot, plotnames, ptype):
     comp = plot['compare']
@@ -169,7 +173,7 @@ def loop_plot_types(plot, plotnames):
                     calltheplot(plot, plotnames, ptype)              
             
             
-def loop(plots):
+def loop(plots, debug):
     """ Loops though the list of plots and the depths within
         the plots and outputs each to a pdf
         
@@ -181,6 +185,9 @@ def loop(plots):
     -------
     list of tuples with (plotname, plot dictionary, plot type)
     """
+    
+    global DEBUGGING
+    DEBUGGING = debug
     
     #remove old plots
     _remove_plots()
