@@ -26,6 +26,17 @@ defaults = {
             }
 
 plots = [
+ 
+         {    
+          'variable': 'psl',
+          'plot_projection': 'mercator',
+          'depth_type': 'lev',
+#          'depths':[2000, 850, 1000],
+          'compare': {'cmip5': True,
+                      'model': True,
+                      'obs': True,},
+          'comp_models': ['CanCM4', 'NorESM1-M'],
+          },
          {    
           'variable': 'psl',
           'plot_projection': 'taylor',
@@ -36,7 +47,37 @@ plots = [
                       'obs': True,},
           'comp_models': ['CanCM4', 'NorESM1-M'],
           },
-         
+         {    
+          'variable': 'psl',
+          'plot_projection': 'mercator',
+          'depth_type': 'lev',
+#          'depths':[2000, 850, 1000],
+          'compare': {'cmip5': True,
+                      'model': True,
+                      'obs': True,},
+          'comp_models': ['CanCM4', 'NorESM1-M'],
+          },
+         {    
+          'variable': 'ta',
+          'plot_projection': 'section',
+          'compare_trends': True,
+          'depth_type': 'lev',
+#          'depths':[2000, 850, 1000],
+          'compare': {'cmip5': True,
+                      'model': True,
+                      'obs': True,},
+          'comp_models': ['CanCM4', 'NorESM1-M'],
+          },
+         {    
+          'variable': 'psl',
+          'plot_projection': 'zonal_mean',
+          'depth_type': 'lev',
+#          'depths':[2000, 850, 1000],
+          'compare': {'cmip5': True,
+                      'model': True,
+                      'obs': True,},
+          'comp_models': ['CanCM4', 'NorESM1-M'],
+          },          
         ]
 
 delete = {
@@ -55,4 +96,4 @@ obsroot = '/raid/rc40/data/ncs/obs4comp'
 cmiproot = '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
         
 if __name__ == "__main__":
-       plots_with_files = con.execute(plots, model_run, obsroot, cmiproot, defaults, delete)
+       plots_with_files = con.execute(plots, model_run, obsroot, cmiproot, defaults, delete, load_cmip5=True)

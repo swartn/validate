@@ -236,11 +236,11 @@ def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''
     m.drawmapboundary()
 
     m.colorbar(mappable=cot, location='right', label=cblabel)
-    #vals = [data.min(), data.max(), data.mean()]
-    #snam = ['min: ', 'max: ', 'mean: ']
-    #vals = [s + str(np.round(v,1)) for s, v in zip(snam, vals)]
-    #x, y = m(lonmin + 1, latmin + 1)
-    #ax.text(x, y, '  '.join(vals), fontsize=8)
+    vals = [data.min(), data.max(), data.mean()]
+    snam = ['min: ', 'max: ', 'mean: ']
+    vals = [s + str(np.round(v,1)) for s, v in zip(snam, vals)]
+    x, y = m(lonmin + 1, latmin + 1)
+    ax.text(x, y, '  '.join(vals), fontsize=8)
 
     
 def _fix_1Ddata(z, data, ax_args):
@@ -287,6 +287,8 @@ def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', ano
 def timeseries(x, data, ax=None, ax_args=None, label='model'):
     """ Makes a timeseries line plot, using ax if supplied
     """
+    if data.shape != x.shape:
+        data = data[:x.shape[0]]
     if not ax:
         fig, ax = plt.subplots(1,1, figsize=(8,8))
     else:

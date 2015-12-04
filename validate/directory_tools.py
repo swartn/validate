@@ -7,8 +7,6 @@ directories and gathering information from files.
 
 .. moduleauthor:: David Fallis
 """
-
-
 import os
 import cdo; cdo = cdo.Cdo()
 
@@ -237,7 +235,8 @@ def getdates(f):
     x = x[0].rsplit('_',1)
     x = x[1].split('-',1)
     return x[0][:4], x[1][:4] 
-                   
+
+                          
 def getvariable(f):
     """ Returns the years from a filename and directory path
         This is dependant on the cmip naming convention
@@ -432,31 +431,7 @@ def getobsfiles(plots, obsroot):
                     with open('logs/log.txt', 'a') as outfile:
                         outfile.write('No observations file was found for ' + p['variable'] + '\n\n')
                     print 'No observations file was found for ' + p['variable']
-                    p['compare']['obs'] = False
-                    #p['compare_climatology'] = False
-                    #p['compare_trends'] = False                                    
+                    p['compare']['obs'] = False                                 
     
 if __name__ == "__main__": 
-    plots =[ 
-         {
-          'compare_climatology': False, 
-          'compare_trends': True,                      
-          'variable': 'tas',
-          'plot_projection': 'zonal_mean',
-          'trends': False,
-          'depth_type': 'plev',
-          'depths':[20000, 85000, 100000]                              
-          },                                
-         { 
-          'compare_climatology': False, 
-          'compare_trends': True,            
-          'variable': 'va',
-          'plot_projection': 'mercator',
-          'depth_type': 'plev',
-          'depths':[20000, 85000, 100000]                              
-          }, 
-          
-          ]   
-    for p in getobsfiles(plots):
-        if p['compare_climatology'] or p['compare_trends']:
-            print p['comp_file']
+    pass

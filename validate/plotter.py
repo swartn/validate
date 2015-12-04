@@ -127,8 +127,8 @@ def calltheplot(plot, plotnames, ptype):
              'trends': trends,
              'compare_climatology': compare_climatology,
              'compare_trends': compare_trends,}   
-    #makeplot(plot, plotnames, funcs[ptype])
-    makeplot_without_catching(plot, plotnames, funcs[ptype])            
+    makeplot(plot, plotnames, funcs[ptype])
+    #makeplot_without_catching(plot, plotnames, funcs[ptype])            
 
 def comp_loop(plot, plotnames, ptype):
     comp = plot['compare']
