@@ -145,7 +145,6 @@ def climatology_comparison_name(plot):
     return plot_name
 
 def trends_comparison_name(plot):
-    print plot['comp_flag']
     if plot['comp_flag'] == 'obs':
         plot_name = 'plots/' + plot['variable'] + '_' + plot['plot_projection'] + '_trends_comparison_obs' + str(plot['plot_depth'])
     if plot['comp_flag'] == 'cmip5':
@@ -277,10 +276,7 @@ def section_climatology_comparison(plot, func):
     plot = dft.filltitle(plot, 'Climatology Observations', 'data2', '') 
     plot = dft.filltitle(plot, 'Climatology Model - Obs', 'comp', '')               
     _comp_pcolor(zonmean, zonmean2, plot, 'climatology') 
-    compdata = zonmean - zonmean2 
-    print zonmean.shape
-    print zonmean2.shape
-    print compdata.shape   
+    compdata = zonmean - zonmean2  
     fig = plt.figure(figsize=(6,8))
     gs = gridspec.GridSpec(3, 2, width_ratios=[20,1])
     func(lat, depth, zonmean, ax=plt.subplot(gs[0,0]), ax_args=plot['data1_args']['climatology_args']['ax_args'],

@@ -29,11 +29,6 @@ def check_plot_projection(pp):
     if pp not in possible_values:
         raise ValueError("plot_projection: " + pp + " is not a valid 'plot_projection'")
 
-def check_section(plot):
-    if plot['plot_projection'] is 'section':
-        if 'depth_type' not in plot:
-             raise Exception("'depth_type' must be specified to plot a section")
-
 def check_bool(thebool, thekey):
     if type(thebool) is not bool:
         raise TypeError("'" + thekey + "' must be 'bool' type")
@@ -203,7 +198,6 @@ def check_plot(plot):
         check_variable(plot['variable'])
     if 'plot_projection' in plot:
         check_plot_projection(plot['plot_projection'])
-        check_section(plot)
     if 'climatology' in plot:
         check_bool(plot['climatology'], 'climatology')
     if 'compare_climatology' in plot:

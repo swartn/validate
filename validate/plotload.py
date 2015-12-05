@@ -82,7 +82,7 @@ def _scale_units(units, scale):
         units = units + ' * ' + str(scale)
     return units
        
-def _load(nc, var, depth_type):
+def _load(nc, var):
     """ Extracts the data from a netCDF4 Dataset along
         with the units and associated depths
     
@@ -112,14 +112,15 @@ def _load(nc, var, depth_type):
         units = ''
     
     depth = [0]
-    if depth_type != "":
+    for dimension in ncvar.dimensions:
+        print dimension
         try:
-            for dimension in ncvar.dimensions:
-                if depth_type in dimension.lower():
-                    depth = nc.variables[dimension][:]
-                    break
+            if nc.variables[dimension].axis == 'Z':
+                depth = nc.variables[dimension][:]
+                break
         except:
-            depth = [0]
+            pass
+
     return data, units, depth
 
 def _load2(data, nc, units, depth, scale):
@@ -191,7 +192,7 @@ def timeaverage_load(ifile, var, depth_type, dates, realm, scale):
         cdo.remapdis('r360x180', options='-L', input='-setctomiss,0 remapfiles/seldate.nc', output='remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
     nc = Dataset('remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
     
-    data, units, depth = _load(nc, var, depth_type)    
+    data, units, depth = _load(nc, var)    
     data, lon, lat, depth, units = _load2(data, nc, units, depth, scale)
 
     return data, units, lon, lat, depth
@@ -241,7 +242,7 @@ def timeaverage_load_comp(ifile, var, depth_type, dates, realm, depthneeded, sca
     except:
         nc = Dataset('remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')        
 
-    data, units, depth = _load(nc, var, 'lev') 
+    data, units, depth = _load(nc, var) 
     data, lon, lat, depth, units = _load2(data, nc, units, depth, scale)
     return data, units, lon, lat, depth    
 
@@ -278,7 +279,7 @@ def trends_load(ifile, var, depth_type, dates, scale):
                      output='trendfiles/slope_remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
     nc = Dataset('trendfiles/slope_remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r' ) 
     
-    data, units, depth = _load(nc, var, depth_type) 
+    data, units, depth = _load(nc, var) 
       
     data, lon, lat, depth, units = _load2(data, nc, units, depth, scale)
     
@@ -330,7 +331,7 @@ def trends_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
     except:
         nc = Dataset('trendfiles/slope_remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r' ) 
     
-    data, units, depth = _load(nc, var, 'level')    
+    data, units, depth = _load(nc, var)    
     data, lon, lat, depth, units = _load2(data, nc, units, depth, scale)
     return data, units, lon, lat, depth  
 
@@ -375,7 +376,7 @@ def timeseries_load(ifile, var, depth_type, dates, realm, scale):
         cdo.fldmean(input='-setctomiss,0 -seldate,' + str(dates['start_date']) + ',' +str(dates['end_date']) + ' ' + out, output='fldmeanfiles/fldmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
     nc = Dataset('fldmeanfiles/fldmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
 
-    data, units, depth = _load(nc, var, depth_type) 
+    data, units, depth = _load(nc, var) 
     
     nc_time = nc.variables['time']
     try: 
@@ -433,7 +434,7 @@ def timeseries_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
     except:
         nc = Dataset('fldmeanfiles/fldmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
    
-    data, units, depth = _load(nc, var, depth_type) 
+    data, units, depth = _load(nc, var) 
     
     nc_time = nc.variables['time']
     try: 
@@ -489,7 +490,7 @@ def zonal_load(ifile, var, depth_type, dates, realm, scale):
         cdo.zonmean(options='-L', input='-timmean -setctomiss,0 -seldate,' + str(dates['start_date']) + ',' +str(dates['end_date']) + ' ' + out, output='zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
     nc = Dataset('zonalfiles/zonmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
   
-    data, units, depth = _load(nc, var, depth_type) 
+    data, units, depth = _load(nc, var) 
     
     x = nc.variables['lat'][:].squeeze()
 
@@ -539,7 +540,7 @@ def zonal_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
     except:
         nc = Dataset('zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
 
-    data, units, depth = _load(nc, var, depth_type) 
+    data, units, depth = _load(nc, var) 
     
     x = nc.variables['lat'][:].squeeze()
 
@@ -549,4 +550,4 @@ def zonal_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
         
 if __name__ == "__main__":
     ifile = '/raid/rc40/data/ncs/historical-edr/mon/atmos/ta/r1i1p1/ta_Amon_DevAM4-2_historical-edr_r1i1p1_185001-200012.nc'
-    timeseries_load(ifile,'ta','plev')        
+    timeseries_load(ifile,'ta')        
