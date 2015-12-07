@@ -432,7 +432,7 @@ def getobsfiles(plots, obsroot):
             variables[var].append(f)
     for p in plots:
         if p['compare_climatology'] or p['compare_trends']:
-            if 'comp_file' not in p:
+            if 'obs_file' not in p:
                 try:
                     p['obs_file'] = variables[p['variable']][0]
                 except:

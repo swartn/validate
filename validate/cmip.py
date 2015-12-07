@@ -28,7 +28,7 @@ def importcmip(directory='/raid/ra40/CMIP5_OTHER_DOWNLOADS/'):
         newfile = f.rsplit('/',1)[1] 
         os.system('ln -s ' + f + ' ./cmipfiles/' + newfile)  
     
-def model_average(var, model):
+def model_average(var, model, frequency):
     new = 'ENS-MEAN_cmipfiles/' + var + '_' + model + '.nc'
     if not os.path.isfile(new):
         ens = cd.mkensemble('cmipfiles/' + var + '_*' + model + '_*historical_*.nc', prefix='cmipfiles/')
@@ -51,9 +51,6 @@ def cmipaverage(var, model_file, sd, ed):
         newfilelist = []
         newerfilelist = []
         for f in filelist:
-            print f + '\n\n\n\n'
-            print sd
-            print ed
             time = f.replace('.nc', '_time.nc')
 #            try:
             os.system('cdo -L seldate,' + sd + ',' + ed + ' -selvar,' + var + ' ' + f + ' ' + time)
@@ -99,13 +96,13 @@ def getfiles(plots):
         comp = p['compare']
         if comp['model'] or comp['cmip5']:
             for model in p['comp_models'][:]:
-                try:
-                    p['model_file'][model] = model_average(p['variable'], model)
-                except:
-                    with open('logs/log.txt', 'a') as outfile:
-                        outfile.write('No cmip5 files were found for ' + p['variable'] + ': ' + model + '\n\n')
-                    print 'No cmip5 files were found for ' + p['variable'] + ': ' + model
-                    p['comp_models'].remove(model)
+               # try:
+                    p['model_file'][model] = model_average(p['variable'], model, p['frequency'])
+               # except:
+               #     with open('logs/log.txt', 'a') as outfile:
+               #         outfile.write('No cmip5 files were found for ' + p['variable'] + ': ' + model + '\n\n')
+               #     print 'No cmip5 files were found for ' + p['variable'] + ': ' + model
+               #     p['comp_models'].remove(model)
     for p in plots:
         if p['compare']['cmip5']:
             try:

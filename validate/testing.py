@@ -27,20 +27,11 @@ defaults = {
 
 plots = [
  
-         {    
-          'variable': 'ta',
-          'plot_projection': 'section',
-#          'depth_type': 'plev',
-#          'depths':[20000, 8500, 10000],
-          'compare': {'cmip5': True,
-                      'model': True,
-                      'obs': True,},
-          'comp_models': ['CanCM4', 'NorESM1-M'],
-          'frequency': 'mon'
-          },   
+ 
          {    
           'variable': 'psl',
           'plot_projection': 'mercator',
+          'obs_file': '/raid/ra40/CMIP5_OTHER_DOWNLOADS/psl/psl_Amon_NorESM1-M_historical_r1i1p1_185001-200512.nc',
 #          'depth_type': 'plev',
 #          'depths':[20000, 8500, 10000],
           'compare': {'cmip5': True,
