@@ -125,7 +125,7 @@ def map_climatology(plot, func):
     
     data = _depth_data(data, depth, plot)   
     
-    plot = dft.filltitle(plot, 'Climatology', 'data1', str(plot['plot_depth']))  
+    dft.filltitle(plot)  
     _pcolor(data, plot, 'climatology', anom=False)  
     func(lon, lat, data, ax_args=plot['data1_args']['climatology_args']['ax_args'],
          pcolor_args=plot['data1_args']['climatology_args']['pcolor_args'], cblabel=units,
@@ -180,9 +180,7 @@ def map_climatology_comparison(plot, func):
     _comp_pcolor(data, data2, plot, 'climatology')    
     fig, (axl, axm, axr) = plt.subplots(3,1, figsize=(8,8))        
     
-    plot = dft.filltitle(plot, 'Climatology', 'data1', str(plot['plot_depth']))
-    plot = dft.filltitle(plot, 'Climatology Observations', 'data2', str(plot['plot_depth'])) 
-    plot = dft.filltitle(plot, 'Climatology Model - Obs', 'comp', str(plot['plot_depth']))  
+    dft.filltitle(plot)
          
     func(lon, lat, data, ax=axl, ax_args=plot['data1_args']['climatology_args']['ax_args'],
          pcolor_args=plot['data1_args']['climatology_args']['pcolor_args'], cblabel=units,
@@ -229,12 +227,13 @@ def section_climatology(plot, func):
     string : name of the plot
     """    
     print 'plotting section of ' + plot['variable']
+    plot['plot_depth'] = 0
     plot = _section_labels('data1_args', plot)
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat'], plot['scale'])
     
     zonmean = _section_data(data, plot)
 
-    plot = dft.filltitle(plot, 'Climatology', 'data1', '')   
+    dft.filltitle(plot)   
     _pcolor(data, plot, 'climatology', anom=False)          
     func(lat, depth, zonmean, ax_args=plot['data1_args']['climatology_args']['ax_args'],
                pcolor_args=plot['data1_args']['climatology_args']['pcolor_args'], cblabel=units)
@@ -242,7 +241,7 @@ def section_climatology(plot, func):
 
     savefigures(plot_name, **plot)
     
-    plot['plot_depth'] = 0
+
     return plot_name
     
 def section_climatology_comparison(plot, func):
@@ -271,10 +270,9 @@ def section_climatology_comparison(plot, func):
     data2, units2, lon2, lat2, depth2 = pl.timeaverage_load_comp(plot['comp_file'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat'], depth, plot['scale'])  
     
     zonmean2 =_section_data(data2, plot)    
-               
-    plot = dft.filltitle(plot, 'Climatology', 'data1', '')  
-    plot = dft.filltitle(plot, 'Climatology Observations', 'data2', '') 
-    plot = dft.filltitle(plot, 'Climatology Model - Obs', 'comp', '')               
+    plot['plot_depth'] = 0                
+    dft.filltitle(plot) 
+                  
     _comp_pcolor(zonmean, zonmean2, plot, 'climatology') 
     compdata = zonmean - zonmean2  
     fig = plt.figure(figsize=(6,8))
@@ -287,7 +285,7 @@ def section_climatology_comparison(plot, func):
                pcolor_args=plot['comp_args']['climatology_args']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[2,1]))
     
     plt.tight_layout()
-    plot['plot_depth'] = 0    
+   
     plot_name = climatology_comparison_name(plot)
     savefigures(plot_name, **plot)    
 
@@ -337,7 +335,7 @@ def map_trends(plot, func):
     data, units = _trend_units(data, units, plot)
 
     _pcolor(data, plot, 'trends', anom=True) 
-    plot = dft.filltitle(plot, 'Trends', 'data1', str(plot['plot_depth']))            
+    dft.filltitle(plot)            
     func(lon, lat, data, anom=True, ax_args=plot['data1_args']['trends_args']['ax_args'],
                   pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units,
                   **plot['plot_args'])
@@ -377,9 +375,7 @@ def map_trends_comp(plot, func):
 
     compdata = data - data2
 
-    plot = dft.filltitle(plot, 'Trends', 'data1', str(plot['plot_depth'])) 
-    plot = dft.filltitle(plot, 'Observations Trends', 'data2', str(plot['plot_depth']))
-    plot = dft.filltitle(plot, 'Trends Model - Obs', 'comp', str(plot['plot_depth']))
+    dft.filltitle(plot)
 
     _comp_pcolor(data, data2, plot, 'trends', anom=True)
     fig, (axl, axm, axr) = plt.subplots(3,1, figsize=(8,8)) 
@@ -416,7 +412,7 @@ def section_trends(plot, func):
     data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['trends_dates'], plot['scale'])
     zonmean = _section_data(data, plot)
     zonmean, units = _trend_units(zonmean, units, plot)
-    plot = dft.filltitle(plot, 'Trends', 'data1', '')  
+    dft.filltitle(plot)  
     _pcolor(zonmean, plot, 'trends', anom=True)           
     func(lat, depth, zonmean, anom=True, ax_args=plot['data1_args']['trends_args']['ax_args'],
                pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units)
@@ -456,10 +452,8 @@ def section_trends_comp(plot, func):
     zonmean2, units2 = _trend_units(zonmean2, units2, plot)   
     
     compdata = zonmean - zonmean2
-     
-    plot = dft.filltitle(plot, 'Trends', 'data1', '')   
-    plot = dft.filltitle(plot, 'Observations Trends', 'data2', '')  
-    plot = dft.filltitle(plot, 'Trends Model-Obs', 'comp', '')
+    plot['plot_depth'] = 0      
+    dft.filltitle(plot)
     _comp_pcolor(zonmean, zonmean2, plot, 'trends', anom=True)             
     fig, (axl, axm, axr) = plt.subplots(3,1, figsize=(8,8)) 
                        
@@ -472,7 +466,7 @@ def section_trends_comp(plot, func):
     func(lat, depth, compdata, ax=axr, anom=True, ax_args=plot['comp_args']['trends_args']['ax_args'],
                   pcolor_args=plot['comp_args']['trends_args']['pcolor_args'], cblabel=units,
                   **plot['plot_args']) 
-    plot['plot_depth'] = 0 
+
     plot_name = trends_comparison_name(plot)
     savefigures(plot_name, **plot) 
     return plot_name
@@ -507,7 +501,7 @@ def timeseries(plot, func):
             depth_ind = 0
         data = data[:,depth_ind]   
    
-    plot = dft.filltitle(plot, 'Climatology', 'data1', str(plot['plot_depth']))        
+    dft.filltitle(plot)        
     func(x, data, ax_args=plot['data1_args']['climatology_args']['ax_args'])
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_timeseries' + str(plot['plot_depth'])
     savefigures(plot_name, **plot)
@@ -545,7 +539,7 @@ def timeseries_comparison(plot, func):
         data = data[:,depth_ind] 
     
     fig, ax = plt.subplots(1,1, figsize=(8,8))
-    plot = dft.filltitle(plot, 'Climatology', 'data1', str(plot['plot_depth']))        
+    dft.filltitle(plot)        
     func(x, data, ax=ax, ax_args=plot['data1_args']['climatology_args']['ax_args'])
     
     if plot['compare']['cmip5'] == True:
@@ -597,7 +591,7 @@ def zonalmean(plot, func):
         data = data[depth_ind,:]  
 
    
-    plot = dft.filltitle(plot, 'Climatology', 'data1', str(plot['plot_depth']))        
+    dft.filltitle(plot)        
     func(x, data, ax_args=plot['data1_args']['climatology_args']['ax_args'])
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_zonalmean' + str(plot['plot_depth'])
     savefigures(plot_name, **plot)
@@ -645,7 +639,7 @@ def zonalmean_comparison(plot, func):
         data = data[depth_ind,:]  
 
     fig, ax = plt.subplots(1,1, figsize=(8,8))   
-    plot = dft.filltitle(plot, 'Climatology', 'data1', str(plot['plot_depth']))        
+    dft.filltitle(plot)        
     func(x, data, ax=ax, ax_args=plot['data1_args']['climatology_args']['ax_args'])
 
     if plot['compare']['cmip5'] == True:
@@ -682,7 +676,7 @@ def taylor_time(plot, func):
             depth_ind = 0
         data = data[:,depth_ind] 
     
-    plot = dft.filltitle(plot, 'Climatology', 'data1', str(plot['plot_depth']))    
+    dft.filltitle(plot)    
     plotdata = [(data, 'model')]
     refdata= timeseriesdata(plot, plot['obs_file'], depth)
     if plot['compare']['cmip5'] == True:
@@ -707,7 +701,7 @@ def taylor(plot, func):
 
     data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['obs_file'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale']) 
     refdata = _depth_data(data, depth, plot)   
-    plot = dft.filltitle(plot, 'Taylor Climatology', 'data1', str(plot['plot_depth']))    
+    dft.filltitle(plot)    
 
     if plot['compare']['cmip5'] == True:
         plot['comp_model'] = 'cmip5'

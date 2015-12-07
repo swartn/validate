@@ -7,7 +7,7 @@ existence checks will not be needed later.
 
 .. moduleauthor:: David Fallis
 """
-def fill(plots, defaults):
+def fill(plots, defaults, model_run):
     """ Fills the blank spaces in plots with default values and returns the list
     
     Parameters
@@ -29,7 +29,8 @@ def fill(plots, defaults):
         if 'variable' not in p:
             plots.remove(p)
             print p
-            print 'deleted: no variable provided'    
+            print 'deleted: no variable provided' 
+        p['model_ID'] = model_run   
         if 'plot_projection' not in p:
             p['plot_projection'] = 'global_map'
         if 'climatology' not in p:
@@ -96,7 +97,7 @@ def fill(plots, defaults):
            else:
                p[data + '_args']['trends_args']['title_flag'] = True 
 
-           if 'vmin' not in p[data + '_args']['climatology_args']['pcolor_args']:
+           if 'vmin' not in p[data + '_args']['climatology_args']['pcolor_args']:                
                p[data + '_args']['climatology_args']['pcolor_flag'] = False
            else:
                p[data + '_args']['climatology_args']['pcolor_flag'] = True
@@ -109,87 +110,44 @@ def fill(plots, defaults):
         _fill_args('data2')
         _fill_args('comp')
         
-                                             
-    return plots
 
-def filltitle(p, t, d, depth):
-    """ Gives appropriate title to plot if no title is provided
-    
-    Parameters
-    ----------
-    p : dictionary
-        the plot information
-    t : string
-        part of title
-    d : string
-        the type of data
-    depth : string
-            the depth of the plot
-    """
-    if p['comp_flag'] == 'obs':
-        if 'Climatology' in t:
-            if not p[d + '_args']['climatology_args']['title_flag']:
-                p[d + '_args']['climatology_args']['ax_args']['title'] = p['variable'] + ' ' + t  
-                if p['climatology_dates']:
-                    p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['climatology_dates']['start_date'] + '_' + p['climatology_dates']['end_date']
-                if depth:
-                    p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth        
-        elif 'Trends' in t:
-            if not p[d + '_args']['trends_args']['title_flag']:
-                p[d + '_args']['trends_args']['ax_args']['title'] = p['variable'] + ' ' + t
-                if p['trends_dates']:
-                    p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['trends_dates']['start_date'] + '_' + p['trends_dates']['end_date']              
-                if depth:
-                    p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth
-    
-    elif p['comp_flag'] == 'cmip5':
-        if 'Climatology' in t:
-            if not p[d + '_args']['climatology_args']['title_flag']:
-                p[d + '_args']['climatology_args']['ax_args']['title'] = p['variable'] + ' ' + t + 'cmip5' 
-                if p['climatology_dates']:
-                    p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['climatology_dates']['start_date'] + '_' + p['climatology_dates']['end_date']
-                if depth:
-                    p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth        
-        elif 'Trends' in t:
-            if not p[d + '_args']['trends_args']['title_flag']:
-                p[d + '_args']['trends_args']['ax_args']['title'] = p['variable'] + ' ' + t +'cmip5'
-                if p['trends_dates']:
-                    p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['trends_dates']['start_date'] + '_' + p['trends_dates']['end_date']              
-                if depth:
-                    p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth
-    
-    elif p['comp_flag'] == 'model':                
-        if 'Climatology' in t:
-            if not p[d + '_args']['climatology_args']['title_flag']:
-                p[d + '_args']['climatology_args']['ax_args']['title'] = p['variable'] + ' ' + t + ' Model:  ' + p['comp_model'] 
-                if p['climatology_dates']:
-                    p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['climatology_dates']['start_date'] + '_' + p['climatology_dates']['end_date']
-                if depth:
-                    p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth        
-        elif 'Trends' in t:
-            if not p[d + '_args']['trends_args']['title_flag']:
-                p[d + '_args']['trends_args']['ax_args']['title'] = p['variable'] + ' ' + t + ' Model:  ' + p['comp_model']
-                if p['trends_dates']:
-                    p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['trends_dates']['start_date'] + '_' + p['trends_dates']['end_date']              
-                if depth:
-                    p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth 
-                    
+def filltitle(p):
+    def fill(comp):
+        if not p['data1_args']['climatology_args']['title_flag']:
+            p['data1_args']['climatology_args']['ax_args']['title'] = (p['variable'] + ' Climatology ' + p['model_ID'] + ' ' +
+                                                                       p['climatology_dates']['start_date'] + '-' + 
+                                                                       p['climatology_dates']['end_date'] +
+                                                                       ' Depth: ' + str(p['plot_depth']))
+        if not p['data2_args']['climatology_args']['title_flag']:
+            p['data2_args']['climatology_args']['ax_args']['title'] = (p['variable'] + ' Climatology ' + comp + ' ' +
+                                                                       p['climatology_dates']['start_date'] + '-' + 
+                                                                       p['climatology_dates']['end_date'] +
+                                                                       ' Depth: ' + str(p['plot_depth']))        
+        if not p['comp_args']['climatology_args']['title_flag']:
+            p['comp_args']['climatology_args']['ax_args']['title'] = (p['variable'] + ' Climatology ' + p['model_ID'] + '-' + comp + ' ' +
+                                                                      p['climatology_dates']['start_date'] + '-' + 
+                                                                      p['climatology_dates']['end_date'] +
+                                                                      ' Depth: ' + str(p['plot_depth']))
+        
+        if not p['data1_args']['trends_args']['title_flag']:
+            p['data1_args']['trends_args']['ax_args']['title'] = (p['variable'] + ' Trends ' + p['model_ID'] + ' ' +
+                                                                  p['trends_dates']['start_date'] + '-' + 
+                                                                  p['trends_dates']['end_date'] +
+                                                                       ' Depth: ' + str(p['plot_depth']))
+        if not p['data2_args']['trends_args']['title_flag']:
+            p['data2_args']['trends_args']['ax_args']['title'] = (p['variable'] + ' Trends ' + comp + ' ' +
+                                                                  p['trends_dates']['start_date'] + '-' + 
+                                                                  p['trends_dates']['end_date'] +
+                                                                  ' Depth: ' + str(p['plot_depth']))        
+        if not p['comp_args']['trends_args']['title_flag']:
+            p['comp_args']['trends_args']['ax_args']['title'] = (p['variable'] + ' Trends ' + p['model_ID'] + '-' + comp + ' ' +
+                                                                 p['trends_dates']['start_date'] + '-' + 
+                                                                 p['trends_dates']['end_date'] +
+                                                                 ' Depth: ' + str(p['plot_depth']))
+    if p['comp_flag'] == 'model':
+        fill(p['comp_model'])
     else:
-        if 'Climatology' in t:
-            if not p[d + '_args']['climatology_args']['title_flag']:
-                p[d + '_args']['climatology_args']['ax_args']['title'] = p['variable'] + ' ' + t 
-                if p['climatology_dates']:
-                    p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['climatology_dates']['start_date'] + '_' + p['climatology_dates']['end_date']
-                if depth:
-                    p[d + '_args']['climatology_args']['ax_args']['title'] = p[d + '_args']['climatology_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth        
-        elif 'Trends' in t:
-            if not p[d + '_args']['trends_args']['title_flag']:
-                p[d + '_args']['trends_args']['ax_args']['title'] = p['variable'] + ' ' + t
-                if p['trends_dates']:
-                    p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['trends_dates']['start_date'] + '_' + p['trends_dates']['end_date']              
-                if depth:
-                    p[d + '_args']['trends_args']['ax_args']['title'] = p[d + '_args']['trends_args']['ax_args']['title'] + ' ' + p['depth_type'] + ': ' + depth
-           
-    return p 
+        fill(p['comp_flag'])
+
     
 

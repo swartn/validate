@@ -35,7 +35,7 @@ def execute(plots, run, obsroot=None, cmiproot=None, defaults={}, delete={}, obs
     """
     if check_input:
         check_inputs(plots, run, obsroot, cmiproot, obs, defaults, delete)              
-    fill(plots, defaults)
+    fill(plots, defaults, run)
     getfiles(plots, run) 
     getobsfiles(plots, obsroot)
     cmip(plots, cmiproot, load_cmip5)   
