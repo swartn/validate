@@ -209,10 +209,7 @@ def _cat_file_slices(filedict):
             count += 1
             outfile = 'ncstore/merged' + filedict[d][0].rsplit('/',1)[1]
             infiles = ' '.join(filedict[d])
-            print d
-            print infiles
             os.system('cdo mergetime ' + infiles + ' ' + outfile)
-            print 'done merge' 
             filedict[d] = (outfile)
         else:
             filedict[d] = filedict[d][0]
@@ -384,9 +381,7 @@ def getidfiles(plots):
         if p['compare']['runid']:
             ids.extend(p['comp_ids'])
         p['id_file'] = {}
-    print ids
     ids = list(set(ids))
-    print ids
     startdates = min_start_dates(plots)
     enddates = max_end_dates(plots)
     for i in ids:

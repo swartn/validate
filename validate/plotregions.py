@@ -331,12 +331,10 @@ def zonalmean(x, data, ax=None, ax_args=None, label='model', plot={}):
         fig, ax = plt.subplots(1,1, figsize=(8,8))
     else:
         fig = plt.gcf()
-    print 'got here'
     ax.plot(x, data, label=label)
 
     plt.setp(ax, **ax_args)
     plot['stats'] = 'N/A'
-    print 'hello'
     
     
 def taylordiagram(refdata, plotdata, fig=None, ax_args=None, plot={}):
@@ -379,11 +377,5 @@ def taylordiagram(refdata, plotdata, fig=None, ax_args=None, plot={}):
         
              
 if __name__ == "__main__":
-    ref  = np.array([2,3,2,4,2,3,2,4,3,4,2,4,2,4,2])
-    data = [np.array([2,3,2,4,2,3,2,4,4,4,2,4,2,4,2]),
-            np.array([2,4,3,2,3,4,3,2,4,2,4,2,3,2,3]),
-            np.array([3,5,3,2,3,2,5,6,3,3,5,3,5,3,4]),
-            ]
-    taylordiagram(ref, data)
-    plt.show()
+    pass
 

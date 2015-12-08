@@ -40,8 +40,6 @@ def execute(plots, run, obsroot=None, cmiproot=None, defaults={}, delete={}, obs
     getobsfiles(plots, obsroot)
     cmip(plots, cmiproot, load_cmip5)  
     getidfiles(plots)
-    for p in plots:
-        print p['id_file'] 
     plotnames = loop(plots, debugging)
     remfiles(**delete)
     arrange(plotnames)

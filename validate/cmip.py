@@ -73,17 +73,6 @@ def cmipaverage(var, model_file, sd, ed):
     return out
 
 
-#def cmips(var):
-#    ens = cd.mkensemble('cmipfiles/' + var + '_*historical_*.nc', prefix='cmipfiles/')
-#    models = ens.lister('model')
-#    print models
-#    model_averages = []
-#    for m in models:
-#        model_averages.append(model_average(var, m))
-#    print model_averages    
-#    return model_averages
-
-
 def getfiles(plots):
     startdates = min_start_dates(plots)
     enddates = max_end_dates(plots)    
@@ -122,14 +111,5 @@ def cmip(plots, cmipdir, load):
                               
 
 if __name__=="__main__":
-    plots = [
-
-        ]
-    
-    cmip(plots, '/raid/ra40/CMIP5_OTHER_DOWNLOADS/')
-    for p in plots:
-        print p['cmip5_files']
-        print p['model_files']
-        print p['model_file']
-        print p['cmip5_file']
+    pass
     

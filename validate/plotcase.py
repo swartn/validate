@@ -622,7 +622,6 @@ def zonalmeandata(plot, compfile, ax, depth, func):
             depth_ind = 0
         data2 = data2[depth_ind,:]  
     func(x2, data2, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1_args']['climatology_args']['ax_args']) 
-    print 'no'
           
 def zonalmean_comparison(plot, func):  
     """ Loads and plots a time average of the zonal means
@@ -663,7 +662,6 @@ def zonalmean_comparison(plot, func):
         zonalmeandata(plot, plot['cmip5_file'], ax, depth, func)
     if plot['compare']['obs']:
         plot['comp_model'] = 'Observations'
-        print 'aaaaaaaa'
         zonalmeandata(plot, plot['obs_file'], ax, depth, func)
     if plot['compare']['model']:
         for model in plot['comp_models']:
