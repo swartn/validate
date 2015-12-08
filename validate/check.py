@@ -174,7 +174,13 @@ def check_obs_file(f):
         raise TypeError("'obs_file' must be 'str' type")
     if not os.path.isfile(f):
         raise ValueError("'obs_file': " + f + " is not a file")        
- 
+
+def check_ifile(f):
+    if type(f) is not str:
+        raise TypeError("'ifile' must be 'str' type")
+    if not os.path.isfile(f):
+        raise ValueError("'ifile': " + f + " is not a file") 
+         
 def check_plot(plot):   
     possible_keys = ['variable',
                      'plot_projection',
@@ -197,7 +203,8 @@ def check_plot(plot):
                      'png',
                      'compare',
                      'comp_models',
-                     'obs_file',]  
+                     'obs_file',
+                     'ifile',]  
     for key in plot:
         if key not in possible_keys:
             raise ValueError(str(key) + ' is not a valid key for a dictionary in plots')
@@ -246,6 +253,8 @@ def check_plot(plot):
         check_comp_models(plot['comp_models'])
     if 'obs_file' in plot:
         check_obs_file(plot['obs_file'])
+    if 'ifile' in plot:
+        check_ifile(plot['_file'])        
         
 def check_plots(plots):
     if type(plots) is not list:

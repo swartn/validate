@@ -24,10 +24,17 @@ plots : A list of dictionaries specifying the plots to be produced. At a minimum
                               'section'
                               'time_series'
                               'zonal_mean'
+                              'taylor'
          'climatology' : Boolean to produce climatology plot.
          'compare_climatology' : Boolean to produce climatology comparison.
          'trends' : Boolean to produce trends plot.
          'compare_trends' : Boolean to produce trends comparison.
+         'compare' : A dictionary mapping comparison options
+                     'obs'
+                     'cmip5',
+                     'model'
+                     to booleans
+         'comp_models' : A list of strings of cmip5 model names to compare
          'climatology_dates' : A dictionary mapping
                                'start_date'
                                'end_date'
@@ -50,6 +57,8 @@ plots : A list of dictionaries specifying the plots to be produced. At a minimum
                     ex. [10000, 2500, 1000]
          'frequency' : time interval of data
                        ex. 'mon'
+         'scale' : float
+                   the data is mulitiplied by the scalar value
          'plot_args' : dictionary with some boolean options for the map plots
                        options:
                         'fill_continents'
@@ -63,7 +72,7 @@ plots : A list of dictionaries specifying the plots to be produced. At a minimum
                        the model and observations. It uses the same keys as 'data1_args'
          'ifile' : Can be used to specify a netCDF filename, including the directoy path
                    to be used for this plot.
-         'comp_file' : Can be used to specify a filename, including the directory path, 
+         'obs_file' : Can be used to specify a filename, including the directory path, 
                        to be used for the observation data.
                         
                         
