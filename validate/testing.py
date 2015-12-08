@@ -28,8 +28,8 @@ defaults = {
 plots = [
  
          {    
-          'variable': 'psl',
-          'plot_projection': 'global_map',
+          'variable': 'ta',
+          'plot_projection': 'section',
 #          'depth_type': 'plev',
 #          'depths':[20000, 8500, 10000],
           'compare': {'cmip5': True,

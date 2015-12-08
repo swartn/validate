@@ -268,7 +268,7 @@ def _fix_1Ddata(z, data, ax_args):
     return np.array(range(0,5)), np.array(newdata), ax_args
     
                                                                 
-def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, plot={}, cblabel='', anom=False, cbaxis=None):
+def section(x, z, data, ax=None, rmse=False, ax_args=None, pcolor_args=None, plot={}, cblabel='', anom=False, cbaxis=None):
     """Pcolor a var in a section, using ax if supplied"""
     if len(data.shape) == 1:
        z, data, ax_args = _fix_1Ddata(z, data, ax_args)
@@ -297,11 +297,17 @@ def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, plot={}, cblabe
     else:
         tl = fig.add_axes([box.x1 + box.width * 0.05, box.y0, 0.02, box.height])
         fig.colorbar(cot, cax=tl, label=cblabel)
-
-    vals = [str(np.round(data.min(),1)), str(np.round(data.max(),1)), str(np.round(data.mean(),1))]
-    plot['stats'] = {'mean': float(vals[2]),
-                     'min': float(vals[0]),
-                     'max': float(vals[1]),}
+    
+    if rmse:
+        vals = [str(np.round(data.min(),1)), str(np.round(data.max(),1)), str(np.round(sqrt(mean(square(data))),1))]
+        plot['stats'] = {'rmse': float(vals[2]),
+                         'min': float(vals[0]),
+                         'max': float(vals[1]),}        
+    else:
+        vals = [str(np.round(data.min(),1)), str(np.round(data.max(),1)), str(np.round(data.mean(),1))]
+        plot['stats'] = {'mean': float(vals[2]),
+                         'min': float(vals[0]),
+                         'max': float(vals[1]),}
 
 def timeseries(x, data, ax=None, ax_args=None, label='model', plot={}):
     """ Makes a timeseries line plot, using ax if supplied

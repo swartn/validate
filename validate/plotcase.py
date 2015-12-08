@@ -283,7 +283,7 @@ def section_climatology_comparison(plot, func):
                pcolor_args=plot['data1_args']['climatology_args']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[0,1]))
     func(lat, depth, zonmean2, plot=plot, ax=plt.subplot(gs[1,0]), ax_args=plot['data2_args']['climatology_args']['ax_args'],
                pcolor_args=plot['data2_args']['climatology_args']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[1,1]))
-    func(lat, depth, compdata, anom=True, plot=plot, ax=plt.subplot(gs[2,0]), ax_args=plot['comp_args']['climatology_args']['ax_args'],
+    func(lat, depth, compdata, anom=True, rmse=True, plot=plot, ax=plt.subplot(gs[2,0]), ax_args=plot['comp_args']['climatology_args']['ax_args'],
                pcolor_args=plot['comp_args']['climatology_args']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[2,1]))
     
     plt.tight_layout()
@@ -389,7 +389,7 @@ def map_trends_comp(plot, func):
     func(lon, lat, data2, ax=axm, anom=True, plot=plot, ax_args=plot['data2_args']['trends_args']['ax_args'],
                   pcolor_args=plot['data2_args']['trends_args']['pcolor_args'], cblabel=units,
                   **plot['plot_args'])
-    func(lon, lat, compdata, ax=axr, anom=True, plot=plot, ax_args=plot['comp_args']['trends_args']['ax_args'],
+    func(lon, lat, compdata, ax=axr, anom=True, rmse=True, plot=plot, ax_args=plot['comp_args']['trends_args']['ax_args'],
                   pcolor_args=plot['comp_args']['trends_args']['pcolor_args'], cblabel=units,
                   **plot['plot_args'])                                    
     plot_name = trends_comparison_name(plot)
@@ -467,7 +467,7 @@ def section_trends_comp(plot, func):
     func(lat, depth, zonmean2, ax=axm, anom=True, plot=plot, ax_args=plot['data2_args']['trends_args']['ax_args'],
                   pcolor_args=plot['data2_args']['trends_args']['pcolor_args'], cblabel=units,
                   **plot['plot_args'])
-    func(lat, depth, compdata, ax=axr, anom=True, plot=plot, ax_args=plot['comp_args']['trends_args']['ax_args'],
+    func(lat, depth, compdata, ax=axr, anom=True, rmse=True, plot=plot, ax_args=plot['comp_args']['trends_args']['ax_args'],
                   pcolor_args=plot['comp_args']['trends_args']['pcolor_args'], cblabel=units,
                   **plot['plot_args']) 
 
