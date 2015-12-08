@@ -75,6 +75,21 @@ def anom_cmap():
                                    reverse=True).mpl_colormap
     cmap_anom = discrete_cmap(ncols, cmap_anom)
     return cmap_anom
+
+def stats(plot, data, rmse):
+    if rmse:
+        vals = [str(np.round(data.min(),1)), str(np.round(data.max(),1)), str(np.round(sqrt(mean(square(data))),1))]
+        snam = ['min: ', 'max: ', 'rmse: '] 
+        plot['stats'] = {'rmse': float(vals[2]),
+                         'min': float(vals[0]),
+                         'max': float(vals[1]),}       
+    else:
+        vals = [str(np.round(data.min(),1)), str(np.round(data.max(),1)), str(np.round(data.mean(),1))]
+        snam = ['min: ', 'max: ', 'mean: ']  
+        plot['stats'] = {'mean': float(vals[2]),
+                         'min': float(vals[0]),
+                         'max': float(vals[1]),}     
+    return vals, snam
     
 def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom = False, rmse=False,
                latmin=-50, latmax=50, lonmin=0, lonmax=360, 
@@ -114,25 +129,14 @@ def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=
         m.drawlsmask(ocean_color='0.7')
         
     m.colorbar(mappable=cot, location='right', label=cblabel)
-    if rmse:
-        vals = [str(np.round(data.min(),1)), str(np.round(data.max(),1)), str(np.round(sqrt(mean(square(data))),1))]
-        snam = ['min: ', 'max: ', 'rmse: '] 
-        plot['stats'] = {'rmse': float(vals[2]),
-                         'min': float(vals[0]),
-                         'max': float(vals[1]),}       
-    else:
-        vals = [str(np.round(data.min(),1)), str(np.round(data.max(),1)), str(np.round(data.mean(),1))]
-        snam = ['min: ', 'max: ', 'mean: ']  
-        plot['stats'] = {'mean': float(vals[2]),
-                         'min': float(vals[0]),
-                         'max': float(vals[1]),} 
 
+    vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
     x, y = m(10, -88)
     ax.text(x, y, '  '.join(val), fontsize=8)
 
 
-def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom = False,
+def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom = False, rmse=False,
               latmin=30, latmax=80, lonmin=0, lonmax=360,
               fill_continents=True, fill_oceans = False, draw_parallels=True, draw_meridians=True, plot={}):
     """Pcolor a var in a north polar map, using ax if supplied"""
@@ -168,16 +172,14 @@ def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='
         m.drawmeridians(np.arange(-180.,181.,20.))
     m.drawmapboundary()
     m.colorbar(mappable=cot, location='right', label=cblabel)
-    vals = [str(np.round(data.min(),1)), str(np.round(data.max(),1)), str(np.round(data.mean(),1))]
-    snam = ['min: ', 'max: ', 'mean: ']   
+    
+    vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
     x, y = m(-135, 12)
     ax.text(x, y, '  '.join(vals), fontsize=8)
-    plot['stats'] = {'mean': float(vals[2]),
-                     'min': float(vals[0]),
-                     'max': float(vals[1]),}
+
                      
-def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom = False,
+def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom = False, rmse=False,
                     latmin=-90, latmax=-30, lonmin=0, lonmax=360,
                     fill_continents=True, fill_oceans = False, draw_parallels=True, draw_meridians=True, plot={}):
     """Pcolor a var in a south polar map, using ax if supplied"""
@@ -213,15 +215,11 @@ def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cbl
     m.drawmapboundary()
     m.colorbar(mappable=cot, location='right', label=cblabel)
     vals = [str(np.round(data.min(),1)), str(np.round(data.max(),1)), str(np.round(data.mean(),1))]
-    snam = ['min: ', 'max: ', 'mean: ']   
-    val = [s + v for s, v in zip(snam, vals)]
+    vals, snam = stats(plot, data, rmse)
     x, y = m(-45, -12)
     ax.text(x, y, '  '.join(vals), fontsize=8)
-    plot['stats'] = {'mean': float(vals[2]),
-                     'min': float(vals[0]),
-                     'max': float(vals[1]),}
 
-def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, plot={},
+def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False, plot={},
              latmin=-80, latmax=80, lonmin=0, lonmax=360,
              fill_continents=False, fill_oceans=False, draw_parallels=True, draw_meridians=True):
     """Pcolor a var in a mercator plot, using ax if supplied"""
@@ -254,14 +252,10 @@ def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''
     m.drawmapboundary()
 
     m.colorbar(mappable=cot, location='right', label=cblabel)
-    vals = [str(np.round(data.min(),1)), str(np.round(data.max(),1)), str(np.round(data.mean(),1))]
-    snam = ['min: ', 'max: ', 'mean: ']   
+    vals, snam = stats(plot, data, rmse)  
     val = [s + v for s, v in zip(snam, vals)]
     x, y = m(lonmin + 1, latmin + 1)
     ax.text(x, y, '  '.join(vals), fontsize=8)
-    plot['stats'] = {'mean': float(vals[2]),
-                     'min': float(vals[0]),
-                     'max': float(vals[1]),}
     
 def _fix_1Ddata(z, data, ax_args):
     """ Extends section data if it is in only on dimension
