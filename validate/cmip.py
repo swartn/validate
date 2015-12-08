@@ -96,13 +96,13 @@ def getfiles(plots):
         comp = p['compare']
         if comp['model'] or comp['cmip5']:
             for model in p['comp_models'][:]:
-               # try:
+                try:
                     p['model_file'][model] = model_average(p['variable'], model, p['frequency'])
-               # except:
-               #     with open('logs/log.txt', 'a') as outfile:
-               #         outfile.write('No cmip5 files were found for ' + p['variable'] + ': ' + model + '\n\n')
-               #     print 'No cmip5 files were found for ' + p['variable'] + ': ' + model
-               #     p['comp_models'].remove(model)
+                except:
+                    with open('logs/log.txt', 'a') as outfile:
+                        outfile.write('No cmip5 files were found for ' + p['variable'] + ': ' + model + '\n\n')
+                    print 'No cmip5 files were found for ' + p['variable'] + ': ' + model
+                    p['comp_models'].remove(model)
     for p in plots:
         if p['compare']['cmip5']:
             try:

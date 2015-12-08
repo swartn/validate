@@ -11,6 +11,7 @@ import subprocess
 import os
 import glob
 import numpy as np
+from numpy import mean, sqrt, square
 from mpl_toolkits.basemap import Basemap, addcyclic, maskoceans
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -75,9 +76,9 @@ def anom_cmap():
     cmap_anom = discrete_cmap(ncols, cmap_anom)
     return cmap_anom
     
-def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom = False,
+def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom = False, rmse=False,
                latmin=-50, latmax=50, lonmin=0, lonmax=360, 
-               fill_continents=False, fill_oceans=False, draw_parallels=True, draw_meridians=False):
+               fill_continents=False, fill_oceans=False, draw_parallels=True, draw_meridians=False, plot = {}):
     """Pcolor a var in a global map, using ax if supplied"""
     # setup a basic global map
     if not ax:
@@ -113,15 +114,27 @@ def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=
         m.drawlsmask(ocean_color='0.7')
         
     m.colorbar(mappable=cot, location='right', label=cblabel)
-    vals = [data.min(), data.max(), data.mean()]
-    snam = ['min: ', 'max: ', 'mean: ']   
-    vals = [s + str(np.round(v,1)) for s, v in zip(snam, vals)]
+    if rmse:
+        vals = [str(np.round(data.min(),1)), str(np.round(data.max(),1)), str(np.round(sqrt(mean(square(data))),1))]
+        snam = ['min: ', 'max: ', 'rmse: '] 
+        plot['stats'] = {'rmse': float(vals[2]),
+                         'min': float(vals[0]),
+                         'max': float(vals[1]),}       
+    else:
+        vals = [str(np.round(data.min(),1)), str(np.round(data.max(),1)), str(np.round(data.mean(),1))]
+        snam = ['min: ', 'max: ', 'mean: ']  
+        plot['stats'] = {'mean': float(vals[2]),
+                         'min': float(vals[0]),
+                         'max': float(vals[1]),} 
+
+    val = [s + v for s, v in zip(snam, vals)]
     x, y = m(10, -88)
-    ax.text(x, y, '  '.join(vals), fontsize=8)
+    ax.text(x, y, '  '.join(val), fontsize=8)
+
 
 def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom = False,
               latmin=30, latmax=80, lonmin=0, lonmax=360,
-              fill_continents=True, fill_oceans = False, draw_parallels=True, draw_meridians=True):
+              fill_continents=True, fill_oceans = False, draw_parallels=True, draw_meridians=True, plot={}):
     """Pcolor a var in a north polar map, using ax if supplied"""
 
     if not ax:
@@ -155,16 +168,18 @@ def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='
         m.drawmeridians(np.arange(-180.,181.,20.))
     m.drawmapboundary()
     m.colorbar(mappable=cot, location='right', label=cblabel)
-    vals = [data.min(), data.max(), data.mean()]
-    snam = ['min: ', 'max: ', 'mean: ']
-
-    vals = [s + str(np.round(v,1)) for s, v in zip(snam, vals)]
+    vals = [str(np.round(data.min(),1)), str(np.round(data.max(),1)), str(np.round(data.mean(),1))]
+    snam = ['min: ', 'max: ', 'mean: ']   
+    val = [s + v for s, v in zip(snam, vals)]
     x, y = m(-135, 12)
     ax.text(x, y, '  '.join(vals), fontsize=8)
-
+    plot['stats'] = {'mean': float(vals[2]),
+                     'min': float(vals[0]),
+                     'max': float(vals[1]),}
+                     
 def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom = False,
                     latmin=-90, latmax=-30, lonmin=0, lonmax=360,
-                    fill_continents=True, fill_oceans = False, draw_parallels=True, draw_meridians=True):
+                    fill_continents=True, fill_oceans = False, draw_parallels=True, draw_meridians=True, plot={}):
     """Pcolor a var in a south polar map, using ax if supplied"""
     if not pcolor_args : pcolor_args = default_pcolor_args(data, anom)
     
@@ -197,13 +212,16 @@ def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cbl
         m.drawlsmask(ocean_color='0.7')
     m.drawmapboundary()
     m.colorbar(mappable=cot, location='right', label=cblabel)
-    vals = [data.min(), data.max(), data.mean()]
-    snam = ['min: ', 'max: ', 'mean: ']
-    vals = [s + str(np.round(v,1)) for s, v in zip(snam, vals)]
+    vals = [str(np.round(data.min(),1)), str(np.round(data.max(),1)), str(np.round(data.mean(),1))]
+    snam = ['min: ', 'max: ', 'mean: ']   
+    val = [s + v for s, v in zip(snam, vals)]
     x, y = m(-45, -12)
     ax.text(x, y, '  '.join(vals), fontsize=8)
+    plot['stats'] = {'mean': float(vals[2]),
+                     'min': float(vals[0]),
+                     'max': float(vals[1]),}
 
-def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False,
+def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, plot={},
              latmin=-80, latmax=80, lonmin=0, lonmax=360,
              fill_continents=False, fill_oceans=False, draw_parallels=True, draw_meridians=True):
     """Pcolor a var in a mercator plot, using ax if supplied"""
@@ -236,12 +254,14 @@ def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''
     m.drawmapboundary()
 
     m.colorbar(mappable=cot, location='right', label=cblabel)
-    vals = [data.min(), data.max(), data.mean()]
-    snam = ['min: ', 'max: ', 'mean: ']
-    vals = [s + str(np.round(v,1)) for s, v in zip(snam, vals)]
+    vals = [str(np.round(data.min(),1)), str(np.round(data.max(),1)), str(np.round(data.mean(),1))]
+    snam = ['min: ', 'max: ', 'mean: ']   
+    val = [s + v for s, v in zip(snam, vals)]
     x, y = m(lonmin + 1, latmin + 1)
     ax.text(x, y, '  '.join(vals), fontsize=8)
-
+    plot['stats'] = {'mean': float(vals[2]),
+                     'min': float(vals[0]),
+                     'max': float(vals[1]),}
     
 def _fix_1Ddata(z, data, ax_args):
     """ Extends section data if it is in only on dimension
@@ -254,7 +274,7 @@ def _fix_1Ddata(z, data, ax_args):
     return np.array(range(0,5)), np.array(newdata), ax_args
     
                                                                 
-def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, cbaxis=None):
+def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, plot={}, cblabel='', anom=False, cbaxis=None):
     """Pcolor a var in a section, using ax if supplied"""
     if len(data.shape) == 1:
        z, data, ax_args = _fix_1Ddata(z, data, ax_args)
@@ -283,8 +303,13 @@ def section(x, z, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', ano
     else:
         tl = fig.add_axes([box.x1 + box.width * 0.05, box.y0, 0.02, box.height])
         fig.colorbar(cot, cax=tl, label=cblabel)
-    #plt.colorbar(cot, cax=tl, label=cblabel, use_gridspec=True)
-def timeseries(x, data, ax=None, ax_args=None, label='model'):
+
+    vals = [str(np.round(data.min(),1)), str(np.round(data.max(),1)), str(np.round(data.mean(),1))]
+    plot['stats'] = {'mean': float(vals[2]),
+                     'min': float(vals[0]),
+                     'max': float(vals[1]),}
+
+def timeseries(x, data, ax=None, ax_args=None, label='model', plot={}):
     """ Makes a timeseries line plot, using ax if supplied
     """
     if data.shape != x.shape:
@@ -296,9 +321,10 @@ def timeseries(x, data, ax=None, ax_args=None, label='model'):
     
     ax.plot(x, data, label=label)
 
-    plt.setp(ax, **ax_args)   
+    plt.setp(ax, **ax_args)
+    plot['stats'] = 'N/A'
     
-def zonalmean(x, data, ax=None, ax_args=None, label='model'):
+def zonalmean(x, data, ax=None, ax_args=None, label='model', plot={}):
     """ Makes a zonal mean line plot, using ax if supplied
     """
     if not ax:
@@ -309,12 +335,14 @@ def zonalmean(x, data, ax=None, ax_args=None, label='model'):
     ax.plot(x, data, label=label)
 
     plt.setp(ax, **ax_args)
+    plot['stats'] = 'N/A'
     
-def taylordiagram(refdata, plotdata, fig=None, ax_args=None):
+def taylordiagram(refdata, plotdata, fig=None, ax_args=None, plot={}):
     refdata = refdata.flatten()
     refstd = refdata.std(ddof=1)
     for i,(d,n) in enumerate(plotdata):
         plotdata[i] = d.flatten(), n
+    plot['stats'] = {'obserations': {'standard deviation': float(refstd)}}
     
     samples = [ [m.std(ddof=1), np.corrcoef(refdata, m)[0,1], n] for m,n in plotdata]
     if not fig:
@@ -328,6 +356,8 @@ def taylordiagram(refdata, plotdata, fig=None, ax_args=None):
     colors= plt.matplotlib.cm.jet(np.linspace(0,1,len(samples)))
     
     for i,(stddev,corrcoef, n) in enumerate(samples):
+        plot['stats'][n] = {'standard deviation': float(stddev),
+                            'correlation coefficient': float(corrcoef)}
         dia.add_sample(stddev, corrcoef,
                        marker='$%d$' % (i+1), ms=10, ls='',
                        mfc=colors[i], mec=colors[i],

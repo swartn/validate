@@ -128,11 +128,12 @@ def map_climatology(plot, func):
     dft.filltitle(plot)  
     _pcolor(data, plot, 'climatology', anom=False)  
     func(lon, lat, data, ax_args=plot['data1_args']['climatology_args']['ax_args'],
-         pcolor_args=plot['data1_args']['climatology_args']['pcolor_args'], cblabel=units,
+         pcolor_args=plot['data1_args']['climatology_args']['pcolor_args'], cblabel=units, plot=plot,
          **plot['plot_args'])
                   
     plot_name = 'plots/' + plot['variable'] + '_' + plot['plot_projection'] + '_climatology' + str(plot['plot_depth'])    
     savefigures(plot_name, **plot)
+    plot['units']=units
     return plot_name    
 
 def climatology_comparison_name(plot):
@@ -182,17 +183,18 @@ def map_climatology_comparison(plot, func):
     
     dft.filltitle(plot)
          
-    func(lon, lat, data, ax=axl, ax_args=plot['data1_args']['climatology_args']['ax_args'],
+    func(lon, lat, data, plot=plot, ax=axl, ax_args=plot['data1_args']['climatology_args']['ax_args'],
          pcolor_args=plot['data1_args']['climatology_args']['pcolor_args'], cblabel=units,
          **plot['plot_args'])
-    func(lon, lat, data2, ax=axm, ax_args=plot['data2_args']['climatology_args']['ax_args'],
+    func(lon, lat, data2, plot=plot, ax=axm, ax_args=plot['data2_args']['climatology_args']['ax_args'],
          pcolor_args=plot['data2_args']['climatology_args']['pcolor_args'], cblabel=units,
          **plot['plot_args'])
-    func(lon, lat, compdata, anom=True, ax=axr, ax_args=plot['comp_args']['climatology_args']['ax_args'],
+    func(lon, lat, compdata, anom=True, rmse=True, plot=plot, ax=axr, ax_args=plot['comp_args']['climatology_args']['ax_args'],
          pcolor_args=plot['comp_args']['climatology_args']['pcolor_args'], cblabel=units,
          **plot['plot_args'])                              
     plot_name = climatology_comparison_name(plot)
     savefigures(plot_name, **plot)
+    plot['units'] = units
     return plot_name   
 
 
@@ -235,13 +237,13 @@ def section_climatology(plot, func):
 
     dft.filltitle(plot)   
     _pcolor(data, plot, 'climatology', anom=False)          
-    func(lat, depth, zonmean, ax_args=plot['data1_args']['climatology_args']['ax_args'],
+    func(lat, depth, zonmean, plot=plot, ax_args=plot['data1_args']['climatology_args']['ax_args'],
                pcolor_args=plot['data1_args']['climatology_args']['pcolor_args'], cblabel=units)
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology'
 
     savefigures(plot_name, **plot)
     
-
+    plot['units'] = units
     return plot_name
     
 def section_climatology_comparison(plot, func):
@@ -277,18 +279,18 @@ def section_climatology_comparison(plot, func):
     compdata = zonmean - zonmean2  
     fig = plt.figure(figsize=(6,8))
     gs = gridspec.GridSpec(3, 2, width_ratios=[20,1])
-    func(lat, depth, zonmean, ax=plt.subplot(gs[0,0]), ax_args=plot['data1_args']['climatology_args']['ax_args'],
+    func(lat, depth, zonmean, plot=plot, ax=plt.subplot(gs[0,0]), ax_args=plot['data1_args']['climatology_args']['ax_args'],
                pcolor_args=plot['data1_args']['climatology_args']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[0,1]))
-    func(lat, depth, zonmean2, ax=plt.subplot(gs[1,0]), ax_args=plot['data2_args']['climatology_args']['ax_args'],
+    func(lat, depth, zonmean2, plot=plot, ax=plt.subplot(gs[1,0]), ax_args=plot['data2_args']['climatology_args']['ax_args'],
                pcolor_args=plot['data2_args']['climatology_args']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[1,1]))
-    func(lat, depth, compdata, anom=True, ax=plt.subplot(gs[2,0]), ax_args=plot['comp_args']['climatology_args']['ax_args'],
+    func(lat, depth, compdata, anom=True, plot=plot, ax=plt.subplot(gs[2,0]), ax_args=plot['comp_args']['climatology_args']['ax_args'],
                pcolor_args=plot['comp_args']['climatology_args']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[2,1]))
     
     plt.tight_layout()
    
     plot_name = climatology_comparison_name(plot)
     savefigures(plot_name, **plot)    
-
+    plot['units'] = units
     return plot_name
 
 def _trend_units(data, units, plot):
@@ -336,12 +338,13 @@ def map_trends(plot, func):
 
     _pcolor(data, plot, 'trends', anom=True) 
     dft.filltitle(plot)            
-    func(lon, lat, data, anom=True, ax_args=plot['data1_args']['trends_args']['ax_args'],
+    func(lon, lat, data, anom=True, plot=plot, ax_args=plot['data1_args']['trends_args']['ax_args'],
                   pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units,
                   **plot['plot_args'])
                   
     plot_name = 'plots/' + plot['variable'] + '_' + plot['plot_projection'] + '_trends' + str(plot['plot_depth'])
     savefigures(plot_name, **plot)
+    plot['units'] = units
     return plot_name 
 
 def map_trends_comp(plot, func):
@@ -380,17 +383,18 @@ def map_trends_comp(plot, func):
     _comp_pcolor(data, data2, plot, 'trends', anom=True)
     fig, (axl, axm, axr) = plt.subplots(3,1, figsize=(8,8)) 
                        
-    func(lon, lat, data, ax=axl, anom=True, ax_args=plot['data1_args']['trends_args']['ax_args'],
+    func(lon, lat, data, ax=axl, anom=True, plot=plot, ax_args=plot['data1_args']['trends_args']['ax_args'],
                   pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units,
                   **plot['plot_args'])
-    func(lon, lat, data2, ax=axm, anom=True, ax_args=plot['data2_args']['trends_args']['ax_args'],
+    func(lon, lat, data2, ax=axm, anom=True, plot=plot, ax_args=plot['data2_args']['trends_args']['ax_args'],
                   pcolor_args=plot['data2_args']['trends_args']['pcolor_args'], cblabel=units,
                   **plot['plot_args'])
-    func(lon, lat, compdata, ax=axr, anom=True, ax_args=plot['comp_args']['trends_args']['ax_args'],
+    func(lon, lat, compdata, ax=axr, anom=True, plot=plot, ax_args=plot['comp_args']['trends_args']['ax_args'],
                   pcolor_args=plot['comp_args']['trends_args']['pcolor_args'], cblabel=units,
                   **plot['plot_args'])                                    
     plot_name = trends_comparison_name(plot)
     savefigures(plot_name, **plot)
+    plot['units'] = units
     return plot_name 
 
 
@@ -414,13 +418,13 @@ def section_trends(plot, func):
     zonmean, units = _trend_units(zonmean, units, plot)
     dft.filltitle(plot)  
     _pcolor(zonmean, plot, 'trends', anom=True)           
-    func(lat, depth, zonmean, anom=True, ax_args=plot['data1_args']['trends_args']['ax_args'],
+    func(lat, depth, zonmean, anom=True, plot=plot, ax_args=plot['data1_args']['trends_args']['ax_args'],
                pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units)
 
 
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_trends_'
     savefigures(plot_name, **plot)
-   
+    plot['units'] = units
     return plot_name
 
 def section_trends_comp(plot, func):
@@ -457,18 +461,19 @@ def section_trends_comp(plot, func):
     _comp_pcolor(zonmean, zonmean2, plot, 'trends', anom=True)             
     fig, (axl, axm, axr) = plt.subplots(3,1, figsize=(8,8)) 
                        
-    func(lat, depth, zonmean, ax=axl, anom=True, ax_args=plot['data1_args']['trends_args']['ax_args'],
+    func(lat, depth, zonmean, ax=axl, anom=True, plot=plot, ax_args=plot['data1_args']['trends_args']['ax_args'],
                   pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units,
                   **plot['plot_args'])
-    func(lat, depth, zonmean2, ax=axm, anom=True, ax_args=plot['data2_args']['trends_args']['ax_args'],
+    func(lat, depth, zonmean2, ax=axm, anom=True, plot=plot, ax_args=plot['data2_args']['trends_args']['ax_args'],
                   pcolor_args=plot['data2_args']['trends_args']['pcolor_args'], cblabel=units,
                   **plot['plot_args'])
-    func(lat, depth, compdata, ax=axr, anom=True, ax_args=plot['comp_args']['trends_args']['ax_args'],
+    func(lat, depth, compdata, ax=axr, anom=True, plot=plot, ax_args=plot['comp_args']['trends_args']['ax_args'],
                   pcolor_args=plot['comp_args']['trends_args']['pcolor_args'], cblabel=units,
                   **plot['plot_args']) 
 
     plot_name = trends_comparison_name(plot)
     savefigures(plot_name, **plot) 
+    plot['units'] = units
     return plot_name
 
 
@@ -502,9 +507,10 @@ def timeseries(plot, func):
         data = data[:,depth_ind]   
    
     dft.filltitle(plot)        
-    func(x, data, ax_args=plot['data1_args']['climatology_args']['ax_args'])
+    func(x, data, plot=plot, ax_args=plot['data1_args']['climatology_args']['ax_args'])
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_timeseries' + str(plot['plot_depth'])
     savefigures(plot_name, **plot)
+    plot['units'] = units
     return plot_name
 
 def timeseriesdata(plot, compfile, depth):
@@ -540,24 +546,25 @@ def timeseries_comparison(plot, func):
     
     fig, ax = plt.subplots(1,1, figsize=(8,8))
     dft.filltitle(plot)        
-    func(x, data, ax=ax, ax_args=plot['data1_args']['climatology_args']['ax_args'])
+    func(x, data, plot=plot, ax=ax, ax_args=plot['data1_args']['climatology_args']['ax_args'])
     
     if plot['compare']['cmip5'] == True:
         plot['comp_model'] = 'cmip5'
         data = timeseriesdata(plot, plot['cmip5_file'], depth)
-        func(x, data, ax=ax, label=plot['comp_model'], ax_args=plot['data1_args']['climatology_args']['ax_args'])
+        func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1_args']['climatology_args']['ax_args'])
     if plot['compare']['obs'] == True:
         plot['comp_model'] = 'Observations'
         data = timeseriesdata(plot, plot['obs_file'], depth)
-        func(x, data, ax=ax, label=plot['comp_model'], ax_args=plot['data1_args']['climatology_args']['ax_args'])
+        func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1_args']['climatology_args']['ax_args'])
     if plot['compare']['model'] == True:
         for model in plot['comp_models']:
             plot['comp_model'] = model
             data = timeseriesdata(plot, plot['model_file'][model], depth) 
-            func(x, data, ax=ax, label=plot['comp_model'], ax_args=plot['data1_args']['climatology_args']['ax_args']) 
+            func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1_args']['climatology_args']['ax_args']) 
     ax.legend(loc='best')
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_timeseries_comparison' + str(plot['plot_depth'])
     savefigures(plot_name, **plot)
+    plots['units'] = units
     return plot_name        
 
       
@@ -592,9 +599,10 @@ def zonalmean(plot, func):
 
    
     dft.filltitle(plot)        
-    func(x, data, ax_args=plot['data1_args']['climatology_args']['ax_args'])
+    func(x, data, plot=plot, ax_args=plot['data1_args']['climatology_args']['ax_args'])
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_zonalmean' + str(plot['plot_depth'])
     savefigures(plot_name, **plot)
+    plot['units'] = units
     return plot_name
 
 def zonalmeandata(plot, compfile, ax, depth, func):
@@ -606,7 +614,7 @@ def zonalmeandata(plot, compfile, ax, depth, func):
             print('Failed to extract depth ' +  plot['plot_depth'] + ' for ' + plot['variable'])
             depth_ind = 0
         data2 = data2[depth_ind,:]  
-    func(x2, data2, ax=ax, label=plot['comp_model'], ax_args=plot['data1_args']['climatology_args']['ax_args']) 
+    func(x2, data2, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1_args']['climatology_args']['ax_args']) 
           
 def zonalmean_comparison(plot, func):  
     """ Loads and plots a time average of the zonal means
@@ -640,7 +648,7 @@ def zonalmean_comparison(plot, func):
 
     fig, ax = plt.subplots(1,1, figsize=(8,8))   
     dft.filltitle(plot)        
-    func(x, data, ax=ax, ax_args=plot['data1_args']['climatology_args']['ax_args'])
+    func(x, data, plot=plot, ax=ax, ax_args=plot['data1_args']['climatology_args']['ax_args'])
 
     if plot['compare']['cmip5'] == True:
         plot['comp_model'] = 'cmip5'
@@ -656,6 +664,7 @@ def zonalmean_comparison(plot, func):
     ax.legend(loc='best')
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_zonalmean_comparison' + str(plot['plot_depth'])
     savefigures(plot_name, **plot)
+    plot['units'] = units
     return plot_name
     
 def taylor_time(plot, func):
@@ -689,6 +698,7 @@ def taylor_time(plot, func):
     pr.taylordiagram(refdata, plotdata, ax_args=plot['data1_args']['climatology_args']['ax_args'])
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_taylor' + str(plot['plot_depth'])
     savefigures(plot_name, **plot)
+    plot['units'] = units
     return plot_name  
 
 
@@ -712,8 +722,10 @@ def taylor(plot, func):
             plot['comp_model'] = model
             data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['model_file'][model], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
             plotdata.append((_depth_data(data, depth, plot), model))  
-    pr.taylordiagram(refdata, plotdata, ax_args=plot['data1_args']['climatology_args']['ax_args'])
+    pr.taylordiagram(refdata, plotdata, plot=plot,ax_args=plot['data1_args']['climatology_args']['ax_args'])
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_taylor' + str(plot['plot_depth'])
     plt.tight_layout()
     savefigures(plot_name, **plot)
+    plot['units'] = units
+    plot['comp_file'] = plot['obs_file']
     return plot_name     

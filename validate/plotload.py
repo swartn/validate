@@ -113,7 +113,6 @@ def _load(nc, var):
     
     depth = [0]
     for dimension in ncvar.dimensions:
-        print dimension
         try:
             if nc.variables[dimension].axis == 'Z':
                 depth = nc.variables[dimension][:]

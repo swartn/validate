@@ -147,7 +147,10 @@ def filltitle(p):
     if p['comp_flag'] == 'model':
         fill(p['comp_model'])
     else:
-        fill(p['comp_flag'])
+        if p['comp_flag']:
+            fill(p['comp_flag'])
+        else:
+            fill("")
 
     
 

@@ -15,6 +15,8 @@ OUTPUT_ORDER = ['plot_name',
                 'comp_file',
                 'dates',
                 'frequency',
+                'units',
+                'stats'
                 ]
                 
 def convert(plot):
@@ -33,16 +35,30 @@ def convert(plot):
     else:
         yamplot['dates'] = plot['trends_dates']
     yamplot['frequency'] = plot['frequency']
+    yamplot['units'] = str(plot['units'])
+    yamplot['stats'] = plot['stats']
+#    for key in plot['stats']:
+#        if type(plot['stats'][key]) is dict:
+#            yamplot['stats'][key] = plot['stats'][key]
+#        else:
+#            yamplot['stats'][plot['obs']] = plot['stats']
+            
     return yamplot
 
 def output(yamplot):
     with open('logs/log.yml', 'a') as outfile:
         outfile.write('\n-----\n\n')
     for name in OUTPUT_ORDER:
-        printer = {name: yamplot[name]}
-        with open('logs/log.yml', 'a') as outfile:
-            outfile.write(yaml.dump(printer, default_flow_style=False))
-
+#        if name is 'stats':
+            printer = {name: yamplot[name]}
+            with open('logs/log.yml', 'a') as outfile:
+                outfile.write(yaml.dump(printer, default_flow_style=False))
+#        else:
+#            for key in yamplot['stats']:
+#                printer = {key: yamplot['stats'][key]}
+#                with open('logs/log.yml', 'a') as outfile:
+#                    outfile.write(yaml.dump(printer, default_flow_style=False))
+                
 def log(plot):
     yamplot = convert(plot)
     output(yamplot)
