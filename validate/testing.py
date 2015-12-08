@@ -33,8 +33,10 @@ plots : A list of dictionaries specifying the plots to be produced. At a minimum
                      'obs'
                      'cmip5',
                      'model'
+                     'runid'
                      to booleans
          'comp_models' : A list of strings of cmip5 model names to compare
+         'comp_ids' : A list of strings of run IDs to compare
          'climatology_dates' : A dictionary mapping
                                'start_date'
                                'end_date'
@@ -116,6 +118,7 @@ obsroot : A string naming the directory where netCDF observation files can
            
            example:
                obsroot = '/raid/ra40/data/ncs/obs4comp/'                        
+                      
 
 """
 
@@ -126,7 +129,7 @@ model_run = 'edr'
 
 defaults = {
             'climatology': True,
-            'climatology_dates': {'start_date': '1850-01', 'end_date': '2000-01'},
+            'climatology_dates': {'start_date': '1980-01', 'end_date': '2000-01'},
             'compare_climatology': True,
 
             'trends': False,
@@ -143,16 +146,17 @@ plots = [
  
          {    
           'variable': 'ta',
-          'plot_projection': 'section',
-#          'depth_type': 'plev',
-#          'depths':[20000, 8500, 10000],
-          'compare': {'cmip5': True,
-                      'model': True,
-                      'obs': True,},
+          'plot_projection': 'zonal_mean',
+          'depth_type': 'plev',
+          'depths':[20000, 8500, 100000],
+          'compare': {'cmip5': False,
+                      'model': False,
+                      'obs': True,
+                      'runid': True,},
           'comp_models': ['CanCM4', 'NorESM1-M'],
-          'frequency': 'mon'
-          },  
-    
+          'comp_ids': ['cvu'],
+          'frequency': 'mon',
+          },    
         ]
 
 delete = {

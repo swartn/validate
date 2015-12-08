@@ -10,7 +10,7 @@ from various modules to produce the plots layed out in configure.py
 
 
 
-from directory_tools import getfiles, remfiles, getobsfiles
+from directory_tools import getfiles, remfiles, getobsfiles, getidfiles
 from plotter import loop
 from pdforganize import arrange
 from defaults import fill
@@ -38,7 +38,10 @@ def execute(plots, run, obsroot=None, cmiproot=None, defaults={}, delete={}, obs
     fill(plots, defaults, run)
     getfiles(plots, run) 
     getobsfiles(plots, obsroot)
-    cmip(plots, cmiproot, load_cmip5)   
+    cmip(plots, cmiproot, load_cmip5)  
+    getidfiles(plots)
+    for p in plots:
+        print p['id_file'] 
     plotnames = loop(plots, debugging)
     remfiles(**delete)
     arrange(plotnames)

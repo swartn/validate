@@ -33,8 +33,10 @@ plots : A list of dictionaries specifying the plots to be produced. At a minimum
                      'obs'
                      'cmip5',
                      'model'
+                     'runid'
                      to booleans
          'comp_models' : A list of strings of cmip5 model names to compare
+         'comp_ids' : A list of strings of run IDs to compare
          'climatology_dates' : A dictionary mapping
                                'start_date'
                                'end_date'

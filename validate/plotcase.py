@@ -143,6 +143,8 @@ def climatology_comparison_name(plot):
         plot_name = 'plots/' + plot['variable'] + '_' + plot['plot_projection'] + '_climatology_comparison_cmip5_' + str(plot['plot_depth'])
     if plot['comp_flag'] == 'model':
         plot_name = 'plots/' + plot['variable'] + '_' + plot['plot_projection'] + '_climatology_comparison_' + plot['comp_model'] + str(plot['plot_depth'])
+    if plot['comp_flag'] == 'runid':
+        plot_name = 'plots/' + plot['variable'] + '_' + plot['plot_projection'] + '_climatology_comparison_' + plot['comp_model'] + str(plot['plot_depth'])
     return plot_name
 
 def trends_comparison_name(plot):
@@ -523,7 +525,7 @@ def timeseriesdata(plot, compfile, depth):
             print('Failed to extract depth ' +  plot['plot_depth'] + ' for ' + plot['variable'])
             depth_ind = 0
         data = data[:,depth_ind] 
-    return data
+    return data, x
       
 
 def timeseries_comparison(plot, func):
@@ -548,23 +550,28 @@ def timeseries_comparison(plot, func):
     dft.filltitle(plot)        
     func(x, data, plot=plot, ax=ax, ax_args=plot['data1_args']['climatology_args']['ax_args'])
     
-    if plot['compare']['cmip5'] == True:
+    if plot['compare']['cmip5']:
         plot['comp_model'] = 'cmip5'
-        data = timeseriesdata(plot, plot['cmip5_file'], depth)
+        data, x = timeseriesdata(plot, plot['cmip5_file'], depth)
         func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1_args']['climatology_args']['ax_args'])
-    if plot['compare']['obs'] == True:
+    if plot['compare']['obs']:
         plot['comp_model'] = 'Observations'
-        data = timeseriesdata(plot, plot['obs_file'], depth)
+        data, x = timeseriesdata(plot, plot['obs_file'], depth)
         func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1_args']['climatology_args']['ax_args'])
-    if plot['compare']['model'] == True:
+    if plot['compare']['model']:
         for model in plot['comp_models']:
             plot['comp_model'] = model
-            data = timeseriesdata(plot, plot['model_file'][model], depth) 
+            data, x = timeseriesdata(plot, plot['model_file'][model], depth) 
+            func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1_args']['climatology_args']['ax_args'])
+    if plot['compare']['runid']:
+        for i in plot['comp_ids']:
+            plot['comp_model'] = i
+            data, x = timeseriesdata(plot, plot['id_file'][i], depth) 
             func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1_args']['climatology_args']['ax_args']) 
     ax.legend(loc='best')
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_timeseries_comparison' + str(plot['plot_depth'])
     savefigures(plot_name, **plot)
-    plots['units'] = units
+    plot['units'] = units
     return plot_name        
 
       
@@ -615,6 +622,7 @@ def zonalmeandata(plot, compfile, ax, depth, func):
             depth_ind = 0
         data2 = data2[depth_ind,:]  
     func(x2, data2, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1_args']['climatology_args']['ax_args']) 
+    print 'no'
           
 def zonalmean_comparison(plot, func):  
     """ Loads and plots a time average of the zonal means
@@ -649,58 +657,28 @@ def zonalmean_comparison(plot, func):
     fig, ax = plt.subplots(1,1, figsize=(8,8))   
     dft.filltitle(plot)        
     func(x, data, plot=plot, ax=ax, ax_args=plot['data1_args']['climatology_args']['ax_args'])
-
-    if plot['compare']['cmip5'] == True:
+    
+    if plot['compare']['cmip5']:
         plot['comp_model'] = 'cmip5'
         zonalmeandata(plot, plot['cmip5_file'], ax, depth, func)
-    if plot['compare']['obs'] == True:
+    if plot['compare']['obs']:
         plot['comp_model'] = 'Observations'
+        print 'aaaaaaaa'
         zonalmeandata(plot, plot['obs_file'], ax, depth, func)
-    if plot['compare']['model'] == True:
+    if plot['compare']['model']:
         for model in plot['comp_models']:
             plot['comp_model'] = model
             zonalmeandata(plot, plot['model_file'][model], ax, depth, func) 
+    if plot['compare']['runid']:
+        for i in plot['comp_ids']:
+            plot['comp_model'] = i
+            zonalmeandata(plot, plot['id_file'][i], ax, depth, func) 
                
     ax.legend(loc='best')
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_zonalmean_comparison' + str(plot['plot_depth'])
     savefigures(plot_name, **plot)
     plot['units'] = units
     return plot_name
-    
-def taylor_time(plot, func):
-    print 'plotting taylor diagram of ' + plot['variable']
-    data, units, x, depth = pl.timeseries_load(plot['ifile'], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat'], plot['scale'])
-
-    plot['data1_args']['climatology_args']['ax_args']['xlabel'] = 'Time'
-    plot['data1_args']['climatology_args']['ax_args']['ylabel'] = units
-    
-    plot['plot_depth'] = plot['depth']
-    if data.ndim > 1:
-        plot['plot_depth'] = min(depth, key=lambda x:abs(x-plot['depth']))
-
-        try:
-            depth_ind = np.where(np.round(depth) == plot['plot_depth'])[0][0]
-        except:
-            print('Failed to extract depth ' +  plot['plot_depth'] + ' for ' + plot['variable'])
-            depth_ind = 0
-        data = data[:,depth_ind] 
-    
-    dft.filltitle(plot)    
-    plotdata = [(data, 'model')]
-    refdata= timeseriesdata(plot, plot['obs_file'], depth)
-    if plot['compare']['cmip5'] == True:
-        plot['comp_model'] = 'cmip5'
-        plotdata.append((timeseriesdata(plot, plot['cmip5_file'], depth), 'cmip5'))
-    if plot['compare']['model'] == True:
-        for model in plot['comp_models']:
-            plot['comp_model'] = model
-            plotdata.append((timeseriesdata(plot, plot['model_file'][model], depth), model))  
-    pr.taylordiagram(refdata, plotdata, ax_args=plot['data1_args']['climatology_args']['ax_args'])
-    plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_taylor' + str(plot['plot_depth'])
-    savefigures(plot_name, **plot)
-    plot['units'] = units
-    return plot_name  
-
 
 def taylor(plot, func):
     print 'plotting taylor diagram of ' + plot['variable']
@@ -721,7 +699,12 @@ def taylor(plot, func):
         for model in plot['comp_models']:
             plot['comp_model'] = model
             data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['model_file'][model], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
-            plotdata.append((_depth_data(data, depth, plot), model))  
+            plotdata.append((_depth_data(data, depth, plot), model)) 
+    if plot['compare']['runid'] == True:
+        for i in plot['comp_ids']:
+            plot['comp_model'] = i
+            data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['id_file'][i], plot['variable'], plot['depth_type'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
+            plotdata.append((_depth_data(data, depth, plot), i))     
     pr.taylordiagram(refdata, plotdata, plot=plot,ax_args=plot['data1_args']['climatology_args']['ax_args'])
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_taylor' + str(plot['plot_depth'])
     plt.tight_layout()

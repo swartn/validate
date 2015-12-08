@@ -484,11 +484,9 @@ def zonal_load(ifile, var, depth_type, dates, realm, scale):
         elif realm == 'land':
             cdo.mul(input='-divc,100 mask/land ' + path + '/' + ifile, output=out)
         else:
-            out = path + '/' + ifile  
-                        
+            out = path + '/' + ifile                     
         cdo.zonmean(options='-L', input='-timmean -setctomiss,0 -seldate,' + str(dates['start_date']) + ',' +str(dates['end_date']) + ' ' + out, output='zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
     nc = Dataset('zonalfiles/zonmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
-  
     data, units, depth = _load(nc, var) 
     
     x = nc.variables['lat'][:].squeeze()
@@ -530,7 +528,7 @@ def zonal_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
     if not os.path.isfile('zonalfiles/zonmean_' + ifile +  str(dates['start_date']) + str(dates['end_date']) + '.nc'):
         out = 'zonalfiles/selvar.nc'
         cdo.selvar(var, input=path + '/' + ifile, output=out)
-        out2 = 'zonalfiles/selvarremap.nc'            
+        out2 = 'zonalfiles/selvarremap.nc'                
         cdo.remapdis('r360x180', input=out, output=out2)
         cdo.zonmean(options= '-L', input='-timmean -seldate,' + str(dates['start_date']) + ',' +str(dates['end_date']) + ' ' + out2, output='zonalfiles/zonmean_'  + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
     try:    

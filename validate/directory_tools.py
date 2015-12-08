@@ -378,7 +378,37 @@ def getfiles(plots, run):
             if p['realm_cat'] == 'ocean':
                 p['plot_args']['fill_continents'] = True
 
-
+def getidfiles(plots):
+    ids = []
+    for p in plots:
+        if p['compare']['runid']:
+            ids.extend(p['comp_ids'])
+        p['id_file'] = {}
+    print ids
+    ids = list(set(ids))
+    print ids
+    startdates = min_start_dates(plots)
+    enddates = max_end_dates(plots)
+    for i in ids:
+        files = traverse('/raid/rc40/data/ncs/historical-' + i)
+        vf = {}
+        fvr = []
+        for f in files:
+            vf[(getfrequency(f), getvariable(f), getrealization(f))] = []
+        for f in files:
+            vf[(getfrequency(f), getvariable(f), getrealization(f))].append(f)        
+        for p in plots:
+            fvr.append((p['frequency'], p['variable'], str(p['realization']))) 
+        for key in vf.keys():
+            if key not in fvr:
+                del vf[key]
+        filedict = _remove_files_out_of_date_range(vf, startdates, enddates)
+        filedict = _cat_file_slices(filedict)                 
+        for p in plots:
+            if i in p['comp_ids']:
+                p['id_file'][i] = filedict[(p['frequency'], p['variable'], str(p['realization']))] 
+                
+                
 def remfiles(del_fldmeanfiles=True, del_mask=True, del_ncstore=True, del_remapfiles=True, del_trendfiles=True, del_zonalfiles=True, 
              del_cmipfiles=True, del_ENS_MEAN_cmipfiles=True, del_ENS_STD_cmipfiles=True, **kwargs):
     """ Option to delete the directories used to store processed .nc files

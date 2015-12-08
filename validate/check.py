@@ -153,7 +153,7 @@ def check_compare(comp):
     possible_keys = ['cmip5',
                      'model',
                      'obs',
-                     'runID']
+                     'runid']
     for key in comp:
         if type(key) is not str:
             raise TypeError("'compare' keys must be 'str' type")
@@ -180,6 +180,13 @@ def check_ifile(f):
         raise TypeError("'ifile' must be 'str' type")
     if not os.path.isfile(f):
         raise ValueError("'ifile': " + f + " is not a file") 
+
+def check_comp_ids(ids):
+    if type(ids) is not list:
+        raise TypeError("'comp_ids' must be 'list' type")
+    for i in ids:
+        if type(i) is not str:
+            raise TypeError("run IDs in 'comp_ids' must be 'str' type")    
          
 def check_plot(plot):   
     possible_keys = ['variable',
@@ -204,7 +211,8 @@ def check_plot(plot):
                      'compare',
                      'comp_models',
                      'obs_file',
-                     'ifile',]  
+                     'ifile',
+                     'comp_ids',]  
     for key in plot:
         if key not in possible_keys:
             raise ValueError(str(key) + ' is not a valid key for a dictionary in plots')
@@ -254,7 +262,9 @@ def check_plot(plot):
     if 'obs_file' in plot:
         check_obs_file(plot['obs_file'])
     if 'ifile' in plot:
-        check_ifile(plot['_file'])        
+        check_ifile(plot['_file'])
+    if 'comp_ids' in plot:
+        check_comp_ids(plot['comp_ids'])     
         
 def check_plots(plots):
     if type(plots) is not list:

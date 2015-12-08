@@ -331,11 +331,13 @@ def zonalmean(x, data, ax=None, ax_args=None, label='model', plot={}):
         fig, ax = plt.subplots(1,1, figsize=(8,8))
     else:
         fig = plt.gcf()
-    
+    print 'got here'
     ax.plot(x, data, label=label)
 
     plt.setp(ax, **ax_args)
     plot['stats'] = 'N/A'
+    print 'hello'
+    
     
 def taylordiagram(refdata, plotdata, fig=None, ax_args=None, plot={}):
     refdata = refdata.flatten()
@@ -351,6 +353,8 @@ def taylordiagram(refdata, plotdata, fig=None, ax_args=None, plot={}):
         fig = plt.gcf()
     
     stdrange = max(samples, key=itemgetter(1))[0]*1.3/refstd
+    if stdrange <= refstd*1.1/refstd:
+        stdrange = refstd*1.1/refstd
         
     dia = TaylorDiagram(refstd, fig=fig, label='obs', srange=(0,stdrange))
     colors= plt.matplotlib.cm.jet(np.linspace(0,1,len(samples)))

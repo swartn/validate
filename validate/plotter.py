@@ -152,7 +152,13 @@ def comp_loop(plot, plotnames, ptype):
             plot['comp_model'] = model
             plot['comp_file'] = plot['model_file'][model]
             calltheplot(plot, plotnames, ptype)
-    
+    if comp['runid']:
+        plot['comp_flag'] = 'runid'
+        for i in plot['id_file']:
+            plot['comp_model'] = i
+            plot['comp_file'] = plot['id_file'][i]
+            calltheplot(plot, plotnames, ptype)  
+                      
 def loop_plot_types(plot, plotnames):
     types = ['climatology', 'trends', 'compare_climatology', 'compare_trends']
     comptypes = ['compare_climatology', 'compare_trends']
