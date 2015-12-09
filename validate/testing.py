@@ -205,4 +205,4 @@ obsroot = '/raid/rc40/data/ncs/obs4comp'
 cmiproot = '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
         
 if __name__ == "__main__":
-       plots_with_files = con.execute(plots, model_run, experiment, obsroot, cmiproot, defaults, delete, debugging=True)
+       plots_with_files = con.execute(plots, model_run, experiment, obsroot, cmiproot, defaults, delete, debugging=False)
