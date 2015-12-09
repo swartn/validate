@@ -75,14 +75,6 @@ def check_realization(real):
     else:
         raise TypeError("Realization should be 'int' type")
 
-def check_depth_type(dt):
-    if type(dt) is not str:
-        raise TypeError("'depth_type' must be 'str' type")
-
-def check_depth(plot):
-    if 'depth_type' not in plot:
-        raise Exception("'depth_type' must be specified to plot specific depths")
-
 def check_depths(depths):
     if type(depths) is not list:
         raise TypeError("'depths' must be 'list' type")
@@ -198,7 +190,6 @@ def check_plot(plot):
                      'climatology_dates',
                      'trends_dates',
                      'realization',
-                     'depth_type',
                      'depths',
                      'frequency',
                      'scale',
@@ -234,10 +225,7 @@ def check_plot(plot):
         check_dates(plot['trends_dates'], 'trends_dates')
     if 'realization' in plot:
         check_realization(plot['realization'])
-    if 'depth_type' in  plot:
-        check_depth_type(plot['depth_type'])
     if 'depths' in plot:
-        check_depth(plot)
         check_depths(plot['depths'])
     if 'frequency' in plot:
         check_frequency(plot['frequency'])

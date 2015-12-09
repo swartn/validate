@@ -144,11 +144,19 @@ defaults = {
             }
 
 plots = [
- 
+         {    
+          'variable': 'psl',
+          'plot_projection': 'taylor',
+          'compare': {'cmip5': True,
+                      'model': True,
+                      'obs': True,
+                      'runid': True,},
+          'comp_models': ['CanCM4', 'NorESM1-M'],
+          'comp_ids': ['cvu'],
+          }, 
          {    
           'variable': 'ta',
           'plot_projection': 'mercator',
-          'depth_type': 'plev',
           'depths':[20000, 8500, 100000],
           'compare': {'cmip5': True,
                       'model': True,
@@ -156,8 +164,29 @@ plots = [
                       'runid': True,},
           'comp_models': ['CanCM4', 'NorESM1-M'],
           'comp_ids': ['cvu'],
-          'frequency': 'mon',
-          },    
+          }, 
+
+         {    
+          'variable': 'ta',
+          'plot_projection': 'zonal_mean',
+          'depths':[20000, 8500, 100000],
+          'compare': {'cmip5': True,
+                      'model': True,
+                      'obs': True,
+                      'runid': True,},
+          'comp_models': ['CanCM4', 'NorESM1-M'],
+          'comp_ids': ['cvu'],
+          },
+         {    
+          'variable': 'ta',
+          'plot_projection': 'section',
+          'compare': {'cmip5': True,
+                      'model': True,
+                      'obs': True,
+                      'runid': True,},
+          'comp_models': ['CanCM4', 'NorESM1-M'],
+          'comp_ids': ['cvu'],
+          },                                          
         ]
 
 delete = {

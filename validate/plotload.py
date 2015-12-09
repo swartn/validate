@@ -149,7 +149,7 @@ def _load2(data, nc, units, depth, scale):
     data = data*scale    
     return data, lon, lat, depth, units
     
-def timeaverage_load(ifile, var, depth_type, dates, realm, scale):
+def timeaverage_load(ifile, var, dates, realm, scale):
     """ Loads the data from a file and remaps it.
         Applies a time average over specified dates and scales the data.
         
@@ -158,8 +158,6 @@ def timeaverage_load(ifile, var, depth_type, dates, realm, scale):
     ifile : string
             filename to load data from
     var : string
-    depth_type : string
-                 the name the depth is labelled as in the file
     dates : dictionary
             maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
     realm : string
@@ -196,7 +194,7 @@ def timeaverage_load(ifile, var, depth_type, dates, realm, scale):
 
     return data, units, lon, lat, depth
 
-def timeaverage_load_comp(ifile, var, depth_type, dates, realm, depthneeded, scale):
+def timeaverage_load_comp(ifile, var, dates, realm, depthneeded, scale):
     """ Loads the data from a file and remaps it to 360x180.
         Also remaps the vertical axis to specified depths for easy comparison
         Applies a time average over specified dates and scales the data.
@@ -206,8 +204,6 @@ def timeaverage_load_comp(ifile, var, depth_type, dates, realm, depthneeded, sca
     ifile : string
             filename to load data from
     var : string
-    depth_type : string
-                 the name the depth is labelled as in the file
     dates : dictionary
             maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
     realm : string
@@ -245,7 +241,7 @@ def timeaverage_load_comp(ifile, var, depth_type, dates, realm, depthneeded, sca
     data, lon, lat, depth, units = _load2(data, nc, units, depth, scale)
     return data, units, lon, lat, depth    
 
-def trends_load(ifile, var, depth_type, dates, scale):
+def trends_load(ifile, var, dates, scale):
     """ Loads the trend data over specified dates from a file 
         Remaps and scales the data.
         
@@ -254,8 +250,6 @@ def trends_load(ifile, var, depth_type, dates, scale):
     ifile : string
             filename to load data from
     var : string
-    depth_type : string
-                 the name the depth is labelled as in the file
     dates : dictionary
             maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
     scale : int
@@ -284,7 +278,7 @@ def trends_load(ifile, var, depth_type, dates, scale):
     
     return data, units, lon, lat, depth    
 
-def trends_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
+def trends_load_comp(ifile, var, dates, depthneeded, scale):
     """ Loads the trend data over specified dates from a file 
         Remaps and scales the data. Also remaps the vertical axis to 
         specified depths for easy comparison.
@@ -294,8 +288,6 @@ def trends_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
     ifile : string
             filename to load data from
     var : string
-    depth_type : string
-                 the name the depth is labelled as in the file
     dates : dictionary
             maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
     depthneeded : numpy array
@@ -335,7 +327,7 @@ def trends_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
     return data, units, lon, lat, depth  
 
    
-def timeseries_load(ifile, var, depth_type, dates, realm, scale):
+def timeseries_load(ifile, var, dates, realm, scale):
     """ Loads the field mean data over specified dates from a file.
         Remaps and scales the data. 
                 
@@ -344,8 +336,6 @@ def timeseries_load(ifile, var, depth_type, dates, realm, scale):
     ifile : string
             filename to load data from
     var : string
-    depth_type : string
-                 the name the depth is labelled as in the file
     dates : dictionary
             maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
     scale : int
@@ -390,7 +380,7 @@ def timeseries_load(ifile, var, depth_type, dates, realm, scale):
     units = _scale_units(units, scale)
     return data*scale, units, x, depth    
 
-def timeseries_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
+def timeseries_load_comp(ifile, var, dates, depthneeded, scale):
     """ Loads the field mean data over specified dates from a file.
         Remaps and scales the data. 
                 
@@ -399,8 +389,6 @@ def timeseries_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
     ifile : string
             filename to load data from
     var : string
-    depth_type : string
-                 the name the depth is labelled as in the file
     dates : dictionary
             maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
     scale : int
@@ -450,7 +438,7 @@ def timeseries_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
     
    
 
-def zonal_load(ifile, var, depth_type, dates, realm, scale):
+def zonal_load(ifile, var, dates, realm, scale):
     """ Loads the zonal mean data over specified dates from a file.
         Remaps and scales the data. 
                 
@@ -459,8 +447,6 @@ def zonal_load(ifile, var, depth_type, dates, realm, scale):
     ifile : string
             filename to load data from
     var : string
-    depth_type : string
-                 the name the depth is labelled as in the file
     dates : dictionary
             maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
     depthneeded : numpy array
@@ -495,7 +481,7 @@ def zonal_load(ifile, var, depth_type, dates, realm, scale):
     units = _scale_units(units, scale)
     return data*scale, units, x, depth   
     
-def zonal_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
+def zonal_load_comp(ifile, var, dates, depthneeded, scale):
     """ Loads the zonal mean data over specified dates from a file.
         Remaps and scales the data. 
                 
@@ -504,8 +490,6 @@ def zonal_load_comp(ifile, var, depth_type, dates, depthneeded, scale):
     ifile : string
             filename to load data from
     var : string
-    depth_type : string
-                 the name the depth is labelled as in the file
     dates : dictionary
             maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
     scale : int
