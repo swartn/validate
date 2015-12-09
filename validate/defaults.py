@@ -7,6 +7,21 @@ existence checks will not be needed later.
 
 .. moduleauthor:: David Fallis
 """
+
+DEFAULTS = {'plotprojection': 'global_map',
+            'climatology': False,
+            'compare_climatology': False,
+            'trends': False,
+            'compare_trends': False,
+            'frequency': 'mon',
+            'realization': 1,
+            'depths': [0],
+            'scale': 1,
+            'pdf': True,
+            'png': False,
+            'comp_flag': None,}
+            
+
 def fill(plots, defaults, model_run):
     """ Fills the blank spaces in plots with default values and returns the list
     
@@ -26,36 +41,14 @@ def fill(plots, defaults, model_run):
         for key in defaults:
             if key not in p:
                 p[key] = defaults[key]
+        for key in DEFAULTS:
+            if key not in p:
+                p[key] = DEFAULTS[key]
         if 'variable' not in p:
             plots.remove(p)
             print p
             print 'deleted: no variable provided' 
         p['model_ID'] = model_run   
-        if 'plot_projection' not in p:
-            p['plot_projection'] = 'global_map'
-        if 'climatology' not in p:
-            p['climatology'] = False
-        if 'compare_climatology' not in p:
-            p['compare_climatology'] = False
-        if 'trends' not in p:
-            p['trends'] = False
-        if 'compare_trends' not in p:
-            p['compare_trends'] = False
-        if 'frequency' not in p:
-            p['frequency'] = 'mon'
-        if 'realization' not in p:
-            p['realization'] = 1
-        if 'depth_type' not in p:
-            p['depth_type'] = ""
-        if 'depths' not in p:
-            p['depths'] = [0]
-        if 'scale' not in p:
-            p['scale'] = 1
-        if 'pdf' not in p:
-            p['pdf'] = True
-        if 'png' not in p:
-            p['png'] = False
-        p['comp_flag'] = None
         if 'compare' not in p:
             p['compare'] = {'cmip5': False,
                             'model': False,

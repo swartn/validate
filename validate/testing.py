@@ -126,6 +126,7 @@ import control as con
 import os
 
 model_run = 'edr'
+experiment = 'historical'
 
 defaults = {
             'climatology': True,
@@ -146,11 +147,11 @@ plots = [
  
          {    
           'variable': 'ta',
-          'plot_projection': 'zonal_mean',
+          'plot_projection': 'mercator',
           'depth_type': 'plev',
           'depths':[20000, 8500, 100000],
-          'compare': {'cmip5': False,
-                      'model': False,
+          'compare': {'cmip5': True,
+                      'model': True,
                       'obs': True,
                       'runid': True,},
           'comp_models': ['CanCM4', 'NorESM1-M'],
@@ -175,4 +176,4 @@ obsroot = '/raid/rc40/data/ncs/obs4comp'
 cmiproot = '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
         
 if __name__ == "__main__":
-       plots_with_files = con.execute(plots, model_run, obsroot, cmiproot, defaults, delete, debugging=True)
+       plots_with_files = con.execute(plots, model_run, experiment, obsroot, cmiproot, defaults, delete, debugging=True)

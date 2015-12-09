@@ -281,6 +281,10 @@ def check_model_run(model_run):
         raise TypeError("'model_run' needs to be 'str' type")
     if not os.path.exists('/raid/rc40/data/ncs/historical-' + model_run):
         raise ValueError("No data found for model '" + model_run)
+
+def check_experiment(exp):
+    if type(exp) is not str:
+        raise TypeError("'experiment' needs to be 'str' type")    
         
 
 def check_obsroot(obsroot):
@@ -329,9 +333,10 @@ def check_defaults(defaults):
        raise TypeError("'defaults' must be 'dict' type")
     check_plot(defaults)        
 
-def check_inputs(plots, model_run, obsroot, cmiproot, obs, defaults, delete):
+def check_inputs(plots, model_run, experiment, obsroot, cmiproot, obs, defaults, delete):
     check_plots(plots)
     check_model_run(model_run)
+    check_experiment(experiment)
     if obsroot:
         check_obsroot(obsroot)
     if cmiproot:

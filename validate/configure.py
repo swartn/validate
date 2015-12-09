@@ -4,7 +4,7 @@ configure
 This module is used to configure the output of running the validation package.
 Several parameters can be defined to be passed to the control.py module.
 
-model_run : A three letter string associated with the model to be tested.             
+model_run : A three letter string associated with the run ID to be tested.             
             
             example:             
                 model_run = 'edr'
@@ -128,7 +128,7 @@ import control as con
 import os
 
 model_run = 'edr'
-
+experiment_name
 
 defaults = {
             'climatology': True,

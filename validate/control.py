@@ -17,7 +17,7 @@ from defaults import fill
 from check import check_inputs
 from cmip import cmip
 
-def execute(plots, run, obsroot=None, cmiproot=None, defaults={}, delete={}, obs={}, load_cmip5=False, check_input=True, debugging=False):
+def execute(plots, run, expname='historical', obsroot=None, cmiproot=None, defaults={}, delete={}, obs={}, load_cmip5=False, check_input=True, debugging=False):
     """ Calls modules required to find the data, 
         process the data, and output the plots and figures
         
@@ -34,11 +34,11 @@ def execute(plots, run, obsroot=None, cmiproot=None, defaults={}, delete={}, obs
              maps directory name to boolean, will delete the directoy if True
     """
     if check_input:
-        check_inputs(plots, run, obsroot, cmiproot, obs, defaults, delete)              
+        check_inputs(plots, run, expname, obsroot, cmiproot, obs, defaults, delete)              
     fill(plots, defaults, run)
     getfiles(plots, run) 
     getobsfiles(plots, obsroot)
-    cmip(plots, cmiproot, load_cmip5)  
+    cmip(plots, cmiproot, expname, load_cmip5)  
     getidfiles(plots)
     plotnames = loop(plots, debugging)
     remfiles(**delete)
