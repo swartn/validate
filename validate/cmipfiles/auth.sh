@@ -1,1 +1,0 @@
-/raid/ra40/CMIP5_OTHER_DOWNLOADS/tas/auth.sh
