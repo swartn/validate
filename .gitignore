@@ -1,5 +1,8 @@
 *.pyc
 *.*~
+*~
+*.sh
+*.jar
 *.*swp
 *.nc
 *.pdf
