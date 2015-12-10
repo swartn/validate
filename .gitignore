@@ -5,3 +5,6 @@
 *.pdf
 logs/
 plots/
+*.egg-info/*
+build/
+dist/

@@ -1,0 +1,14 @@
+#!/bin/python
+
+def copy_configuration_file(directory):
+    import pkg_resources
+    import os
+    import shutil
+    import subprocess
+    path = os.path.join('configure', 'conf.yaml')
+    confile = pkg_resources.resource_filename('validate', path)
+    shutil.copy(confile, directory)
+    p = subprocess.Popen(['kwrite', 'conf.yaml'])
+    
+if __name__ == "__main__":
+    copy_configuration_file('.')

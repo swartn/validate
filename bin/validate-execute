@@ -1,0 +1,40 @@
+#!/bin/python
+
+import argparse
+
+import validate.control as control
+#import control
+
+def args():
+    parser = argparse.ArgumentParser()
+    
+    parser.add_argument('-l', '--loadcmip5', action='store_true',                    
+                        default=argparse.SUPPRESS,
+                        help="loads the cmip5 files")
+    parser.add_argument('-r', '--run',
+                        default=argparse.SUPPRESS,
+                        help="three letter run ID")
+    parser.add_argument('-e', '--experiment',
+                        default=argparse.SUPPRESS,
+                        help="experiment name (ex. historical)")
+    parser.add_argument('-o', '--observations-root',
+                        default=argparse.SUPPRESS,
+                        help="directory to find observations files")
+    parser.add_argument('-c', '--cmip5-root',
+                        default=argparse.SUPPRESS,
+                        help="directory to find cmip5 files")
+    parser.add_argument('-i', '--ignorecheck', action='store_false', 
+                        default=argparse.SUPPRESS,
+                        help="ignore plot checking")      
+    parser.add_argument('-b', '--debugging', action='store_true', 
+                        default=argparse.SUPPRESS,
+                        help="debugging option")                                            
+                    
+    args = parser.parse_args()
+    print args
+    opts = vars(args)
+    print opts
+    control.execute(opts)
+
+if __name__=="__main__":
+    args()

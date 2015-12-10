@@ -49,7 +49,7 @@ def check_dates(dates, thekey):
     if type(dates) is not dict:
         raise TypeError("'" + thekey +"' must be 'dict' type")
     for key in dates:
-        if key is not 'start_date' and key is not 'end_date':
+        if key != 'start_date' and key != 'end_date':
             raise ValueError("'" + thekey + "' key's must be either 'start_date' or 'end_date'")
     if 'start_date' in dates:
         if type(dates['start_date']) is not str:

@@ -7,17 +7,16 @@ from various modules to produce the plots layed out in configure.py
 
 .. moduleauthor:: David Fallis
 """
-
-
-
+import sys
+import yaml
+import os
 from directory_tools import getfiles, remfiles, getobsfiles, getidfiles
 from plotter import loop
 from pdforganize import arrange
 from defaults import fill
 from check import check_inputs
 from cmip import cmip
-
-def execute(plots, run, expname='historical', obsroot=None, cmiproot=None, defaults={}, delete={}, obs={}, load_cmip5=False, check_input=True, debugging=False):
+def execute(options, **kwargs):
     """ Calls modules required to find the data, 
         process the data, and output the plots and figures
         
@@ -33,15 +32,33 @@ def execute(plots, run, expname='historical', obsroot=None, cmiproot=None, defau
     delete : dictionary
              maps directory name to boolean, will delete the directoy if True
     """
-    if check_input:
-        check_inputs(plots, run, expname, obsroot, cmiproot, obs, defaults, delete)              
-    fill(plots, defaults, run)
-    getfiles(plots, run) 
-    getobsfiles(plots, obsroot)
-    cmip(plots, cmiproot, expname, load_cmip5)  
-    getidfiles(plots)
-    plotnames = loop(plots, debugging)
-    remfiles(**delete)
-    arrange(plotnames)
+    def plot(run=None, experiment='historical', observations_root="", cmip5_root="", loadcmip5=False, ignorecheck=False, debugging=False, plots=[], defaults={}, delete={}, obs={}, **kwargs):
+        if not ignorecheck:
+            check_inputs(plots, run, experiment, observations_root, cmip5_root, obs, defaults, delete)              
+        fill(plots, defaults, run)
+        getfiles(plots, run) 
+        getobsfiles(plots, observations_root)
+        cmip(plots, cmip5_root, experiment, loadcmip5)  
+        getidfiles(plots)
+        plotnames = loop(plots, debugging)
+        remfiles(**delete)
+        arrange(plotnames)         
+
+    try:
+        with open('configure/conf.yaml', 'r') as f:
+            settings = yaml.load(f)
+    except IOError:
+        import pkg_resources
+        path = os.path.join('configure', 'conf.yaml')
+        confile = pkg_resources.resource_filename('validate', path)
+        with open(confile, 'r') as f:
+            settings = yaml.load(f)
+
+    for key in settings:
+        if key in options:
+            setting[key] = options[key]
+    plot(**settings)
+    
+
     
         

@@ -122,11 +122,13 @@ obsroot : A string naming the directory where netCDF observation files can
 
 """
 
-import control as con
-import os
+#import control as con
+#import os
 
-model_run = 'edr'
+
+run = 'edr'
 experiment = 'historical'
+
 
 defaults = {
             'climatology': True,
@@ -201,8 +203,9 @@ delete = {
           'del_cmipfiles': False,
           }
           
-obsroot = '/raid/rc40/data/ncs/obs4comp'               
-cmiproot = '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
+observations_root = '/raid/rc40/data/ncs/obs4comp'               
+cmip5_root = '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
+
         
-if __name__ == "__main__":
-       plots_with_files = con.execute(plots, model_run, experiment, obsroot, cmiproot, defaults, delete, debugging=False)
+#if __name__ == "__main__":
+#       plots_with_files = con.execute(plots, model_run, experiment, obsroot, #cmiproot, defaults, delete, debugging=False)
