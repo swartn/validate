@@ -58,7 +58,3 @@ def execute(options, **kwargs):
         if key in options:
             setting[key] = options[key]
     plot(**settings)
-    
-
-    
-        
