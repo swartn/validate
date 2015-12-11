@@ -145,10 +145,10 @@ def _mkdir():
 
 def _logfile(run):
     with open('logs/log.txt', 'w') as outfile:
-        outfile.write('Model: ' + run + '\n\n')
+        outfile.write('Run ID: ' + run + '\n\n')
 
     with open('logs/log.yml', 'w') as outfile:
-        outfile.write('Model: ' + run + '\n\n')
+        outfile.write('Run ID: ' + run + '\n\n')
 
 
 def _load_masks(run):
@@ -279,9 +279,8 @@ def getfrequency(f):
     -------
     string of frequency
     """
-    x = f.rsplit('/', 4)
-    x = x[0].rsplit('/', 1)
-    return x[1]
+    nc = Dataset(f, 'r')
+    return str(nc.__getattribute__('frequency'))
 
 
 def getrealization(f):
@@ -296,11 +295,8 @@ def getrealization(f):
     -------
     string of realization number
     """
-    x = f.rsplit('/', 1)
-    x = x[1].rsplit('_', 2)
-    x = x[1].split('_', 1)
-    x = x[0][1:2]
-    return x
+    nc = Dataset(f, 'r')
+    return str(nc.__getattribute__('realization'))
 
 
 def getrealm(f):
@@ -315,9 +311,8 @@ def getrealm(f):
     -------
     string of realm
     """
-    x = f.rsplit('/', 3)
-    x = x[0].rsplit('/', 1)
-    return x[1]
+    nc = Dataset(f, 'r')
+    return str(nc.__getattribute__('modeling_realm'))
 
 
 def getrealmcat(realm):
