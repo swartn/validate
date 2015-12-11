@@ -1,14 +1,26 @@
 #!/bin/python
+import argparse
+import pkg_resources
+import os
+import shutil
+import subprocess
+
 
 def copy_configuration_file(directory):
-    import pkg_resources
-    import os
-    import shutil
-    import subprocess
+
     path = os.path.join('configure', 'conf.yaml')
     confile = pkg_resources.resource_filename('validate', path)
     shutil.copy(confile, directory)
-    p = subprocess.Popen(['kwrite', 'conf.yaml'])
+    path = os.path.join(directory, 'conf.yaml')
+    p = subprocess.Popen(['kwrite', path])
+
+def args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-d', '--directory',
+                        default='.',
+                        help='directory to place configuartion file')
+    args = parser.parse_args()
+    copy_configuration_file(args.directory)
     
 if __name__ == "__main__":
-    copy_configuration_file('.')
+    args()
