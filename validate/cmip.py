@@ -5,11 +5,11 @@ cmip
 .. moduleauthor:: David Fallis
 """
 
-
-import cmipdata as cd
-import cdo; cdo = cdo.Cdo()
-import os
 from directory_tools import traverse, max_end_dates, min_start_dates
+import os
+import cmipdata as cd
+import cdo
+cdo = cdo.Cdo()
 
 
 def importcmip(directory='/raid/ra40/CMIP5_OTHER_DOWNLOADS/'):
@@ -19,15 +19,15 @@ def importcmip(directory='/raid/ra40/CMIP5_OTHER_DOWNLOADS/'):
         pass
     files = traverse(directory)
 
-    print len(files)    
     for f in files:
         if '.nc' not in f:
             files.remove(f)
     print len(files)
     for f in files:
-        newfile = f.rsplit('/',1)[1] 
-        os.system('ln -s ' + f + ' ./cmipfiles/' + newfile)  
-    
+        newfile = f.rsplit('/', 1)[1]
+        os.system('ln -s ' + f + ' ./cmipfiles/' + newfile)
+
+
 def model_average(var, model, expname, frequency):
     new = 'ENS-MEAN_cmipfiles/' + var + '_' + model + '.nc'
     if not os.path.isfile(new):
@@ -45,8 +45,10 @@ def models(var, model):
     ens.fulldetails()
     ens = cd.cat_exp_slices(ens)
     return ens.lister('ncfile')
-"""    
-def cmipaverage(var, model_file, sd, ed):    
+"""
+
+
+def cmipaverage(var, model_file, sd, ed):
     out = 'ENS-MEAN_cmipfiles/' + var + '_' + 'cmip5.nc'
     if not os.path.isfile(out):
         filelist = list(set(model_file.values()))
@@ -59,25 +61,25 @@ def cmipaverage(var, model_file, sd, ed):
 #            cdo.seldate(sd+','+ed, options = '-L', input='-selvar,' + var + ' ' + f, output=time)
 #            except:
 #                pass
-#            else: 
-            newfilelist.append(time)  
+#            else:
+            newfilelist.append(time)
         for f in newfilelist:
             remap = f.replace('.nc', '_remap.nc')
- #           try:
+#            try:
             cdo.remapdis('r360x180', input=f, output=remap)
 #            except:
 #                pass
-#            else: 
+#            else:
             newerfilelist.append(remap)
-              
+
         filestring = ' '.join(newerfilelist)
-        cdo.ensmean(input = filestring, output = out)
+        cdo.ensmean(input=filestring, output=out)
     return out
 
 
 def getfiles(plots, expname):
     startdates = min_start_dates(plots)
-    enddates = max_end_dates(plots)    
+    enddates = max_end_dates(plots)
     cmip5_variables = {}
     for p in plots:
         p['model_files'] = {}
@@ -97,22 +99,20 @@ def getfiles(plots, expname):
     for p in plots:
         if p['compare']['cmip5']:
             try:
-                p['cmip5_file'] = cmipaverage(p['variable'], p['model_file'], str(startdates[p['variable']]) + '-01', str(enddates[p['variable']])+ '-01')
+                p['cmip5_file'] = cmipaverage(p['variable'], p['model_file'], str(startdates[p['variable']]) + '-01', str(enddates[p['variable']]) + '-01')
             except:
                 p['compare']['cmip5'] = False
-                   
+
+
 def cmip(plots, cmipdir, expname, load):
     for p in plots:
-        if p['compare']['cmip5'] == True or p['compare']['model'] == True:            
+        if p['compare']['cmip5'] == True or p['compare']['model'] == True:
             if (not os.path.exists('cmipfiles')) or load:
                 importcmip(cmipdir)
             print expname
             getfiles(plots, expname)
             break
-            
 
-                              
 
-if __name__=="__main__":
+if __name__ == "__main__":
     pass
-    

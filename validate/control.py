@@ -16,10 +16,12 @@ from pdforganize import arrange
 from defaults import fill
 from check import check_inputs
 from cmip import cmip
+
+
 def execute(options, **kwargs):
-    """ Calls modules required to find the data, 
+    """ Calls modules required to find the data,
         process the data, and output the plots and figures
-        
+
     Parameters
     ----------
     plots : list of dictionaries
@@ -34,15 +36,15 @@ def execute(options, **kwargs):
     """
     def plot(run=None, experiment='historical', observations_root="", cmip5_root="", loadcmip5=False, ignorecheck=False, debugging=False, plots=[], defaults={}, delete={}, obs={}, **kwargs):
         if not ignorecheck:
-            check_inputs(plots, run, experiment, observations_root, cmip5_root, obs, defaults, delete)              
+            check_inputs(plots, run, experiment, observations_root, cmip5_root, obs, defaults, delete)
         fill(plots, defaults, run)
-        getfiles(plots, run) 
+        getfiles(plots, run)
         getobsfiles(plots, observations_root)
-        cmip(plots, cmip5_root, experiment, loadcmip5)  
+        cmip(plots, cmip5_root, experiment, loadcmip5)
         getidfiles(plots)
         plotnames = loop(plots, debugging)
         remfiles(**delete)
-        arrange(plotnames)         
+        arrange(plotnames)
 
     try:
         with open('configure/conf.yaml', 'r') as f:
@@ -54,7 +56,6 @@ def execute(options, **kwargs):
         with open(confile, 'r') as f:
             settings = yaml.load(f)
 
-    for key in settings:
-        if key in options:
-            setting[key] = options[key]
+    for key in options:
+        setting[key] = options[key]
     plot(**settings)

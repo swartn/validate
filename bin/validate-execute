@@ -1,12 +1,17 @@
 #!/bin/python
+"""
 
+Produces plots using validate package.
+
+"""
 import argparse
 
 import validate.control as control
 #import control
 
 def args():
-    parser = argparse.ArgumentParser()
+    decription = 'Produces plots using validate package'
+    parser = argparse.ArgumentParser(description=description)
     
     parser.add_argument('-l', '--loadcmip5', action='store_true',                    
                         default=argparse.SUPPRESS,
@@ -28,12 +33,10 @@ def args():
                         help="ignore plot checking")      
     parser.add_argument('-b', '--debugging', action='store_true', 
                         default=argparse.SUPPRESS,
-                        help="debugging option")                                            
+                        help="debugging option")
                     
     args = parser.parse_args()
-    print args
     opts = vars(args)
-    print opts
     control.execute(opts)
 
 if __name__=="__main__":

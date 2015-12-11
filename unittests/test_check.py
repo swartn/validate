@@ -27,31 +27,7 @@ class Test_check_plot_projection:
             ch.check_plot_projection('hello') 
     
     def test_pp_is_a_possible_value(self):
-        assert ch.check_plot_projection('mercator') == None  
-
-class Test_check_section: 
-    def test_plot_has_depth_type(self):
-        plot = {    
-            'plot_projection': 'section',
-            'depth_type': 'plev',                                           
-        } 
-        assert ch.check_section(plot) == None
-        plot = {    
-            'plot_projection': 'mercator',
-            'depth_type': 'plev',                                           
-        }
-        assert ch.check_section(plot) == None
-        
-    def test_plot_has_no_depth_type(self):         
-        plot = {    
-            'plot_projection': 'section',                                         
-        }
-        with pytest.raises(Exception): 
-            ch.check_section(plot)
-        plot = {    
-            'plot_projection': 'mercator',                                          
-        }
-        assert ch.check_section(plot) == None    
+        assert ch.check_plot_projection('mercator') == None     
     
 class Test_check_bool:
     def test_is_not_bool(self):
@@ -114,13 +90,6 @@ class Test_check_realization:
     
     def test_real_is_int(self):    
         assert ch.check_realization(1) == None 
-
-class Test_check_depth_type:
-    def test_depth_is_wrong_type(self):
-        with pytest.raises(TypeError):
-            ch.check_depth_type(1)
-    def test_depth_is_right_type(self):
-        assert ch.check_depth_type('string') == None
 
 class Test_check_depths:
     def test_depths_is_wrong_type(self):
@@ -434,6 +403,6 @@ class Test_check_input:
         }         
         obsroot = None               
         obs = {}         
-        assert ch.check_input(plots, model_run, obsroot, obs, defaults, delete) == None    
+        assert ch.check_inputs(plots, model_run, obsroot, obs, defaults, delete) == None    
 
   

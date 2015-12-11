@@ -27,3 +27,4 @@ setup(
     dependency_links=['https://github.com/swartn/cmipdata.git']
 )
 
+#package_data={'validate':['configure/*.yaml']},
