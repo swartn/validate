@@ -7,7 +7,6 @@ import subprocess
 
 
 def copy_configuration_file(directory):
-
     path = os.path.join('configure', 'conf.yaml')
     confile = pkg_resources.resource_filename('validate', path)
     shutil.copy(confile, directory)
