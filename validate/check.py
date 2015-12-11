@@ -122,8 +122,7 @@ def check_plot_args(pargs):
         if type(key) is not str:
             raise TypeError("Keys in 'plot_args' must be 'str' type")
         if key not in possible_keys:
-            raise ValueError("Keys in 'plot_args' must be one of
-                             'fill_continents', 'draw_parallels', or 'draw_meridians'")
+            raise ValueError("Keys in 'plot_args' must be one of 'fill_continents', 'draw_parallels', or 'draw_meridians'")
 
 
 def check_dict(dargs, data):

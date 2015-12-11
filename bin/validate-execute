@@ -10,7 +10,7 @@ import validate.control as control
 #import control
 
 def args():
-    decription = 'Produces plots using validate package'
+    description = 'Produces plots using validate package'
     parser = argparse.ArgumentParser(description=description)
     
     parser.add_argument('-l', '--loadcmip5', action='store_true',                    
