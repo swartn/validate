@@ -161,6 +161,9 @@ plots:
               model: True
               obs: True
               runid: True
+          depths:
+            - 50000
+            - 100000
           comp_models: 
             - CanCM4
             - NorESM1-M

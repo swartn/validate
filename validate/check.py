@@ -320,7 +320,6 @@ def check_cmiproot(cmiproot):
     if not os.path.exists(cmiproot):
         raise ValueError("cmiproot: " + cmiproot + " does not exist")
 
-
 def check_obs(obs):
     if type(obs) is not dict:
         raise TypeError("'obs' needs to be 'dict' type")

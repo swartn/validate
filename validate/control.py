@@ -37,11 +37,11 @@ def execute(options, **kwargs):
     def plot(run=None, experiment='historical', observations_root="", cmip5_root="", loadcmip5=False, ignorecheck=False, debugging=False, plots=[], defaults={}, delete={}, obs={}, **kwargs):
         if not ignorecheck:
             check_inputs(plots, run, experiment, observations_root, cmip5_root, obs, defaults, delete)
-        fill(plots, defaults, run)
-        getfiles(plots, run)
+        fill(plots, defaults, run, experiment)
+        getfiles(plots, run, experiment)
         getobsfiles(plots, observations_root)
         cmip(plots, cmip5_root, experiment, loadcmip5)
-        getidfiles(plots)
+        getidfiles(plots, experiment)
         plotnames = loop(plots, debugging)
         remfiles(**delete)
         arrange(plotnames)

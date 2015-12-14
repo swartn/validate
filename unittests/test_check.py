@@ -208,7 +208,7 @@ class Test_check_plots:
     def test_plots_are_right_type(self):
         assert ch.check_plots([{}]) == None
 
-class Test_model_run:
+class Test_check_model_run:
     def test_model_run_is_wrong_type(self):
         with pytest.raises(TypeError):
             ch.check_model_run(1)          
@@ -231,7 +231,27 @@ class Test_check_obsroot:
     
     def test_obsroot_exists(self):
         assert ch.check_obsroot('./') == None    
-        
+
+class Test_check_cmiproot:
+    def test_cmiproot_is_wrong_type(self):
+        with pytest.raises(TypeError):
+            ch.check_cmiproot(1)
+    
+    def test_cmiproot_does_not_exist(self):
+        with pytest.raises(ValueError):
+            ch.check_cmiproot('./wrongdirectoryname')  
+    
+    def test_cmiproot_exists(self):
+        assert ch.check_cmiproot('./') == None
+
+class Test_check_experiment:
+    def test_model_run_is_wrong_type(self):
+        with pytest.raises(TypeError):
+            ch.check_experiment(1)          
+    
+    def test_model_data_is_found(self):
+        assert ch.check_experiment('historical') == None  
+              
 class Test_check_obs:
     def test_obs_is_wrong_type(self):
         with pytest.raises(TypeError):
@@ -290,10 +310,12 @@ class Test_check_input:
         delete = {
           'del_fldmeanfiles': False,
         }         
-        obsroot = './'               
+        obsroot = './' 
+        cmiproot = './'
+        experiment = 'historical'              
         obs = {}         
         with pytest.raises(TypeError):
-            ch.check_input(plots, model_run, obsroot, obs, defaults, delete)        
+            ch.check_inputs(plots, model_run, experiment, obsroot, cmiproot, obs, defaults, delete)        
     
     def test_problem_with_model_run(self):
         model_run = 1
@@ -310,10 +332,12 @@ class Test_check_input:
         delete = {
           'del_fldmeanfiles': False,
         }         
-        obsroot = './'               
+        obsroot = './' 
+        cmiproot = './'
+        experiment = 'historical'                  
         obs = {}         
         with pytest.raises(TypeError):
-            ch.check_input(plots, model_run, obsroot, obs, defaults, delete)     
+            ch.check_inputs(plots, model_run, experiment, obsroot, cmiproot, obs, defaults, delete)     
     def test_problem_with_obsroot(self):
         model_run = 'edr'
         defaults = {
@@ -329,10 +353,12 @@ class Test_check_input:
         delete = {
           'del_fldmeanfiles': False,
         }         
-        obsroot = 1               
+        obsroot = 1 
+        cmiproot = './'
+        experiment = 'historical'              
         obs = {}         
         with pytest.raises(TypeError):
-            ch.check_input(plots, model_run, obsroot, obs, defaults, delete)     
+            ch.check_inputs(plots, model_run, experiment, obsroot, cmiproot, obs, defaults, delete)     
     def test_problem_with_obs(self):
         model_run = 'edr'
         defaults = {
@@ -348,10 +374,12 @@ class Test_check_input:
         delete = {
           'del_fldmeanfiles': False,
         }         
-        obsroot = './'               
+        obsroot = './'  
+        cmiproot = './'
+        experiment = 'historical'                 
         obs = []         
         with pytest.raises(TypeError):
-            ch.check_input(plots, model_run, obsroot, obs, defaults, delete)     
+            ch.check_inputs(plots, model_run, experiment, obsroot, cmiproot, obs, defaults, delete)     
     def test_problem_with_defaults(self):
         model_run = 'edr'
         defaults = []
@@ -365,10 +393,12 @@ class Test_check_input:
         delete = {
           'del_fldmeanfiles': False,
         }         
-        obsroot = './'               
+        obsroot = './'  
+        cmiproot = './'
+        experiment = 'historical'                 
         obs = {}         
         with pytest.raises(TypeError):
-            ch.check_input(plots, model_run, obsroot, obs, defaults, delete)     
+            ch.check_inputs(plots, model_run, experiment, obsroot, cmiproot, obs, defaults, delete)     
     def test_problem_with_delete(self):
         model_run = 'edr'
         defaults = {
@@ -382,10 +412,54 @@ class Test_check_input:
                  }, 
         ]
         delete = []         
-        obsroot = './'               
+        obsroot = './' 
+        cmiproot = './'
+        experiment = 'historical'                
         obs = {}         
         with pytest.raises(TypeError):
-            ch.check_input(plots, model_run, obsroot, obs, defaults, delete)     
+            ch.check_inputs(plots, model_run, experiment, obsroot, cmiproot, obs, defaults, delete)  
+    def test_problem_with_cmiproot(self):
+        model_run = 'edr'
+        defaults = {
+            'climatology': True,
+            }
+
+        plots = [
+                 {    
+                  'variable': 'ta',
+                  'plot_projection': 'time_series',                                          
+                 }, 
+        ]
+        delete = {
+          'del_fldmeanfiles': False,
+        }         
+        obsroot = None 
+        cmiproot = 1
+        experiment = 'historical'                  
+        obs = {} 
+        with pytest.raises(TypeError):
+            ch.check_inputs(plots, model_run, experiment, obsroot, cmiproot, obs, defaults, delete) 
+    def test_problem_with_experiment(self):
+        model_run = 'edr'
+        defaults = {
+            'climatology': True,
+            }
+
+        plots = [
+                 {    
+                  'variable': 'ta',
+                  'plot_projection': 'time_series',                                          
+                 }, 
+        ]
+        delete = {
+          'del_fldmeanfiles': False,
+        }         
+        obsroot = None 
+        cmiproot = None
+        experiment = 1                  
+        obs = {} 
+        with pytest.raises(TypeError):
+            ch.check_inputs(plots, model_run, experiment, obsroot, cmiproot, obs, defaults, delete)           
     def test_valid_input(self):
         model_run = 'edr'
         defaults = {
@@ -401,8 +475,10 @@ class Test_check_input:
         delete = {
           'del_fldmeanfiles': False,
         }         
-        obsroot = None               
+        obsroot = None 
+        cmiproot = './'
+        experiment = 'historical'                  
         obs = {}         
-        assert ch.check_inputs(plots, model_run, obsroot, obs, defaults, delete) == None    
+        assert ch.check_inputs(plots, model_run, experiment, obsroot, cmiproot, obs, defaults, delete) == None    
 
   

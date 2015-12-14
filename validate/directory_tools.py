@@ -335,7 +335,7 @@ def getrealmcat(realm):
     return realm_cat
 
 
-def getfiles(plots, run):
+def getfiles(plots, run, experiment):
     """ For every plot in the dictionary of plots
         maps the key 'ifile' to the name of the file
         needed to make the plot
@@ -349,7 +349,7 @@ def getfiles(plots, run):
     """
     _mkdir()
     _logfile(run)
-    files = traverse('/raid/rc40/data/ncs/historical-' + run)
+    files = traverse('/raid/rc40/data/ncs/' + experiment + '-' + run)
     _load_masks(run)
 
     realms = {}
@@ -383,7 +383,7 @@ def getfiles(plots, run):
                 p['plot_args']['fill_continents'] = True
 
 
-def getidfiles(plots):
+def getidfiles(plots, experiment):
     ids = []
     for p in plots:
         if p['compare']['runid']:
@@ -393,7 +393,7 @@ def getidfiles(plots):
     startdates = min_start_dates(plots)
     enddates = max_end_dates(plots)
     for i in ids:
-        files = traverse('/raid/rc40/data/ncs/historical-' + i)
+        files = traverse('/raid/rc40/data/ncs/' + experiment + '-' + i)
         vf = {}
         fvr = []
         for f in files:

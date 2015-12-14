@@ -17,12 +17,13 @@ setup(
     description='Model validation package.',
     long_description=open('README.rst').read(),
     install_requires=[
-        'brewer2mpl ==1.4.1',
-        'cdo ==1.2.5',
-        'netCDF4 ==1.1.6',
-        'numpy ==1.9.2',
-        'matplotlib ==1.4.3',
-        'pyyaml ==3.11',
+        'brewer2mpl >=1.4.1',
+        'cdo >=1.2.5',
+        'netCDF4 >=1.1.6',
+        'numpy >=1.9.2',
+        'matplotlib >=1.4.3',
+        'pyyaml >=3.11',
+        'cmipdata >=0.5',
     ],
     dependency_links=['https://github.com/swartn/cmipdata.git']
 )

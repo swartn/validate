@@ -23,7 +23,7 @@ DEFAULTS = {'plotprojection': 'global_map',
             }
 
 
-def fill(plots, defaults, model_run):
+def fill(plots, defaults, model_run, experiment):
     """ Fills the blank spaces in plots with default values and returns the list
 
     Parameters
@@ -138,6 +138,8 @@ def filltitle(p):
                                                                  p['trends_dates']['end_date'] +
                                                                  ' Depth: ' + str(p['plot_depth']))
     if p['comp_flag'] == 'model':
+        fill(p['comp_model'])
+    elif p['comp_flag'] == 'runid':
         fill(p['comp_model'])
     else:
         if p['comp_flag']:
