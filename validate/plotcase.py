@@ -121,7 +121,7 @@ def map_climatology(plot, func):
     string : name of the plot
     """
     print 'plotting map of ' + plot['variable']
-    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'])
+    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'])
     plot['plot_depth'] = 0
 
     data = _depth_data(data, depth, plot)
@@ -175,11 +175,11 @@ def map_climatology_comparison(plot, func):
     string : name of the plot
     """
     print 'plotting comparison map of ' + plot['variable']
-    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'])
+    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'])
     plot['plot_depth'] = 0
     data = _depth_data(data, depth, plot)
 
-    data2, units, lon, lat, depth = pl.timeaverage_load_comp(plot['comp_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
+    data2, units, lon, lat, depth = pl.timeaverage_load_comp(plot['comp_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'], plot['remap'], plot['remap_grid'])
 
     data2 = _depth_data(data2, depth, plot)
 
@@ -238,7 +238,7 @@ def section_climatology(plot, func):
     print 'plotting section of ' + plot['variable']
     plot['plot_depth'] = 0
     plot = _section_labels('data1_args', plot)
-    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'])
+    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'])
 
     zonmean = _section_data(data, plot)
 
@@ -273,7 +273,7 @@ def section_climatology_comparison(plot, func):
     _section_labels('data2_args', plot)
     _section_labels('comp_args', plot)
 
-    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'])
+    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'])
 
     zonmean = _section_data(data, plot)
 
@@ -338,7 +338,7 @@ def map_trends(plot, func):
     string : name of the plot
     """
     print 'plotting trends map of ' + plot['variable']
-    data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['trends_dates'], plot['scale'])
+    data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['trends_dates'], plot['scale'], plot['remap'], plot['remap_grid'])
     plot['plot_depth'] = 0
 
     data = _depth_data(data, depth, plot)
@@ -371,13 +371,13 @@ def map_trends_comp(plot, func):
     string : name of the plot
     """
     print 'plotting trends map comparison of ' + plot['variable']
-    data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['trends_dates'], plot['scale'])
+    data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['trends_dates'], plot['scale'], plot['remap'], plot['remap_grid'])
     plot['plot_depth'] = 0
 
     data = _depth_data(data, depth, plot)
     data, units = _trend_units(data, units, plot)
 
-    data2, units2, lon2, lat2, depth2 = pl.trends_load_comp(plot['comp_file'], plot['variable'], plot['trends_dates'], [plot['plot_depth']], plot['scale'])
+    data2, units2, lon2, lat2, depth2 = pl.trends_load_comp(plot['comp_file'], plot['variable'], plot['trends_dates'], [plot['plot_depth']], plot['scale'], plot['remap'], plot['remap_grid'])
 
     if data2.ndim > 2:
         data2 = data2[depth_ind, :, :]
@@ -419,7 +419,7 @@ def section_trends(plot, func):
     print 'plotting section trends of ' + plot['variable']
     _section_labels('data1_args', plot)
 
-    data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['trends_dates'], plot['scale'])
+    data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['trends_dates'], plot['scale'], plot['remap'], plot['remap_grid'])
     zonmean = _section_data(data, plot)
     zonmean, units = _trend_units(zonmean, units, plot)
     dft.filltitle(plot)
@@ -452,10 +452,10 @@ def section_trends_comp(plot, func):
     _section_labels('data2_args', plot)
     _section_labels('comp_args', plot)
 
-    data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['trends_dates'], plot['scale'])
+    data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['trends_dates'], plot['scale'], plot['remap'], plot['remap_grid'])
     zonmean = _section_data(data, plot)
 
-    data2, units2, lon2, lat2, depth2 = pl.trends_load_comp(plot['comp_file'], plot['variable'], plot['trends_dates'], depth, plot['scale'])
+    data2, units2, lon2, lat2, depth2 = pl.trends_load_comp(plot['comp_file'], plot['variable'], plot['trends_dates'], depth, plot['scale'], plot['remap'], plot['remap_grid'])
     zonmean2 = _section_data(data2, plot)
 
     zonmean, units = _trend_units(zonmean, units, plot)

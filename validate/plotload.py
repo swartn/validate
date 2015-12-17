@@ -154,8 +154,22 @@ def _load2(data, nc, units, depth, scale):
     data = data * scale
     return data, lon, lat, depth, units
 
-
-def timeaverage_load(ifile, var, dates, realm, scale):
+def get_remap_function(remap):
+    if remap == 'remapdis':
+        return cdo.remapdis
+    def cdoremap(r):
+        return {'remapbil': cdo.remapbil,
+                'remapbic': cdo.remapbic,
+                'remapdis': cdo.remapdis,
+                'remapnn': cdo.remapnn,
+                'remapcon': cdo.remapcon,
+                'remapcon2': cdo.remapcon2,
+                'remapplaf': cdo.remaplaf,
+                }[r]  
+    return cdoremap(remap)  
+    
+    
+def timeaverage_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180'):
     """ Loads the data from a file and remaps it.
         Applies a time average over specified dates and scales the data.
 
@@ -180,20 +194,22 @@ def timeaverage_load(ifile, var, dates, realm, scale):
     numpy array
     """
     _check_dates(ifile, dates)
-    path, ifile = os.path.split(ifile)
-    if not os.path.isfile('remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc'):
+    path, sfile = os.path.split(ifile)
+    remap = get_remap_function(remapf)
+    finalout = 'remapfiles/' + remapf + remapgrid + '_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
+    if not os.path.isfile(finalout):
         out = 'remapfiles/remapfile.nc'
         if realm == 'ocean':
-            cdo.mul(input='-divc,100 mask/ocean ' + path + '/' + ifile, output=out)
+            cdo.ifthen(input='mask/ocean ' + ifile, output=out)
         elif realm == 'land':
-            cdo.mul(input='-divc,100 mask/land ' + path + '/' + ifile, output=out)
+            cdo.ifthen(input='mask/land ' + ifile, output=out)
         else:
-            out = path + '/' + ifile
+            out = ifile
         cdo.selvar(var, input=out, output='remapfiles/selvar.nc')
         out = 'remapfiles/selvar.nc'
         cdo.timmean(input='-seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output='remapfiles/seldate.nc')
-        cdo.remapdis('r360x180', options='-L', input='-setctomiss,0 remapfiles/seldate.nc', output='remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
-    nc = Dataset('remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
+        remap(remapgrid, options='-L', input='-setctomiss,0 remapfiles/seldate.nc', output=finalout)
+    nc = Dataset(finalout, 'r')
 
     data, units, depth = _load(nc, var)
     data, lon, lat, depth, units = _load2(data, nc, units, depth, scale)
@@ -201,7 +217,7 @@ def timeaverage_load(ifile, var, dates, realm, scale):
     return data, units, lon, lat, depth
 
 
-def timeaverage_load_comp(ifile, var, dates, realm, depthneeded, scale):
+def timeaverage_load_comp(ifile, var, dates, realm, depthneeded, scale, remapf='remapdis', remapgrid='r360x180'):
     """ Loads the data from a file and remaps it to 360x180.
         Also remaps the vertical axis to specified depths for easy comparison
         Applies a time average over specified dates and scales the data.
@@ -231,25 +247,27 @@ def timeaverage_load_comp(ifile, var, dates, realm, depthneeded, scale):
     for i in xrange(len(depthneeded)):
         depthneeded[i] = str(depthneeded[i])
     depthneededstr = ','.join(depthneeded)
-    path, ifile = os.path.split(ifile)
-
-    _check_dates(path + '/' + ifile, dates)
-    if not os.path.isfile('remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc'):
-        cdo.selvar(var, input=path + '/' + ifile, output='remapfiles/selvar.nc')
-        out = 'remapfiles/selvar.nc'
-        cdo.remapdis('r360x180', options='-L', input='-setctomiss,0 -timmean -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output='remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
+    
+    _check_dates(ifile, dates)    
+    path, sfile = os.path.split(ifile)
+    remap = get_remap_function(remapf)
+    finalout = 'remapfiles/' + remapf + remapgrid + '_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
+    if not os.path.isfile(finalout):
+        out = 'remapfiles/selvar.nc'    
+        cdo.selvar(var, input=ifile, output=out)
+        remap(remapgrid, options='-L', input='-setctomiss,0 -timmean -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output=finalout)
     try:
-        cdo.intlevelx(str(depthneededstr), input='remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', output='remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc')
-        nc = Dataset('remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc', 'r')
+        cdo.intlevelx(str(depthneededstr), input=finalout, output=finalout + str(depthneeded[0]) + '.nc')
+        nc = Dataset(finalout + str(depthneeded[0]) + '.nc', 'r')
     except:
-        nc = Dataset('remapfiles/remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
+        nc = Dataset(finalout, 'r')
 
     data, units, depth = _load(nc, var)
     data, lon, lat, depth, units = _load2(data, nc, units, depth, scale)
     return data, units, lon, lat, depth
 
 
-def trends_load(ifile, var, dates, scale):
+def trends_load(ifile, var, dates, scale, remapf='remapdis', remapgrid='r360x180'):
     """ Loads the trend data over specified dates from a file
         Remaps and scales the data.
 
@@ -272,13 +290,16 @@ def trends_load(ifile, var, dates, scale):
     numpy array
     """
     _check_dates(ifile, dates)
-    path, ifile = os.path.split(ifile)
-    if not os.path.isfile('trendfiles/slope_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc'):
-        cdo.trend(input='-seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + path + '/' + ifile,
-                  output='trendfiles/intercept_' + ifile + ' trendfiles/slope_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
-        cdo.remapdis('r360x180', input='-setctomiss,0 ' + 'trendfiles/slope_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc',
-                     output='trendfiles/slope_remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
-    nc = Dataset('trendfiles/slope_remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
+    path, sfile = os.path.split(ifile)
+    remap = get_remap_function(remapf)
+    finalout = 'trendfiles/slope_' + remapf + remapgrid + '_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
+    slopefile = 'trendfiles/slope_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
+    if not os.path.isfile(finalout):
+        cdo.trend(input='-seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + ifile,
+                  output='trendfiles/intercept_' + sfile + ' ' + slopefile)
+        remap(remapgrid, input='-setctomiss,0 ' + slopefile,
+                  output=finalout)
+    nc = Dataset(finalout, 'r')
 
     data, units, depth = _load(nc, var)
     data, lon, lat, depth, units = _load2(data, nc, units, depth, scale)
@@ -286,7 +307,7 @@ def trends_load(ifile, var, dates, scale):
     return data, units, lon, lat, depth
 
 
-def trends_load_comp(ifile, var, dates, depthneeded, scale):
+def trends_load_comp(ifile, var, dates, depthneeded, scale, remapf='remapdis', remapgrid='r360x180'):
     """ Loads the trend data over specified dates from a file
         Remaps and scales the data. Also remaps the vertical axis to
         specified depths for easy comparison.
@@ -315,20 +336,23 @@ def trends_load_comp(ifile, var, dates, depthneeded, scale):
         depthneeded[i] = str(depthneeded[i])
     depthneededstr = ','.join(depthneeded)
 
-    path, ifile = os.path.split(ifile)
-    _check_dates(path + '/' + ifile, dates)
-    if not os.path.isfile('trendfiles/slope_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc'):
-        cdo.selvar(var, input=path + '/' + ifile, output='trendfiles/selvar.nc')
+    _check_dates(ifile, dates)
+    path, sfile = os.path.split(ifile)
+    remap = get_remap_function(remapf)
+    finalout = 'trendfiles/slope_' + remapf + remapgrid + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
+    trendfile = 'trendfiles/slope_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
+    if not os.path.isfile(finalout):
+        cdo.selvar(var, input=ifile, output='trendfiles/selvar.nc')
         out = 'trendfiles/selvar.nc'
         cdo.trend(input='-seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out,
-                  output='trendfiles/intercept_' + ifile + ' trendfiles/slope_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
-        cdo.remapdis('r360x180', options='-L', input='-setctomiss,0 ' + 'trendfiles/slope_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc',
-                     output='trendfiles/slope_remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
+                  output='trendfiles/intercept_' + sfile + ' ' + trendfile)
+        remap(remapgrid, options='-L', input='-setctomiss,0 ' + trendfile,
+                  output=finalout)
     try:
-        cdo.intlevelx(str(depthneededstr), input='trendfiles/slope_remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', output='trendfiles/slope_remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc')
-        nc = Dataset('trendfiles/slope_remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc', 'r')
+        cdo.intlevelx(str(depthneededstr), input=finalout, output=finalout + str(depthneeded[0]) + '.nc')
+        nc = Dataset(finalout + str(depthneeded[0]) + '.nc', 'r')
     except:
-        nc = Dataset('trendfiles/slope_remap_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
+        nc = Dataset(finalout, 'r')
 
     data, units, depth = _load(nc, var)
     data, lon, lat, depth, units = _load2(data, nc, units, depth, scale)
@@ -356,22 +380,22 @@ def timeseries_load(ifile, var, dates, realm, scale):
     numpy array
     numpy array
     """
-    path, ifile = os.path.split(ifile)
-#    if not os.path.isfile('fldmeanfiles/fldmean_' + ifile):
-#        cdo.fldmean(input=path + '/' + ifile, output='fldmeanfiles/fldmean_' + ifile)
+    _check_dates(ifile, dates)    
+    path, sfile = os.path.split(ifile)
+    finalout = 'fldmeanfiles/fldmean_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
 
-    _check_dates(path + '/' + ifile, dates)
-    if not os.path.isfile('fldmeanfiles/fldmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc'):
+    if not os.path.isfile(finalout):
         out = 'fldmeanfiles/fldmean.nc'
         if realm == 'ocean':
-            cdo.mul(input='-divc,100 mask/ocean ' + path + '/' + ifile, output=out)
+            cdo.mul(input='-divc,100 mask/ocean ' + ifile, output=out)
         elif realm == 'land':
-            cdo.mul(input='-divc,100 mask/land ' + path + '/' + ifile, output=out)
+            cdo.mul(input='-divc,100 mask/land ' + ifile, output=out)
         else:
-            out = path + '/' + ifile
+            out = ifile
 
-        cdo.fldmean(input='-setctomiss,0 -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output='fldmeanfiles/fldmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
-    nc = Dataset('fldmeanfiles/fldmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
+        cdo.fldmean(input='-setctomiss,0 -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output=finalout)
+   
+    nc = Dataset(finalout, 'r')
 
     data, units, depth = _load(nc, var)
     nc_time = nc.variables['time']
@@ -414,20 +438,19 @@ def timeseries_load_comp(ifile, var, dates, depthneeded, scale):
     for i in xrange(len(depthneeded)):
         depthneeded[i] = str(depthneeded[i])
     depthneededstr = ','.join(depthneeded)
-
-    path, ifile = os.path.split(ifile)
-#    if not os.path.isfile('fldmeanfiles/fldmean_' + ifile):
-#        cdo.fldmean(input=path + '/' + ifile, output='fldmeanfiles/fldmean_' + ifile)
-    _check_dates(path + '/' + ifile, dates)
-    if not os.path.isfile('fldmeanfiles/fldmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc'):
+    
+    _check_dates(ifile, dates)
+    path, sfile = os.path.split(ifile)
+    finalout = 'fldmeanfiles/fldmean_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
+    if not os.path.isfile(finalout):
         out = 'fldmeanfiles/selvar.nc'
-        cdo.selvar(var, input=path + '/' + ifile, output=out)
-        cdo.fldmean(options='-L', input='-seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output='fldmeanfiles/fldmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
+        cdo.selvar(var, input=ifile, output=out)
+        cdo.fldmean(options='-L', input='-seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output=finalout)
     try:
-        cdo.intlevelx(str(depthneededstr), input='fldmeanfiles/fldmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', output='fldmeanfiles/fldmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc')
-        nc = Dataset('fldmeanfiles/fldmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc', 'r')
+        cdo.intlevelx(str(depthneededstr), input=finalout, output=finalout + str(depthneeded[0]) + '.nc')
+        nc = Dataset(finalout + str(depthneeded[0]) + '.nc', 'r')
     except:
-        nc = Dataset('fldmeanfiles/fldmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
+        nc = Dataset(finalout, 'r')
 
     data, units, depth = _load(nc, var)
     nc_time = nc.variables['time']
@@ -467,19 +490,21 @@ def zonal_load(ifile, var, dates, realm, scale):
     numpy array
     numpy array
     """
-    path, ifile = os.path.split(ifile)
+    _check_dates(ifile, dates)    
+    path, sfile = os.path.split(ifile)
 
-    _check_dates(path + '/' + ifile, dates)
-    if not os.path.isfile('zonalfiles/zonmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc'):
+    finalout = 'zonalfiles/zonmean_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
+    if not os.path.isfile(finalout):
         out = 'zonalfiles/zonmean.nc'
         if realm == 'ocean':
-            cdo.mul(input='-divc,100 mask/ocean ' + path + '/' + ifile, output=out)
+            cdo.mul(input='-divc,100 mask/ocean ' + ifile, output=out)
         elif realm == 'land':
-            cdo.mul(input='-divc,100 mask/land ' + path + '/' + ifile, output=out)
+            cdo.mul(input='-divc,100 mask/land ' + ifile, output=out)
         else:
-            out = path + '/' + ifile
-        cdo.zonmean(options='-L', input='-timmean -setctomiss,0 -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output='zonalfiles/zonmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
-    nc = Dataset('zonalfiles/zonmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
+            out = ifile
+        cdo.zonmean(options='-L', input='-timmean -setctomiss,0 -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output=finalout)
+    nc = Dataset(finalout, 'r')
+    
     data, units, depth = _load(nc, var)
     x = nc.variables['lat'][:].squeeze()
 
@@ -514,20 +539,22 @@ def zonal_load_comp(ifile, var, dates, depthneeded, scale):
     for i in xrange(len(depthneeded)):
         depthneeded[i] = str(depthneeded[i])
     depthneededstr = ','.join(depthneeded)
-    path, ifile = os.path.split(ifile)
+    
+    _check_dates(ifile, dates)    
+    path, sfile = os.path.split(ifile)
+    finalout = 'zonalfiles/zonmean_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
 
-    _check_dates(path + '/' + ifile, dates)
-    if not os.path.isfile('zonalfiles/zonmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc'):
+    if not os.path.isfile(finalout):
         out = 'zonalfiles/selvar.nc'
-        cdo.selvar(var, input=path + '/' + ifile, output=out)
+        cdo.selvar(var, input=ifile, output=out)
         out2 = 'zonalfiles/selvarremap.nc'
         cdo.remapdis('r360x180', input=out, output=out2)
-        cdo.zonmean(options='-L', input='-timmean -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out2, output='zonalfiles/zonmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc')
+        cdo.zonmean(options='-L', input='-timmean -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out2, output=finalout)
     try:
-        cdo.intlevelx(str(depthneededstr), input='zonalfiles/zonmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', output='zonalfiles/zonmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc')
-        nc = Dataset('zonalfiles/zonmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + str(depthneeded[0]) + '.nc', 'r')
+        cdo.intlevelx(str(depthneededstr), input=finalout, output=finalout + str(depthneeded[0]) + '.nc')
+        nc = Dataset(finalout + str(depthneeded[0]) + '.nc', 'r')
     except:
-        nc = Dataset('zonalfiles/zonmean_' + ifile + str(dates['start_date']) + str(dates['end_date']) + '.nc', 'r')
+        nc = Dataset(finalout, 'r')
 
     data, units, depth = _load(nc, var)
 

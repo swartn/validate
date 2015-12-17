@@ -183,7 +183,7 @@ def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
     x, y = m(-135, 12)
-    ax.text(x, y, '  '.join(vals), fontsize=8)
+    ax.text(x, y, '  '.join(val), fontsize=8)
 
 
 def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
@@ -221,11 +221,12 @@ def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cbl
     if fill_oceans:
         m.drawlsmask(ocean_color='0.7')
     m.drawmapboundary()
+    
     m.colorbar(mappable=cot, location='right', label=cblabel)
-    vals = [str(np.round(data.min(), 1)), str(np.round(data.max(), 1)), str(np.round(data.mean(), 1))]
     vals, snam = stats(plot, data, rmse)
+    val = [s + v for s, v in zip(snam, vals)]
     x, y = m(-45, -12)
-    ax.text(x, y, '  '.join(vals), fontsize=8)
+    ax.text(x, y, '  '.join(val), fontsize=8)
 
 
 def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False, plot={},
@@ -265,7 +266,7 @@ def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
     x, y = m(lonmin + 1, latmin + 1)
-    ax.text(x, y, '  '.join(vals), fontsize=8)
+    ax.text(x, y, '  '.join(val), fontsize=8)
 
 
 def _fix_1Ddata(z, data, ax_args):

@@ -143,12 +143,14 @@ def _mkdir():
     mkthedir('ENS-STD_cmipfiles')
 
 
-def _logfile(run):
+def _logfile(run, experiment):
     with open('logs/log.txt', 'w') as outfile:
-        outfile.write('Run ID: ' + run + '\n\n')
+        outfile.write('Run ID: ' + run + '\n')
+        outfile.write('Experiment: ' + experiment + '\n\n')
 
     with open('logs/log.yml', 'w') as outfile:
-        outfile.write('Run ID: ' + run + '\n\n')
+        outfile.write('Run ID: ' + run + '\n')
+        outfile.write('Experiment: ' + experiment + '\n\n')
 
 
 def _load_masks(run):
@@ -348,7 +350,7 @@ def getfiles(plots, run, experiment):
 
     """
     _mkdir()
-    _logfile(run)
+    _logfile(run, experiment)
     files = traverse('/raid/rc40/data/ncs/' + experiment + '-' + run)
     _load_masks(run)
 

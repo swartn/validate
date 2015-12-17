@@ -20,6 +20,8 @@ DEFAULTS = {'plotprojection': 'global_map',
             'pdf': True,
             'png': False,
             'comp_flag': None,
+            'remap': 'remapdis',
+            'remap_grid': 'r180x360',
             }
 
 
@@ -53,6 +55,7 @@ def fill(plots, defaults, model_run, experiment):
         if 'compare' not in p:
             p['compare'] = {'cmip5': False,
                             'model': False,
+                            'runid': False,
                             'obs': True,
                             }
         else:
@@ -62,7 +65,9 @@ def fill(plots, defaults, model_run, experiment):
                 p['compare']['model'] = False
             if 'obs' not in p['compare']:
                 p['compare']['cmip5'] = False
-
+            if 'runid' not in p['compare']:
+                p['compare']['runid'] = False
+                
         def _fill_args(data):
             if data + '_args' not in p:
                 p[data + '_args'] = {}

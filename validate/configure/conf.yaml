@@ -60,6 +60,11 @@
 #                        ex. 'mon'
 #          scale : float
 #                    the data is mulitiplied by the scalar value
+#          remap : string
+#                    type of remapping
+#                    ex. 'remapdis'
+#          remap_grid : string
+#                       remapping grid or filename with grid   
 #          plot_args : dictionary with some boolean options for the map plots
 #                        options:
 #                         'fill_continents'

@@ -47,7 +47,7 @@ def execute(options, **kwargs):
         arrange(plotnames)
 
     try:
-        with open('configure/conf.yaml', 'r') as f:
+        with open('conf.yaml', 'r') as f:
             settings = yaml.load(f)
     except IOError:
         import pkg_resources
@@ -57,5 +57,5 @@ def execute(options, **kwargs):
             settings = yaml.load(f)
 
     for key in options:
-        setting[key] = options[key]
+        settings[key] = options[key]
     plot(**settings)

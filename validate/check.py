@@ -208,7 +208,24 @@ def check_comp_ids(ids):
         if type(i) is not str:
             raise TypeError("run IDs in 'comp_ids' must be 'str' type")
 
+def check_remap(rm):
+    if type(rm) is not str:
+        raise TypeError("'remap' must be 'str' type")
+    possible_values = ['remapbil',
+                       'remapbic',
+                       'remapdis',
+                       'remapnn',
+                       'remapcon',
+                       'remapcon2',
+                       'remapplaf',
+                       ]    
+    if rm not in possible_values:
+        raise ValueError("'remap' " + rm + " is not a valid 'remap'")
 
+def check_remap_grid(rmg):
+    if type(rmg) is not str:
+        raise TypeError("'remap_grid' must be 'str' type")
+        
 def check_plot(plot):
     possible_keys = ['variable',
                      'plot_projection',
@@ -233,6 +250,8 @@ def check_plot(plot):
                      'obs_file',
                      'ifile',
                      'comp_ids',
+                     'remap',
+                     'remap_grid',
                      ]
     for key in plot:
         if key not in possible_keys:
@@ -283,7 +302,10 @@ def check_plot(plot):
         check_ifile(plot['_file'])
     if 'comp_ids' in plot:
         check_comp_ids(plot['comp_ids'])
-
+    if 'remap' in plot:
+        check_remap(plot['remap'])
+    if 'remap_grid' in plot:
+        check_remap_grid(plot['remap_grid'])
 
 def check_plots(plots):
     if type(plots) is not list:
