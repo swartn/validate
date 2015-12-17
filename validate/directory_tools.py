@@ -153,16 +153,26 @@ def _logfile(run, experiment):
         outfile.write('Experiment: ' + experiment + '\n\n')
 
 
-def _load_masks(run):
+def _load_masks(files):
     """Loads the land and sea masks for a specified run
 
     Parameters
     ----------
-    run : string
-          the model run
+    files : list
+            file names
     """
-    os.system('ln -s /raid/rc40/data/ncs/historical-' + run + '/fx/ocean/sftof/r0i0p0/*.nc ./mask/ocean')
-    os.system('ln -s /raid/rc40/data/ncs/historical-' + run + '/fx/atmos/sftlf/r0i0p0/sftlf_fx_DevAM4-2_historical-edr_r0i0p0.nc ./mask/land')
+    for f in files:
+        var = getvariable(f)
+        if var == 'sftof':
+            print f
+            print 'found ocean'
+            os.system('ln -s ' + f + ' ./mask/ocean')
+        if var == 'sftlf':
+            os.system('ln -s ' + f + ' ./mask/land')
+            print f
+            print 'found land'
+#    os.system('ln -s /raid/rc40/data/ncs/historical-' + run + '/fx/ocean/sftof/r0i0p0/*.nc ./mask/ocean')
+#    os.system('ln -s /raid/rc40/data/ncs/historical-' + run + '/fx/atmos/sftlf/r0i0p0/sftlf_fx_DevAM4-2_historical-edr_r0i0p0.nc ./mask/land')
 
 
 def _remove_files_out_of_date_range(filedict, start_dates, end_dates):
@@ -352,7 +362,7 @@ def getfiles(plots, run, experiment):
     _mkdir()
     _logfile(run, experiment)
     files = traverse('/raid/rc40/data/ncs/' + experiment + '-' + run)
-    _load_masks(run)
+    _load_masks(files)
 
     realms = {}
     for f in files:
