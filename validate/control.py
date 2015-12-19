@@ -32,7 +32,7 @@ def execute(options, **kwargs):
     defaults : dictionary
                any keys will be added to each plot if they are not present
     delete : dictionary
-             maps directory name to boolean, will delete the directoy if True
+             maps directory name to boolean, will delete the directory if True
     """
     def plot(run=None, experiment='historical', observations_root="", cmip5_root="", loadcmip5=False, ignorecheck=False, debugging=False, plots=[], defaults={}, delete={}, obs={}, **kwargs):
         if not ignorecheck:

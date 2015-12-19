@@ -387,9 +387,9 @@ def timeseries_load(ifile, var, dates, realm, scale):
     if not os.path.isfile(finalout):
         out = 'fldmeanfiles/fldmean.nc'
         if realm == 'ocean':
-            cdo.mul(input='-divc,100 mask/ocean ' + ifile, output=out)
+            cdo.ifthen(input='mask/ocean ' + ifile, output=out)
         elif realm == 'land':
-            cdo.mul(input='-divc,100 mask/land ' + ifile, output=out)
+            cdo.ifthen(input='mask/land ' + ifile, output=out)
         else:
             out = ifile
 
@@ -497,9 +497,9 @@ def zonal_load(ifile, var, dates, realm, scale):
     if not os.path.isfile(finalout):
         out = 'zonalfiles/zonmean.nc'
         if realm == 'ocean':
-            cdo.mul(input='-divc,100 mask/ocean ' + ifile, output=out)
+            cdo.ifthen(input='mask/ocean ' + ifile, output=out)
         elif realm == 'land':
-            cdo.mul(input='-divc,100 mask/land ' + ifile, output=out)
+            cdo.ifthen(input='mask/land ' + ifile, output=out)
         else:
             out = ifile
         cdo.zonmean(options='-L', input='-timmean -setctomiss,0 -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output=finalout)

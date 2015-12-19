@@ -23,9 +23,7 @@ setup(
         'numpy >=1.9.2',
         'matplotlib >=1.4.3',
         'pyyaml >=3.11',
-        'cmipdata >=0.5',
     ],
-    dependency_links=['https://github.com/swartn/cmipdata.git']
 )
 
 #package_data={'validate':['configure/*.yaml']},
