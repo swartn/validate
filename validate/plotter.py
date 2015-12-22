@@ -214,7 +214,10 @@ def loop(plots, debug):
     plotnames = []
     for p in plots:
         if p['depths'] == []:
+            p['is_depth'] = False
             p['depths'] = [0]
+        else:
+            p['is_depth'] = True
         for d in p['depths']:
             p['depth'] = int(d)
             loop_plot_types(p, plotnames)

@@ -757,7 +757,51 @@ def zonalmean_comparison(plot, func):
     return plot_name
 
 
+def taylor_full(plot, func):
+    print 'plotting taylor diagram of ' + plot['variable']
+    plot['plot_depth'] = plot['depth']
+    
+    # load data from netcdf file
+    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'])
+
+    # start list of tuples to be plotted
+    plotdata = [(data, plot['model_ID'])]
+
+    # load observations data
+    data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['obs_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
+    
+    dft.filltitle(plot)
+    
+    # get data from models and cmip and append to plotdata list
+    if plot['compare']['cmip5'] == True:
+        plot['comp_model'] = 'cmip5'
+        data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['cmip5_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
+        plotdata.append(data, 'cmip5'))
+    if plot['compare']['model'] == True:
+        for model in plot['comp_models']:
+            plot['comp_model'] = model
+            data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['model_file'][model], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
+            plotdata.append(data, model))
+    if plot['compare']['runid'] == True:
+        for i in plot['comp_ids']:
+            plot['comp_model'] = i
+            data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['id_file'][i], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
+            plotdata.append(data, i))
+            
+    # make plot
+    pr.taylordiagram(refdata, plotdata, plot=plot, ax_args=plot['data1_args']['climatology_args']['ax_args'])
+    
+    plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_taylor' + str(plot['plot_depth'])
+    plt.tight_layout()
+    savefigures(plot_name, **plot)
+    plot['units'] = units
+    plot['comp_file'] = plot['obs_file']
+    return plot_name
+    
 def taylor(plot, func):
+    if not plot['is_depth']:
+        return taylor_full(plot, func)
+
     print 'plotting taylor diagram of ' + plot['variable']
     plot['plot_depth'] = plot['depth']
     
@@ -804,3 +848,4 @@ def taylor(plot, func):
     plot['units'] = units
     plot['comp_file'] = plot['obs_file']
     return plot_name
+  
