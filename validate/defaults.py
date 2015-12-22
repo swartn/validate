@@ -31,27 +31,37 @@ def fill(plots, defaults, model_run, experiment):
     Parameters
     ----------
     plots : list of dictionaries
-    obs : dictionary
-          maps variable name to the name of observations file
     defaults : dictionary
                values to fill plots
+    model_run : string
+                run ID
+    experiment : string
+                 experiment name
 
     Returns
     -------
     list of dictionaries
     """
     for p in plots:
+
+        # fill plots with the defaults given in conf.yaml
         for key in defaults:
             if key not in p:
                 p[key] = defaults[key]
+ 
+        # fill plots with global DEFAULTS
         for key in DEFAULTS:
             if key not in p:
                 p[key] = DEFAULTS[key]
+                
+        # remove plot from list if no variable is provided
         if 'variable' not in p:
             plots.remove(p)
             print p
             print 'deleted: no variable provided'
+
         p['model_ID'] = model_run
+        p['plot_depth'] = 0
         if 'compare' not in p:
             p['compare'] = {'cmip5': False,
                             'model': False,

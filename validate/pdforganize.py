@@ -19,7 +19,7 @@ def arrange(plotnames):
     plotnames : list of tuples
                 (name of plot, plot dictionary, plot type)
     """
-    dictionary = _orderplots(plotnames)
+    dictionary = orderplots(plotnames)
 
     pstring = pdfmarks(dictionary)
     combine_str = 'gs -sDEVICE=pdfwrite -sOutputFile=plots/joined.pdf -dQUIET -dNOPAUSE -dBATCH -dAutoRotatePages=/None -f ' + pstring + ' plots/pdfmarks\n'
@@ -28,7 +28,7 @@ def arrange(plotnames):
     os.system('rm -f plots/pdfmarks')
 
 
-def _orderplots(plotnames):
+def orderplots(plotnames):
     """ Organizes the names into a dictionary that can be used to cycle through the plots
 
     Parameters

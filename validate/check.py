@@ -13,11 +13,17 @@ import re
 
 
 def check_variable(var):
+    """ Raises TypeError exception if the argument is not a string. 
+    """
     if type(var) is not str:
         raise TypeError("variable: " + str(var) + " needs to be 'str' type")
 
 
 def check_plot_projection(pp):
+    """ Raises TypeError exception if the argument is not a string.
+        Raises ValueError exception if the argument is not in the
+        list of possible values. 
+    """
     if type(pp) is not str:
         raise TypeError("plot_projection: " + str(pp) +
                         " needs to be 'str' type")
@@ -36,11 +42,17 @@ def check_plot_projection(pp):
 
 
 def check_bool(thebool, thekey):
+    """ Raises TypeError exception if the argument is not a boolean. 
+    """
     if type(thebool) is not bool:
         raise TypeError("'" + thekey + "' must be 'bool' type")
 
 
 def check_date(date):
+    """ Returns True if the argument matches the pattern
+        yyyy or yyyy-mm or yyyy-mm-dd.
+        Returns False otherwise.
+    """
     redate1 = re.compile(r'\b[0-9][0-9][0-9][0-9]\b')
     redate2 = re.compile(r'\b[0-9][0-9][0-9][0-9]-[0-9][0-9]\b')
     redate3 = re.compile(r'\b[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\b')
@@ -54,6 +66,12 @@ def check_date(date):
 
 
 def check_dates(dates, thekey):
+    """ Raises TypeError exception if the argument is not a dictionary.
+        Raises ValuError exception if the dictionary keys are not one
+        of 'start_date' or 'end_date'.
+        Raises TypeError if the provided dates are not strings.
+        Raises ValueError if the dates are not correctly formatted.
+    """
     if type(dates) is not dict:
         raise TypeError("'" + thekey + "' must be 'dict' type")
     for key in dates:
@@ -77,6 +95,9 @@ def check_dates(dates, thekey):
 
 
 def check_realization(real):
+    """ Raises TypeError if the argument is not a string or integer.
+        Raises ValueError if the argument can not be cast to an integer. 
+    """
     if type(real) is str:
         try:
             int(real)
@@ -91,6 +112,9 @@ def check_realization(real):
 
 
 def check_depths(depths):
+    """ Raises TypeError if the argument is not a list.
+        Raises TypeError if the elements of the list are not integers. 
+    """
     if type(depths) is not list:
         raise TypeError("'depths' must be 'list' type")
     for depth in depths:
@@ -99,6 +123,10 @@ def check_depths(depths):
 
 
 def check_frequency(freq):
+    """ Raises TypeError if the argument is not a string.
+        Raises ValueError exception if the argument is not in the
+        list of possible values.
+    """
     if type(freq) is not str:
         raise TypeError("'frequency' must be 'str' type")
     possible_values = ['day', 'mon', 'yr']
@@ -107,11 +135,18 @@ def check_frequency(freq):
 
 
 def check_scale(scale):
+    """ Raises TypeError if the argument is not an integer or a float.
+    """
     if type(scale) is not int and type(scale) is not float:
         raise TypeError("'scale' must be 'int' or 'float' type")
 
 
 def check_plot_args(pargs):
+    """ Raises TypeError if the argument is not a dictionary.
+        Raises TypeError if the keys in the dictionary are not strings.
+        Raises ValueError if the keys are not in the list of 
+        possible values.
+    """
     if type(pargs) is not dict:
         raise TypeError("'plot_args' must be 'dict' type")
     possible_keys = ['fill_continents',
@@ -126,11 +161,19 @@ def check_plot_args(pargs):
 
 
 def check_dict(dargs, data):
+    """ Raises TypeError if the first argument is not a dictionary.
+    """
     if type(dargs) is not dict:
         raise TypeError("'" + data + "' must be 'dict' type")
 
 
 def check_projection_args(pargs, data):
+    """ Raises TypeError if the first argument is not a dictionary.
+        Raises TypeError if the keys in the dictionary are not strings.
+        Raises ValueError if the keys are not in the list of 
+        possible keys.
+        Raises exception if the items in the dictionary are not valid.
+    """
     if type(pargs) is not dict:
         raise TypeError("'" + data + "' must be 'dict' type")
     possible_keys = ['pcolor_args',
@@ -148,6 +191,12 @@ def check_projection_args(pargs, data):
 
 
 def check_data_args(dargs, data):
+    """ Raises TypeError if the first argument is not a dictionary.
+        Raises TypeError if the keys in the dictionary are not strings.
+        Raises ValueError if the keys are not in the list of 
+        possible keys.
+        Raises exception if the items in the dictionary are not valid.
+    """
     if type(dargs) is not dict:
         raise TypeError("'" + data + "' must be 'dict' type")
     possible_keys = ['climatology_args',
@@ -164,6 +213,12 @@ def check_data_args(dargs, data):
 
 
 def check_compare(comp):
+    """ Raises TypeError if the argument is not a dictionary.
+        Raises TypeError if the keys in the dictionary are not strings.
+        Raises ValueError if the keys are not in the list of 
+        possible keys.
+        Raises exception if the items in the dictionary are not valid.
+    """
     if type(comp) is not dict:
         raise TypeError("'compare' must be 'dict' type")
     possible_keys = ['cmip5',
@@ -180,6 +235,9 @@ def check_compare(comp):
 
 
 def check_comp_models(models):
+    """ Raises TypeError if the argument is not a list.
+        Raises TypeError if the elements of the list are not strings. 
+    """
     if type(models) is not list:
         raise TypeError("'comp_models' must be 'list' type")
     for model in models:
@@ -188,6 +246,10 @@ def check_comp_models(models):
 
 
 def check_obs_file(f):
+    """ Raises TypeError if the argument is not a string.
+        Raises ValueError if the filename for the string provided
+        does not exist. 
+    """
     if type(f) is not str:
         raise TypeError("'obs_file' must be 'str' type")
     if not os.path.isfile(f):
@@ -195,6 +257,10 @@ def check_obs_file(f):
 
 
 def check_ifile(f):
+    """ Raises TypeError if the argument is not a string.
+        Raises ValueError if the filename for the string provided
+        does not exist. 
+    """
     if type(f) is not str:
         raise TypeError("'ifile' must be 'str' type")
     if not os.path.isfile(f):
@@ -202,6 +268,9 @@ def check_ifile(f):
 
 
 def check_comp_ids(ids):
+    """ Raises TypeError if the argument is not a list.
+        Raises TypeError if the elements of the list are not strings. 
+    """
     if type(ids) is not list:
         raise TypeError("'comp_ids' must be 'list' type")
     for i in ids:
@@ -209,6 +278,10 @@ def check_comp_ids(ids):
             raise TypeError("run IDs in 'comp_ids' must be 'str' type")
 
 def check_remap(rm):
+    """ Raises TypeError if the argument is not a string.
+        Raises ValueError if the string is not in thelist of 
+        possible values.
+    """
     if type(rm) is not str:
         raise TypeError("'remap' must be 'str' type")
     possible_values = ['remapbil',
@@ -223,10 +296,16 @@ def check_remap(rm):
         raise ValueError("'remap' " + rm + " is not a valid 'remap'")
 
 def check_remap_grid(rmg):
+    """ Raises ValueError if the keys in the dictionary are not in
+        the list of possible keys.
+        Raises exception if the items in the dictionary are not valid.
+    """
     if type(rmg) is not str:
         raise TypeError("'remap_grid' must be 'str' type")
         
 def check_plot(plot):
+    """ Raises TypeError if the argument is not a string.
+    """   
     possible_keys = ['variable',
                      'plot_projection',
                      'climatology',
@@ -308,6 +387,10 @@ def check_plot(plot):
         check_remap_grid(plot['remap_grid'])
 
 def check_plots(plots):
+    """ Raises TypeError if the argument is not a list.
+        Raises TypeError if the elements of the list are not dictionaries.
+        Raises exception if the dictionaries in the list are not valid. 
+    """
     if type(plots) is not list:
         raise TypeError("plots needs to be 'list' type")
     for plot in plots:
@@ -318,18 +401,23 @@ def check_plots(plots):
 
 
 def check_model_run(model_run):
+    """ Raises TypeError if the argument is not a string.
+    """
     if type(model_run) is not str:
         raise TypeError("'model_run' needs to be 'str' type")
-    if not os.path.exists('/raid/rc40/data/ncs/historical-' + model_run):
-        raise ValueError("No data found for model '" + model_run)
 
 
 def check_experiment(exp):
+    """ Raises TypeError if the argument is not a string.
+    """
     if type(exp) is not str:
         raise TypeError("'experiment' needs to be 'str' type")
 
 
 def check_obsroot(obsroot):
+    """ Raises TypeError if the argument is not a string.
+        Raises ValueError if the argument is not a valid directory.
+    """    
     if type(obsroot) is not str:
         raise TypeError("'obs_root' needs to be 'str' type")
     if not os.path.exists(obsroot):
@@ -337,12 +425,20 @@ def check_obsroot(obsroot):
 
 
 def check_cmiproot(cmiproot):
+    """ Raises TypeError if the argument is not a string.
+        Raises ValueError if the argument is not a valid directory.
+    """ 
     if type(cmiproot) is not str:
         raise TypeError("'cmiproot_root' needs to be 'str' type")
     if not os.path.exists(cmiproot):
         raise ValueError("cmiproot: " + cmiproot + " does not exist")
 
 def check_obs(obs):
+    """ Raises TypeError if the argument is not a dictionary.
+        Raises TypeError if the keys in the dictionary are not strings.
+        Raises TypeError if the items in the dictionary are not strings.
+        Raises ValueError if the items in the dictionary are not valid files.
+    """ 
     if type(obs) is not dict:
         raise TypeError("'obs' needs to be 'dict' type")
     for key in obs:
@@ -355,6 +451,11 @@ def check_obs(obs):
 
 
 def check_delete(delete):
+    """ Raises TypeError if the argument is not a dictionary.
+        Raises ValueError if the keys in the dictionary are not in
+        the list of possible keys.
+        Raises TypeError if the items in the dictionary are not booleans.
+    """
     if type(delete) is not dict:
         raise TypeError("'delete' needs to be 'dict' type")
     possible_keys = ['del_fldmeanfiles',
@@ -375,12 +476,18 @@ def check_delete(delete):
 
 
 def check_defaults(defaults):
+    """ Raises TypeError if the argument is not a dictionary.
+        Raises exception if the dictionary is not valid.
+    """
     if type(defaults) is not dict:
         raise TypeError("'defaults' must be 'dict' type")
     check_plot(defaults)
 
 
 def check_inputs(plots, model_run, experiment, obsroot, cmiproot, obs, defaults, delete):
+    """ Checks the configuration inputs and 
+        raises exceptions if they do not make sense.
+    """
     check_plots(plots)
     check_model_run(model_run)
     check_experiment(experiment)

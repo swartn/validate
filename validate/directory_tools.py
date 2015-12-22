@@ -171,6 +171,8 @@ def _load_masks(files):
             os.system('ln -s ' + f + ' ./mask/land')
             print f
             print 'found land'
+
+#    used to be hard coded for known directory path
 #    os.system('ln -s /raid/rc40/data/ncs/historical-' + run + '/fx/ocean/sftof/r0i0p0/*.nc ./mask/ocean')
 #    os.system('ln -s /raid/rc40/data/ncs/historical-' + run + '/fx/atmos/sftlf/r0i0p0/sftlf_fx_DevAM4-2_historical-edr_r0i0p0.nc ./mask/land')
 
@@ -396,6 +398,15 @@ def getfiles(plots, run, experiment):
 
 
 def getidfiles(plots, experiment):
+    """ Get the files for run IDs for comparison.
+
+    Parameters
+    ----------
+    plots : list of dictionaries
+    experiment : string
+                 name of experiment
+
+    """
     ids = []
     for p in plots:
         if p['compare']['runid']:

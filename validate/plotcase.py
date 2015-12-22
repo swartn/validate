@@ -10,7 +10,7 @@ to the correct plot.
 .. moduleauthor:: David Fallis
 """
 
-import plotload as pl
+import dataload as pl
 import plotregions as pr
 import numpy as np
 import matplotlib.pyplot as plt
@@ -121,13 +121,17 @@ def map_climatology(plot, func):
     string : name of the plot
     """
     print 'plotting map of ' + plot['variable']
+    # load data from netcdf file
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'])
-    plot['plot_depth'] = 0
+    
 
+    # get data at correct depth
     data = _depth_data(data, depth, plot)
 
     dft.filltitle(plot)
     _pcolor(data, plot, 'climatology', anom=False)
+    
+    # make plot
     func(lon, lat, data, ax_args=plot['data1_args']['climatology_args']['ax_args'],
          pcolor_args=plot['data1_args']['climatology_args']['pcolor_args'], cblabel=units, plot=plot,
          **plot['plot_args'])
@@ -175,12 +179,17 @@ def map_climatology_comparison(plot, func):
     string : name of the plot
     """
     print 'plotting comparison map of ' + plot['variable']
+    # load data from netcdf file
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'])
-    plot['plot_depth'] = 0
+
+    
+    # get data at correct depth
     data = _depth_data(data, depth, plot)
 
+    # get comparison data from netcdf file
     data2, units, lon, lat, depth = pl.timeaverage_load_comp(plot['comp_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'], plot['remap'], plot['remap_grid'])
 
+    # get comparison data at correct depth
     data2 = _depth_data(data2, depth, plot)
 
     compdata = data - data2
@@ -189,6 +198,7 @@ def map_climatology_comparison(plot, func):
 
     dft.filltitle(plot)
 
+    # make plots of data, comparison data, data - comparison data
     func(lon, lat, data, plot=plot, ax=axl, ax_args=plot['data1_args']['climatology_args']['ax_args'],
          pcolor_args=plot['data1_args']['climatology_args']['pcolor_args'], cblabel=units,
          **plot['plot_args'])
@@ -198,6 +208,7 @@ def map_climatology_comparison(plot, func):
     func(lon, lat, compdata, anom=True, rmse=True, plot=plot, ax=axr, ax_args=plot['comp_args']['climatology_args']['ax_args'],
          pcolor_args=plot['comp_args']['climatology_args']['pcolor_args'], cblabel=units,
          **plot['plot_args'])
+    
     plot_name = climatology_comparison_name(plot)
     savefigures(plot_name, **plot)
     plot['units'] = units
@@ -236,20 +247,24 @@ def section_climatology(plot, func):
     string : name of the plot
     """
     print 'plotting section of ' + plot['variable']
-    plot['plot_depth'] = 0
+    
     plot = _section_labels('data1_args', plot)
+    
+    # load data from netcdf file
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'])
 
+    # calculate the zonal mean of the data
     zonmean = _section_data(data, plot)
 
     dft.filltitle(plot)
     _pcolor(data, plot, 'climatology', anom=False)
+    
+    # plot the data
     func(lat, depth, zonmean, plot=plot, ax_args=plot['data1_args']['climatology_args']['ax_args'],
          pcolor_args=plot['data1_args']['climatology_args']['pcolor_args'], cblabel=units)
+    
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology'
-
     savefigures(plot_name, **plot)
-
     plot['units'] = units
     return plot_name
 
@@ -273,18 +288,23 @@ def section_climatology_comparison(plot, func):
     _section_labels('data2_args', plot)
     _section_labels('comp_args', plot)
 
+    # load data from netcdf file
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'])
 
+    # calculate the zonal mean
     zonmean = _section_data(data, plot)
-
+    
+    # load comparison data from netcdf file
     data2, units2, lon2, lat2, depth2 = pl.timeaverage_load_comp(plot['comp_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], depth, plot['scale'])
 
+    # calculate the zonal mean of the comparison data
     zonmean2 = _section_data(data2, plot)
-    plot['plot_depth'] = 0
-    dft.filltitle(plot)
 
+    dft.filltitle(plot)
     _comp_pcolor(zonmean, zonmean2, plot, 'climatology')
     compdata = zonmean - zonmean2
+    
+    # make plots of data, comparison data, data - comparison data
     fig = plt.figure(figsize=(6, 8))
     gs = gridspec.GridSpec(3, 2, width_ratios=[20, 1])
     func(lat, depth, zonmean, plot=plot, ax=plt.subplot(gs[0, 0]), ax_args=plot['data1_args']['climatology_args']['ax_args'],
@@ -316,7 +336,7 @@ def _trend_units(data, units, plot):
     string
     """
     if plot['frequency'] == 'day':
-        data = data * 3652.5
+        data = data * 365
     if plot['frequency'] == 'mon':
         data = data * 120
     if plot['frequency'] == 'year':
@@ -338,14 +358,20 @@ def map_trends(plot, func):
     string : name of the plot
     """
     print 'plotting trends map of ' + plot['variable']
+    
+    # load trends data from netcdf file
     data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['trends_dates'], plot['scale'], plot['remap'], plot['remap_grid'])
-    plot['plot_depth'] = 0
 
+    # get data at correct depth
     data = _depth_data(data, depth, plot)
+    
+    # scale data based on frequency
     data, units = _trend_units(data, units, plot)
 
     _pcolor(data, plot, 'trends', anom=True)
     dft.filltitle(plot)
+    
+    # make plot
     func(lon, lat, data, anom=True, plot=plot, ax_args=plot['data1_args']['trends_args']['ax_args'],
          pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units,
          **plot['plot_args'])
@@ -371,24 +397,32 @@ def map_trends_comp(plot, func):
     string : name of the plot
     """
     print 'plotting trends map comparison of ' + plot['variable']
+    
+    # load trends data from netcdf file
     data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['trends_dates'], plot['scale'], plot['remap'], plot['remap_grid'])
-    plot['plot_depth'] = 0
 
+    # get data at correct depth
     data = _depth_data(data, depth, plot)
+
+    # scale data based on frequency
     data, units = _trend_units(data, units, plot)
 
+    # load trends comparison data from netcdf file
     data2, units2, lon2, lat2, depth2 = pl.trends_load_comp(plot['comp_file'], plot['variable'], plot['trends_dates'], [plot['plot_depth']], plot['scale'], plot['remap'], plot['remap_grid'])
 
+    # get comparison data at correct depth
     if data2.ndim > 2:
         data2 = data2[depth_ind, :, :]
-
+        
+    # scale data based on frequency
     data2, units2 = _trend_units(data2, units2, plot)
     compdata = data - data2
 
     dft.filltitle(plot)
     _comp_pcolor(data, data2, plot, 'trends', anom=True)
-    fig, (axl, axm, axr) = plt.subplots(3, 1, figsize=(8, 8))
 
+    # make trends plots of data, comparison data, data - comparison data    
+    fig, (axl, axm, axr) = plt.subplots(3, 1, figsize=(8, 8))
     func(lon, lat, data, ax=axl, anom=True, plot=plot, ax_args=plot['data1_args']['trends_args']['ax_args'],
          pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units,
          **plot['plot_args'])
@@ -398,6 +432,7 @@ def map_trends_comp(plot, func):
     func(lon, lat, compdata, ax=axr, anom=True, rmse=True, plot=plot, ax_args=plot['comp_args']['trends_args']['ax_args'],
          pcolor_args=plot['comp_args']['trends_args']['pcolor_args'], cblabel=units,
          **plot['plot_args'])
+         
     plot_name = trends_comparison_name(plot)
     savefigures(plot_name, **plot)
     plot['units'] = units
@@ -419,11 +454,19 @@ def section_trends(plot, func):
     print 'plotting section trends of ' + plot['variable']
     _section_labels('data1_args', plot)
 
+    # load trends data from netcdf file
     data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['trends_dates'], plot['scale'], plot['remap'], plot['remap_grid'])
+    
+    # get zonal mean data
     zonmean = _section_data(data, plot)
+    
+    # scale data based on frequency
     zonmean, units = _trend_units(zonmean, units, plot)
+    
     dft.filltitle(plot)
     _pcolor(zonmean, plot, 'trends', anom=True)
+    
+    # make plot
     func(lat, depth, zonmean, anom=True, plot=plot, ax_args=plot['data1_args']['trends_args']['ax_args'],
          pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units)
 
@@ -452,21 +495,28 @@ def section_trends_comp(plot, func):
     _section_labels('data2_args', plot)
     _section_labels('comp_args', plot)
 
+    # load trends data from netcdf file
     data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['trends_dates'], plot['scale'], plot['remap'], plot['remap_grid'])
+    
+    # get zonal mean of data
     zonmean = _section_data(data, plot)
 
+    # load comparison data from netcdf file
     data2, units2, lon2, lat2, depth2 = pl.trends_load_comp(plot['comp_file'], plot['variable'], plot['trends_dates'], depth, plot['scale'], plot['remap'], plot['remap_grid'])
+    
+    # get zonal mean of comparison data
     zonmean2 = _section_data(data2, plot)
 
+    # scale data based on frequency
     zonmean, units = _trend_units(zonmean, units, plot)
     zonmean2, units2 = _trend_units(zonmean2, units2, plot)
 
     compdata = zonmean - zonmean2
-    plot['plot_depth'] = 0
     dft.filltitle(plot)
     _comp_pcolor(zonmean, zonmean2, plot, 'trends', anom=True)
+    
+    # make trends plots of data, comparison data, data - comparison data    
     fig, (axl, axm, axr) = plt.subplots(3, 1, figsize=(8, 8))
-
     func(lat, depth, zonmean, ax=axl, anom=True, plot=plot, ax_args=plot['data1_args']['trends_args']['ax_args'],
          pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units,
          **plot['plot_args'])
@@ -496,11 +546,14 @@ def timeseries(plot, func):
     string : name of the plot
     """
     print 'plotting timeseries of ' + plot['variable']
-    data, units, x, depth = pl.timeseries_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['scale'])
+
     plot['data1_args']['climatology_args']['ax_args']['xlabel'] = 'Time'
     plot['data1_args']['climatology_args']['ax_args']['ylabel'] = units
 
-    plot['plot_depth'] = plot['depth']
+    # Load time series data from netcdf file
+    data, units, x, depth = pl.timeseries_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['scale'])
+
+    # get data at the correct depth
     if data.ndim > 1:
         plot['plot_depth'] = min(depth, key=lambda x: abs(x - plot['depth']))
 
@@ -512,7 +565,10 @@ def timeseries(plot, func):
         data = data[:, depth_ind]
 
     dft.filltitle(plot)
+    
+    # make plot
     func(x, data, plot=plot, ax_args=plot['data1_args']['climatology_args']['ax_args'])
+    
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_timeseries' + str(plot['plot_depth'])
     savefigures(plot_name, **plot)
     plot['units'] = units
@@ -534,10 +590,14 @@ def timeseriesdata(plot, compfile, depth):
 
 def timeseries_comparison(plot, func):
     print 'plotting timeseries comparison of ' + plot['variable']
+
+    # Load time series data from netcdf file
     data, units, x, depth = pl.timeseries_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'])
 
     plot['data1_args']['climatology_args']['ax_args']['xlabel'] = 'Time'
     plot['data1_args']['climatology_args']['ax_args']['ylabel'] = units
+    
+    # get data at the correct depth 
     plot['plot_depth'] = plot['depth']
     if data.ndim > 1:
         plot['plot_depth'] = min(depth, key=lambda x: abs(x - plot['depth']))
@@ -551,8 +611,11 @@ def timeseries_comparison(plot, func):
 
     fig, ax = plt.subplots(1, 1, figsize=(8, 8))
     dft.filltitle(plot)
+    
+    # make plot
     func(x, data, plot=plot, ax=ax, ax_args=plot['data1_args']['climatology_args']['ax_args'])
 
+    # plot comparison data on the same axis
     if plot['compare']['cmip5']:
         plot['comp_model'] = 'cmip5'
         data, x = timeseriesdata(plot, plot['cmip5_file'], depth)
@@ -571,6 +634,7 @@ def timeseries_comparison(plot, func):
             plot['comp_model'] = i
             data, x = timeseriesdata(plot, plot['id_file'][i], depth)
             func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1_args']['climatology_args']['ax_args'])
+
     ax.legend(loc='best')
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_timeseries_comparison' + str(plot['plot_depth'])
     savefigures(plot_name, **plot)
@@ -592,6 +656,8 @@ def zonalmean(plot, func):
     string : name of the plot
     """
     print 'plotting zonal mean of ' + plot['variable']
+    
+    # Load zonal mean data from netcdf file
     data, units, x, depth = pl.zonal_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['scale'])
     plot['data1_args']['climatology_args']['ax_args']['xlabel'] = 'Latitude'
     plot['data1_args']['climatology_args']['ax_args']['ylabel'] = units
@@ -608,7 +674,10 @@ def zonalmean(plot, func):
         data = data[depth_ind, :]
 
     dft.filltitle(plot)
+    
+    # make plot
     func(x, data, plot=plot, ax_args=plot['data1_args']['climatology_args']['ax_args'])
+
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_zonalmean' + str(plot['plot_depth'])
     savefigures(plot_name, **plot)
     plot['units'] = units
@@ -641,11 +710,14 @@ def zonalmean_comparison(plot, func):
     string : name of the plot
     """
     print 'plotting zonal mean of ' + plot['variable']
+    
+    # Load zonal mean data from netcdf file
     data, units, x, depth = pl.zonal_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'])
 
     plot['data1_args']['climatology_args']['ax_args']['xlabel'] = 'Latitude'
     plot['data1_args']['climatology_args']['ax_args']['ylabel'] = units
 
+    # get data at the correct depth 
     plot['plot_depth'] = plot['depth']
     if data.ndim > 1:
         plot['plot_depth'] = min(depth, key=lambda x: abs(x - plot['depth']))
@@ -658,8 +730,11 @@ def zonalmean_comparison(plot, func):
 
     fig, ax = plt.subplots(1, 1, figsize=(8, 8))
     dft.filltitle(plot)
+    
+    # make plot
     func(x, data, plot=plot, ax=ax, ax_args=plot['data1_args']['climatology_args']['ax_args'])
 
+    # plot comparison data on the same axis
     if plot['compare']['cmip5']:
         plot['comp_model'] = 'cmip5'
         zonalmeandata(plot, plot['cmip5_file'], ax, depth, func)
@@ -685,14 +760,26 @@ def zonalmean_comparison(plot, func):
 def taylor(plot, func):
     print 'plotting taylor diagram of ' + plot['variable']
     plot['plot_depth'] = plot['depth']
+    
+    # load data from netcdf file
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'])
+    
+    # get data at correct depth
     data = _depth_data(data, depth, plot)
-    plotdata = [(data, 'model')]
+    
 
+    # start list of tuples to be plotted
+    plotdata = [(data, plot['model_ID'])]
+
+    # load observations data
     data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['obs_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
+    
+    # get observations data at correct depth
     refdata = _depth_data(data, depth, plot)
+    
     dft.filltitle(plot)
-
+    
+    # get data from models and cmip and append to plotdata list
     if plot['compare']['cmip5'] == True:
         plot['comp_model'] = 'cmip5'
         data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['cmip5_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
@@ -707,7 +794,10 @@ def taylor(plot, func):
             plot['comp_model'] = i
             data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['id_file'][i], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
             plotdata.append((_depth_data(data, depth, plot), i))
+            
+    # make plot
     pr.taylordiagram(refdata, plotdata, plot=plot, ax_args=plot['data1_args']['climatology_args']['ax_args'])
+    
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_taylor' + str(plot['plot_depth'])
     plt.tight_layout()
     savefigures(plot_name, **plot)
