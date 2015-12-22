@@ -30,8 +30,6 @@ def climatology(plot):
                 'polar_map': (pr.polar_map, pc.map_climatology),
                 'polar_map_south': (pr.polar_map_south, pc.map_climatology),
                 'mercator': (pr.mercator, pc.map_climatology),
-                'time_series': (pr.timeseries, pc.timeseries),
-                'zonal_mean': (pr.zonalmean, pc.zonalmean),
                 }[pl]
     func_region, func_case = pregion_standard(plot['plot_projection'])
     return func_case(plot, func_region)

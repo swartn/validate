@@ -532,49 +532,6 @@ def section_trends_comp(plot, func):
     plot['units'] = units
     return plot_name
 
-
-def timeseries(plot, func):
-    """ Loads and plots a global mean timeseries.
-
-    Parameters
-    ----------
-    plot : dictionary
-    func : a method that will plot the data on a specified map
-
-    Returns
-    -------
-    string : name of the plot
-    """
-    print 'plotting timeseries of ' + plot['variable']
-
-    plot['data1_args']['climatology_args']['ax_args']['xlabel'] = 'Time'
-    plot['data1_args']['climatology_args']['ax_args']['ylabel'] = units
-
-    # Load time series data from netcdf file
-    data, units, x, depth = pl.timeseries_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['scale'])
-
-    # get data at the correct depth
-    if data.ndim > 1:
-        plot['plot_depth'] = min(depth, key=lambda x: abs(x - plot['depth']))
-
-        try:
-            depth_ind = np.where(np.round(depth) == plot['plot_depth'])[0][0]
-        except:
-            print('Failed to extract depth ' + plot['plot_depth'] + ' for ' + plot['variable'])
-            depth_ind = 0
-        data = data[:, depth_ind]
-
-    dft.filltitle(plot)
-    
-    # make plot
-    func(x, data, plot=plot, ax_args=plot['data1_args']['climatology_args']['ax_args'])
-    
-    plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_timeseries' + str(plot['plot_depth'])
-    savefigures(plot_name, **plot)
-    plot['units'] = units
-    return plot_name
-
-
 def timeseriesdata(plot, compfile, depth):
     data, units, x, depth = pl.timeseries_load_comp(compfile, plot['variable'], plot['climatology_dates'], depth, plot['scale'])
 
@@ -640,49 +597,6 @@ def timeseries_comparison(plot, func):
     savefigures(plot_name, **plot)
     plot['units'] = units
     return plot_name
-
-
-def zonalmean(plot, func):
-    """ Loads and plots a time average of the zonal means
-        for each latitude.
-
-    Parameters
-    ----------
-    plot : dictionary
-    func : a method that will plot the data on a specified map
-
-    Returns
-    -------
-    string : name of the plot
-    """
-    print 'plotting zonal mean of ' + plot['variable']
-    
-    # Load zonal mean data from netcdf file
-    data, units, x, depth = pl.zonal_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['scale'])
-    plot['data1_args']['climatology_args']['ax_args']['xlabel'] = 'Latitude'
-    plot['data1_args']['climatology_args']['ax_args']['ylabel'] = units
-
-    plot['plot_depth'] = plot['depth']
-    if data.ndim > 1:
-        plot['plot_depth'] = min(depth, key=lambda x: abs(x - plot['depth']))
-
-        try:
-            depth_ind = np.where(np.round(depth) == plot['plot_depth'])[0][0]
-        except:
-            print('Failed to extract depth ' + plot['plot_depth'] + ' for ' + plot['variable'])
-            depth_ind = 0
-        data = data[depth_ind, :]
-
-    dft.filltitle(plot)
-    
-    # make plot
-    func(x, data, plot=plot, ax_args=plot['data1_args']['climatology_args']['ax_args'])
-
-    plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_climatology_zonalmean' + str(plot['plot_depth'])
-    savefigures(plot_name, **plot)
-    plot['units'] = units
-    return plot_name
-
 
 def zonalmeandata(plot, compfile, ax, depth, func):
     data2, units2, x2, depth2 = pl.zonal_load_comp(compfile, plot['variable'], plot['climatology_dates'], depth, plot['scale'])
