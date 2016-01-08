@@ -431,8 +431,9 @@ def getidfiles(plots, experiment):
         filedict = _remove_files_out_of_date_range(vf, startdates, enddates)
         filedict = _cat_file_slices(filedict)
         for p in plots:
-            if i in p['comp_ids']:
-                p['id_file'][i] = filedict[(p['frequency'], p['variable'], str(p['realization']))]
+            if 'comp_ids' in p:
+                if i in p['comp_ids']:
+                    p['id_file'][i] = filedict[(p['frequency'], p['variable'], str(p['realization']))]
 
 
 def remfiles(del_fldmeanfiles=True, del_mask=True, del_ncstore=True,

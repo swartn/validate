@@ -690,17 +690,17 @@ def taylor_full(plot, func):
     if plot['compare']['cmip5'] == True:
         plot['comp_model'] = 'cmip5'
         data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['cmip5_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
-        plotdata.append(data, 'cmip5'))
+        plotdata.append((data, 'cmip5'))
     if plot['compare']['model'] == True:
         for model in plot['comp_models']:
             plot['comp_model'] = model
             data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['model_file'][model], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
-            plotdata.append(data, model))
+            plotdata.append((data, model))
     if plot['compare']['runid'] == True:
         for i in plot['comp_ids']:
             plot['comp_model'] = i
             data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['id_file'][i], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
-            plotdata.append(data, i))
+            plotdata.append((data, i))
             
     # make plot
     pr.taylordiagram(refdata, plotdata, plot=plot, ax_args=plot['data1_args']['climatology_args']['ax_args'])
