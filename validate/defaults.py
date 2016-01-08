@@ -74,7 +74,7 @@ def fill(plots, defaults, model_run, experiment):
             if 'model' not in p['compare']:
                 p['compare']['model'] = False
             if 'obs' not in p['compare']:
-                p['compare']['cmip5'] = False
+                p['compare']['obs'] = False
             if 'runid' not in p['compare']:
                 p['compare']['runid'] = False
                 
