@@ -20,7 +20,7 @@ Several external packages are required:
 
 `matplotlib <http://sf.net/projects/matplotlib/>`_ 
 
-'pyyaml <http://pyyaml.org/wiki/PyYAML/>'_
+`pyyaml <http://pyyaml.org/wiki/PyYAML/>`_
 
 validate has primarily been developed and tested within the 
 `anaconda <http://docs.continuum.io/anaconda/index.html>`_ python distribution on 
@@ -53,6 +53,7 @@ Be careful working in populated directories as validate may remove or modify fil
 directories with particular names.
 
 To create a standard set of plots use the command 
+
 .. code-block:: bash
     
     validate-execute -r [runID]
@@ -67,6 +68,7 @@ To make modifications to the standard plots use the command:
     
 Once the changes have been made, save the conf.yaml file in your working directory
 and once again use the command:
+
 .. code-block:: bash
     
     validate-execute -r [runID]
