@@ -9,5 +9,6 @@
 logs/
 plots/
 *.egg-info/*
-build/
+*build/
 dist/
+

@@ -69,7 +69,7 @@ def execute(options, **kwargs):
         with open(confile, 'r') as f:
             settings = yaml.load(f)
     
-    # overwrite the configuration with input given in the exection arguments
+    # overwrite the configuration with input given in the execution arguments
     for key in options:
         settings[key] = options[key]
     
