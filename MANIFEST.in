@@ -1,3 +1,4 @@
 include README.rst
 include validate/configure/*.yaml
 include requirements.txt
+include LICENSE.txt
