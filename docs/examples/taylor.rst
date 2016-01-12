@@ -1,3 +1,8 @@
+.. _taylor:
+
+Taylor Diagram
+===================
+
 For this example we want to make a taylor diagram of the
 atmospheric pressure at the surface for the climatology from
 1980 to 2000.

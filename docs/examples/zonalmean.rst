@@ -1,3 +1,8 @@
+.. _zonalmean:
+
+Zonal Mean Plot
+===================
+
 For this example we want to make a color map of a zonal mean 
 cross section of the atmospheric temperature of the climatology
 from 1980 to 2000 for the edr run ID.

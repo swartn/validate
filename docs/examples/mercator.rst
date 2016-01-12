@@ -1,3 +1,8 @@
+.. _mercator:
+
+Mercator Projection
+===================
+
 For this example we want to make a color map comparison between
 the edr run ID and CanESM2 for the atmospheric surface temperature
 climatology between 1980 and 1995.

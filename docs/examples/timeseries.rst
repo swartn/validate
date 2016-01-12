@@ -1,3 +1,8 @@
+.. _timseries:
+
+Time Series Plot
+===================
+
 For this example we want to make a time series plot of the
 atmospheric pressure at the surface for the climatology from
 1980 to 2000.

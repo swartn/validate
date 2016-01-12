@@ -16,7 +16,7 @@ Documentation is included in the docs/ directory.
 
 Contributors
 ------------
-David Fallis, University of Victoria:  davidwfallis@gmail.com
+David Fallis:  davidwfallis@gmail.com
 
 LICENSE
 -------
