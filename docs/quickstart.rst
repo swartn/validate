@@ -42,6 +42,7 @@ then build and install:
 
     cd validate
     python setup.py install
+    pip install -r requirements.txt
     
 You can (should) do this inside a virtual environment. In that case it will work 
 without root privileges. If you are using anaconda see  
