@@ -42,6 +42,8 @@ def _depth_data(data, depth, plot):
             print('Failed to extract depth ' + plot['plot_depth'] + ' for ' + plot['variable'])
             depth_ind = 0
         data = data[depth_ind, :, :]
+    else:
+        plot['plot_depth'] = ''
     return data
 
 
@@ -161,6 +163,8 @@ def trends_comparison_name(plot):
         plot_name = 'plots/' + plot['variable'] + '_' + plot['plot_projection'] + '_trends_comparison_cmip5_' + str(plot['plot_depth'])
     if plot['comp_flag'] == 'model':
         plot_name = 'plots/' + plot['variable'] + '_' + plot['plot_projection'] + '_trends_comparison_' + plot['comp_model'] + str(plot['plot_depth'])
+    if plot['comp_flag'] == 'runid':
+        plot_name = 'plots/' + plot['variable'] + '_' + plot['plot_projection'] + '_trends_comparison_' + plot['comp_model'] + str(plot['plot_depth'])
     return plot_name
 
 
@@ -187,7 +191,7 @@ def map_climatology_comparison(plot, func):
     data = _depth_data(data, depth, plot)
 
     # get comparison data from netcdf file
-    data2, units, lon, lat, depth = pl.timeaverage_load_comp(plot['comp_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'], plot['remap'], plot['remap_grid'])
+    data2, units, lon, lat, depth = pl.timeaverage_load(plot['comp_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], [plot['plot_depth']])
 
     # get comparison data at correct depth
     data2 = _depth_data(data2, depth, plot)
@@ -289,17 +293,19 @@ def section_climatology_comparison(plot, func):
     _section_labels('comp_args', plot)
 
     # load data from netcdf file
-    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'])
-
+    #data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'])
+    zonmean, units, x, depth = pl.zonal_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'])
+    print zonmean.shape
     # calculate the zonal mean
-    zonmean = _section_data(data, plot)
+    #zonmean = _section_data(data, plot)
     
     # load comparison data from netcdf file
-    data2, units2, lon2, lat2, depth2 = pl.timeaverage_load_comp(plot['comp_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], depth, plot['scale'])
-
+    #data2, units2, lon2, lat2, depth2 = pl.timeaverage_load(plot['comp_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], depthneeded=depth)
+    zonmean2, units2, x2, depth2 = pl.zonal_load(plot['comp_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], depthneeded=depth)
+    print zonmean2.shape
     # calculate the zonal mean of the comparison data
-    zonmean2 = _section_data(data2, plot)
-
+    #zonmean2 = _section_data(data2, plot)
+    
     dft.filltitle(plot)
     _comp_pcolor(zonmean, zonmean2, plot, 'climatology')
     compdata = zonmean - zonmean2
@@ -307,11 +313,11 @@ def section_climatology_comparison(plot, func):
     # make plots of data, comparison data, data - comparison data
     fig = plt.figure(figsize=(6, 8))
     gs = gridspec.GridSpec(3, 2, width_ratios=[20, 1])
-    func(lat, depth, zonmean, plot=plot, ax=plt.subplot(gs[0, 0]), ax_args=plot['data1_args']['climatology_args']['ax_args'],
+    func(x, depth, zonmean, plot=plot, ax=plt.subplot(gs[0, 0]), ax_args=plot['data1_args']['climatology_args']['ax_args'],
          pcolor_args=plot['data1_args']['climatology_args']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[0, 1]))
-    func(lat, depth, zonmean2, plot=plot, ax=plt.subplot(gs[1, 0]), ax_args=plot['data2_args']['climatology_args']['ax_args'],
+    func(x, depth, zonmean2, plot=plot, ax=plt.subplot(gs[1, 0]), ax_args=plot['data2_args']['climatology_args']['ax_args'],
          pcolor_args=plot['data2_args']['climatology_args']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[1, 1]))
-    func(lat, depth, compdata, anom=True, rmse=True, plot=plot, ax=plt.subplot(gs[2, 0]), ax_args=plot['comp_args']['climatology_args']['ax_args'],
+    func(x, depth, compdata, anom=True, rmse=True, plot=plot, ax=plt.subplot(gs[2, 0]), ax_args=plot['comp_args']['climatology_args']['ax_args'],
          pcolor_args=plot['comp_args']['climatology_args']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[2, 1]))
 
     plt.tight_layout()
@@ -408,7 +414,7 @@ def map_trends_comp(plot, func):
     data, units = _trend_units(data, units, plot)
 
     # load trends comparison data from netcdf file
-    data2, units2, lon2, lat2, depth2 = pl.trends_load_comp(plot['comp_file'], plot['variable'], plot['trends_dates'], [plot['plot_depth']], plot['scale'], plot['remap'], plot['remap_grid'])
+    data2, units2, lon2, lat2, depth2 = pl.trends_load(plot['comp_file'], plot['variable'], plot['trends_dates'], plot['scale'], plot['remap'], plot['remap_grid'], depthneeded=[plot['plot_depth']])
 
     # get comparison data at correct depth
     if data2.ndim > 2:
@@ -502,7 +508,7 @@ def section_trends_comp(plot, func):
     zonmean = _section_data(data, plot)
 
     # load comparison data from netcdf file
-    data2, units2, lon2, lat2, depth2 = pl.trends_load_comp(plot['comp_file'], plot['variable'], plot['trends_dates'], depth, plot['scale'], plot['remap'], plot['remap_grid'])
+    data2, units2, lon2, lat2, depth2 = pl.trends_load(plot['comp_file'], plot['variable'], plot['trends_dates'], plot['scale'], plot['remap'], plot['remap_grid'], depthneeded=depth)
     
     # get zonal mean of comparison data
     zonmean2 = _section_data(data2, plot)
@@ -533,7 +539,7 @@ def section_trends_comp(plot, func):
     return plot_name
 
 def timeseriesdata(plot, compfile, depth):
-    data, units, x, depth = pl.timeseries_load_comp(compfile, plot['variable'], plot['climatology_dates'], depth, plot['scale'])
+    data, units, x, depth = pl.timeseries_load(compfile, plot['variable'], plot['climatology_dates'], plot['realm'], plot['scale'], depthneeded=depth)
 
     if data.ndim > 1:
         try:
@@ -633,6 +639,7 @@ def zonalmean_comparison(plot, func):
 
     # get data at the correct depth 
     plot['plot_depth'] = plot['depth']
+    print data.shape
     if data.ndim > 1:
         plot['plot_depth'] = min(depth, key=lambda x: abs(x - plot['depth']))
         try:
@@ -682,24 +689,24 @@ def taylor_full(plot, func):
     plotdata = [(data, plot['model_ID'])]
 
     # load observations data
-    data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['obs_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
+    data, units, lon, lat, depth = pl.timeaverage_load(plot['obs_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], depthneeded=[plot['plot_depth']])
     
     dft.filltitle(plot)
     
     # get data from models and cmip and append to plotdata list
     if plot['compare']['cmip5'] == True:
         plot['comp_model'] = 'cmip5'
-        data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['cmip5_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
+        data, units, lon, lat, depth = pl.timeaverage_load(plot['cmip5_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], depthneeded=[plot['plot_depth']])
         plotdata.append((data, 'cmip5'))
     if plot['compare']['model'] == True:
         for model in plot['comp_models']:
             plot['comp_model'] = model
-            data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['model_file'][model], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
+            data, units, lon, lat, depth = pl.timeaverage_load(plot['model_file'][model], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], depthneeded=[plot['plot_depth']])
             plotdata.append((data, model))
     if plot['compare']['runid'] == True:
         for i in plot['comp_ids']:
             plot['comp_model'] = i
-            data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['id_file'][i], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
+            data, units, lon, lat, depth = pl.timeaverage_load(plot['id_file'][i], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], depthneeded=[plot['plot_depth']])
             plotdata.append((data, i))
             
     # make plot
@@ -730,7 +737,7 @@ def taylor(plot, func):
     plotdata = [(data, plot['model_ID'])]
 
     # load observations data
-    data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['obs_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
+    data, units, lon, lat, depth = pl.timeaverage_load(plot['obs_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], depthneeded=[plot['plot_depth']])
     
     # get observations data at correct depth
     refdata = _depth_data(data, depth, plot)
@@ -740,17 +747,17 @@ def taylor(plot, func):
     # get data from models and cmip and append to plotdata list
     if plot['compare']['cmip5'] == True:
         plot['comp_model'] = 'cmip5'
-        data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['cmip5_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
+        data, units, lon, lat, depth = pl.timeaverage_load(plot['cmip5_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], depthneeded=[plot['plot_depth']])
         plotdata.append((_depth_data(data, depth, plot), 'cmip5'))
     if plot['compare']['model'] == True:
         for model in plot['comp_models']:
             plot['comp_model'] = model
-            data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['model_file'][model], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
+            data, units, lon, lat, depth = pl.timeaverage_load(plot['model_file'][model], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], depthneeded=[plot['plot_depth']])
             plotdata.append((_depth_data(data, depth, plot), model))
     if plot['compare']['runid'] == True:
         for i in plot['comp_ids']:
             plot['comp_model'] = i
-            data, units, lon, lat, depth = pl.timeaverage_load_comp(plot['id_file'][i], plot['variable'], plot['climatology_dates'], plot['realm_cat'], [plot['plot_depth']], plot['scale'])
+            data, units, lon, lat, depth = pl.timeaverage_load(plot['id_file'][i], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], depthneeded=[plot['plot_depth']])
             plotdata.append((_depth_data(data, depth, plot), i))
             
     # make plot

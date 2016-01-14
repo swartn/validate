@@ -348,6 +348,8 @@ def zonalmean(x, data, ax=None, ax_args=None, label='model', plot={}):
         fig, ax = plt.subplots(1, 1, figsize=(8, 8))
     else:
         fig = plt.gcf()
+    print x.shape
+    print data.shape
     ax.plot(x, data, label=label)
 
     plt.setp(ax, **ax_args)

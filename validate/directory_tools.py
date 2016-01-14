@@ -141,6 +141,7 @@ def _mkdir():
     mkthedir('logs')
     mkthedir('ENS-MEAN_cmipfiles')
     mkthedir('ENS-STD_cmipfiles')
+    mkthedir('netcdf')
 
 
 def _logfile(run, experiment):

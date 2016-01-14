@@ -199,7 +199,7 @@ def get_remap_function(remap):
     return cdoremap(remap)  
 
 
-def timeaverage_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180'):
+def timeaverage_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', depthneeded=None):
     """ Loads the data from a file and remaps it.
         Applies a time average over specified dates and scales the data.
 
@@ -225,35 +225,10 @@ def timeaverage_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgr
     """
     _check_dates(ifile, dates)
     
-    # split the full file name into directory path and filename
-    path, sfile = os.path.split(ifile)
-    
-    # get the remapping function
-    remap = get_remap_function(remapf)
-    finalout = 'remapfiles/' + remapf + remapgrid + '_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
-    
-    # skip if it has already been remapped and averaged before
-    if not os.path.isfile(finalout):
-        out = 'remapfiles/remapfile.nc'
-        
-        # mask ocean or land data
-        if realm == 'ocean':
-            cdo.ifthen(input='mask/ocean ' + ifile, output=out)
-        elif realm == 'land':
-            cdo.ifthen(input='mask/land ' + ifile, output=out)
-        else:
-            out = ifile
-        
-        # select the variable otherwise cdo complains that some variables can't be remapped
-        cdo.selvar(var, input=out, output='remapfiles/selvar.nc')
-        
-        out = 'remapfiles/selvar.nc'
-        
-        # compute climatology 
-        cdo.timmean(input='-seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output='remapfiles/seldate.nc')
-        
-        # do remapping
-        remap(remapgrid, options='-L', input='-setctomiss,0 remapfiles/seldate.nc', output=finalout)
+    if depthneeded is not None: # use is not because the truth value of an array is ambiguous
+        finalout = intlevel(setc(remap(time_mean(sel_var(ifile, var), dates['start_date'], dates['end_date']), remapf, remapgrid)), depthneeded)
+    else:
+        finalout = setc(remap(time_mean(mask(sel_var(ifile, var), realm), dates['start_date'], dates['end_date']), remapf, remapgrid))
     
     # load data from final netcdf file into Dataset object
     nc = Dataset(finalout, 'r')
@@ -265,71 +240,7 @@ def timeaverage_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgr
     return data, units, lon, lat, depth
 
 
-def timeaverage_load_comp(ifile, var, dates, realm, depthneeded, scale, remapf='remapdis', remapgrid='r360x180'):
-    """ Loads the data from a file and remaps it to 360x180.
-        Also remaps the vertical axis to specified depths for easy comparison
-        Applies a time average over specified dates and scales the data.
-
-    Parameters
-    ----------
-    ifile : string
-            filename to load data from
-    var : string
-    dates : dictionary
-            maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
-    realm : string
-            either 'ocean', 'land' or 'atmos'
-    depthneeded : numpy array
-    scale : int
-            scale the data by this factor
-
-    Returns
-    -------
-    numpy array
-    string
-    numpy array
-    numpy array
-    numpy array
-    """
-    # get a string of depths seperated by commas from an array of depths
-    depthneeded = ["%.2f" % number for number in depthneeded]
-    for i in xrange(len(depthneeded)):
-        depthneeded[i] = str(depthneeded[i])
-    depthneededstr = ','.join(depthneeded)
-    
-    _check_dates(ifile, dates)
-    
-    # split the full file name into directory path and file name
-    path, sfile = os.path.split(ifile)
-    
-    # get the remapping function
-    remap = get_remap_function(remapf)
-    finalout = 'remapfiles/' + remapf + remapgrid + '_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
-    
-    # skip if it has already been remapped and averaged before
-    if not os.path.isfile(finalout):
-        out = 'remapfiles/selvar.nc'
-        
-        # select the variable otherwise cdo complains that some variables can't be remapped
-        cdo.selvar(var, input=ifile, output=out)
-        
-        # do the remapping and time average
-        remap(remapgrid, options='-L', input='-setctomiss,0 -timmean -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output=finalout)
-    try:
-        # extrapolate z-axis to get comparison data at the same depth as the model
-        cdo.intlevelx(str(depthneededstr), input=finalout, output=finalout + str(depthneeded[0]) + '.nc')
-        nc = Dataset(finalout + str(depthneeded[0]) + '.nc', 'r')
-    except:
-        # if there is no z-axis just extract the data
-        nc = Dataset(finalout, 'r')
-
-    # Extract relevent information from Dataset object
-    data, units, depth = _load(nc, var)
-    data, lon, lat, depth, units = _load2(data, nc, units, depth, scale)
-    return data, units, lon, lat, depth
-
-
-def trends_load(ifile, var, dates, scale, remapf='remapdis', remapgrid='r360x180'):
+def trends_load(ifile, var, dates, scale, remapf='remapdis', remapgrid='r360x180', depthneeded=None):
     """ Loads the trend data over specified dates from a file
         Remaps and scales the data.
 
@@ -353,23 +264,10 @@ def trends_load(ifile, var, dates, scale, remapf='remapdis', remapgrid='r360x180
     """
     _check_dates(ifile, dates)
 
-    # split the full file name into directory path and file name
-    path, sfile = os.path.split(ifile)
-    
-    # get remapping function
-    remap = get_remap_function(remapf)
-    finalout = 'trendfiles/slope_' + remapf + remapgrid + '_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
-    slopefile = 'trendfiles/slope_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
-    
-    # skip if it has already been remapped and trendded before
-    if not os.path.isfile(finalout):
-        # compute trends
-        cdo.trend(input='-seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + ifile,
-                  output='trendfiles/intercept_' + sfile + ' ' + slopefile)
-        
-        # do remapping
-        remap(remapgrid, input='-setctomiss,0 ' + slopefile,
-                  output=finalout)
+    if depthneeded is not None:
+        finalout = intlevel(setc(remap(trend(sel_var(ifile, var), dates['start_date'], dates['end_date']), remapf, remapgrid)), depthneeded)   
+    else:
+        finalout = setc(remap(trend(sel_var(ifile, var), dates['start_date'], dates['end_date']), remapf, remapgrid))
     
     # load data from final netcdf file into Dataset object
     nc = Dataset(finalout, 'r')
@@ -381,73 +279,7 @@ def trends_load(ifile, var, dates, scale, remapf='remapdis', remapgrid='r360x180
     return data, units, lon, lat, depth
 
 
-def trends_load_comp(ifile, var, dates, depthneeded, scale, remapf='remapdis', remapgrid='r360x180'):
-    """ Loads the trend data over specified dates from a file
-        Remaps and scales the data. Also remaps the vertical axis to
-        specified depths for easy comparison.
-
-    Parameters
-    ----------
-    ifile : string
-            filename to load data from
-    var : string
-    dates : dictionary
-            maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
-    depthneeded : numpy array
-    scale : int
-            scale the data by this factor
-
-    Returns
-    -------
-    numpy array
-    string
-    numpy array
-    numpy array
-    numpy array
-    """
-
-    # get a string of depths seperated by commas from an array of depths
-    depthneeded = ["%.2f" % number for number in depthneeded]
-    for i in xrange(len(depthneeded)):
-        depthneeded[i] = str(depthneeded[i])
-    depthneededstr = ','.join(depthneeded)
-
-    _check_dates(ifile, dates)
-    
-    # split the full file name into directory path and file name
-    path, sfile = os.path.split(ifile)
-    
-    remap = get_remap_function(remapf)
-    finalout = 'trendfiles/slope_' + remapf + remapgrid + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
-    trendfile = 'trendfiles/slope_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
-    
-    # skip if it has already been remapped and trendded before
-    if not os.path.isfile(finalout):
-        # select the variable otherwise cdo complains that some variables can't be remapped
-        cdo.selvar(var, input=ifile, output='trendfiles/selvar.nc')
-        out = 'trendfiles/selvar.nc'
-        # compute the trends
-        cdo.trend(input='-seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out,
-                  output='trendfiles/intercept_' + sfile + ' ' + trendfile)
-        # do the remapping
-        remap(remapgrid, options='-L', input='-setctomiss,0 ' + trendfile,
-                  output=finalout)
-    try:
-        # extrapolate z-axis to get comparison data at the same depth as the model
-        cdo.intlevelx(str(depthneededstr), input=finalout, output=finalout + str(depthneeded[0]) + '.nc')
-        nc = Dataset(finalout + str(depthneeded[0]) + '.nc', 'r')
-    except:
-        # if there is no z-axis just extract the data
-        nc = Dataset(finalout, 'r')
-
-    # Extract relevent information from Dataset object
-    data, units, depth = _load(nc, var)
-    data, lon, lat, depth, units = _load2(data, nc, units, depth, scale)
-    
-    return data, units, lon, lat, depth
-
-
-def timeseries_load(ifile, var, dates, realm, scale):
+def timeseries_load(ifile, var, dates, realm, scale, depthneeded=None):
     """ Loads the field mean data over specified dates from a file.
         Remaps and scales the data.
 
@@ -469,25 +301,12 @@ def timeseries_load(ifile, var, dates, realm, scale):
     numpy array
     """
     _check_dates(ifile, dates)
-    
-    # split the full file name into directory path and file name
-    path, sfile = os.path.split(ifile)
-    finalout = 'fldmeanfiles/fldmean_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
-    
-    # skip if it has already been fieldmeaned
-    if not os.path.isfile(finalout):
-        out = 'fldmeanfiles/fldmean.nc'
-        # mask ocean or land data
-        if realm == 'ocean':
-            cdo.ifthen(input='mask/ocean ' + ifile, output=out)
-        elif realm == 'land':
-            cdo.ifthen(input='mask/land ' + ifile, output=out)
-        else:
-            out = ifile
-        
-        # compute field mean
-        cdo.fldmean(input='-setctomiss,0 -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output=finalout)
-    
+
+    if depthneeded is not None:
+        finalout = intlevel(setc(field_mean(sel_var(ifile, var), dates['start_date'], dates['end_date'])), depthneeded)
+    else:
+        finalout = setc(field_mean(mask(sel_var(ifile, var), realm), dates['start_date'], dates['end_date']))    
+
     # Load data into Dataset object
     nc = Dataset(finalout, 'r')
 
@@ -508,75 +327,7 @@ def timeseries_load(ifile, var, dates, realm, scale):
     return data, units, x, depth
 
 
-def timeseries_load_comp(ifile, var, dates, depthneeded, scale):
-    """ Loads the field mean data over specified dates from a file.
-        Remaps and scales the data.
-
-    Parameters
-    ----------
-    ifile : string
-            filename to load data from
-    var : string
-    dates : dictionary
-            maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
-    scale : int
-            scale the data by this factor
-
-    Returns
-    -------
-    numpy array
-    string
-    numpy array
-    numpy array
-    """
-    # get a string of depths seperated by commas from an array of depths
-    depthneeded = ["%.2f" % number for number in depthneeded]
-    for i in xrange(len(depthneeded)):
-        depthneeded[i] = str(depthneeded[i])
-    depthneededstr = ','.join(depthneeded)
-    
-    _check_dates(ifile, dates)
-    
-    # split the full file name into directory path and file name
-    path, sfile = os.path.split(ifile)
-    
-    finalout = 'fldmeanfiles/fldmean_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
-    
-    # skip if it has already been fieldmeaned
-    if not os.path.isfile(finalout):
-        out = 'fldmeanfiles/selvar.nc'
-        
-        # select the variable otherwise cdo complains that some variables can't be remapped
-        cdo.selvar(var, input=ifile, output=out)
-        
-        # compute the field mean
-        cdo.fldmean(options='-L', input='-seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output=finalout)
-    try:
-        # extrapolate z-axis to get comparison data at the same depth as the model
-        cdo.intlevelx(str(depthneededstr), input=finalout, output=finalout + str(depthneeded[0]) + '.nc')
-        nc = Dataset(finalout + str(depthneeded[0]) + '.nc', 'r')
-    except:
-        # if there is no z-axis just extract the data
-        nc = Dataset(finalout, 'r')
-
-    # get the time data from the dataset object
-    data, units, depth = _load(nc, var)
-    nc_time = nc.variables['time']
-    try:
-        cal = nc_time.calendar
-    except:
-        cal = 'standard'
-    x = num2date(nc_time[:], nc_time.units, cal)
-    x = [datetime.datetime(*item.timetuple()[:6]) for item in x]
-    x = np.array(x)
-
-    depth = np.round(depth)
-    units = _scale_units(units, scale)
-    data = data * scale
-    return data, units, x, depth
-
-
-def zonal_load(ifile, var, dates, realm, scale):
+def zonal_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', depthneeded=None):
     """ Loads the zonal mean data over specified dates from a file.
         Remaps and scales the data.
 
@@ -587,7 +338,6 @@ def zonal_load(ifile, var, dates, realm, scale):
     var : string
     dates : dictionary
             maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
-    depthneeded : numpy array
     scale : int
             scale the data by this factor
 
@@ -597,106 +347,112 @@ def zonal_load(ifile, var, dates, realm, scale):
     string
     numpy array
     numpy array
-    """
-    _check_dates(ifile, dates)
+    """ 
+    _check_dates(ifile, dates)  
     
-    # split the full file name into directory path and file name   
-    path, sfile = os.path.split(ifile)
+    if depthneeded is not None:
+        finalout = intlevel(zonal_mean(remap(time_mean(setc(sel_var(ifile, var)), dates['start_date'], dates['end_date']), remapf, remapgrid)), depthneeded)    
+    else:
+        finalout = zonal_mean(remap(time_mean(setc(mask(sel_var(ifile, var), realm)), dates['start_date'], dates['end_date']), remapf, remapgrid))
+    nc = Dataset(finalout, 'r')
 
-    finalout = 'zonalfiles/zonmean_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
-    
-    # skip if it has already been zonal meaned
-    if not os.path.isfile(finalout):    
-        out = 'zonalfiles/zonmean.nc'
-        
-        # mask ocean or land data
+    # extract relevent data
+    data, units, depth = _load(nc, var)
+    x = nc.variables['lat'][:].squeeze()
+
+    depth = np.round(depth)
+    units = _scale_units(units, scale)
+    data = data * scale
+    return data, units, x, depth
+
+def split(name):
+    """ Returns the name of a file without the directory path
+    """
+    path, filename = os.path.split(name)
+    return filename
+
+def sel_var(name, variable):
+    out = 'netcdf/sel_' + split(name)
+    if not os.path.isfile(out):
+        cdo.selvar(variable, input=name, output=out) 
+    return out
+
+def mask(name, realm):
+    out = 'netcdf/masked_' + split(name)
+    if not os.path.isfile(out):
         if realm == 'ocean':
             cdo.ifthen(input='mask/ocean ' + ifile, output=out)
         elif realm == 'land':
-            cdo.ifthen(input='mask/land ' + ifile, output=out)
+            cdo.ifthen(input='mask/land ' + ifile, output=out) 
         else:
-            out = ifile
-        
-        # compute zonal mean
-        cdo.zonmean(options='-L', input='-timmean -setctomiss,0 -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out, output=finalout)
+            out = name
+    return out
+
+def time_mean(name, start_date, end_date):
+    out = 'netcdf/climate_' + split(name)
+    if not os.path.isfile(out):
+        seldatestring = '-seldate,' + start_date + ',' + end_date
+        cdo.timmean(input=seldatestring + ' ' + name, output=out)
+    return out  
+
+def trend(name, start_date, end_date):
+    out = 'netcdf/slope_' + split(name)
+    outintercept = 'netcdf/intercept_' + split(name)
+    if not os.path.isfile(out):
+        seldatestring = '-seldate,' + start_date + ',' + end_date
+        cdo.trend(input=seldatestring + ' ' + name, output=outintercept + ' ' + out)
+    return out
+
+def setc(name):
+    out = 'netcdf/setc_' + split(name)
+    if not os.path.isfile(out):
+        cdo.setctomiss(0, input=name, output=out)
+    return out
+
+def remap(name, remapname, remapgrid):
+    out = 'netcdf/' + remapname + '-' + remapgrid + split(name)
+    if not os.path.isfile(out):
+        remap = get_remap_function(remapname)
+        remap(remapgrid, input=name, output=out)
+    return out
+
+def field_mean(name, start_date, end_date):
+    out = 'netcdf/fldmean_' + split(name)
+    if not os.path.isfile(out):
+        seldatestring = '-seldate,' + start_date + ',' + end_date
+        cdo.fldmean(options='-L', input=seldatestring + ' ' + name, output=out)
+    return out
+
+def zonal_mean(name):
+    out = 'netcdf/zonmean_' + split(name)
+    if not os.path.isfile(out):
+        cdo.zonmean(input=name, output=out)
+    return out
     
-    # load the data into a Dataset object
-    nc = Dataset(finalout, 'r')
-    
-    # extract relevent data
-    data, units, depth = _load(nc, var)
-    x = nc.variables['lat'][:].squeeze()
-
-    depth = np.round(depth)
-    units = _scale_units(units, scale)
-    data = data * scale
-    return data, units, x, depth
-
-
-def zonal_load_comp(ifile, var, dates, depthneeded, scale):
-    """ Loads the zonal mean data over specified dates from a file.
-        Remaps and scales the data.
-
-    Parameters
-    ----------
-    ifile : string
-            filename to load data from
-    var : string
-    dates : dictionary
-            maps 'start_date' and 'end_date' to date string with formay 'yyyy-mm'
-    scale : int
-            scale the data by this factor
-
-    Returns
-    -------
-    numpy array
-    string
-    numpy array
-    numpy array
-    """
-    # get a string of depths seperated by commas from an array of depths
-    depthneeded = ["%.2f" % number for number in depthneeded]
+def depthstring(depthlist):
+    depthneeded = ["%.2f" % number for number in depthlist]
     for i in xrange(len(depthneeded)):
         depthneeded[i] = str(depthneeded[i])
-    depthneededstr = ','.join(depthneeded)
+    return ','.join(depthneeded)
     
-    _check_dates(ifile, dates)  
-    
-    # split the full file name into directory path and file name  
-    path, sfile = os.path.split(ifile)
-    
-    finalout = 'zonalfiles/zonmean_' + sfile + str(dates['start_date']) + str(dates['end_date']) + '.nc'
+       
+def intlevel(name, depthlist):
+    if depthlist == ['']:
+        return name
+    print depthlist
+    depth = depthstring(depthlist)
+    print depth
+    depthname = depth.replace(' ', '')
+    if len(depthname) > 100:
+        depthname = depthname[:99]
+    out = 'netcdf/level-' + str(depthname) + '_' + split(name)
+    if depth:
+        if not os.path.isfile(out):
+            cdo.intlevelx(str(depth), input=name, output=out)
+    else:
+        return name
+    return out        
 
-    # skip if it has already been zonal meaned
-    if not os.path.isfile(finalout):
-        out = 'zonalfiles/selvar.nc'
         
-        # select the variable otherwise cdo complains that some variables can't be remapped
-        cdo.selvar(var, input=ifile, output=out)
-        out2 = 'zonalfiles/selvarremap.nc'
-        
-        # do the remapping
-        cdo.remapdis('r360x180', input=out, output=out2)
-
-        # compute he zonal mean
-        cdo.zonmean(options='-L', input='-timmean -seldate,' + str(dates['start_date']) + ',' + str(dates['end_date']) + ' ' + out2, output=finalout)
-    try:
-        # extrapolate z-axis to get comparison data at the same depth as the model
-        cdo.intlevelx(str(depthneededstr), input=finalout, output=finalout + str(depthneeded[0]) + '.nc')
-        nc = Dataset(finalout + str(depthneeded[0]) + '.nc', 'r')
-    except:
-        # if there is no z-axis just extract the data
-        nc = Dataset(finalout, 'r')
-
-    # extract relevent data
-    data, units, depth = _load(nc, var)
-    x = nc.variables['lat'][:].squeeze()
-
-    depth = np.round(depth)
-    units = _scale_units(units, scale)
-    data = data * scale
-    return data, units, x, depth
-
-
 if __name__ == "__main__":
     pass
