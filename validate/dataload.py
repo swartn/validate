@@ -184,20 +184,6 @@ def _load2(data, nc, units, depth, scale):
     data = data * scale
     return data, lon, lat, depth, units
 
-def get_remap_function(remap):
-    """ Returns a cdo function from string of the same name.
-    """
-    def cdoremap(r):
-        return {'remapbil': cdo.remapbil,
-                'remapbic': cdo.remapbic,
-                'remapdis': cdo.remapdis,
-                'remapnn': cdo.remapnn,
-                'remapcon': cdo.remapcon,
-                'remapcon2': cdo.remapcon2,
-                'remapplaf': cdo.remaplaf,
-                }[r]  
-    return cdoremap(remap)  
-
 
 def timeaverage_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', depthneeded=None):
     """ Loads the data from a file and remaps it.
@@ -327,7 +313,7 @@ def timeseries_load(ifile, var, dates, realm, scale, depthneeded=None):
     return data, units, x, depth
 
 
-def zonal_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', depthneeded=None):
+def zonal_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', trends=False, depthneeded=None):
     """ Loads the zonal mean data over specified dates from a file.
         Remaps and scales the data.
 
@@ -350,10 +336,17 @@ def zonal_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r3
     """ 
     _check_dates(ifile, dates)  
     
-    if depthneeded is not None:
-        finalout = intlevel(zonal_mean(remap(time_mean(setc(sel_var(ifile, var)), dates['start_date'], dates['end_date']), remapf, remapgrid)), depthneeded)    
+    if trends:
+        if depthneeded is not None:
+            finalout = intlevel(zonal_mean(remap(trend(setc(sel_var(ifile, var)), dates['start_date'], dates['end_date']), remapf, remapgrid)), depthneeded)    
+        else:
+            finalout = zonal_mean(remap(trend(setc(mask(sel_var(ifile, var), realm)), dates['start_date'], dates['end_date']), remapf, remapgrid))   
     else:
-        finalout = zonal_mean(remap(time_mean(setc(mask(sel_var(ifile, var), realm)), dates['start_date'], dates['end_date']), remapf, remapgrid))
+        if depthneeded is not None:
+            finalout = intlevel(zonal_mean(remap(time_mean(setc(sel_var(ifile, var)), dates['start_date'], dates['end_date']), remapf, remapgrid)), depthneeded)    
+        else:
+            finalout = zonal_mean(remap(time_mean(setc(mask(sel_var(ifile, var), realm)), dates['start_date'], dates['end_date']), remapf, remapgrid))
+    
     nc = Dataset(finalout, 'r')
 
     # extract relevent data
@@ -408,6 +401,20 @@ def setc(name):
     if not os.path.isfile(out):
         cdo.setctomiss(0, input=name, output=out)
     return out
+
+def get_remap_function(remap):
+    """ Returns a cdo function from string of the same name.
+    """
+    def cdoremap(r):
+        return {'remapbil': cdo.remapbil,
+                'remapbic': cdo.remapbic,
+                'remapdis': cdo.remapdis,
+                'remapnn': cdo.remapnn,
+                'remapcon': cdo.remapcon,
+                'remapcon2': cdo.remapcon2,
+                'remapplaf': cdo.remaplaf,
+                }[r]  
+    return cdoremap(remap)
 
 def remap(name, remapname, remapgrid):
     out = 'netcdf/' + remapname + '-' + remapgrid + split(name)

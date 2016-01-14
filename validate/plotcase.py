@@ -461,10 +461,10 @@ def section_trends(plot, func):
     _section_labels('data1_args', plot)
 
     # load trends data from netcdf file
-    data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['trends_dates'], plot['scale'], plot['remap'], plot['remap_grid'])
-    
+    # data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['trends_dates'], plot['scale'], plot['remap'], plot['remap_grid'])
+    zonmean, units, x, depth = pl.zonal_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], trends=True)    
     # get zonal mean data
-    zonmean = _section_data(data, plot)
+    # zonmean = _section_data(data, plot)
     
     # scale data based on frequency
     zonmean, units = _trend_units(zonmean, units, plot)
@@ -473,7 +473,7 @@ def section_trends(plot, func):
     _pcolor(zonmean, plot, 'trends', anom=True)
     
     # make plot
-    func(lat, depth, zonmean, anom=True, plot=plot, ax_args=plot['data1_args']['trends_args']['ax_args'],
+    func(x, depth, zonmean, anom=True, plot=plot, ax_args=plot['data1_args']['trends_args']['ax_args'],
          pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units)
 
     plot_name = 'plots/' + plot['variable'] + plot['plot_projection'] + '_trends_'
@@ -501,17 +501,9 @@ def section_trends_comp(plot, func):
     _section_labels('data2_args', plot)
     _section_labels('comp_args', plot)
 
-    # load trends data from netcdf file
-    data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['trends_dates'], plot['scale'], plot['remap'], plot['remap_grid'])
-    
-    # get zonal mean of data
-    zonmean = _section_data(data, plot)
+    zonmean, units, x, depth = pl.zonal_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], trends=True)
 
-    # load comparison data from netcdf file
-    data2, units2, lon2, lat2, depth2 = pl.trends_load(plot['comp_file'], plot['variable'], plot['trends_dates'], plot['scale'], plot['remap'], plot['remap_grid'], depthneeded=depth)
-    
-    # get zonal mean of comparison data
-    zonmean2 = _section_data(data2, plot)
+    zonmean2, units2, x2, depth2 = pl.zonal_load(plot['comp_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], trends=True, depthneeded=depth)
 
     # scale data based on frequency
     zonmean, units = _trend_units(zonmean, units, plot)
@@ -523,13 +515,13 @@ def section_trends_comp(plot, func):
     
     # make trends plots of data, comparison data, data - comparison data    
     fig, (axl, axm, axr) = plt.subplots(3, 1, figsize=(8, 8))
-    func(lat, depth, zonmean, ax=axl, anom=True, plot=plot, ax_args=plot['data1_args']['trends_args']['ax_args'],
+    func(x, depth, zonmean, ax=axl, anom=True, plot=plot, ax_args=plot['data1_args']['trends_args']['ax_args'],
          pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units,
          **plot['plot_args'])
-    func(lat, depth, zonmean2, ax=axm, anom=True, plot=plot, ax_args=plot['data2_args']['trends_args']['ax_args'],
+    func(x, depth, zonmean2, ax=axm, anom=True, plot=plot, ax_args=plot['data2_args']['trends_args']['ax_args'],
          pcolor_args=plot['data2_args']['trends_args']['pcolor_args'], cblabel=units,
          **plot['plot_args'])
-    func(lat, depth, compdata, ax=axr, anom=True, rmse=True, plot=plot, ax_args=plot['comp_args']['trends_args']['ax_args'],
+    func(x, depth, compdata, ax=axr, anom=True, rmse=True, plot=plot, ax_args=plot['comp_args']['trends_args']['ax_args'],
          pcolor_args=plot['comp_args']['trends_args']['pcolor_args'], cblabel=units,
          **plot['plot_args'])
 

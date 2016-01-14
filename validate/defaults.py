@@ -21,7 +21,7 @@ DEFAULTS = {'plotprojection': 'global_map',
             'png': False,
             'comp_flag': None,
             'remap': 'remapdis',
-            'remap_grid': 'r180x360',
+            'remap_grid': 'r360x180',
             }
 
 
