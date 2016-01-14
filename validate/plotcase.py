@@ -293,18 +293,10 @@ def section_climatology_comparison(plot, func):
     _section_labels('comp_args', plot)
 
     # load data from netcdf file
-    #data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'])
     zonmean, units, x, depth = pl.zonal_load(plot['ifile'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'])
-    print zonmean.shape
-    # calculate the zonal mean
-    #zonmean = _section_data(data, plot)
     
     # load comparison data from netcdf file
-    #data2, units2, lon2, lat2, depth2 = pl.timeaverage_load(plot['comp_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], depthneeded=depth)
     zonmean2, units2, x2, depth2 = pl.zonal_load(plot['comp_file'], plot['variable'], plot['climatology_dates'], plot['realm_cat'], plot['scale'], depthneeded=depth)
-    print zonmean2.shape
-    # calculate the zonal mean of the comparison data
-    #zonmean2 = _section_data(data2, plot)
     
     dft.filltitle(plot)
     _comp_pcolor(zonmean, zonmean2, plot, 'climatology')
@@ -513,18 +505,17 @@ def section_trends_comp(plot, func):
     dft.filltitle(plot)
     _comp_pcolor(zonmean, zonmean2, plot, 'trends', anom=True)
     
-    # make trends plots of data, comparison data, data - comparison data    
-    fig, (axl, axm, axr) = plt.subplots(3, 1, figsize=(8, 8))
-    func(x, depth, zonmean, ax=axl, anom=True, plot=plot, ax_args=plot['data1_args']['trends_args']['ax_args'],
-         pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units,
-         **plot['plot_args'])
-    func(x, depth, zonmean2, ax=axm, anom=True, plot=plot, ax_args=plot['data2_args']['trends_args']['ax_args'],
-         pcolor_args=plot['data2_args']['trends_args']['pcolor_args'], cblabel=units,
-         **plot['plot_args'])
-    func(x, depth, compdata, ax=axr, anom=True, rmse=True, plot=plot, ax_args=plot['comp_args']['trends_args']['ax_args'],
-         pcolor_args=plot['comp_args']['trends_args']['pcolor_args'], cblabel=units,
-         **plot['plot_args'])
+    # make plots of data, comparison data, data - comparison data
+    fig = plt.figure(figsize=(6, 8))
+    gs = gridspec.GridSpec(3, 2, width_ratios=[20, 1])
+    func(x, depth, zonmean, anom=True, plot=plot, ax=plt.subplot(gs[0, 0]), ax_args=plot['data1_args']['trends_args']['ax_args'],
+         pcolor_args=plot['data1_args']['trends_args']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[0, 1]))
+    func(x, depth, zonmean2, anom=True, plot=plot, ax=plt.subplot(gs[1, 0]), ax_args=plot['data2_args']['trends_args']['ax_args'],
+         pcolor_args=plot['data2_args']['trends_args']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[1, 1]))
+    func(x, depth, compdata, anom=True, rmse=True, plot=plot, ax=plt.subplot(gs[2, 0]), ax_args=plot['comp_args']['trends_args']['ax_args'],
+         pcolor_args=plot['comp_args']['trends_args']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[2, 1]))
 
+    plt.tight_layout()
     plot_name = trends_comparison_name(plot)
     savefigures(plot_name, **plot)
     plot['units'] = units
