@@ -113,8 +113,7 @@ def getfiles(plots, expname):
         p['model_file'] = {}
         p['cmip5_files'] = {}
         p['cmip5_file'] = {}
-        comp = p['compare']
-        if comp['model'] or comp['cmip5']:
+        if p['comp_models'] or p['comp_cmips']:
             # map the file names of the comparison files to the model names
             for model in p['comp_models'][:]:
                 try:
@@ -127,12 +126,12 @@ def getfiles(plots, expname):
                     # remove the model from the list if no comparison files were found
                     p['comp_models'].remove(model)
     for p in plots:
-        if p['compare']['cmip5']:
+        if 'cmip5' in p['comp_cmips']:
             # map the file name of the comparison file to cmip5 in compare dictionary
             try:
                 p['cmip5_file'] = cmipaverage(p['variable'], p['model_file'], str(startdates[p['variable']]) + '-01', str(enddates[p['variable']]) + '-01')
             except:
-                p['compare']['cmip5'] = False
+                p['comp_cmips'].remove('cmip5')
 
 
 def cmip(plots, cmipdir, expname, load):
@@ -140,9 +139,9 @@ def cmip(plots, cmipdir, expname, load):
         and call the functions to modify and map the cmip5 files
     """
     for p in plots:
-        if p['compare']['cmip5'] == True or p['compare']['model'] == True:
+        if p['comp_cmips'] or p['comp_models']:
             # Assumes if the 'cmipfiles' directory exists then the files have been already linked
-            # can be loaded anyways of the loadcimp5 flag is set in the execution
+            # can be loaded anyways of the loadcmip5 flag is set in the execution
             if (not os.path.exists('cmipfiles')) or load:
                 importcmip(cmipdir)
             getfiles(plots, expname)

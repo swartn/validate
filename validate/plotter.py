@@ -15,6 +15,7 @@ import defaults as dft
 import plotcase as pc
 import matplotlib.pyplot as plt
 from yamllog import log
+from copy import deepcopy
 
 DEBUGGING = False
 
@@ -145,50 +146,37 @@ def calltheplot(plot, plotnames, ptype):
 
 
 def comp_loop(plot, plotnames, ptype):
-    comp = plot['compare']
-    if comp['obs']:
-        plot['comp_model'] = 'Observations'
-        plot['comp_flag'] = 'obs'
-        plot['comp_file'] = plot['obs_file']
+    plot['comp_flag'] = 'obs'
+    for o in plot['comp_obs']:
+        plot['comp_model'] = o
+        plot['comp_file'] = plot['obs_file'][o]
         calltheplot(plot, plotnames, ptype)
-    if comp['cmip5']:
-        plot['comp_flag'] = 'cmip5'
-        plot['comp_model'] = 'cmip5'
+    plot['comp_flag'] = 'cmip5'
+    for c in plot['comp_cmips']:
+        plot['comp_model'] = c
         plot['comp_file'] = plot['cmip5_file']
         calltheplot(plot, plotnames, ptype)
-    if comp['model']:
-        plot['comp_flag'] = 'model'
-        for model in plot['comp_models']:
-            plot['comp_model'] = model
-            plot['comp_file'] = plot['model_file'][model]
-            calltheplot(plot, plotnames, ptype)
-    if comp['runid']:
-        plot['comp_flag'] = 'runid'
-        for i in plot['id_file']:
-            plot['comp_model'] = i
-            plot['comp_file'] = plot['id_file'][i]
-            calltheplot(plot, plotnames, ptype)
+    plot['comp_flag'] = 'model'
+    for model in plot['comp_models']:
+        plot['comp_model'] = model
+        plot['comp_file'] = plot['model_file'][model]
+        calltheplot(plot, plotnames, ptype)
+    plot['comp_flag'] = 'runid'
+    for i in plot['id_file']:
+        plot['comp_model'] = i
+        plot['comp_file'] = plot['id_file'][i]
+        calltheplot(plot, plotnames, ptype)
 
 
 def loop_plot_types(plot, plotnames):
-    types = ['climatology', 'trends', 'compare_climatology', 'compare_trends']
-    comptypes = ['compare_climatology', 'compare_trends']
-    funcs = {'climatology': climatology,
-             'trends': trends,
-             'compare_climatology': compare_climatology,
-             'compare_trends': compare_trends,
-             }
     if plot['plot_projection'] == 'time_series' or plot['plot_projection'] == 'zonal_mean' or plot['plot_projection'] == 'taylor':
         plot['comp_model'] = 'Model'
         calltheplot(plot, plotnames, 'compare_climatology')
     else:
-        for ptype in types:
-            if plot[ptype]:
-                if ptype in comptypes:
-                    comp_loop(plot, plotnames, ptype)
-                else:
-                    plot['comp_model'] = 'Model'
-                    calltheplot(plot, plotnames, ptype)
+        plot['comp_model'] = 'Model'
+        calltheplot(plot, plotnames, plot['data_type'])
+        comp_loop(plot, plotnames, 'compare_' + plot['data_type'])
+
 
 
 def loop(plots, debug):
@@ -210,16 +198,18 @@ def loop(plots, debug):
     _remove_plots()
 
     plotnames = []
-    for p in plots:
-        if p['depths'] == []:
+    for p in plots[:]:       
+        if p['depths'] == [""]:
             p['is_depth'] = False
-            p['depths'] = [0]
         else:
             p['is_depth'] = True
         for d in p['depths']:
-            p['depth'] = int(d)
+            try:
+                p['depth'] = int(d)
+            except: pass
             loop_plot_types(p, plotnames)
         plt.close('all')
+
     return plotnames
 
 

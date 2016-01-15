@@ -231,7 +231,7 @@ def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cbl
 
 def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False, plot={},
              latmin=-80, latmax=80, lonmin=0, lonmax=360,
-             fill_continents=False, fill_oceans=False, draw_parallels=True, draw_meridians=True):
+             fill_continents=False, fill_oceans=False, draw_parallels=False, draw_meridians=False):
     """Pcolor a var in a mercator plot, using ax if supplied"""
     if not pcolor_args:
         pcolor_args = default_pcolor_args(data, anom)

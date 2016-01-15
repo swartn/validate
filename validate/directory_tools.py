@@ -46,14 +46,13 @@ def min_start_dates(plots):
     """
     start_dates = _variable_dictionary(plots)
     for p in plots:
-        if p['climatology'] or p['compare_climatology']:
-            if 'climatology_dates' in p:
-                if 'start_date' in p['climatology_dates']:
-                    start_dates[p['variable']].append(p['climatology_dates']['start_date'])
-        if p['trends'] or p['compare_trends']:
-            if 'trends_dates' in p:
-                if 'start_date' in p['trends_dates']:
-                    start_dates[p['variable']].append(p['trends_dates']['start_date'])
+        try:
+            start_dates[p['variable']].append(p['dates']['start_date'])
+        except: pass
+        try:
+            start_dates[p['variable']].append(p['comp_dates']['start_date'])
+        except: pass
+        
     for var in start_dates:
         start_dates[var] = [int(date[:4]) for date in start_dates[var]]
         try:
@@ -77,14 +76,12 @@ def max_end_dates(plots):
     """
     end_dates = _variable_dictionary(plots)
     for p in plots:
-        if p['climatology'] or p['compare_climatology']:
-            if 'climatology_dates' in p:
-                if 'end_date' in p['climatology_dates']:
-                    end_dates[p['variable']].append(p['climatology_dates']['end_date'])
-        if p['trends'] or p['compare_trends']:
-            if 'trends_dates' in p:
-                if 'end_date' in p['trends_dates']:
-                    end_dates[p['variable']].append(p['trends_dates']['end_date'])
+        try:
+            end_dates[p['variable']].append(p['dates']['end_date'])
+        except: pass
+        try:
+            end_dates[p['variable']].append(p['comp_dates']['end_date'])
+        except: pass
 
     for var in end_dates:
         end_dates[var] = [int(date[:4]) for date in end_dates[var]]
@@ -132,12 +129,8 @@ def _mkdir():
             os.makedirs(name)
         except:
             pass
-    mkthedir('fldmeanfiles')
-    mkthedir('remapfiles')
-    mkthedir('trendfiles')
     mkthedir('mask')
     mkthedir('plots')
-    mkthedir('zonalfiles')
     mkthedir('logs')
     mkthedir('ENS-MEAN_cmipfiles')
     mkthedir('ENS-STD_cmipfiles')
@@ -350,7 +343,7 @@ def getrealmcat(realm):
     return realm_cat
 
 
-def getfiles(plots, run, experiment):
+def getfiles(plots, root, run, experiment):
     """ For every plot in the dictionary of plots
         maps the key 'ifile' to the name of the file
         needed to make the plot
@@ -364,7 +357,7 @@ def getfiles(plots, run, experiment):
     """
     _mkdir()
     _logfile(run, experiment)
-    files = traverse('/raid/rc40/data/ncs/' + experiment + '-' + run)
+    files = traverse(root + experiment + '-' + run)
     _load_masks(files)
 
     realms = {}
@@ -391,14 +384,13 @@ def getfiles(plots, run, experiment):
             p['ifile'] = filedict[(p['frequency'], p['variable'], str(p['realization']))]
         p['realm'] = realms[p['variable']]
         p['realm_cat'] = getrealmcat(p['realm'])
-        if 'plot_args' not in p:
-            p['plot_args'] = {}
+        
         if 'fill_continents' not in p['plot_args']:
             if p['realm_cat'] == 'ocean':
                 p['plot_args']['fill_continents'] = True
 
 
-def getidfiles(plots, experiment):
+def getidfiles(plots, root, experiment):
     """ Get the files for run IDs for comparison.
 
     Parameters
@@ -410,14 +402,14 @@ def getidfiles(plots, experiment):
     """
     ids = []
     for p in plots:
-        if p['compare']['runid']:
+        if p['comp_ids']:
             ids.extend(p['comp_ids'])
         p['id_file'] = {}
     ids = list(set(ids))
     startdates = min_start_dates(plots)
     enddates = max_end_dates(plots)
     for i in ids:
-        files = traverse('/raid/rc40/data/ncs/' + experiment + '-' + i)
+        files = traverse(root + experiment + '-' + i)
         vf = {}
         fvr = []
         for f in files:
@@ -432,13 +424,11 @@ def getidfiles(plots, experiment):
         filedict = _remove_files_out_of_date_range(vf, startdates, enddates)
         filedict = _cat_file_slices(filedict)
         for p in plots:
-            if 'comp_ids' in p:
-                if i in p['comp_ids']:
-                    p['id_file'][i] = filedict[(p['frequency'], p['variable'], str(p['realization']))]
+            if i in p['comp_ids']:
+                p['id_file'][i] = filedict[(p['frequency'], p['variable'], str(p['realization']))]
 
 
-def remfiles(del_fldmeanfiles=True, del_mask=True, del_ncstore=True,
-             del_remapfiles=True, del_trendfiles=True, del_zonalfiles=True,
+def remfiles(del_mask=True, del_ncstore=True, del_netcdf=True,
              del_cmipfiles=True, del_ENS_MEAN_cmipfiles=True,
              del_ENS_STD_cmipfiles=True, **kwargs):
     """ Option to delete the directories used to store processed .nc files
@@ -452,18 +442,12 @@ def remfiles(del_fldmeanfiles=True, del_mask=True, del_ncstore=True,
     del_trendfiles : boolean
     del_zonalfiles : boolean
     """
-    if del_fldmeanfiles:
-        os.system('rm -rf fldmeanfiles')
     if del_mask:
         os.system('rm -rf mask')
     if del_ncstore:
         os.system('rm -rf ncstore')
-    if del_remapfiles:
-        os.system('rm -rf remapfiles')
-    if del_trendfiles:
-        os.system('rm -rf trendfiles')
-    if del_zonalfiles:
-        os.system('rm -rf zonalfiles')
+    if del_netcdf:
+        os.system('rm -rf netcdf')
     if del_cmipfiles:
         os.system('rm -rf cmipfiles')
     if del_ENS_MEAN_cmipfiles:
@@ -471,8 +455,12 @@ def remfiles(del_fldmeanfiles=True, del_mask=True, del_ncstore=True,
     if del_ENS_STD_cmipfiles:
         os.system('rm -rf ENS-STD_cmipfiles')
 
-
 def getobsfiles(plots, obsroot):
+    obsdirectories = [o for o in os.listdir(obsroot) if os.path.isdir(os.path.join(obsroot,o))]
+    for o in obsdirectories:
+        getobs (plots, obsroot + o, o)
+
+def getobs(plots, obsroot, o):
     """ For every plot in the dictionary of plots
         if an observations file is needed it
         maps the key 'comp_file' to a file containg observations.
@@ -492,15 +480,16 @@ def getobsfiles(plots, obsroot):
         if var in variables:
             variables[var].append(f)
     for p in plots:
-        if p['compare_climatology'] or p['compare_trends']:
-            if 'obs_file' not in p:
-                try:
-                    p['obs_file'] = variables[p['variable']][0]
-                except:
-                    with open('logs/log.txt', 'a') as outfile:
-                        outfile.write('No observations file was found for ' + p['variable'] + '\n\n')
-                    print 'No observations file was found for ' + p['variable']
-                    p['compare']['obs'] = False
+        if o in p['comp_obs']:
+            if 'obs_files' not in p:
+                p['obs_file'] = {}
+            try:
+                p['obs_file'][o] = variables[p['variable']][0]
+            except:
+                with open('logs/log.txt', 'a') as outfile:
+                    outfile.write('No observations file was found for ' + p['variable'] + '\n\n')
+                print 'No ' + o + ' file was found for ' + p['variable']
+                p['comp_obs'].remove(o)
 
     def fill_dates(dtype, p):
         sd, ed = getdates(p['ifile'])

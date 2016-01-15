@@ -24,19 +24,19 @@ def execute(options, **kwargs):
         process the data, and output the plots and figures.
 
     """
-    def plot(run=None, experiment='historical', observations_root="", cmip5_root="", loadcmip5=False, ignorecheck=False, debugging=False, plots=[], defaults={}, delete={}, obs={}, **kwargs):
+    def plot(run=None, experiment='historical', data_root="", observations_root="", cmip5_root="", loadcmip5=False, ignorecheck=False, debugging=False, plots=[], defaults={}, delete={}, obs={}, **kwargs):
         """Calls modules required to find the data,
            process the data, and output the plots and figures
         """
-        if not ignorecheck:
-            # check that the configuartion is valid
-            check_inputs(plots, run, experiment, observations_root, cmip5_root, obs, defaults, delete)
+#        if not ignorecheck:
+#            # check that the configuartion is valid
+#            check_inputs(plots, run, experiment, observations_root, cmip5_root, obs, defaults, delete)
         
         # fill options not specified using the defaults
-        fill(plots, defaults, run, experiment)
+        fill(plots, run, experiment, defaults)
         
         # find and modify if necessary the files for the model and experiment
-        getfiles(plots, run, experiment)
+        getfiles(plots, data_root, run, experiment)
         
         # find the observations files
         getobsfiles(plots, observations_root)
@@ -44,8 +44,8 @@ def execute(options, **kwargs):
         # find the cmip5 files
         cmip(plots, cmip5_root, experiment, loadcmip5)
         
-        # find the files from other runIds fir comparison
-        getidfiles(plots, experiment)
+        # find the files from other runIds for comparison
+        getidfiles(plots, data_root, experiment)
         
         # THIS IS WHERE THE PLOTS ARE CREATED
         plotnames = loop(plots, debugging)
@@ -54,7 +54,7 @@ def execute(options, **kwargs):
         remfiles(**delete)
         
         # organize plots in joined.pdf file
-        arrange(plotnames)
+#        arrange(plotnames)
 
 
     # if conf.yaml exists in the current directory use that for the configuration

@@ -382,15 +382,15 @@ def mask(name, realm):
     return out
 
 def time_mean(name, start_date, end_date):
-    out = 'netcdf/climate_' + split(name)
+    out = 'netcdf/climate_' + start_date + '_' + end_date + '_' + split(name)
     if not os.path.isfile(out):
         seldatestring = '-seldate,' + start_date + ',' + end_date
         cdo.timmean(input=seldatestring + ' ' + name, output=out)
     return out  
 
 def trend(name, start_date, end_date):
-    out = 'netcdf/slope_' + split(name)
-    outintercept = 'netcdf/intercept_' + split(name)
+    out = 'netcdf/slope_' + start_date + '_' + end_date + '_' + split(name)
+    outintercept = 'netcdf/intercept_' + start_date + '_' + end_date + '_' + split(name)
     if not os.path.isfile(out):
         seldatestring = '-seldate,' + start_date + ',' + end_date
         cdo.trend(input=seldatestring + ' ' + name, output=outintercept + ' ' + out)
@@ -424,7 +424,7 @@ def remap(name, remapname, remapgrid):
     return out
 
 def field_mean(name, start_date, end_date):
-    out = 'netcdf/fldmean_' + split(name)
+    out = 'netcdf/fldmean_' + start_date + '_' + end_date + '_' + split(name)
     if not os.path.isfile(out):
         seldatestring = '-seldate,' + start_date + ',' + end_date
         cdo.fldmean(options='-L', input=seldatestring + ' ' + name, output=out)
@@ -446,9 +446,7 @@ def depthstring(depthlist):
 def intlevel(name, depthlist):
     if depthlist == ['']:
         return name
-    print depthlist
     depth = depthstring(depthlist)
-    print depth
     depthname = depth.replace(' ', '')
     if len(depthname) > 100:
         depthname = depthname[:99]

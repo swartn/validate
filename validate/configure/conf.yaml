@@ -129,51 +129,60 @@ run: 'edr'
 experiment: 'historical'
 
 defaults:
-            climatology: True
-            climatology_dates:
-              start_date: '1980-01'
-              end_date: '2000-01'
-            compare_climatology: True
 
-            trends: False
-            trends_dates:
-              start_date: '1991-01'
-              end_date: '2000-01'
-            compare_trends: False
-
-            realization: '1'
-            scale: 1
-            pdf: True
-
-plots:    
-        - variable: 'psl'
-          plot_projection: 'taylor'
-          compare: 
-              cmip5: True
-              model: True
-              obs: True
-              runid: True
-          comp_models: 
-            - CanCM4
-            - NorESM1-M
-          comp_ids: 
-            - cvu
-       
+plots:  
         - variable: 'ta'
           plot_projection: 'mercator'
-          compare: 
-              cmip5: True
-              model: True
-              obs: True
-              runid: True
+          data_type: 'climatology'
           depths:
             - 50000
             - 100000
-          comp_models: 
-            - CanCM4
-            - NorESM1-M
-          comp_ids: 
-            - cvu   
+          dates:
+              start_date: '1990-01'
+              end_date: '2000-01'
+          comp_ids:
+            - cvu
+          comp_obs:
+            - 20CR
+
+        - variable: 'ta'
+          plot_projection: 'section'
+          data_type: 'climatology'
+
+          dates:
+              start_date: '1990-01'
+              end_date: '2000-01'
+
+        - variable: 'ta'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          depths:
+            - 100000
+          dates:
+              start_date: '1990-01'
+              end_date: '2000-01'
+          comp_ids:
+            - cvu
+          comp_obs:
+            - 20CR
+
+        - variable: 'ta'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          depths:
+            - 100000
+            - 50000
+
+          dates:
+              start_date: '1990-01'
+              end_date: '2000-01'
+          comp_dates:
+              start_date: '1910-01'
+              end_date: '1920-01'
+          comp_ids:
+            - edr  
+
+
 
 delete:
           del_fldmeanfiles: True
@@ -186,6 +195,6 @@ delete:
           del_ENS_STD_cmipfiles: True
           del_cmipfiles: False
 
-          
-observations_root: '/raid/rc40/data/ncs/obs4comp'
+data_root: '/raid/rc40/data/ncs/'
+observations_root: '/raid/rc40/data/ncs/obs4comp/'
 cmip5_root: '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
