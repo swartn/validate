@@ -99,6 +99,10 @@ def fill(plots, model_run, experiment, defaults={}):
             p['plot_args'] = {}
         if 'depths' not in p:
             p['depths'] = [""]
+        if 'seasons' not in p:
+            p['seasons'] = ['DJF', 'MAM', 'JJA', 'SON']
+        if 'comp_seasons' not in p:
+            p['comp_seasons'] = ['DJF', 'MAM', 'JJA', 'SON']
               
         # remove plot from list if no variable is provided
         if 'variable' not in p:
