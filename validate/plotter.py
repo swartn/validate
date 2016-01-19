@@ -82,6 +82,7 @@ def compare_trends(plot):
                 'polar_map': (pr.polar_map, pc.map_trends_comp),
                 'polar_map_south': (pr.polar_map_south, pc.map_trends_comp),
                 'mercator': (pr.mercator, pc.map_trends_comp),
+                'histogram': (pr.histogram, pc.histogram),
                 }[pl]
     func_region, func_case = pregion_ct(plot['plot_projection'])
     return func_case(plot, func_region)
@@ -172,6 +173,9 @@ def loop_plot_types(plot, plotnames):
     if plot['plot_projection'] == 'time_series' or plot['plot_projection'] == 'zonal_mean' or plot['plot_projection'] == 'taylor':
         plot['comp_model'] = 'Model'
         calltheplot(plot, plotnames, 'compare_climatology')
+    elif plot['plot_projection'] == 'histogram':
+        plot['comp_model'] = 'Model'
+        calltheplot(plot, plotnames, 'compare_trends')        
     else:
         plot['comp_model'] = 'Model'
         calltheplot(plot, plotnames, plot['data_type'])
@@ -198,7 +202,7 @@ def loop(plots, debug):
     _remove_plots()
 
     plotnames = []
-    for p in plots[:]:       
+    for p in plots:
         if p['depths'] == [""]:
             p['is_depth'] = False
         else:
@@ -209,7 +213,6 @@ def loop(plots, debug):
             except: pass
             loop_plot_types(p, plotnames)
         plt.close('all')
-
     return plotnames
 
 

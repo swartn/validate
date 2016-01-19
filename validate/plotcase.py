@@ -20,6 +20,21 @@ import datetime
 from plotregions import default_pcolor_args
 
 
+def _1d_depth_data(data, depth, plot):
+    if not type(data) == 'numpy.ndarray':
+        plot['plot_depth'] = None
+        return data
+    print '-----------------------------'
+    plot['plot_depth'] = min(depth, key=lambda x: abs(x - plot['depth']))
+    try:
+        depth_ind = np.where(np.round(depth) == np.round(plot['plot_depth']))[0][0]
+    except:
+        print('Failed to extract depth ' + plot['plot_depth'] + ' for ' + plot['variable'])
+        depth_ind = 0
+    print depth_ind
+    data = data[depth_ind]
+    return data
+
 def _depth_data(data, depth, plot):
     """ Makes a numpy array only containing data at the desired depth
 
@@ -42,6 +57,9 @@ def _depth_data(data, depth, plot):
             print('Failed to extract depth ' + plot['plot_depth'] + ' for ' + plot['variable'])
             depth_ind = 0
         data = data[depth_ind, :, :]
+    else:
+        plot['plot_depth'] = None
+        
 
     return data
 
@@ -483,8 +501,47 @@ def section_trends_comp(plot, func):
     plot['units'] = units
     return plot_name
 
+def histogram(plot, func):
+    values = {}
+    fdata, units, x, depth = pl.histogram_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], trends=True, depthneeded=None, seasons=plot['seasons'])  
+
+    # scale data based on frequency
+    fdata, units = _trend_units(fdata, units, plot)
+    plot['units'] = units
+    fdata = _1d_depth_data(fdata, depth, plot)
+    values[plot['model_ID']] = fdata
+    for o in plot['comp_obs']:
+        data, units, x, depth = pl.histogram_load(plot['obs_file'][o], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], trends=True, depthneeded=plot['plot_depth'], seasons=plot['seasons'])
+        data, units = _trend_units(data, units, plot)
+        data = _1d_depth_data(data, depth, plot)
+        values[o] = data
+    for i in plot['comp_ids']:  
+        data, units, x, depth = pl.histogram_load(plot['id_file'][i], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], trends=True, depthneeded=plot['plot_depth'], seasons=plot['seasons'])
+        data, units = _trend_units(data, units, plot)
+        data = _1d_depth_data(data, depth, plot)
+        values[i] = data
+
+       
+    cmipdata = []
+    for f in plot['cmip5_files']:
+        data, units, x, depth = pl.histogram_load(f, plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], trends=True, depthneeded=plot['plot_depth'], seasons=plot['seasons'])
+        data, units = _trend_units(data, units, plot)
+        data = _1d_depth_data(data, depth, plot)
+        cmipdata.append(data)
+    
+    
+    dft.filltitle(plot)
+    plot['data1']['ax_args']['xlabel'] = 'Trend ' + plot['comp_dates']['start_date'][:4] + '-' + plot['comp_dates']['end_date'][:4] + ' (' + units + ')'
+    plot['data1']['ax_args']['ylabel'] = '# Realizations'
+    
+    pr.histogram(cmipdata, values, ax_args=plot['data1']['ax_args'], plot=plot)
+    plot_name = plotname(plot)
+    savefigures(plot_name, **plot)
+    plot['units'] = units
+    return plot_name
+    
 def timeseriesdata(plot, compfile, depth):
-    data, units, x, depth = pl.timeseries_load(compfile, plot['variable'], plot['dates'], plot['realm'], plot['scale'], depthneeded=depth, season=plot['comp_seasons'])
+    data, units, x, depth = pl.timeseries_load(compfile, plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], depthneeded=plot['plot_depth'], seasons=plot['comp_seasons'])
 
     if data.ndim > 1:
         try:
@@ -506,7 +563,7 @@ def timeseries_comparison(plot, func):
     plot['data1']['ax_args']['ylabel'] = units
     
     # get data at the correct depth 
-    plot['plot_depth'] = plot['depth']
+    plot['plot_depth'] = None
     if data.ndim > 1:
         plot['plot_depth'] = min(depth, key=lambda x: abs(x - plot['depth']))
 
@@ -521,7 +578,7 @@ def timeseries_comparison(plot, func):
     dft.filltitle(plot)
     
     # make plot
-    func(x, data, plot=plot, ax=ax, ax_args=plot['data1_args']['climatology_args']['ax_args'])
+    func(x, data, plot=plot, ax=ax, ax_args=plot['data1']['ax_args'])
 
     # plot comparison data on the same axis
     for c in plot['comp_cmips']:
@@ -707,4 +764,4 @@ def taylor(plot, func):
     plot['units'] = units
     plot['comp_file'] = plot['obs_file']
     return plot_name
-  
+ 

@@ -7,6 +7,7 @@ cmip
 
 from directory_tools import traverse, max_end_dates, min_start_dates
 import os
+import itertools
 import cmipdata as cd
 import cdo
 cdo = cdo.Cdo()
@@ -37,7 +38,13 @@ def importcmip(directory='/raid/ra40/CMIP5_OTHER_DOWNLOADS/'):
         newfile = f.rsplit('/', 1)[1]
         os.system('ln -s ' + f + ' ./cmipfiles/' + newfile)
 
-
+def model_files(var, model, expname, frequency):
+    ensstring = 'cmipfiles/' + var + '_*' + frequency + '_*' + model + '_' + expname + '_*.nc'
+    ens = cd.mkensemble(ensstring, prefix='cmipfiles/')
+    ens = cd.cat_exp_slices(ens)
+    mfiles = ens.lister('ncfile')
+    return mfiles
+    
 def model_average(var, model, expname, frequency):
     """ Creates and stores a netCDF file with the average data
         across the realizations for a given variable, model, and experiment
@@ -53,11 +60,16 @@ def model_average(var, model, expname, frequency):
         ens = cd.cat_exp_slices(ens)
         means, stdevs = cd.ens_stats(ens, var)
         new = 'ENS-MEAN_cmipfiles/' + var + '_' + model + '.nc'
+        new2 = 'ENS-STD_cmipfiles/' + var + '_' + model + '.nc'
         os.rename(means[0], new)
+        os.rename(stdevs[0], new2)
     return new
 
+def cmip_files(model_files):
+    files = list(itertools.chain.from_iterable(model_files.values()))
+    return list(set(files))
 
-def cmipaverage(var, model_file, sd, ed):
+def cmip_average(var, model_file, sd, ed):
     """ Creates and stores a netCDF file with the average data
         across all the models provided.
         REturns the name of the created file.
@@ -117,6 +129,7 @@ def getfiles(plots, expname):
             # map the file names of the comparison files to the model names
             for model in p['comp_models'][:]:
                 try:
+                    p['model_files'][model] = model_files(p['variable'], model, expname, p['frequency'])
                     p['model_file'][model] = model_average(p['variable'], model, expname, p['frequency'])
                 except:
                     with open('logs/log.txt', 'a') as outfile:
@@ -129,7 +142,9 @@ def getfiles(plots, expname):
         if 'cmip5' in p['comp_cmips']:
             # map the file name of the comparison file to cmip5 in compare dictionary
             try:
-                p['cmip5_file'] = cmipaverage(p['variable'], p['model_file'], str(startdates[p['variable']]) + '-01', str(enddates[p['variable']]) + '-01')
+                p['cmip5_files'] = cmip_files(p['model_files'])
+
+                p['cmip5_file'] = cmip_average(p['variable'], p['model_file'], str(startdates[p['variable']]) + '-01', str(enddates[p['variable']]) + '-01')
             except:
                 p['comp_cmips'].remove('cmip5')
 
@@ -149,4 +164,5 @@ def cmip(plots, cmipdir, expname, load):
 
 
 if __name__ == "__main__":
-    pass
+    #importcmip('/raid/ra40/CMIP5_OTHER_DOWNLOADS/')
+    model_files('ts', 'HadCM3', 'historical', 'mon')

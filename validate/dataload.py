@@ -286,8 +286,8 @@ def timeseries_load(ifile, var, dates, realm, scale, depthneeded=None, seasons=N
     numpy array
     numpy array
     """
-    _check_dates(ifile, dates)
-
+    _check_dates(ifile, dates)    
+   
     if depthneeded is not None:
         finalout = intlevel(setc(field_mean(season(sel_var(ifile, var), seasons), dates['start_date'], dates['end_date'])), depthneeded)
     else:
@@ -312,7 +312,40 @@ def timeseries_load(ifile, var, dates, realm, scale, depthneeded=None, seasons=N
     data = data * scale
     return data, units, x, depth
 
+def histogram_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', trends=False, depthneeded=None, seasons=None):
+    
+    _check_dates(ifile, dates)
 
+    if trends:
+        if depthneeded is not None:
+            finalout = intlevel(field_mean(remap(trend(setc(season(sel_var(ifile, var), seasons)), dates['start_date'], dates['end_date']), remapf, remapgrid), dates['start_date'], dates['end_date']), depthneeded)    
+        else:
+            finalout = field_mean(remap(trend(setc(mask(season(sel_var(ifile, var), seasons), realm)), dates['start_date'], dates['end_date']), remapf, remapgrid), dates['start_date'], dates['end_date'])   
+    else:
+        if depthneeded is not None:
+            finalout = intlevel(field_mean(remap(time_mean(setc(season(sel_var(ifile, var), seasons)), dates['start_date'], dates['end_date']), remapf, remapgrid)), depthneeded)    
+        else:
+            finalout = field_mean(remap(time_mean(setc(mask(season(sel_var(ifile, var), seasons), realm)), dates['start_date'], dates['end_date']), remapf, remapgrid))
+
+    # Load data into Dataset object
+    nc = Dataset(finalout, 'r')
+
+    # Get the time data from the dataset object
+    data, units, depth = _load(nc, var)
+    nc_time = nc.variables['time']
+    try:
+        cal = nc_time.calendar
+    except:
+        cal = 'standard'
+    x = num2date(nc_time[:], nc_time.units, cal)
+    x = [datetime.datetime(*item.timetuple()[:6]) for item in x]
+    x = np.array(x)
+
+    depth = np.round(depth)
+    units = _scale_units(units, scale)
+    data = data * scale
+    return data, units, x, depth
+    
 def zonal_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', trends=False, depthneeded=None, seasons=None):
     """ Loads the zonal mean data over specified dates from a file.
         Remaps and scales the data.
@@ -444,7 +477,8 @@ def depthstring(depthlist):
     
        
 def intlevel(name, depthlist):
-    if depthlist == ['']:
+    print depthlist
+    if depthlist == [''] or depthlist == None:
         return name
     depth = depthstring(depthlist)
     depthname = depth.replace(' ', '')

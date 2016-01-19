@@ -21,6 +21,7 @@ from netCDF4 import Dataset
 from colormaps import viridis
 from taylor import TaylorDiagram
 from operator import itemgetter
+from math import ceil
 import cdo
 cdo = cdo.Cdo()
 plt.close('all')
@@ -393,6 +394,29 @@ def taylordiagram(refdata, plotdata, fig=None, ax_args=None, plot={}):
     if 'title' in ax_args:
         plt.title(ax_args['title'])
 
+def histogram(data, values, ax=None, ax_args=None, plot={}):
+    print ax_args
+
+    if not ax:
+        fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+    else:
+        fig = plt.gcf()
+    
+    n, bins, patches = plt.hist(data, 10, facecolor='grey', alpha=0.75)
+    ymax = int(ceil(1.2 * max(n)))
+    ax.set_ylim(0, ymax)
+    
+#    colormap = plt.cm.gist_rainbow
+#    ax.set_color_cycle([colormap(i) for i in np.linspace(0, 0.9, len(values))])
+    for key in values:
+        plt.axvline(values[key], label=key, linewidth=4,
+                    color=next(ax._get_lines.color_cycle))
+    plt.setp(ax, **ax_args)
+    if 'title' in ax_args:
+        plt.title(ax_args['title'])
+    
+    ax.legend(loc='best')
+    
 
 if __name__ == "__main__":
     pass
