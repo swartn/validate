@@ -14,6 +14,8 @@ import dataload as pl
 import plotregions as pr
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+import matplotlib.ticker as ticker
 from matplotlib import gridspec
 import defaults as dft
 import datetime
@@ -531,7 +533,7 @@ def histogram(plot, func):
     
     
     dft.filltitle(plot)
-    plot['data1']['ax_args']['xlabel'] = 'Trend ' + plot['comp_dates']['start_date'][:4] + '-' + plot['comp_dates']['end_date'][:4] + ' (' + units + ')'
+    plot['data1']['ax_args']['xlabel'] = 'Trends ' + plot['comp_dates']['start_date'][:4] + '-' + plot['comp_dates']['end_date'][:4] + ' (' + units + ')'
     plot['data1']['ax_args']['ylabel'] = '# Realizations'
     
     pr.histogram(cmipdata, values, ax_args=plot['data1']['ax_args'], plot=plot)
@@ -578,34 +580,39 @@ def timeseries_comparison(plot, func):
     dft.filltitle(plot)
     
     # make plot
-    func(x, data, plot=plot, ax=ax, ax_args=plot['data1']['ax_args'])
+    func(x, data, plot=plot, ax=ax, label=plot['model_ID'], ax_args=plot['data1']['ax_args'], color='b', zorder=5)
+    handles = [mpatches.Patch(color='b', label=plot['model_ID'])]
 
     # plot comparison data on the same axis
     for c in plot['comp_cmips']:
         plot['comp_model'] = c
         data, x = timeseriesdata(plot, plot['cmip5_file'], depth)
-        func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'])
+        func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='g', zorder=3)
+        handles.append(mpatches.Patch(color='g', label=str(plot['comp_model'])))
     for o in plot['comp_obs']:
         plot['comp_model'] = o
         data, x = timeseriesdata(plot, plot['obs_file'][o], depth)
-        func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'])
+        func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='r', zorder=4)
+        handles.append(mpatches.Patch(color='r', label=str(plot['comp_model'])))
     for model in plot['comp_models']:
         plot['comp_model'] = model
         data, x = timeseriesdata(plot, plot['model_file'][model], depth)
-        func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'])
+        func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='0.75', zorder=1)
     for i in plot['comp_ids']:
         plot['comp_model'] = i
         data, x = timeseriesdata(plot, plot['id_file'][i], depth)
-        func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'])
+        func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='y', zorder=2)
+        handles.append(mpatches.Patch(color='y', label=str(plot['comp_model'])))
 
-    ax.legend(loc='best')
+    ax.legend(handles=handles, loc='center left', bbox_to_anchor=(1, 0.5))
+    ax.yaxis.set_major_formatter(ticker.ScalarFormatter(useOffset=False))
     plot_name = plotname(plot)
     savefigures(plot_name, **plot)
     plot['units'] = units
     return plot_name
 
-def zonalmeandata(plot, compfile, ax, depth, func):
-    data2, units2, x2, depth2 = pl.zonal_load_comp(compfile, plot['variable'], plot['dates'], depth, plot['scale'], seasons=plot['comp_seasons'])
+def zonalmeandata(plot, compfile, ax, depth, func, color, zorder):
+    data2, units2, x2, depth2 = pl.zonal_load(compfile, plot['variable'], plot['comp_dates'], depth, plot['scale'], seasons=plot['comp_seasons'])
     if data2.ndim > 1:
         try:
             depth_ind = np.where(np.round(depth) == plot['plot_depth'])[0][0]
@@ -613,7 +620,7 @@ def zonalmeandata(plot, compfile, ax, depth, func):
             print('Failed to extract depth ' + plot['plot_depth'] + ' for ' + plot['variable'])
             depth_ind = 0
         data2 = data2[depth_ind, :]
-    func(x2, data2, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'])
+    func(x2, data2, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color=color, zorder=zorder)
 
 
 def zonalmean_comparison(plot, func):
@@ -638,7 +645,7 @@ def zonalmean_comparison(plot, func):
     plot['data1']['ax_args']['ylabel'] = units
 
     # get data at the correct depth 
-    plot['plot_depth'] = plot['depth']
+    plot['plot_depth'] = None
 
     if data.ndim > 1:
         plot['plot_depth'] = min(depth, key=lambda x: abs(x - plot['depth']))
@@ -651,25 +658,29 @@ def zonalmean_comparison(plot, func):
 
     fig, ax = plt.subplots(1, 1, figsize=(8, 8))
     dft.filltitle(plot)
-    
+   
     # make plot
-    func(x, data, plot=plot, ax=ax, ax_args=plot['data1']['ax_args'])
-
+    func(x, data, plot=plot, ax=ax, ax_args=plot['data1']['ax_args'], color='b', zorder=5)
+    handles = [mpatches.Patch(color='b', label=plot['model_ID'])] 
+    
     # plot comparison data on the same axis
     for c in plot['comp_cmips']:
         plot['comp_model'] = 'cmip5'
-        zonalmeandata(plot, plot['cmip5_file'], ax, depth, func)
+        zonalmeandata(plot, plot['cmip5_file'], ax, depth, func, color='g', zorder=3)
+        handles.append(mpatches.Patch(color='g', label='cmip5')) 
     for o in plot['comp_obs']:
         plot['comp_model'] = o
-        zonalmeandata(plot, plot['obs_file'], ax, depth, func)
+        zonalmeandata(plot, plot['obs_file'][o], ax, depth, func, color='r', zorder=4)
+        handles.append(mpatches.Patch(color='r', label=str(plot['comp_model'])))
     for model in plot['comp_models']:
         plot['comp_model'] = model
-        zonalmeandata(plot, plot['model_file'][model], ax, depth, func)
+        zonalmeandata(plot, plot['model_file'][model], ax, depth, func, color='0.75', zorder=1)
     for i in plot['comp_ids']:
         plot['comp_model'] = i
-        zonalmeandata(plot, plot['id_file'][i], ax, depth, func)
-
-    ax.legend(loc='best')
+        zonalmeandata(plot, plot['id_file'][i], ax, depth, func, color='y', zorder=2)
+        handles.append(mpatches.Patch(color='y', label=str(plot['comp_model'])))
+        
+    ax.legend(handles=handles, loc='center left', bbox_to_anchor=(1, 0.5))
     plot_name = plotname(plot)
     savefigures(plot_name, **plot)
     plot['units'] = units

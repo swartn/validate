@@ -302,6 +302,7 @@ def section(x, z, data, ax=None, rmse=False, ax_args=None, pcolor_args=None, plo
                vmax=pcolor_args['vmax'])
     ax.invert_yaxis()
     ax.autoscale(True, axis='both', tight='both')
+    ax.set_yscale(plot['set_yscale'])
     if ax_args:
         plt.setp(ax, **ax_args)
 
@@ -326,7 +327,7 @@ def section(x, z, data, ax=None, rmse=False, ax_args=None, pcolor_args=None, plo
                          }
 
 
-def timeseries(x, data, ax=None, ax_args=None, label='model', plot={}):
+def timeseries(x, data, ax=None, ax_args=None, label='model', plot={}, color=None, zorder=None):
     """ Makes a timeseries line plot, using ax if supplied
     """
     if data.shape != x.shape:
@@ -336,22 +337,20 @@ def timeseries(x, data, ax=None, ax_args=None, label='model', plot={}):
     else:
         fig = plt.gcf()
 
-    ax.plot(x, data, label=label)
+    ax.plot(x, data, label=label, color=color, zorder=zorder)
 
     plt.setp(ax, **ax_args)
     plot['stats'] = 'N/A'
 
 
-def zonalmean(x, data, ax=None, ax_args=None, label='model', plot={}):
+def zonalmean(x, data, ax=None, ax_args=None, label='model', plot={}, color=None, zorder=None):
     """ Makes a zonal mean line plot, using ax if supplied
     """
     if not ax:
         fig, ax = plt.subplots(1, 1, figsize=(8, 8))
     else:
         fig = plt.gcf()
-    print x.shape
-    print data.shape
-    ax.plot(x, data, label=label)
+    ax.plot(x, data, label=label, color=color, zorder=zorder)
 
     plt.setp(ax, **ax_args)
     plot['stats'] = 'N/A'
