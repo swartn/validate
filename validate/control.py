@@ -54,7 +54,7 @@ def execute(options, **kwargs):
         remfiles(**delete)
         
         # organize plots in joined.pdf file
-#        arrange(plotnames)
+        arrange(plotnames)
 
 
     # if conf.yaml exists in the current directory use that for the configuration

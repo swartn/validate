@@ -37,6 +37,7 @@ DEFAULTS = {'plotprojection': 'mercator',
             'remap_grid': 'r360x180',
             'seasons': ['DJF', 'MAM', 'JJA', 'SON'],
             'comp_seasons': ['DJF', 'MAM', 'JJA', 'SON'],
+            'alpha': 0.01,
             }
 
 piControl = {'dates': {'start_date': '2900-01',
@@ -176,15 +177,15 @@ def _section_labels(datanumber, pl):
 def filltitle(p):
     def fill(comp):
         if not p['data1']['title_flag']:
-            p['data1']['ax_args']['title'] = p['variable'] + ' Model:' + p['model_ID']
+            p['data1']['ax_args']['title'] = p['variable'] + ' Model: ' + p['model_ID']
         if not p['data2']['title_flag']:
-            p['data2']['ax_args']['title'] = p['variable'] + ' Model:' + comp
+            p['data2']['ax_args']['title'] = p['variable'] + ' Model: ' + comp
         if not p['comp']['title_flag']:
-            p['comp']['ax_args']['title'] = p['variable'] + ' Model:' + p['model_ID'] + '-' + comp
-        if p['is_depth']:
-           p['data1']['ax_args']['title'].append(' Depth: ' + str(p['plot_depth']))
-           p['data2']['ax_args']['title'].append(' Depth: ' + str(p['plot_depth']))
-           p['comp']['ax_args']['title'].append(' Depth: ' + str(p['plot_depth']))
+            p['comp']['ax_args']['title'] = p['variable'] + ' Model: ' + p['model_ID'] + '-' + comp
+#        if p['is_depth']:
+#           p['data1']['ax_args']['title'] += ' Depth: ' + str(p['plot_depth'])
+#           p['data2']['ax_args']['title'] += ' Depth: ' + str(p['plot_depth'])
+#           p['comp']['ax_args']['title'] += ' Depth: ' + str(p['plot_depth'])
 
     if p['comp_flag'] == 'model':
         fill(p['comp_model'])

@@ -41,23 +41,30 @@ def orderplots(plotnames):
     """
     plotdict = {}
     for p in plotnames:
+        try:
+            p['plot_depth'] = str(p['plot_depth'])
+        except:
+            p['plot_depth'] = 'surface'
+        p['season'] = ''.join(p['seasons'])
+    for p in plotnames:
         plotdict[p['realm']] = {}
     for p in plotnames:
         plotdict[p['realm']][p['variable']] = {}
     for p in plotnames:
-        plotdict[p['realm']][p['variable']][p['plot_type']] = {}
+        plotdict[p['realm']][p['variable']][p['plot_projection']] = {}
+    for p in plotnames:
+        plotdict[p['realm']][p['variable']][p['plot_projection']][p['data_type']] = {}
+    for p in plotnames:
+        plotdict[p['realm']][p['variable']][p['plot_projection']][p['data_type']][p['plot_depth']] = {}
+    for p in plotnames:
+        plotdict[p['realm']][p['variable']][p['plot_projection']][p['data_type']][p['plot_depth']][p['dates']['start_date'][:4] + '-' + p['dates']['end_date'][:4]] = {}
+    for p in plotnames:
+        plotdict[p['realm']][p['variable']][p['plot_projection']][p['data_type']][p['plot_depth']][p['dates']['start_date'][:4] + '-' + p['dates']['end_date'][:4]][p['season']] = {}
+    for p in plotnames:
+        plotdict[p['realm']][p['variable']][p['plot_projection']][p['data_type']][p['plot_depth']][p['dates']['start_date'][:4] + '-' + p['dates']['end_date'][:4]][p['season']][p['comp_model']] = {}
 
     for p in plotnames:
-        plotdict[p['realm']][p['variable']][p['plot_type']][p['plot_projection']] = {'sorteddepthlist': [],
-                                                                                     'depthfile': {},
-                                                                                     }
-    for p in plotnames:
-        plotdict[p['realm']][p['variable']][p['plot_type']][p['plot_projection']]['sorteddepthlist'].append(p['plot_depth'])
-        plotdict[p['realm']][p['variable']][p['plot_type']][p['plot_projection']]['sorteddepthlist'].sort()
-        plotdict[p['realm']][p['variable']][p['plot_type']][p['plot_projection']]['depthfile'][p['plot_depth']] = {}
-
-    for p in plotnames:
-        plotdict[p['realm']][p['variable']][p['plot_type']][p['plot_projection']]['depthfile'][p['plot_depth']][p['comp_model']] = p['plot_name']
+        plotdict[p['realm']][p['variable']][p['plot_projection']][p['data_type']][p['plot_depth']][p['dates']['start_date'][:4] + '-' + p['dates']['end_date'][:4]][p['season']][p['comp_model']] = p['plot_name']
     return plotdict
 
 
@@ -83,18 +90,20 @@ def pdfmarks(plotdict):
         f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + realm + ") /Count -" + str(len(plotdict[realm].keys())) + " /OUT pdfmark\n")
         for var in plotdict[realm]:
             f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + var + ") /Count -" + str(len(plotdict[realm][var].keys())) + " /OUT pdfmark\n")
-            for ptype in plotdict[realm][var]:
-                f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + ptype + ") /Count -" + str(len(plotdict[realm][var][ptype].keys())) + " /OUT pdfmark\n")
-                for pp in plotdict[realm][var][ptype]:
-                    f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + pp + ") /Count -" + str(len(plotdict[realm][var][ptype][pp]['depthfile'].keys())) + " /OUT pdfmark\n")
-                    for depth in list(set(plotdict[realm][var][ptype][pp]['sorteddepthlist'])):
-                        plotdict[realm][var][ptype][pp]['sorteddepthlist'] = list(set(plotdict[realm][var][ptype][pp]['sorteddepthlist']))
-                        f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + str(depth) + ") /Count -" + str(len(plotdict[realm][var][ptype][pp]['depthfile'][depth])) + " /OUT pdfmark\n")
-                        for model in plotdict[realm][var][ptype][pp]['depthfile'][depth]:
-                            f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + model + ") /OUT pdfmark\n")
-                            print plotdict[realm][var][ptype][pp]['depthfile'][depth][model]
-                            plist.append(str(plotdict[realm][var][ptype][pp]['depthfile'][depth][model]))
-                            page_count += 1
+            for proj in plotdict[realm][var]:
+                f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + proj + ") /Count -" + str(len(plotdict[realm][var][proj].keys())) + " /OUT pdfmark\n")
+                for dt in plotdict[realm][var][proj]:
+                    f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + dt + ") /Count -" + str(len(plotdict[realm][var][proj][dt].keys())) + " /OUT pdfmark\n")
+                    for depth in plotdict[realm][var][proj][dt]:
+                        f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + depth + ") /Count -" + str(len(plotdict[realm][var][proj][dt][depth].keys())) + " /OUT pdfmark\n")
+                        for dates in plotdict[realm][var][proj][dt][depth]:
+                            f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + dates + ") /Count -" + str(len(plotdict[realm][var][proj][dt][depth][dates].keys())) + " /OUT pdfmark\n")
+                            for season in plotdict[realm][var][proj][dt][depth][dates]:
+                                f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + season + ") /Count -" + str(len(plotdict[realm][var][proj][dt][depth][dates][season].keys())) + " /OUT pdfmark\n")                            
+                                for comp in plotdict[realm][var][proj][dt][depth][dates][season]:
+                                    f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + comp + ") /OUT pdfmark\n")
+                                    plist.append(str(plotdict[realm][var][proj][dt][depth][dates][season][comp]))
+                                    page_count +=1
 
     f.close()
     pstring = " ".join(plist)

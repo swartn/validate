@@ -264,6 +264,15 @@ def trends_load(ifile, var, dates, scale, remapf='remapdis', remapgrid='r360x180
 
     return data, units, lon, lat, depth
 
+def full_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', depthneeded=None, seasons=None):
+    if depthneeded is not None:
+        finalout = intlevel(setc(remap(sel_date(season(sel_var(ifile, var), seasons), dates['start_date'], dates['end_date']), remapf, remapgrid)), depthneeded)
+    else:
+        finalout = setc(remap(sel_date(mask(season(sel_var(ifile, var), seasons), realm), dates['start_date'], dates['end_date']), remapf, remapgrid))
+    
+    nc = Dataset(finalout, 'r')
+    data, units, depth = _load(nc, var)
+    return data
 
 def timeseries_load(ifile, var, dates, realm, scale, depthneeded=None, seasons=None):
     """ Loads the field mean data over specified dates from a file.
@@ -345,7 +354,17 @@ def histogram_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid
     units = _scale_units(units, scale)
     data = data * scale
     return data, units, x, depth
-    
+
+def full_section_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', depthneeded=None, seasons=None):
+    if depthneeded is not None:
+        finalout = intlevel(zonal_mean(remap(sel_date(setc(season(sel_var(ifile, var), seasons)), dates['start_date'], dates['end_date']), remapf, remapgrid)), depthneeded)    
+    else:
+        finalout = zonal_mean(remap(sel_date(setc(mask(season(sel_var(ifile, var), seasons), realm)), dates['start_date'], dates['end_date']), remapf, remapgrid))
+ 
+    nc = Dataset(finalout, 'r')
+    data, units, depth = _load(nc, var)
+    return data
+        
 def zonal_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', trends=False, depthneeded=None, seasons=None):
     """ Loads the zonal mean data over specified dates from a file.
         Remaps and scales the data.
@@ -397,6 +416,13 @@ def split(name):
     path, filename = os.path.split(name)
     return filename
 
+def sel_date(name, start_date, end_date):
+    out = 'netcdf/seldate_' + start_date + '_' + end_date + '_' + split(name)
+    if not os.path.isfile(out):
+        datestring = start_date + ',' + end_date
+        cdo.seldate(datestring, input=name, output=out)
+    return out
+    
 def sel_var(name, variable):
     out = 'netcdf/sel_' + split(name)
     if not os.path.isfile(out):

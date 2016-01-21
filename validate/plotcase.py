@@ -13,6 +13,7 @@ to the correct plot.
 import dataload as pl
 import plotregions as pr
 import numpy as np
+import scipy as sp
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import matplotlib.ticker as ticker
@@ -61,8 +62,15 @@ def _depth_data(data, depth, plot):
         data = data[depth_ind, :, :]
     else:
         plot['plot_depth'] = None
-        
+    return data
 
+def _full_depth_data(data, depth, plot):
+    print depth
+    print plot['plot_depth']
+    if data.ndim > 3:
+        depth_ind = np.where(np.round(depth) == np.round(plot['plot_depth']))[0][0]
+        print depth_ind
+        data = data[:, depth_ind, :, :]
     return data
 
 
@@ -181,6 +189,10 @@ def map_climatology(plot, func):
     plot['units'] = units
     return plot_name
 
+def ttest(data1, data2):
+    t, p = sp.stats.ttest_ind(data1, data2, axis=0, equal_var=False)
+    return p
+
 def map_climatology_comparison(plot, func):
     """ Loads and plots the data for a time averaged map.
         Loads and plots the data for comparison and plots the
@@ -197,20 +209,29 @@ def map_climatology_comparison(plot, func):
     """
     print 'plotting comparison map of ' + plot['variable']
     # load data from netcdf file
-    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
 
+    
+    data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
     
     # get data at correct depth
     data = _depth_data(data, depth, plot)
+
+    fulldata = pl.full_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
+    fulldata2 = pl.full_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], depthneeded=depth, seasons=plot['comp_seasons'])
+    fulldepthdata = _full_depth_data(fulldata, depth, plot)
+    fulldepthdata2 = _full_depth_data(fulldata2, depth, plot)
+    pvalues = ttest(fulldepthdata, fulldepthdata2) 
 
     # get comparison data from netcdf file
     data2, units, lon, lat, depth = pl.timeaverage_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], [plot['plot_depth']], seasons=plot['comp_seasons'])
 
     # get comparison data at correct depth
-    data2 = _depth_data(data2, depth, plot)
+#    data2 = _depth_data(data2, depth, plot)
 
     compdata = data - data2
     _comp_pcolor(data, data2, plot)
+    
+
     fig, (axl, axm, axr) = plt.subplots(3, 1, figsize=(8, 8))
 
     dft.filltitle(plot)
@@ -222,7 +243,7 @@ def map_climatology_comparison(plot, func):
     func(lon, lat, data2, plot=plot, ax=axm, ax_args=plot['data2']['ax_args'],
          pcolor_args=plot['data2']['pcolor_args'], cblabel=units,
          **plot['plot_args'])
-    func(lon, lat, compdata, anom=True, rmse=True, plot=plot, ax=axr, ax_args=plot['comp']['ax_args'],
+    func(lon, lat, compdata, pvalues=pvalues, alpha=plot['alpha'], anom=True, rmse=True, plot=plot, ax=axr, ax_args=plot['comp']['ax_args'],
          pcolor_args=plot['comp']['pcolor_args'], cblabel=units,
          **plot['plot_args'])
     
@@ -280,12 +301,15 @@ def section_climatology_comparison(plot, func):
     string : name of the plot
     """
     print 'plotting section comparison of ' + plot['variable']
-
     # load data from netcdf file
     zonmean, units, x, depth = pl.zonal_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], seasons=plot['seasons'])
-    
+
     # load comparison data from netcdf file
     zonmean2, units2, x2, depth2 = pl.zonal_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], depthneeded=depth, seasons=plot['comp_seasons'])
+
+    fulldata = pl.full_section_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], seasons=plot['seasons'])
+    fulldata2 = pl.full_section_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], depthneeded=depth, seasons=plot['comp_seasons'])
+    pvalues = ttest(fulldata, fulldata2)
     
     dft.filltitle(plot)
     _comp_pcolor(zonmean, zonmean2, plot)
@@ -298,7 +322,7 @@ def section_climatology_comparison(plot, func):
          pcolor_args=plot['data1']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[0, 1]))
     func(x, depth, zonmean2, plot=plot, ax=plt.subplot(gs[1, 0]), ax_args=plot['data2']['ax_args'],
          pcolor_args=plot['data2']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[1, 1]))
-    func(x, depth, compdata, anom=True, rmse=True, plot=plot, ax=plt.subplot(gs[2, 0]), ax_args=plot['comp']['ax_args'],
+    func(x, depth, compdata, anom=True, rmse=True, pvalues=pvalues, alpha=plot['alpha'], plot=plot, ax=plt.subplot(gs[2, 0]), ax_args=plot['comp']['ax_args'],
          pcolor_args=plot['comp']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[2, 1]))
 
     plt.tight_layout()

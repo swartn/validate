@@ -98,8 +98,20 @@ def stats(plot, data, rmse):
                          }
     return vals, snam
 
-
-def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
+def draw_stipple(pvalues, lon, lat, m, alpha):
+        slons = []
+        slats = []
+        print pvalues.shape
+        for index, value in np.ndenumerate(pvalues):
+            if index[1]%4 == 0 and index[0]%2 == 0:
+                if value < alpha:
+                    slons.append(lon[index[1]])
+                    slats.append(lat[index[0]])
+        a,b = m(slons, slats)
+        m.plot(a,b, '.', markersize=0.2, color='k')
+        
+        
+def global_map(lon, lat, data, pvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
                latmin=-50, latmax=50, lonmin=0, lonmax=360,
                fill_continents=False, fill_oceans=False, draw_parallels=True, draw_meridians=False, plot={}):
     """Pcolor a var in a global map, using ax if supplied"""
@@ -137,17 +149,20 @@ def global_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=
     if fill_oceans:
         m.drawlsmask(ocean_color='0.7')
 
+    if alpha:
+        draw_stipple(pvalues, lon, lat, m, alpha)
+
     m.colorbar(mappable=cot, location='right', label=cblabel)
 
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
     x, y = m(10, -88)
-    ax.text(x, y, '  '.join(val), fontsize=8)
+    ax.text(x, y, '  '.join(val), fontsize=7)
 
 
-def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
+def polar_map(lon, lat, data, pvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
               latmin=30, latmax=80, lonmin=0, lonmax=360,
-              fill_continents=True, fill_oceans=False, draw_parallels=True, draw_meridians=True, plot={}):
+              fill_continents=False, fill_oceans=False, draw_parallels=False, draw_meridians=False, plot={}):
     """Pcolor a var in a north polar map, using ax if supplied"""
     if not ax:
         fig, ax = plt.subplots(1, 1, figsize=(8, 8))
@@ -179,18 +194,27 @@ def polar_map(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='
     if draw_meridians:
         m.drawmeridians(np.arange(-180., 181., 20.))
     m.drawmapboundary()
+
+    if alpha:
+        draw_stipple(pvalues, lon, lat, m, alpha)    
+    
     m.colorbar(mappable=cot, location='right', label=cblabel)
 
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
     x, y = m(-135, 12)
-    ax.text(x, y, '  '.join(val), fontsize=8)
+    ax.text(x, y, '  '.join(val), fontsize=7)
 
 
-def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
-                    latmin=-90, latmax=-30, lonmin=0, lonmax=360,
-                    fill_continents=True, fill_oceans=False, draw_parallels=True, draw_meridians=True, plot={}):
+def polar_map_south(lon, lat, data, pvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
+                    latmin=-80, latmax=-30, lonmin=0, lonmax=360,
+                    fill_continents=False, fill_oceans=False, draw_parallels=False, draw_meridians=False, plot={}):
     """Pcolor a var in a south polar map, using ax if supplied"""
+    if not ax:
+        fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+    else:
+        fig = plt.gcf()
+
     if not pcolor_args:
         pcolor_args = default_pcolor_args(data, anom)
 
@@ -198,11 +222,7 @@ def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cbl
         if key not in pcolor_args or (pcolor_args[key] is None):
             pcolor_args[key] = value
 
-    if not ax:
-        fig, ax = plt.subplots(1, 1, figsize=(8, 8))
-    else:
-        fig = plt.gcf()
-    m = Basemap(projection='spstere', boundinglat=latmax, lon_0=270, resolution='c')
+    m = Basemap(projection='spstere', boundinglat=latmax, lon_0=270, resolution='c', ax=ax)
 
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
@@ -222,16 +242,19 @@ def polar_map_south(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cbl
     if fill_oceans:
         m.drawlsmask(ocean_color='0.7')
     m.drawmapboundary()
-    
+ 
+    if alpha:
+        draw_stipple(pvalues, lon, lat, m, alpha)
+            
     m.colorbar(mappable=cot, location='right', label=cblabel)
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
     x, y = m(-45, -12)
-    ax.text(x, y, '  '.join(val), fontsize=8)
+    ax.text(x, y, '  '.join(val), fontsize=7)
 
 
-def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False, plot={},
-             latmin=-80, latmax=80, lonmin=0, lonmax=360,
+def mercator(lon, lat, data, pvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False, plot={},
+             latmin=-80, latmax=80, lonmin=0, lonmax=360, 
              fill_continents=False, fill_oceans=False, draw_parallels=False, draw_meridians=False):
     """Pcolor a var in a mercator plot, using ax if supplied"""
     if not pcolor_args:
@@ -262,12 +285,15 @@ def mercator(lon, lat, data, ax=None, ax_args=None, pcolor_args=None, cblabel=''
     if draw_meridians:
         m.drawmeridians(np.arange(-180., 181., 20.))
     m.drawmapboundary()
-
+    
+    if alpha:
+        draw_stipple(pvalues, lon, lat, m, alpha)
+    
     m.colorbar(mappable=cot, location='right', label=cblabel)
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
     x, y = m(lonmin + 1, latmin + 1)
-    ax.text(x, y, '  '.join(val), fontsize=8)
+    ax.text(x, y, '  '.join(val), fontsize=7)
 
 
 def _fix_1Ddata(z, data, ax_args):
@@ -281,7 +307,7 @@ def _fix_1Ddata(z, data, ax_args):
     return np.array(range(0, 5)), np.array(newdata), ax_args
 
 
-def section(x, z, data, ax=None, rmse=False, ax_args=None, pcolor_args=None, plot={}, cblabel='', anom=False, cbaxis=None):
+def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=None, pcolor_args=None, plot={}, cblabel='', anom=False, cbaxis=None):
     """Pcolor a var in a section, using ax if supplied"""
     if len(data.shape) == 1:
         z, data, ax_args = _fix_1Ddata(z, data, ax_args)
@@ -305,6 +331,18 @@ def section(x, z, data, ax=None, rmse=False, ax_args=None, pcolor_args=None, plo
     ax.set_yscale(plot['set_yscale'])
     if ax_args:
         plt.setp(ax, **ax_args)
+
+    if alpha:
+        slons = []
+        sdepths = []
+        print pvalues.shape
+        for index, value in np.ndenumerate(pvalues):
+            if index[1]%4 == 0:
+                if value < alpha:
+                    print index
+                    slons.append(x[index[1]])
+                    sdepths.append(z[index[0]])
+        ax.plot(slons, sdepths, '.', markersize=0.2, color='k')
 
     box = ax.get_position()
     if cbaxis:
