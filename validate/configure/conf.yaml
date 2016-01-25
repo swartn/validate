@@ -6,7 +6,7 @@
 # run : A three letter string associated with the run ID to be tested.             
 #            
 #             example:             
-#                 model_run = 'edr'
+#                 run: 'edr'
 #
 # plots : A list of dictionaries specifying the plots to be produced. At a minimum
 #         to produce a plot, the dictionary must have a 'variable' and 'plot_projection'
@@ -129,68 +129,940 @@ run: 'edr'
 experiment: 'historical'
 
 defaults:
-
-plots:  
-        - variable: 'ta'
-          plot_projection: 'mercator'
-          data_type: 'climatology'
-          depths:
-            - 50000
-            - 100000
           dates:
-              start_date: '1990-01'
+              start_date: '1979-01'
               end_date: '2000-01'
-          comp_ids:
-            - cvu
+          png: True
+plots:
+
+#        ATMOS ALL YEAR
+
+#surface
+        - variable: 'tas'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'uas'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'psl'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
           comp_obs:
             - 20CR
+
+        - variable: 'pr'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'prsn'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+#depth
+        - variable: 'zg'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          depths:
+            - 100000
+            - 85000
+            - 70000
+            - 50000
+            - 25000
+            - 10000
+            - 5000
+            - 1000
+
+        - variable: 'ua'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          depths:
+            - 100000
+            - 85000
+            - 70000
+            - 50000
+            - 25000
+            - 10000
+            - 5000
+            - 1000
+
+        - variable: 'ta'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          depths:
+            - 100000
+            - 85000
+            - 70000
+            - 50000
+            - 25000
+            - 10000
+            - 5000
+            - 1000
+
+#section
+        - variable: 'ua'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          comp_obs:
+             - 20CR
 
         - variable: 'ta'
           plot_projection: 'section'
           data_type: 'climatology'
+          comp_obs:
+             - 20CR
 
-          dates:
-              start_date: '1990-01'
-              end_date: '2000-01'
+        - variable: 'zg'
+          plot_projection: 'section'
+          data_type: 'climatology'
 
+#zonal mean 
+        - variable: 'pr'
+          plot_projection: 'zonal_mean'
+          data_type: 'climatology'
+          comp_obs:
+             - 20CR
+          comp_models:
+           - CanCM4
+           - CCSM4
+           - CNRM-CM5
+           - FGOALS-g2
+           - GISS-E2-H
+           - GFDL-ESM2M
+           - GFDL-ESM2G
+           - NorESM1-M
+           - MPI-ESM-LR
+           - HadGEM2-ES
+           - MIROC4h
+           - HadCM3
+          comp_cmips:
+           - cmip5
+
+#taylor
         - variable: 'ta'
           plot_projection: 'taylor'
           data_type: 'climatology'
-          depths:
-            - 100000
-          dates:
-              start_date: '1990-01'
-              end_date: '2000-01'
-          comp_ids:
-            - cvu
           comp_obs:
-            - 20CR
+             - 20CR
+          comp_models:
+           - CanCM4
+           - CCSM4
+           - CNRM-CM5
+           - FGOALS-g2
+           - GISS-E2-H
+           - GFDL-ESM2M
+           - GFDL-ESM2G
+           - NorESM1-M
+           - MPI-ESM-LR
+           - HadGEM2-ES
+           - MIROC4h
+           - HadCM3
+          comp_cmips:
+           - cmip5
+        
+        - variable: 'ua'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - 20CR
+          comp_models:
+           - CanCM4
+           - CCSM4
+           - CNRM-CM5
+           - FGOALS-g2
+           - GISS-E2-H
+           - GFDL-ESM2M
+           - GFDL-ESM2G
+           - NorESM1-M
+           - MPI-ESM-LR
+           - HadGEM2-ES
+           - MIROC4h
+           - HadCM3
+          comp_cmips:
+           - cmip5
 
-        - variable: 'ta'
-          plot_projection: 'mercator'
+        - variable: 'zg'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - 20CR
+          comp_models:
+           - CanCM4
+           - CCSM4
+           - CNRM-CM5
+           - FGOALS-g2
+           - GISS-E2-H
+           - GFDL-ESM2M
+           - GFDL-ESM2G
+           - NorESM1-M
+           - MPI-ESM-LR
+           - HadGEM2-ES
+           - MIROC4h
+           - HadCM3
+          comp_cmips:
+           - cmip5
+
+        - variable: 'pr'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - 20CR
+          comp_models:
+           - CanCM4
+           - CCSM4
+           - CNRM-CM5
+           - FGOALS-g2
+           - GISS-E2-H
+           - GFDL-ESM2M
+           - GFDL-ESM2G
+           - NorESM1-M
+           - MPI-ESM-LR
+           - HadGEM2-ES
+           - MIROC4h
+           - HadCM3
+          comp_cmips:
+           - cmip5
+
+#        ATMOS DJF
+
+#surface
+        - variable: 'tas'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          seasons:
+             - 'DJF'
+
+        - variable: 'uas'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          seasons:
+             - 'DJF'
+
+        - variable: 'psl'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          seasons:
+             - 'DJF'
+
+        - variable: 'pr'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          seasons:
+             - 'DJF'
+
+        - variable: 'prsn'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          seasons:
+             - 'DJF'
+
+#depth
+        - variable: 'zg'
+          plot_projection: 'global_map'
           data_type: 'climatology'
           depths:
             - 100000
+            - 85000
+            - 70000
             - 50000
+            - 25000
+            - 10000
+            - 5000
+            - 1000
+          seasons:
+             - 'DJF'
 
-          dates:
-              start_date: '1990-01'
-              end_date: '2000-01'
-          comp_dates:
-              start_date: '1910-01'
-              end_date: '1920-01'
-          comp_ids:
-            - edr  
+        - variable: 'ua'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          depths:
+            - 100000
+            - 85000
+            - 70000
+            - 50000
+            - 25000
+            - 10000
+            - 5000
+            - 1000
+          seasons:
+             - 'DJF'
+
+        - variable: 'ta'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          depths:
+            - 100000
+            - 85000
+            - 70000
+            - 50000
+            - 25000
+            - 10000
+            - 5000
+            - 1000
+          seasons:
+             - 'DJF'
+
+#section
+        - variable: 'ua'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          seasons:
+             - 'DJF'
+
+        - variable: 'ta'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          seasons:
+             - 'DJF'
 
 
+        - variable: 'zg'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          seasons:
+             - 'DJF'
+
+
+#        ATMOS JJA
+
+#surface
+        - variable: 'tas'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          seasons:
+             - 'JJA'
+
+        - variable: 'uas'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          seasons:
+             - 'JJA'
+
+        - variable: 'psl'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          seasons:
+             - 'JJA'
+
+        - variable: 'pr'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          seasons:
+             - 'JJA'
+
+        - variable: 'prsn'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          seasons:
+             - 'JJA'
+
+#depth
+        - variable: 'zg'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          depths:
+            - 100000
+            - 85000
+            - 70000
+            - 50000
+            - 25000
+            - 10000
+            - 5000
+            - 1000
+          seasons:
+             - 'JJA'
+
+        - variable: 'ua'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          depths:
+            - 100000
+            - 85000
+            - 70000
+            - 50000
+            - 25000
+            - 10000
+            - 5000
+            - 1000
+          seasons:
+             - 'JJA'
+
+        - variable: 'ta'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          depths:
+            - 100000
+            - 85000
+            - 70000
+            - 50000
+            - 25000
+            - 10000
+            - 5000
+            - 1000
+          seasons:
+             - 'JJA'
+
+#section
+        - variable: 'ua'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          seasons:
+             - 'JJA'
+
+        - variable: 'ta'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          seasons:
+             - 'JJA'
+
+
+        - variable: 'zg'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          seasons:
+             - 'JJA'
+
+#         LAND
+        - variable: 'nep'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'gpp'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'npp'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'lai'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'cSoil'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'cRoot'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'cVeg'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'cWood'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'cLeaf'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'cLitter'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+#        OCEAN
+
+#surface
+        - variable: 'tos'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          comp_obs:
+            - observations
+
+        - variable: 'sos'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+
+#        - variable: 'zos'
+#          plot_projection: 'global_map'
+#          data_type: 'climatology'
+
+        - variable: 'msftbarot'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+#        - variable: 'pbo'
+#          plot_projection: 'global_map'
+#          data_type: 'climatology'
+
+        - variable: 'zosga'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'zossga'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+#depth
+
+        - variable: 'thetao'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+
+        - variable: 'so'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+
+        - variable: 'uo'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+
+        - variable: 'vo'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+
+#sections
+#        - variable: 'to'
+#          plot_projection: 'section'
+#          data_type: 'climatology'
+
+        - variable: 'so'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          comp_obs:
+            - observations
+
+        - variable: 'uo'
+          plot_projection: 'section'
+          data_type: 'climatology'
+
+        - variable: 'vo'
+          plot_projection: 'section'
+          data_type: 'climatology'
+
+        - variable: 'msftmyz'
+          plot_projection: 'section'
+          data_type: 'climatology'
+
+        - variable: 'thetao'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          comp_obs:
+            - observations
+
+
+#taylor
+        - variable: 'thetao'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_models:
+           - CanCM4
+           - CCSM4
+           - CNRM-CM5
+           - FGOALS-g2
+           - GISS-E2-H
+           - GFDL-ESM2M
+           - GFDL-ESM2G
+           - NorESM1-M
+           - MPI-ESM-LR
+           - HadGEM2-ES
+           - MIROC4h
+           - HadCM3
+          comp_cmips:
+           - cmip5
+
+        - variable: 'so'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_models:
+           - CanCM4
+           - CCSM4
+           - CNRM-CM5
+           - FGOALS-g2
+           - GISS-E2-H
+           - GFDL-ESM2M
+           - GFDL-ESM2G
+           - NorESM1-M
+           - MPI-ESM-LR
+           - HadGEM2-ES
+           - MIROC4h
+           - HadCM3
+          comp_cmips:
+           - cmip5
+
+        - variable: 'tos'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_models:
+           - CanCM4
+           - CCSM4
+           - CNRM-CM5
+           - FGOALS-g2
+           - GISS-E2-H
+           - GFDL-ESM2M
+           - GFDL-ESM2G
+           - NorESM1-M
+           - MPI-ESM-LR
+           - HadGEM2-ES
+           - MIROC4h
+           - HadCM3
+          comp_cmips:
+           - cmip5
+
+
+#             OCEANBGCHEM
+        - variable: 'chl'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          comp_obs:
+            - observations
+
+        - variable: 'fgco2'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'epc100'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'epcalc100'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'intpp'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'frc'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'intdic'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'dpco2'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+        
+        - variable: 'no3'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          comp_obs:
+            - observations
+
+#depth
+        - variable: 'dissic'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+
+        - variable: 'no3'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+
+        - variable: 'ph'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+
+        - variable: 'talk'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+
+#sections
+        - variable: 'dissic'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          frequency: 'yr'
+
+        - variable: 'no3'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          frequency: 'yr'
+
+        - variable: 'ph'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          frequency: 'yr'
+
+        - variable: 'talk'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          frequency: 'yr'
+
+#taylor
+        - variable: 'dissic'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_models:
+           - CanCM4
+           - CCSM4
+           - CNRM-CM5
+           - FGOALS-g2
+           - GISS-E2-H
+           - GFDL-ESM2M
+           - GFDL-ESM2G
+           - NorESM1-M
+           - MPI-ESM-LR
+           - HadGEM2-ES
+           - MIROC4h
+           - HadCM3
+          comp_cmips:
+           - cmip5
+
+        - variable: 'no3'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_models:
+           - CanCM4
+           - CCSM4
+           - CNRM-CM5
+           - FGOALS-g2
+           - GISS-E2-H
+           - GFDL-ESM2M
+           - GFDL-ESM2G
+           - NorESM1-M
+           - MPI-ESM-LR
+           - HadGEM2-ES
+           - MIROC4h
+           - HadCM3
+          comp_cmips:
+           - cmip5
+
+        - variable: 'ph'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_models:
+           - CanCM4
+           - CCSM4
+           - CNRM-CM5
+           - FGOALS-g2
+           - GISS-E2-H
+           - GFDL-ESM2M
+           - GFDL-ESM2G
+           - NorESM1-M
+           - MPI-ESM-LR
+           - HadGEM2-ES
+           - MIROC4h
+           - HadCM3
+          comp_cmips:
+           - cmip5
+
+        - variable: 'talk'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_models:
+           - CanCM4
+           - CCSM4
+           - CNRM-CM5
+           - FGOALS-g2
+           - GISS-E2-H
+           - GFDL-ESM2M
+           - GFDL-ESM2G
+           - NorESM1-M
+           - MPI-ESM-LR
+           - HadGEM2-ES
+           - MIROC4h
+           - HadCM3
+          comp_cmips:
+           - cmip5
+
+        - variable: 'chl'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_models:
+           - CanCM4
+           - CCSM4
+           - CNRM-CM5
+           - FGOALS-g2
+           - GISS-E2-H
+           - GFDL-ESM2M
+           - GFDL-ESM2G
+           - NorESM1-M
+           - MPI-ESM-LR
+           - HadGEM2-ES
+           - MIROC4h
+           - HadCM3
+          comp_cmips:
+           - cmip5
+#         SEAICE
+
+#np
+        - variable: 'sic'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'tsice'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'pr'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'strairx'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'sit'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'snd'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'prsn'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'strairy'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+#sp
+        - variable: 'sic'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'tsice'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'pr'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'strairx'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'sit'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'snd'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'prsn'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'strairy'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
 
 delete:
-          del_fldmeanfiles: True
+          del_netcdf: False
           del_mask: True
           del_ncstore: True
-          del_remapfiles: True
-          del_trendfiles: True
-          del_zonalfiles: True
           del_ENS_MEAN_cmipfiles: True
           del_ENS_STD_cmipfiles: True
           del_cmipfiles: False

@@ -27,14 +27,12 @@ def _1d_depth_data(data, depth, plot):
     if not type(data) == 'numpy.ndarray':
         plot['plot_depth'] = None
         return data
-    print '-----------------------------'
     plot['plot_depth'] = min(depth, key=lambda x: abs(x - plot['depth']))
     try:
         depth_ind = np.where(np.round(depth) == np.round(plot['plot_depth']))[0][0]
     except:
         print('Failed to extract depth ' + plot['plot_depth'] + ' for ' + plot['variable'])
         depth_ind = 0
-    print depth_ind
     data = data[depth_ind]
     return data
 
@@ -65,11 +63,8 @@ def _depth_data(data, depth, plot):
     return data
 
 def _full_depth_data(data, depth, plot):
-    print depth
-    print plot['plot_depth']
     if data.ndim > 3:
         depth_ind = np.where(np.round(depth) == np.round(plot['plot_depth']))[0][0]
-        print depth_ind
         data = data[:, depth_ind, :, :]
     return data
 
@@ -355,6 +350,35 @@ def _trend_units(data, units, plot):
     units = units + '/decade'
     return data, units
 
+def trend_significance(residuals, sigma=0.05):
+    nt = len(residuals)
+    count = 0
+    x = len(residuals[0, :, 0])
+    y = len(residuals[0, 0, :])
+    rcorrs = np.empty(shape=[x, y])
+    for (i,j), value in np.ndenumerate(rcorrs):
+        count += 1
+        r_corr,_ = sp.stats.pearsonr(residuals[: -1, i, j], residuals[1:, i, j])
+        if r_corr < 0:
+            r_corr = 0
+        rcorrs[i][j] = r_corr
+    
+    cs = np.empty(shape=[x, y])    
+    for (i,j), rcor in np.ndenumerate(rcorrs):
+        #neff = float(nt * (1-rcor) / (1 + rcor))
+        neff = nt
+        a = residuals[:,i,j]
+        b = a * a
+        d = sum(b)
+        se = np.sqrt( d / ( neff - 2 ) )
+        sb = se / np.sqrt( sum( ( np.arange(nt) - np.mean( np.arange(nt) ) )**2 ) )
+
+        tcrit = sp.stats.t.isf(sigma/2.0, nt - 2 )
+
+        c = tcrit * sb
+
+        cs[i][j] = c
+    return cs
 
 def map_trends(plot, func):
     """ Loads and plots the trend data on a map.
@@ -369,6 +393,7 @@ def map_trends(plot, func):
     string : name of the plot
     """
     print 'plotting trends map of ' + plot['variable']
+
     
     # load trends data from netcdf file
     data, units, lon, lat, depth = pl.trends_load(plot['ifile'], plot['variable'], plot['dates'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
@@ -379,11 +404,31 @@ def map_trends(plot, func):
     # scale data based on frequency
     data, units = _trend_units(data, units, plot)
 
+    fulldata = pl.full_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
+    detrenddata = pl.full_detrend(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
+    print fulldata.shape
+    print detrenddata.shape
+    fulldepthdata = _full_depth_data(fulldata, depth, plot)
+    fulldepthdetrenddata = _full_depth_data(detrenddata, depth, plot)
+    
+    slope, intercept, r_value, p_value, std_error = sp.stats.linregress(np.arange(len(fulldepthdata)), fulldepthdata[:, 0 , 0])
+    print '----'
+    print slope
+    print intercept
+    print r_value
+    print p_value
+    print std_error
+    print '------'
+    print fulldepthdata.shape
+    print fulldepthdetrenddata.shape
+    siggrid = trend_significance(fulldepthdetrenddata, plot['sigma'])
+    cvalues, _ = _trend_units(siggrid, units, plot)
+
     _pcolor(data, plot, anom=True)
     dft.filltitle(plot)
     
     # make plot
-    func(lon, lat, data, anom=True, plot=plot, ax_args=plot['data1']['ax_args'],
+    func(lon, lat, data, anom=True, plot=plot, cvalues=cvalues, ax_args=plot['data1']['ax_args'],
          pcolor_args=plot['data1']['pcolor_args'], cblabel=units,
          **plot['plot_args'])
 

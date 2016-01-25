@@ -104,14 +104,24 @@ def draw_stipple(pvalues, lon, lat, m, alpha):
         print pvalues.shape
         for index, value in np.ndenumerate(pvalues):
             if index[1]%4 == 0 and index[0]%2 == 0:
-                if value < alpha:
+                if value < alpha:    
                     slons.append(lon[index[1]])
                     slats.append(lat[index[0]])
         a,b = m(slons, slats)
         m.plot(a,b, '.', markersize=0.2, color='k')
-        
-        
-def global_map(lon, lat, data, pvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
+
+def draw_trend_stipple(data, cvalues, lon, lat, m):        
+        slons = []
+        slats = []
+        for index, value in np.ndenumerate(cvalues):
+            if index[1]%4 == 0 and index[0]%2 == 0:
+                if abs(value) < data[index[0]][index[1]]:             
+                    slons.append(lon[index[1]])
+                    slats.append(lat[index[0]])
+        a,b = m(slons, slats)
+        m.plot(a,b, '.', markersize=0.2, color='k')      
+  
+def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
                latmin=-50, latmax=50, lonmin=0, lonmax=360,
                fill_continents=False, fill_oceans=False, draw_parallels=True, draw_meridians=False, plot={}):
     """Pcolor a var in a global map, using ax if supplied"""
@@ -152,6 +162,9 @@ def global_map(lon, lat, data, pvalues=None, alpha=None, ax=None, ax_args=None, 
     if alpha:
         draw_stipple(pvalues, lon, lat, m, alpha)
 
+    if cvalues is not None:
+        draw_trend_stipple(data, cvalues, lon, lat, m)
+    
     m.colorbar(mappable=cot, location='right', label=cblabel)
 
     vals, snam = stats(plot, data, rmse)

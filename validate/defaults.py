@@ -38,6 +38,7 @@ DEFAULTS = {'plotprojection': 'mercator',
             'seasons': ['DJF', 'MAM', 'JJA', 'SON'],
             'comp_seasons': ['DJF', 'MAM', 'JJA', 'SON'],
             'alpha': 0.01,
+            'sigma': 0.05,
             }
 
 piControl = {'dates': {'start_date': '2900-01',

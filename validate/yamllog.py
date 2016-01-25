@@ -37,7 +37,10 @@ def convert(plot):
         yamplot['dates'] = plot['trends_dates']
     yamplot['frequency'] = plot['frequency']
     yamplot['units'] = str(plot['units'])
-    yamplot['stats'] = plot['stats']
+    try:
+        yamplot['stats'] = plot['stats']
+    except:
+        yamplot['stats'] = 'N/A'
 #    for key in plot['stats']:
 #        if type(plot['stats'][key]) is dict:
 #            yamplot['stats'][key] = plot['stats'][key]

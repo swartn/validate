@@ -274,6 +274,16 @@ def full_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r36
     data, units, depth = _load(nc, var)
     return data
 
+def full_detrend(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', depthneeded=None, seasons=None):
+    if depthneeded is not None:
+        pass
+    else:
+        finalout = setc(remap(detrend(season(sel_var(ifile, var), seasons), dates['start_date'], dates['end_date']), remapf, remapgrid))
+    
+    nc = Dataset(finalout, 'r')
+    data, units, depth = _load(nc, var)
+    return data    
+
 def timeseries_load(ifile, var, dates, realm, scale, depthneeded=None, seasons=None):
     """ Loads the field mean data over specified dates from a file.
         Remaps and scales the data.
@@ -455,6 +465,13 @@ def trend(name, start_date, end_date):
         cdo.trend(input=seldatestring + ' ' + name, output=outintercept + ' ' + out)
     return out
 
+def detrend(name, start_date, end_date):
+    out = 'netcdf/detrend_' + start_date + '_' + end_date + '_' + split(name)
+    if not os.path.isfile(out):
+        seldatestring = '-seldate,' + start_date + ',' + end_date
+        cdo.detrend(input=seldatestring + ' ' + name, output=out)
+    return out    
+
 def setc(name):
     out = 'netcdf/setc_' + split(name)
     if not os.path.isfile(out):
@@ -504,7 +521,9 @@ def depthstring(depthlist):
        
 def intlevel(name, depthlist):
     print depthlist
-    if depthlist == [''] or depthlist == None:
+    if (not depthlist) or depthlist == [""] or depthlist == [None]:
+        print depthlist
+        print '--'
         return name
     depth = depthstring(depthlist)
     depthname = depth.replace(' ', '')
@@ -513,7 +532,10 @@ def intlevel(name, depthlist):
     out = 'netcdf/level-' + str(depthname) + '_' + split(name)
     if depth:
         if not os.path.isfile(out):
-            cdo.intlevelx(str(depth), input=name, output=out)
+            try:
+                cdo.intlevelx(str(depth), input=name, output=out)
+            except:
+                return name
     else:
         return name
     return out        

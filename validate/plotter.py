@@ -108,7 +108,7 @@ def makeplot(p, plotnames, func):
         plot_name = func(p)
     except:
         with open('logs/log.txt', 'a') as outfile:
-            outfile.write('Failed to plot ' + p['variable'] + ', ' + p['plot_projection'] + ', ' + p['plot_type'] + ', ' + p['comp_model'] + ', at depth:' + str(p['depth']) + '\n\n')
+            outfile.write('Failed to plot ' + p['variable'] + ', ' + p['plot_projection'] + ', ' + p['data_type'] + ', ' + p['comp_model'] + '\n\n')
     else:
         p['plot_name'] = plot_name + '.pdf'
         p['png_name'] = plot_name + '.png'
@@ -119,7 +119,7 @@ def makeplot(p, plotnames, func):
             p['plot_name'] = p['png_name']
             log(p)
         with open('logs/log.txt', 'a') as outfile:
-            outfile.write('Successfully plotted ' + p['variable'] + ', ' + p['plot_projection'] + ', ' + p['plot_type'] + ', ' + p['comp_model'] + ', at depth:' + str(p['depth']) + '\n\n')
+            outfile.write('Successfully plotted ' + p['variable'] + ', ' + p['plot_projection'] + ', ' + p['plot_type'] + ', ' + p['comp_model'] + '\n\n')
 
 
 def makeplot_without_catching(p, plotnames, func):
