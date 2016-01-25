@@ -357,7 +357,8 @@ def getfiles(plots, root, run, experiment):
     """
     _mkdir()
     _logfile(run, experiment)
-    files = traverse(root + experiment + '-' + run)
+    #files = traverse(root + experiment + '-' + run)
+    files = traverse(root)
     _load_masks(files)
 
     realms = {}
