@@ -24,6 +24,7 @@ setup(
         'numpy >=1.9.2',
         'matplotlib >=1.4.3',
         'pyyaml >=3.11',
+        'basemap >=1.0.7',
     ],
 )
 
