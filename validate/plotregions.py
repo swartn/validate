@@ -101,7 +101,6 @@ def stats(plot, data, rmse):
 def draw_stipple(pvalues, lon, lat, m, alpha):
         slons = []
         slats = []
-        print pvalues.shape
         for index, value in np.ndenumerate(pvalues):
             if index[1]%4 == 0 and index[0]%2 == 0:
                 if value < alpha:    
@@ -173,7 +172,7 @@ def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, 
     ax.text(x, y, '  '.join(val), fontsize=7)
 
 
-def polar_map(lon, lat, data, pvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
+def polar_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
               latmin=30, latmax=80, lonmin=0, lonmax=360,
               fill_continents=False, fill_oceans=False, draw_parallels=False, draw_meridians=False, plot={}):
     """Pcolor a var in a north polar map, using ax if supplied"""
@@ -210,7 +209,10 @@ def polar_map(lon, lat, data, pvalues=None, alpha=None, ax=None, ax_args=None, p
 
     if alpha:
         draw_stipple(pvalues, lon, lat, m, alpha)    
-    
+
+    if cvalues is not None:
+        draw_trend_stipple(data, cvalues, lon, lat, m)
+            
     m.colorbar(mappable=cot, location='right', label=cblabel)
 
     vals, snam = stats(plot, data, rmse)
@@ -219,7 +221,7 @@ def polar_map(lon, lat, data, pvalues=None, alpha=None, ax=None, ax_args=None, p
     ax.text(x, y, '  '.join(val), fontsize=7)
 
 
-def polar_map_south(lon, lat, data, pvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
+def polar_map_south(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
                     latmin=-80, latmax=-30, lonmin=0, lonmax=360,
                     fill_continents=False, fill_oceans=False, draw_parallels=False, draw_meridians=False, plot={}):
     """Pcolor a var in a south polar map, using ax if supplied"""
@@ -258,7 +260,10 @@ def polar_map_south(lon, lat, data, pvalues=None, alpha=None, ax=None, ax_args=N
  
     if alpha:
         draw_stipple(pvalues, lon, lat, m, alpha)
-            
+
+    if cvalues is not None:
+        draw_trend_stipple(data, cvalues, lon, lat, m)
+           
     m.colorbar(mappable=cot, location='right', label=cblabel)
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
@@ -266,7 +271,7 @@ def polar_map_south(lon, lat, data, pvalues=None, alpha=None, ax=None, ax_args=N
     ax.text(x, y, '  '.join(val), fontsize=7)
 
 
-def mercator(lon, lat, data, pvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False, plot={},
+def mercator(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False, plot={},
              latmin=-80, latmax=80, lonmin=0, lonmax=360, 
              fill_continents=False, fill_oceans=False, draw_parallels=False, draw_meridians=False):
     """Pcolor a var in a mercator plot, using ax if supplied"""
@@ -301,7 +306,10 @@ def mercator(lon, lat, data, pvalues=None, alpha=None, ax=None, ax_args=None, pc
     
     if alpha:
         draw_stipple(pvalues, lon, lat, m, alpha)
-    
+
+    if cvalues is not None:
+        draw_trend_stipple(data, cvalues, lon, lat, m)
+   
     m.colorbar(mappable=cot, location='right', label=cblabel)
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
@@ -348,11 +356,9 @@ def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=N
     if alpha:
         slons = []
         sdepths = []
-        print pvalues.shape
         for index, value in np.ndenumerate(pvalues):
             if index[1]%4 == 0:
                 if value < alpha:
-                    print index
                     slons.append(x[index[1]])
                     sdepths.append(z[index[0]])
         ax.plot(slons, sdepths, '.', markersize=0.2, color='k')

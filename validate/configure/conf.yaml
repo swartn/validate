@@ -223,21 +223,7 @@ plots:
           data_type: 'climatology'
           comp_obs:
              - 20CR
-          comp_models:
-           - CanCM4
-           - CCSM4
-           - CNRM-CM5
-           - FGOALS-g2
-           - GISS-E2-H
-           - GFDL-ESM2M
-           - GFDL-ESM2G
-           - NorESM1-M
-           - MPI-ESM-LR
-           - HadGEM2-ES
-           - MIROC4h
-           - HadCM3
-          comp_cmips:
-           - cmip5
+          comp_cmips: 'all'
 
 #taylor
         - variable: 'ta'
@@ -245,41 +231,15 @@ plots:
           data_type: 'climatology'
           comp_obs:
              - 20CR
-          comp_models:
-           - CanCM4
-           - CCSM4
-           - CNRM-CM5
-           - FGOALS-g2
-           - GISS-E2-H
-           - GFDL-ESM2M
-           - GFDL-ESM2G
-           - NorESM1-M
-           - MPI-ESM-LR
-           - HadGEM2-ES
-           - MIROC4h
-           - HadCM3
-          comp_cmips:
-           - cmip5
+          comp_cmips: 'all'
+
         
         - variable: 'ua'
           plot_projection: 'taylor'
           data_type: 'climatology'
           comp_obs:
              - 20CR
-          comp_models:
-           - CanCM4
-           - CCSM4
-           - CNRM-CM5
-           - FGOALS-g2
-           - GISS-E2-H
-           - GFDL-ESM2M
-           - GFDL-ESM2G
-           - NorESM1-M
-           - MPI-ESM-LR
-           - HadGEM2-ES
-           - MIROC4h
-           - HadCM3
-          comp_cmips:
+          comp_cmips: 'all'
            - cmip5
 
         - variable: 'zg'
@@ -287,20 +247,7 @@ plots:
           data_type: 'climatology'
           comp_obs:
              - 20CR
-          comp_models:
-           - CanCM4
-           - CCSM4
-           - CNRM-CM5
-           - FGOALS-g2
-           - GISS-E2-H
-           - GFDL-ESM2M
-           - GFDL-ESM2G
-           - NorESM1-M
-           - MPI-ESM-LR
-           - HadGEM2-ES
-           - MIROC4h
-           - HadCM3
-          comp_cmips:
+          comp_cmips: 'all'
            - cmip5
 
         - variable: 'pr'
@@ -680,20 +627,7 @@ plots:
           data_type: 'climatology'
           comp_obs:
              - observations
-          comp_models:
-           - CanCM4
-           - CCSM4
-           - CNRM-CM5
-           - FGOALS-g2
-           - GISS-E2-H
-           - GFDL-ESM2M
-           - GFDL-ESM2G
-           - NorESM1-M
-           - MPI-ESM-LR
-           - HadGEM2-ES
-           - MIROC4h
-           - HadCM3
-          comp_cmips:
+          comp_cmips: 'all'
            - cmip5
 
         - variable: 'so'
@@ -701,20 +635,7 @@ plots:
           data_type: 'climatology'
           comp_obs:
              - observations
-          comp_models:
-           - CanCM4
-           - CCSM4
-           - CNRM-CM5
-           - FGOALS-g2
-           - GISS-E2-H
-           - GFDL-ESM2M
-           - GFDL-ESM2G
-           - NorESM1-M
-           - MPI-ESM-LR
-           - HadGEM2-ES
-           - MIROC4h
-           - HadCM3
-          comp_cmips:
+          comp_cmips: 'all'
            - cmip5
 
         - variable: 'tos'
@@ -722,21 +643,8 @@ plots:
           data_type: 'climatology'
           comp_obs:
              - observations
-          comp_models:
-           - CanCM4
-           - CCSM4
-           - CNRM-CM5
-           - FGOALS-g2
-           - GISS-E2-H
-           - GFDL-ESM2M
-           - GFDL-ESM2G
-           - NorESM1-M
-           - MPI-ESM-LR
-           - HadGEM2-ES
-           - MIROC4h
-           - HadCM3
-          comp_cmips:
-           - cmip5
+          comp_cmips: 'all'
+
 
 
 #             OCEANBGCHEM
@@ -860,105 +768,36 @@ plots:
           data_type: 'climatology'
           comp_obs:
              - observations
-          comp_models:
-           - CanCM4
-           - CCSM4
-           - CNRM-CM5
-           - FGOALS-g2
-           - GISS-E2-H
-           - GFDL-ESM2M
-           - GFDL-ESM2G
-           - NorESM1-M
-           - MPI-ESM-LR
-           - HadGEM2-ES
-           - MIROC4h
-           - HadCM3
-          comp_cmips:
-           - cmip5
+          comp_cmips: 'all'
 
         - variable: 'no3'
           plot_projection: 'taylor'
           data_type: 'climatology'
           comp_obs:
              - observations
-          comp_models:
-           - CanCM4
-           - CCSM4
-           - CNRM-CM5
-           - FGOALS-g2
-           - GISS-E2-H
-           - GFDL-ESM2M
-           - GFDL-ESM2G
-           - NorESM1-M
-           - MPI-ESM-LR
-           - HadGEM2-ES
-           - MIROC4h
-           - HadCM3
-          comp_cmips:
-           - cmip5
+          comp_cmips: 'all'
 
         - variable: 'ph'
           plot_projection: 'taylor'
           data_type: 'climatology'
           comp_obs:
              - observations
-          comp_models:
-           - CanCM4
-           - CCSM4
-           - CNRM-CM5
-           - FGOALS-g2
-           - GISS-E2-H
-           - GFDL-ESM2M
-           - GFDL-ESM2G
-           - NorESM1-M
-           - MPI-ESM-LR
-           - HadGEM2-ES
-           - MIROC4h
-           - HadCM3
-          comp_cmips:
-           - cmip5
+          comp_cmips: 'all'
 
         - variable: 'talk'
           plot_projection: 'taylor'
           data_type: 'climatology'
           comp_obs:
              - observations
-          comp_models:
-           - CanCM4
-           - CCSM4
-           - CNRM-CM5
-           - FGOALS-g2
-           - GISS-E2-H
-           - GFDL-ESM2M
-           - GFDL-ESM2G
-           - NorESM1-M
-           - MPI-ESM-LR
-           - HadGEM2-ES
-           - MIROC4h
-           - HadCM3
-          comp_cmips:
-           - cmip5
+          comp_cmips: 'all'
 
         - variable: 'chl'
           plot_projection: 'taylor'
           data_type: 'climatology'
           comp_obs:
              - observations
-          comp_models:
-           - CanCM4
-           - CCSM4
-           - CNRM-CM5
-           - FGOALS-g2
-           - GISS-E2-H
-           - GFDL-ESM2M
-           - GFDL-ESM2G
-           - NorESM1-M
-           - MPI-ESM-LR
-           - HadGEM2-ES
-           - MIROC4h
-           - HadCM3
-          comp_cmips:
-           - cmip5
+          comp_cmips: 'all'
+
 #         SEAICE
 
 #np

@@ -55,7 +55,6 @@ def model_average(var, model, expname, frequency):
     # skip if the new file was already made
     if not os.path.isfile(new):
         ensstring = 'cmipfiles/' + var + '_*' + frequency + '_*' + model + '_' + expname + '_*.nc'
-        print ensstring
         ens = cd.mkensemble(ensstring, prefix='cmipfiles/')
         ens = cd.cat_exp_slices(ens)
         means, stdevs = cd.ens_stats(ens, var)
@@ -154,25 +153,17 @@ def getfiles(plots, expname):
     for p in plots:
         if p['comp_cmips']:
             # map the file name of the comparison file to cmip5 in compare dictionary
-#            try:
+            try:
                 files = {}
                 for f in p['comp_cmips']:
                     files[f] = p['model_files'][f]
                 cfile = {}
                 for f in p['comp_cmips']:
-                    files[f] = p['model_file'][f]
-                
-                print files
-                           
+                    files[f] = p['model_file'][f]                           
                 p['cmip5_files'] = cmip_files(files)
-                print '------------------------------'
-                print p['cmip5_files']
-
                 p['cmip5_file'] = cmip_average(p['variable'], p['cmip5_files'], str(startdates[p['variable']]) + '-01', str(enddates[p['variable']]) + '-01')
-                print p['cmip5_file']
-                print '----'
-#            except:
-#                p['comp_cmips'] = []
+            except:
+                p['comp_cmips'] = []
 
 
 def cmip(plots, cmipdir, expname, load):

@@ -443,9 +443,9 @@ def mask(name, realm):
     out = 'netcdf/masked_' + split(name)
     if not os.path.isfile(out):
         if realm == 'ocean':
-            cdo.ifthen(input='mask/ocean ' + ifile, output=out)
+            cdo.ifthen(input='mask/ocean ' + name, output=out)
         elif realm == 'land':
-            cdo.ifthen(input='mask/land ' + ifile, output=out) 
+            cdo.ifthen(input='mask/land ' + name, output=out) 
         else:
             out = name
     return out
@@ -520,10 +520,7 @@ def depthstring(depthlist):
     
        
 def intlevel(name, depthlist):
-    print depthlist
     if (not depthlist) or depthlist == [""] or depthlist == [None]:
-        print depthlist
-        print '--'
         return name
     depth = depthstring(depthlist)
     depthname = depth.replace(' ', '')
