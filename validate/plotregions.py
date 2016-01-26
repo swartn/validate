@@ -445,8 +445,6 @@ def taylordiagram(refdata, plotdata, fig=None, ax_args=None, plot={}):
         plt.title(ax_args['title'])
 
 def histogram(data, values, ax=None, ax_args=None, plot={}):
-    print ax_args
-
     if not ax:
         fig, ax = plt.subplots(1, 1, figsize=(8, 8))
     else:

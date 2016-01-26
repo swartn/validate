@@ -155,7 +155,7 @@ def comp_loop(plot, plotnames, ptype):
         plot['comp_file'] = plot['obs_file'][o]
         calltheplot(plot, plotnames, ptype)
     plot['comp_flag'] = 'cmip5'
-    for c in plot['comp_cmips']:
+    if plot['comp_cmips']:
         plot['comp_model'] = c
         plot['comp_file'] = plot['cmip5_file']
         calltheplot(plot, plotnames, ptype)

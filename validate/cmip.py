@@ -66,32 +66,31 @@ def model_average(var, model, expname, frequency):
     return new
 
 def cmip_files(model_files):
-    files = list(itertools.chain.from_iterable(model_files.values()))
+    files = list(model_files.values())
     return list(set(files))
 
-def cmip_average(var, model_file, sd, ed):
+def cmip_average(var, files, sd, ed):
     """ Creates and stores a netCDF file with the average data
         across all the models provided.
-        REturns the name of the created file.
+        Returns the name of the created file.
     """
     out = 'ENS-MEAN_cmipfiles/' + var + '_' + 'cmip5.nc'
     # skip if the new file was already made
     if not os.path.isfile(out):
-        filelist = list(set(model_file.values()))
         newfilelist = []
         newerfilelist = []
-        for f in filelist:
+        for f in files:
             time = f.replace('.nc', '_time.nc')
             
             # try to select the date range
-            try:
-                os.system('cdo -L seldate,' + sd + ',' + ed + ' -selvar,' + var + ' ' + f + ' ' + time)
+#            try:
+            os.system('cdo -L seldate,' + sd + ',' + ed + ' -selvar,' + var + ' ' + f + ' ' + time)
 #            cdo.seldate(sd+','+ed, options = '-L', input='-selvar,' + var + ' ' + f, output=time)
-            except:
+#            except:
                 # don't append filename to the list if it was not in the date range
-                pass
-            else:
-                newfilelist.append(time)
+#                pass
+#            else:
+            newfilelist.append(time)
         for f in newfilelist:
             remap = f.replace('.nc', '_remap.nc')
             
@@ -135,18 +134,45 @@ def getfiles(plots, expname):
                     with open('logs/log.txt', 'a') as outfile:
                         outfile.write('No cmip5 files were found for ' + p['variable'] + ': ' + model + '\n\n')
                     print 'No cmip5 files were found for ' + p['variable'] + ': ' + model
-
-                    # remove the model from the list if no comparison files were found
                     p['comp_models'].remove(model)
+                    try:
+                         p['comp_cmips'].remove(model)
+                    except: pass
+                    
+            for model in p['comp_cmips'][:]:
+                if model not in p['comp_models']:
+                    try:
+                        p['model_files'][model] = model_files(p['variable'], model, expname, p['frequency'])
+                        p['model_file'][model] = model_average(p['variable'], model, expname, p['frequency'])
+                    except:
+                        with open('logs/log.txt', 'a') as outfile:
+                            outfile.write('No cmip5 files were found for ' + p['variable'] + ': ' + model + '\n\n')
+                        print 'No cmip5 files were found for ' + p['variable'] + ': ' + model
+                        # remove the model from the list if no comparison files were found
+                        p['comp_cmips'].remove(model)
+                    
     for p in plots:
-        if 'cmip5' in p['comp_cmips']:
+        if p['comp_cmips']:
             # map the file name of the comparison file to cmip5 in compare dictionary
-            try:
-                p['cmip5_files'] = cmip_files(p['model_files'])
+#            try:
+                files = {}
+                for f in p['comp_cmips']:
+                    files[f] = p['model_files'][f]
+                cfile = {}
+                for f in p['comp_cmips']:
+                    files[f] = p['model_file'][f]
+                
+                print files
+                           
+                p['cmip5_files'] = cmip_files(files)
+                print '------------------------------'
+                print p['cmip5_files']
 
-                p['cmip5_file'] = cmip_average(p['variable'], p['model_file'], str(startdates[p['variable']]) + '-01', str(enddates[p['variable']]) + '-01')
-            except:
-                p['comp_cmips'].remove('cmip5')
+                p['cmip5_file'] = cmip_average(p['variable'], p['cmip5_files'], str(startdates[p['variable']]) + '-01', str(enddates[p['variable']]) + '-01')
+                print p['cmip5_file']
+                print '----'
+#            except:
+#                p['comp_cmips'] = []
 
 
 def cmip(plots, cmipdir, expname, load):

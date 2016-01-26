@@ -41,6 +41,64 @@ DEFAULTS = {'plotprojection': 'mercator',
             'sigma': 0.05,
             }
 
+
+MODELS = ['BCC-CSM1.1',
+          'CanAM4',
+          'CanESM2',
+          'CMCC-CESM',
+          'CMCC-CM',
+          'CMCC-CMS',
+          'CNRM-CM5',
+          'CNRM-CM5-2',
+          'CFSv2-2011',
+          'ACCESS1.0',
+          'ACCESS1.3',
+          'CSIRO-Mk3.6.0',
+          'EC-EARTH',
+          'FIO-ESM',
+          'BNU-ESM',
+          'INM-CM4',
+          'IPSL-CM5a-LR',
+          'IPSL-CM5A-MR',
+          'IPSL-CM5B-LR',
+          'FGOALS-g2',
+          'FGOALS-gl',
+          'FGOALS-s2',
+          'MIROC4h',
+          'MIROC5',
+          'MIROC-ESM',
+          'MIROC-ESM-CHEM',
+          'HadCM3',
+          'HadCM3Q',
+          'HadGEM2-A'
+          'HadGEM2-CC',
+          'HadGEM2-ES',
+          'MPI-ESM-LR',
+          'MPI-ESM-MR',
+          'MPI-ESM-P',
+          'MRI-AGCM3.2H',
+          'MRI-AGCM3.2S',
+          'MRI-CGCM3',
+          'MRI-ESM1',
+          'GISS-E2-H',
+          'GISS-E2-H-CC',
+          'GISS-E2-R',
+          'GISS-E2-R-CC',
+          'GEOS-5',
+          'CCSM4',
+          'NorESM1-M',
+          'NorESM-ME',
+          'NICAM.09',
+          'HadGEM2-AO',
+          'GFDL-CM2.1',
+          'GFDL-CM3',
+          'GFDL-ESM2G',
+          'GFDL-ESM2M',
+          'GFDL-HIRAM-C180',
+          'GFDL-HIRAM-C360',
+          'CESM1',
+          ]
+
 piControl = {'dates': {'start_date': '2900-01',
                        'end_date': '3000-01'},
              }
@@ -105,6 +163,11 @@ def fill(plots, model_run, experiment, defaults={}):
             p['seasons'] = ['DJF', 'MAM', 'JJA', 'SON']
         if 'comp_seasons' not in p:
             p['comp_seasons'] = ['DJF', 'MAM', 'JJA', 'SON']
+        
+        if p['comp_models'] == 'all':
+            p['comp_models'] = list(MODELS)
+        if p['comp_cmips'] == 'all':
+            p['comp_cmips'] = list(MODELS)
               
         # remove plot from list if no variable is provided
         if 'variable' not in p:

@@ -16,8 +16,7 @@ from pdforganize import arrange
 from defaults import fill
 from check import check_inputs
 from cmip import cmip
-
-
+          
 def execute(options, **kwargs):
     """ Gets the configuration and contains the function that
         calls modules required to find the data,
