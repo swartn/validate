@@ -8,6 +8,11 @@
 #             example:             
 #                 run: 'edr'
 #
+#experiment : The type of experiment
+#
+#             example
+#                 experiment: 'historical'
+#
 # plots : A list of dictionaries specifying the plots to be produced. At a minimum
 #         to produce a plot, the dictionary must have a 'variable' and 'plot_projection'
 #         specified. The rest of the keys are options for customizing the plots.
@@ -24,32 +29,27 @@
 #                               'time_series'
 #                               'zonal_mean'
 #                               'taylor'
-#          climatology' : Boolean to produce climatology plot.
-#          compare_climatology' : Boolean to produce climatology comparison.
-#          trends : Boolean to produce trends plot.
-#          compare_trends' : Boolean to produce trends comparison.
-#          compare : A dictionary mapping comparison options
-#                      'obs'
-#                      'cmip5',
-#                      'model'
-#                      'runid'
-#                      to booleans
+#          data_type: The type of data to be displayed
+#                     Either 'climatology' or 'trends'
 #          comp_models : A list of strings of cmip5 model names to compare
 #          comp_ids : A list of strings of run IDs to compare
-#          climatology_dates : A dictionary mapping
+#          comp_cmips : A list of strings of cmip5 model names to be used
+#                       for the cmip average
+#                       'all' can be used to select all the models
+#          dates : A dictionary mapping
 #                                'start_date'
 #                                'end_date'
-#                                to the dates to use in the climatology plots.
+#                                to the dates to use in the plots.
 #                                Should be of the form 'yyyy-mm-dd' or 'yyyy-mm'
 #                                ex. {'start_date': '1970-01-01', 'end_date': '1990-01'}
-#          trends_dates : A dictionary mapping
+#          comp_dates : A dictionary mapping
 #                           'start_date'
 #                           'end_date'
-#                           to the dates to use in the trends plots.
+#                           to the dates to used for the comparison data.
 #                           Should be of the form 'yyyy-mm-dd' or 'yyyy-mm'
 #                           ex. {'start_date': '1970-01-01', 'end_date': '1990-01'}
 #          realization : integer or string of realizaion number
-#                          ex. '1'
+#                          ex. 'r1i1p1'
 #          depth_type : string of the depth type used for the variable in the netCDF file.
 #                         required for depths to be specified and for section plots
 #                         ex 'plev'
@@ -240,7 +240,6 @@ plots:
           comp_obs:
              - 20CR
           comp_cmips: 'all'
-           - cmip5
 
         - variable: 'zg'
           plot_projection: 'taylor'
@@ -248,7 +247,6 @@ plots:
           comp_obs:
              - 20CR
           comp_cmips: 'all'
-           - cmip5
 
         - variable: 'pr'
           plot_projection: 'taylor'
@@ -269,7 +267,6 @@ plots:
            - MIROC4h
            - HadCM3
           comp_cmips:
-           - cmip5
 
 #        ATMOS DJF
 
@@ -472,43 +469,43 @@ plots:
 
 #         LAND
         - variable: 'nep'
-          plot_projection: 'global_map'
+          plot_projection: 'mercator'
           data_type: 'climatology'
 
         - variable: 'gpp'
-          plot_projection: 'global_map'
+          plot_projection: 'mercator'
           data_type: 'climatology'
 
         - variable: 'npp'
-          plot_projection: 'global_map'
+          plot_projection: 'mercator'
           data_type: 'climatology'
 
         - variable: 'lai'
-          plot_projection: 'global_map'
+          plot_projection: 'mercator'
           data_type: 'climatology'
 
         - variable: 'cSoil'
-          plot_projection: 'global_map'
+          plot_projection: 'mercator'
           data_type: 'climatology'
 
         - variable: 'cRoot'
-          plot_projection: 'global_map'
+          plot_projection: 'mercator'
           data_type: 'climatology'
 
         - variable: 'cVeg'
-          plot_projection: 'global_map'
+          plot_projection: 'mercator'
           data_type: 'climatology'
 
         - variable: 'cWood'
-          plot_projection: 'global_map'
+          plot_projection: 'mercator'
           data_type: 'climatology'
 
         - variable: 'cLeaf'
-          plot_projection: 'global_map'
+          plot_projection: 'mercator'
           data_type: 'climatology'
 
         - variable: 'cLitter'
-          plot_projection: 'global_map'
+          plot_projection: 'mercator'
           data_type: 'climatology'
 
 #        OCEAN
@@ -628,7 +625,6 @@ plots:
           comp_obs:
              - observations
           comp_cmips: 'all'
-           - cmip5
 
         - variable: 'so'
           plot_projection: 'taylor'
@@ -636,7 +632,6 @@ plots:
           comp_obs:
              - observations
           comp_cmips: 'all'
-           - cmip5
 
         - variable: 'tos'
           plot_projection: 'taylor'
@@ -906,6 +901,12 @@ delete:
           del_ENS_STD_cmipfiles: True
           del_cmipfiles: False
 
-data_root: '/raid/rc40/data/ncs/'
+data_root: '/raid/rc40/data/ncs/historical-edr/'
+#data_root: '/fs/cetus/fs2/crb/CCCma_Output/CMIP5/output/CCCma/CanESM2/historical/'
+#data_root: 
 observations_root: '/raid/rc40/data/ncs/obs4comp/'
+#observations_root: '/fs/cava/dev/crb/sata/ccrna03/data/utmp/dwf/obs4comp/'
 cmip5_root: '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
+# cmip5_root: '/fs/cetus/fs2/crb/AR5/CMIP5_OTHER_DOWNLOADS/'
+cmip5_means: '/home/004/david_fallis_sept2015/meanstorage/'
+#cmip5_means: '/fs/cava/dev/crb/sata/ccrna03/data/utmp/dwf/cmip5_means/'

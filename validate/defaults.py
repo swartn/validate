@@ -42,7 +42,7 @@ DEFAULTS = {'plotprojection': 'mercator',
             }
 
 
-MODELS = ['BCC-CSM1.1',
+MODELS = ['bcc-csm1-1',
           'CanAM4',
           'CanESM2',
           'CMCC-CESM',
@@ -51,8 +51,8 @@ MODELS = ['BCC-CSM1.1',
           'CNRM-CM5',
           'CNRM-CM5-2',
           'CFSv2-2011',
-          'ACCESS1.0',
-          'ACCESS1.3',
+          'ACCESS1-0',
+          'ACCESS1-3',
           'CSIRO-Mk3.6.0',
           'EC-EARTH',
           'FIO-ESM',
@@ -90,7 +90,7 @@ MODELS = ['BCC-CSM1.1',
           'NorESM-ME',
           'NICAM.09',
           'HadGEM2-AO',
-          'GFDL-CM2.1',
+          'GFDL-CM2p1',
           'GFDL-CM3',
           'GFDL-ESM2G',
           'GFDL-ESM2M',
@@ -145,9 +145,15 @@ def fill(plots, model_run, experiment, defaults={}):
             p['comp_models'] = []
         if 'comp_cmips' not in p:
             p['comp_cmips'] = []
+        if p['comp_cmips'] == None:
+            p['comp_cmips'] = []
         if 'comp_ids' not in p:
             p['comp_ids'] = []
+        if p['comp_ids'] == None:
+            p['comp_ids'] = []
         if 'comp_obs' not in p:
+            p['comp_obs'] = []
+        if p['comp_obs'] == None:
             p['comp_obs'] = []
         if 'data1' not in p:
             p['data1'] = {}
@@ -193,6 +199,7 @@ def fill(plots, model_run, experiment, defaults={}):
             p['comp_dates'] = p['dates']
           
         p['model_ID'] = model_run
+        p['experiment'] = experiment
         p['plot_depth'] = 0
         
         def _fill_args(data):

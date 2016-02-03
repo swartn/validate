@@ -22,7 +22,10 @@ def _check_averaged(ifile):
     """ Returns True if there is only one timestep in the netcdf file
     """
     nc = Dataset(ifile, 'r')
-    time = nc.variables['time'][:].squeeze()
+    try:
+        time = nc.variables['time'][:].squeeze()
+    except:
+        return True
     return time.size == 1
 
 
@@ -86,11 +89,12 @@ def _check_dates(ifile, dates):
     if _check_averaged(ifile):
         with open('logs/log.txt', 'a') as outfile:
             outfile.write('WARNING: Comparison data is time averaged\n')
-        return False
+        return True
     elif _check_dates_outside(ifile, **dates):
         with open('logs/log.txt', 'a') as outfile:
             outfile.write('WARNING: Comparison data is not from time period\n')
         raise Exception
+    return False
 
 
 def _scale_units(units, scale):
@@ -209,12 +213,12 @@ def timeaverage_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgr
     numpy array
     numpy array
     """
-    _check_dates(ifile, dates)
+    averaged = _check_dates(ifile, dates)
     
     if depthneeded is not None: # use is not because the truth value of an array is ambiguous
-        finalout = intlevel(setc(remap(time_mean(season(sel_var(ifile, var), seasons), dates['start_date'], dates['end_date']), remapf, remapgrid)), depthneeded)
+        finalout = intlevel(remap(setc(time_mean(season(sel_var(ifile, var), seasons), dates['start_date'], dates['end_date'], averaged)), remapf, remapgrid), depthneeded)
     else:
-        finalout = setc(remap(time_mean(mask(season(sel_var(ifile, var), seasons), realm), dates['start_date'], dates['end_date']), remapf, remapgrid))
+        finalout = remap(setc(time_mean(mask(season(sel_var(ifile, var), seasons), realm), dates['start_date'], dates['end_date'], averaged)), remapf, remapgrid)
     
     # load data from final netcdf file into Dataset object
     nc = Dataset(finalout, 'r')
@@ -265,10 +269,13 @@ def trends_load(ifile, var, dates, scale, remapf='remapdis', remapgrid='r360x180
     return data, units, lon, lat, depth
 
 def full_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', depthneeded=None, seasons=None):
+
+    averaged = _check_dates(ifile, dates)
+    
     if depthneeded is not None:
-        finalout = intlevel(setc(remap(sel_date(season(sel_var(ifile, var), seasons), dates['start_date'], dates['end_date']), remapf, remapgrid)), depthneeded)
+        finalout = intlevel(setc(remap(sel_date(season(sel_var(ifile, var), seasons), dates['start_date'], dates['end_date'], averaged), remapf, remapgrid)), depthneeded)
     else:
-        finalout = setc(remap(sel_date(mask(season(sel_var(ifile, var), seasons), realm), dates['start_date'], dates['end_date']), remapf, remapgrid))
+        finalout = setc(remap(sel_date(mask(season(sel_var(ifile, var), seasons), realm), dates['start_date'], dates['end_date'], averaged), remapf, remapgrid))
     
     nc = Dataset(finalout, 'r')
     data, units, depth = _load(nc, var)
@@ -366,10 +373,11 @@ def histogram_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid
     return data, units, x, depth
 
 def full_section_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', depthneeded=None, seasons=None):
+    averaged = _check_dates(ifile, dates)
     if depthneeded is not None:
-        finalout = intlevel(zonal_mean(remap(sel_date(setc(season(sel_var(ifile, var), seasons)), dates['start_date'], dates['end_date']), remapf, remapgrid)), depthneeded)    
+        finalout = intlevel(zonal_mean(remap(sel_date(setc(season(sel_var(ifile, var), seasons)), dates['start_date'], dates['end_date'], averaged), remapf, remapgrid)), depthneeded)    
     else:
-        finalout = zonal_mean(remap(sel_date(setc(mask(season(sel_var(ifile, var), seasons), realm)), dates['start_date'], dates['end_date']), remapf, remapgrid))
+        finalout = zonal_mean(remap(sel_date(setc(mask(season(sel_var(ifile, var), seasons), realm)), dates['start_date'], dates['end_date'], averaged), remapf, remapgrid))
  
     nc = Dataset(finalout, 'r')
     data, units, depth = _load(nc, var)
@@ -396,7 +404,7 @@ def zonal_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r3
     numpy array
     numpy array
     """ 
-    _check_dates(ifile, dates)  
+    averaged = _check_dates(ifile, dates)  
     
     if trends:
         if depthneeded is not None:
@@ -405,9 +413,9 @@ def zonal_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r3
             finalout = zonal_mean(remap(trend(setc(mask(season(sel_var(ifile, var), seasons), realm)), dates['start_date'], dates['end_date']), remapf, remapgrid))   
     else:
         if depthneeded is not None:
-            finalout = intlevel(zonal_mean(remap(time_mean(setc(season(sel_var(ifile, var), seasons)), dates['start_date'], dates['end_date']), remapf, remapgrid)), depthneeded)    
+            finalout = intlevel(zonal_mean(remap(time_mean(setc(season(sel_var(ifile, var), seasons)), dates['start_date'], dates['end_date'], averaged), remapf, remapgrid)), depthneeded)    
         else:
-            finalout = zonal_mean(remap(time_mean(setc(mask(season(sel_var(ifile, var), seasons), realm)), dates['start_date'], dates['end_date']), remapf, remapgrid))
+            finalout = zonal_mean(remap(time_mean(setc(mask(season(sel_var(ifile, var), seasons), realm)), dates['start_date'], dates['end_date'], averaged), remapf, remapgrid))
     
     nc = Dataset(finalout, 'r')
 
@@ -426,7 +434,9 @@ def split(name):
     path, filename = os.path.split(name)
     return filename
 
-def sel_date(name, start_date, end_date):
+def sel_date(name, start_date, end_date, time_average=False):
+    if time_average:
+        return name
     out = 'netcdf/seldate_' + start_date + '_' + end_date + '_' + split(name)
     if not os.path.isfile(out):
         datestring = start_date + ',' + end_date
@@ -443,14 +453,26 @@ def mask(name, realm):
     out = 'netcdf/masked_' + split(name)
     if not os.path.isfile(out):
         if realm == 'ocean':
-            cdo.ifthen(input='mask/ocean ' + name, output=out)
+            try:
+                cdo.ifthen(input='mask/ocean ' + name, output=out)
+            except:
+                with open('logs/log.txt', 'a') as outfile:
+                    outfile.write('WARNING: Land data was not masked\n')
+                return name             
         elif realm == 'land':
-            cdo.ifthen(input='mask/land ' + name, output=out) 
+            try:
+                cdo.ifthen(input='mask/land ' + name, output=out) 
+            except:
+                with open('logs/log.txt', 'a') as outfile:
+                    outfile.write('WARNING: Ocean data was not masked\n')
+                return name 
         else:
             out = name
     return out
 
-def time_mean(name, start_date, end_date):
+def time_mean(name, start_date, end_date, time_average=False):
+    if time_average:
+       return name
     out = 'netcdf/climate_' + start_date + '_' + end_date + '_' + split(name)
     if not os.path.isfile(out):
         seldatestring = '-seldate,' + start_date + ',' + end_date
@@ -520,7 +542,7 @@ def depthstring(depthlist):
     
        
 def intlevel(name, depthlist):
-    if (not depthlist) or depthlist == [""] or depthlist == [None]:
+    if depthlist == None or depthlist == [] or depthlist == [""] or depthlist == [None]:
         return name
     depth = depthstring(depthlist)
     depthname = depth.replace(' ', '')

@@ -12,6 +12,7 @@ import cmipdata as cd
 import cdo
 cdo = cdo.Cdo()
 
+MEANDIR = None
 
 def importcmip(directory='/raid/ra40/CMIP5_OTHER_DOWNLOADS/'):
     """ Recursively traverses the provided directory and soft links the netCDF
@@ -55,6 +56,7 @@ def model_average(var, model, expname, frequency):
     # skip if the new file was already made
     if not os.path.isfile(new):
         ensstring = 'cmipfiles/' + var + '_*' + frequency + '_*' + model + '_' + expname + '_*.nc'
+        print ensstring
         ens = cd.mkensemble(ensstring, prefix='cmipfiles/')
         ens = cd.cat_exp_slices(ens)
         means, stdevs = cd.ens_stats(ens, var)
@@ -66,13 +68,17 @@ def model_average(var, model, expname, frequency):
 
 def cmip_files(model_files):
     files = list(model_files.values())
-    return list(set(files))
+    allfiles = [item for sublist in files for item in sublist]
+    return list(set(allfiles))
 
-def cmip_average(var, files, sd, ed):
+def cmip_average(var, frequency, files, sd, ed, expname):
     """ Creates and stores a netCDF file with the average data
         across all the models provided.
         Returns the name of the created file.
     """
+
+    ens = cd.mkensemble(MEANDIR + 'ENS-MEAN_' + var  '_*' + frequency + '_*_' + expname + '_*.nc', prefix=MEANDIR + 'ENS-MEAN_')
+    
     out = 'ENS-MEAN_cmipfiles/' + var + '_' + 'cmip5.nc'
     # skip if the new file was already made
     if not os.path.isfile(out):
@@ -138,17 +144,17 @@ def getfiles(plots, expname):
                          p['comp_cmips'].remove(model)
                     except: pass
                     
-            for model in p['comp_cmips'][:]:
-                if model not in p['comp_models']:
-                    try:
-                        p['model_files'][model] = model_files(p['variable'], model, expname, p['frequency'])
-                        p['model_file'][model] = model_average(p['variable'], model, expname, p['frequency'])
-                    except:
-                        with open('logs/log.txt', 'a') as outfile:
-                            outfile.write('No cmip5 files were found for ' + p['variable'] + ': ' + model + '\n\n')
-                        print 'No cmip5 files were found for ' + p['variable'] + ': ' + model
-                        # remove the model from the list if no comparison files were found
-                        p['comp_cmips'].remove(model)
+#            for model in p['comp_cmips'][:]:
+#                if model not in p['comp_models']:
+#                    try:
+#                        p['model_files'][model] = model_files(p['variable'], model, expname, p['frequency'])
+#                        p['model_file'][model] = model_average(p['variable'], model, expname, p['frequency'])
+#                    except:
+#                        with open('logs/log.txt', 'a') as outfile:
+#                            outfile.write('No cmip5 files were found for ' + p['variable'] + ': ' + model + '\n\n')
+#                        print 'No cmip5 files were found for ' + p['variable'] + ': ' + model
+#                        # remove the model from the list if no comparison files were found
+#                        p['comp_cmips'].remove(model)
                     
     for p in plots:
         if p['comp_cmips']:
@@ -159,17 +165,19 @@ def getfiles(plots, expname):
                     files[f] = p['model_files'][f]
                 cfile = {}
                 for f in p['comp_cmips']:
-                    files[f] = p['model_file'][f]                           
+                    files[f] = p['model_files'][f]                           
                 p['cmip5_files'] = cmip_files(files)
-                p['cmip5_file'] = cmip_average(p['variable'], p['cmip5_files'], str(startdates[p['variable']]) + '-01', str(enddates[p['variable']]) + '-01')
+                p['cmip5_file'] = cmip_average(p['variable'], p['frequency'], p['cmip5_files'], str(startdates[p['variable']]) + '-01', str(enddates[p['variable']]) + '-01', expname)
             except:
                 p['comp_cmips'] = []
 
 
-def cmip(plots, cmipdir, expname, load):
+def cmip(plots, cmipdir, cmipmeandir, expname, load):
     """ Import the netCDF files if needed
         and call the functions to modify and map the cmip5 files
     """
+    global MEANDIR 
+    MEANDIR = cmipmeandir
     for p in plots:
         if p['comp_cmips'] or p['comp_models']:
             # Assumes if the 'cmipfiles' directory exists then the files have been already linked

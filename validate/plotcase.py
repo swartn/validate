@@ -167,13 +167,15 @@ def map_climatology(plot, func):
     # load data from netcdf file
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
     
-
+    print data.shape
     # get data at correct depth
     data = _depth_data(data, depth, plot)
 
     dft.filltitle(plot)
     _pcolor(data, plot, anom=False)
-    
+    print data.shape
+    print lon.shape
+    print lat.shape
     # make plot
     func(lon, lat, data, ax_args=plot['data1']['ax_args'],
          pcolor_args=plot['data1']['pcolor_args'], cblabel=units, plot=plot,
@@ -207,23 +209,33 @@ def map_climatology_comparison(plot, func):
 
     
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
-    
+    print data.shape
     # get data at correct depth
     data = _depth_data(data, depth, plot)
-
+    print data.shape
     fulldata = pl.full_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
-    fulldata2 = pl.full_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], depthneeded=depth, seasons=plot['comp_seasons'])
-    fulldepthdata = _full_depth_data(fulldata, depth, plot)
-    fulldepthdata2 = _full_depth_data(fulldata2, depth, plot)
-    pvalues = ttest(fulldepthdata, fulldepthdata2) 
+    fulldata2 = pl.full_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], depthneeded=list(depth), seasons=plot['comp_seasons'])
+  
+    if len(fulldata.shape) == len(fulldata2.shape):
+        fulldepthdata = _full_depth_data(fulldata, depth, plot)
+        fulldepthdata2 = _full_depth_data(fulldata2, depth, plot)
+        pvalues = ttest(fulldepthdata, fulldepthdata2)
+    else:
+        pvalues = None 
+        plot['alpha'] = None
 
     # get comparison data from netcdf file
-    data2, units, lon, lat, depth = pl.timeaverage_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], [plot['plot_depth']], seasons=plot['comp_seasons'])
-
+    data2, units, lon2, lat2, depth = pl.timeaverage_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], [plot['plot_depth']], seasons=plot['comp_seasons'])
+    print data2.shape
+    print lon.shape
+    print lon2.shape
     # get comparison data at correct depth
 #    data2 = _depth_data(data2, depth, plot)
-
-    compdata = data - data2
+    try:
+        compdata = data - data2
+    except:
+        data2 = data2.transpose()
+        compdata = data - data2
     _comp_pcolor(data, data2, plot)
     
 
@@ -300,10 +312,10 @@ def section_climatology_comparison(plot, func):
     zonmean, units, x, depth = pl.zonal_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], seasons=plot['seasons'])
 
     # load comparison data from netcdf file
-    zonmean2, units2, x2, depth2 = pl.zonal_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], depthneeded=depth, seasons=plot['comp_seasons'])
+    zonmean2, units2, x2, depth2 = pl.zonal_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], depthneeded=list(depth), seasons=plot['comp_seasons'])
 
     fulldata = pl.full_section_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], seasons=plot['seasons'])
-    fulldata2 = pl.full_section_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], depthneeded=depth, seasons=plot['comp_seasons'])
+    fulldata2 = pl.full_section_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], depthneeded=list(depth), seasons=plot['comp_seasons'])
     pvalues = ttest(fulldata, fulldata2)
     
     dft.filltitle(plot)
@@ -546,7 +558,7 @@ def section_trends_comp(plot, func):
 
     zonmean, units, x, depth = pl.zonal_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], trends=True, seasons=plot['seasons'])
 
-    zonmean2, units2, x2, depth2 = pl.zonal_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], trends=True, depthneeded=depth, seasons=plot['comp_seasons'])
+    zonmean2, units2, x2, depth2 = pl.zonal_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], trends=True, depthneeded=list(depth), seasons=plot['comp_seasons'])
 
     # scale data based on frequency
     zonmean, units = _trend_units(zonmean, units, plot)
@@ -597,8 +609,8 @@ def histogram(plot, func):
         data = _1d_depth_data(data, depth, plot)
         values[m] = data 
     cmipdata = []
-    for f in plot['comp_cmips']:
-        data, units, x, depth = pl.histogram_load(plot['model_file'][f], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], trends=True, depthneeded=plot['plot_depth'], seasons=plot['seasons'])
+    for f in plot['cmip5_files']:
+        data, units, x, depth = pl.histogram_load(f, plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], trends=True, depthneeded=plot['plot_depth'], seasons=plot['seasons'])
         data, units = _trend_units(data, units, plot)
         data = _1d_depth_data(data, depth, plot)
         cmipdata.append(data)
@@ -627,6 +639,8 @@ def timeseriesdata(plot, compfile, depth):
 
 
 def timeseries_comparison(plot, func):
+    print plot['cmip5_files']
+    print plot['cmip5_file']
     print 'plotting timeseries comparison of ' + plot['variable']
 
     # Load time series data from netcdf file
@@ -655,7 +669,7 @@ def timeseries_comparison(plot, func):
     handles = [mpatches.Patch(color='b', label=plot['model_ID'])]
 
     # plot comparison data on the same axis
-    if plot['comp_cmips']:
+    if plot['cmip5_file']:
         print plot['cmip5_file']
         plot['comp_model'] = 'cmip5'
         data, x = timeseriesdata(plot, plot['cmip5_file'], depth)
@@ -671,10 +685,14 @@ def timeseries_comparison(plot, func):
         data, x = timeseriesdata(plot, plot['model_file'][model], depth)
         func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='r', zorder=2)
         handles.append(mpatches.Patch(color='r', label=str(plot['comp_model'])))
-    for model in plot['comp_cmips']:
-        plot['comp_model'] = model
-        data, x = timeseriesdata(plot, plot['model_file'][model], depth)
-        func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='0.75', zorder=1)
+    for f in plot['cmip5_files']:
+        print f
+        try:
+            plot['comp_model'] = 'cmip'
+            data, x = timeseriesdata(plot, f, depth)
+            func(x, data, plot=plot, ax=ax, label=None, ax_args=plot['data1']['ax_args'], color='0.75', zorder=1)
+        except:
+            pass 
     for i in plot['comp_ids']:
         plot['comp_model'] = i
         data, x = timeseriesdata(plot, plot['id_file'][i], depth)
@@ -689,16 +707,17 @@ def timeseries_comparison(plot, func):
     return plot_name
 
 def zonalmeandata(plot, compfile, ax, depth, func, color, zorder):
-    data2, units2, x2, depth2 = pl.zonal_load(compfile, plot['variable'], plot['comp_dates'], depth, plot['scale'], seasons=plot['comp_seasons'])
-    if data2.ndim > 1:
-        try:
-            depth_ind = np.where(np.round(depth) == plot['plot_depth'])[0][0]
-        except:
-            print('Failed to extract depth ' + plot['plot_depth'] + ' for ' + plot['variable'])
-            depth_ind = 0
-        data2 = data2[depth_ind, :]
-    func(x2, data2, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color=color, zorder=zorder)
-
+    try:
+        data2, units2, x2, depth2 = pl.zonal_load(compfile, plot['variable'], plot['comp_dates'], depth, plot['scale'], seasons=plot['comp_seasons'])
+        if data2.ndim > 1:
+            try:
+                depth_ind = np.where(np.round(depth) == plot['plot_depth'])[0][0]
+            except:
+                print('Failed to extract depth ' + plot['plot_depth'] + ' for ' + plot['variable'])
+                depth_ind = 0
+            data2 = data2[depth_ind, :]
+        func(x2, data2, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color=color, zorder=zorder)
+    except: pass
 
 def zonalmean_comparison(plot, func):
     """ Loads and plots a time average of the zonal means
@@ -753,9 +772,9 @@ def zonalmean_comparison(plot, func):
         plot['comp_model'] = model
         zonalmeandata(plot, plot['model_file'][model], ax, depth, func, color='r', zorder=2)        
         handles.append(mpatches.Patch(color='r', label=str(plot['comp_model'])))        
-    for model in plot['comp_cmips']:
-        plot['comp_model'] = model
-        zonalmeandata(plot, plot['model_file'][model], ax, depth, func, color='0.75', zorder=1)
+    for f in plot['cmip5_files']:
+        plot['comp_model'] = 'cmip'
+        zonalmeandata(plot, f, ax, depth, func, color='0.75', zorder=1)
     for i in plot['comp_ids']:
         plot['comp_model'] = i
         zonalmeandata(plot, plot['id_file'][i], ax, depth, func, color='y', zorder=3)
@@ -780,22 +799,22 @@ def taylor_full(plot, func):
 
     # load observations data
     
-    refdata, units, lon, lat, depth = pl.timeaverage_load(plot['obs_file'][plot['comp_obs'][0]], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], depthneeded=[plot['plot_depth']], seasons=plot['comp_seasons']) 
+    refdata, units, lon, lat, depth = pl.timeaverage_load(plot['obs_file'][plot['comp_obs'][0]], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], depthneeded=list(depth), seasons=plot['comp_seasons']) 
  
     dft.filltitle(plot)
     
     # get data from models and cmip and append to plotdata list
-    for c in ['comp_cmips']:
-        plot['comp_model'] = c
-        data, units, lon, lat, depth = pl.timeaverage_load(plot['cmip5_file'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], depthneeded=[plot['plot_depth']], seasons=plot['comp_seasons'])
+    if plot['cmip5_file']:
+        plot['comp_model'] = 'cmip5'
+        data, units, lon, lat, depth = pl.timeaverage_load(plot['cmip5_file'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], depthneeded=list(depth), seasons=plot['comp_seasons'])
         plotdata.append((data, 'cmip5'))
     for model in plot['comp_models']:
         plot['comp_model'] = model
-        data, units, lon, lat, depth = pl.timeaverage_load(plot['model_file'][model], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], depthneeded=[plot['plot_depth']], seasons=plot['comp_seasons'])
+        data, units, lon, lat, depth = pl.timeaverage_load(plot['model_file'][model], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], depthneeded=list(depth), seasons=plot['comp_seasons'])
         plotdata.append((data, model))
     for i in plot['comp_ids']:
         plot['comp_model'] = i
-        data, units, lon, lat, depth = pl.timeaverage_load(plot['id_file'][i], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], depthneeded=[plot['plot_depth']], seasons=plot['comp_seasons'])
+        data, units, lon, lat, depth = pl.timeaverage_load(plot['id_file'][i], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], depthneeded=list(depth), seasons=plot['comp_seasons'])
         plotdata.append((data, i))
             
     # make plot
@@ -834,7 +853,7 @@ def taylor(plot, func):
     dft.filltitle(plot)
     
     # get data from models and cmip and append to plotdata list
-    if plot['comp_cmips']:
+    if plot['cmip5_file']:
         plot['comp_model'] = 'cmip5'
         data, units, lon, lat, depth = pl.timeaverage_load(plot['cmip5_file'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], depthneeded=[plot['plot_depth']], seasons=plot['comp_seasons'])
         plotdata.append((_depth_data(data, depth, plot), c))

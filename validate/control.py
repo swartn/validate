@@ -10,12 +10,11 @@ from various modules to produce the plots layed out in conf.yaml
 import sys
 import yaml
 import os
-from directory_tools import getfiles, remfiles, getobsfiles, getidfiles
+from directory_tools import getfiles, remfiles, getobsfiles, getidfiles, cmip
 from plotter import loop
 from pdforganize import arrange
 from defaults import fill
 from check import check_inputs
-from cmip import cmip
           
 def execute(options, **kwargs):
     """ Gets the configuration and contains the function that
@@ -23,7 +22,7 @@ def execute(options, **kwargs):
         process the data, and output the plots and figures.
 
     """
-    def plot(run=None, experiment='historical', data_root="", observations_root="", cmip5_root="", loadcmip5=False, ignorecheck=False, debugging=False, plots=[], defaults={}, delete={}, obs={}, **kwargs):
+    def plot(run=None, experiment='historical', data_root="", observations_root="", cmip5_root="", cmip5_means='', loadcmip5=False, ignorecheck=False, debugging=False, plots=[], defaults={}, delete={}, obs={}, **kwargs):
         """Calls modules required to find the data,
            process the data, and output the plots and figures
         """
@@ -41,7 +40,7 @@ def execute(options, **kwargs):
         getobsfiles(plots, observations_root)
         
         # find the cmip5 files
-        cmip(plots, cmip5_root, experiment, loadcmip5)
+        cmip(plots, cmip5_root, cmip5_means, experiment, loadcmip5)
         
         # find the files from other runIds for comparison
         getidfiles(plots, data_root, experiment)
