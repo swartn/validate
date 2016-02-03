@@ -166,16 +166,12 @@ def map_climatology(plot, func):
     print 'plotting map of ' + plot['variable']
     # load data from netcdf file
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
-    
-    print data.shape
+
     # get data at correct depth
     data = _depth_data(data, depth, plot)
 
     dft.filltitle(plot)
     _pcolor(data, plot, anom=False)
-    print data.shape
-    print lon.shape
-    print lat.shape
     # make plot
     func(lon, lat, data, ax_args=plot['data1']['ax_args'],
          pcolor_args=plot['data1']['pcolor_args'], cblabel=units, plot=plot,
@@ -209,10 +205,9 @@ def map_climatology_comparison(plot, func):
 
     
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
-    print data.shape
     # get data at correct depth
     data = _depth_data(data, depth, plot)
-    print data.shape
+
     fulldata = pl.full_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
     fulldata2 = pl.full_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], depthneeded=list(depth), seasons=plot['comp_seasons'])
   
@@ -226,9 +221,6 @@ def map_climatology_comparison(plot, func):
 
     # get comparison data from netcdf file
     data2, units, lon2, lat2, depth = pl.timeaverage_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], [plot['plot_depth']], seasons=plot['comp_seasons'])
-    print data2.shape
-    print lon.shape
-    print lon2.shape
     # get comparison data at correct depth
 #    data2 = _depth_data(data2, depth, plot)
     try:
@@ -418,21 +410,10 @@ def map_trends(plot, func):
 
     fulldata = pl.full_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
     detrenddata = pl.full_detrend(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
-    print fulldata.shape
-    print detrenddata.shape
     fulldepthdata = _full_depth_data(fulldata, depth, plot)
     fulldepthdetrenddata = _full_depth_data(detrenddata, depth, plot)
     
     slope, intercept, r_value, p_value, std_error = sp.stats.linregress(np.arange(len(fulldepthdata)), fulldepthdata[:, 0 , 0])
-    print '----'
-    print slope
-    print intercept
-    print r_value
-    print p_value
-    print std_error
-    print '------'
-    print fulldepthdata.shape
-    print fulldepthdetrenddata.shape
     siggrid = trend_significance(fulldepthdetrenddata, plot['sigma'])
     cvalues, _ = _trend_units(siggrid, units, plot)
 
@@ -639,8 +620,6 @@ def timeseriesdata(plot, compfile, depth):
 
 
 def timeseries_comparison(plot, func):
-    print plot['cmip5_files']
-    print plot['cmip5_file']
     print 'plotting timeseries comparison of ' + plot['variable']
 
     # Load time series data from netcdf file
@@ -670,7 +649,6 @@ def timeseries_comparison(plot, func):
 
     # plot comparison data on the same axis
     if plot['cmip5_file']:
-        print plot['cmip5_file']
         plot['comp_model'] = 'cmip5'
         data, x = timeseriesdata(plot, plot['cmip5_file'], depth)
         func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='g', zorder=4)
@@ -686,7 +664,6 @@ def timeseries_comparison(plot, func):
         func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='r', zorder=2)
         handles.append(mpatches.Patch(color='r', label=str(plot['comp_model'])))
     for f in plot['cmip5_files']:
-        print f
         try:
             plot['comp_model'] = 'cmip'
             data, x = timeseriesdata(plot, f, depth)
