@@ -640,6 +640,12 @@ plots:
              - observations
           comp_cmips: 'all'
 
+#timeseries
+        - variable: 'fgco2'
+          plot_projection: 'time_series'
+          data_type: 'climatology'
+          cdostring: 'fldsum -seldate,1979-01,2000-01 -mul mask/areacello'       
+
 
 
 #             OCEANBGCHEM
