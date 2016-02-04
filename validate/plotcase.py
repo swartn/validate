@@ -607,7 +607,7 @@ def histogram(plot, func):
     return plot_name
     
 def timeseriesdata(plot, compfile, depth):
-    data, units, x, depth = pl.timeseries_load(compfile, plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], depthneeded=plot['plot_depth'], seasons=plot['comp_seasons'])
+    data, units, x, depth = pl.timeseries_load(compfile, plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], depthneeded=plot['plot_depth'], seasons=plot['comp_seasons'], cdostring=plot['cdostring'])
 
     if data.ndim > 1:
         try:
@@ -623,11 +623,11 @@ def timeseries_comparison(plot, func):
     print 'plotting timeseries comparison of ' + plot['variable']
 
     # Load time series data from netcdf file
-    data, units, x, depth = pl.timeseries_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], seasons=plot['seasons'])
+    data, units, x, depth = pl.timeseries_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], seasons=plot['seasons'], cdostring=plot['cdostring'])
 
     plot['data1']['ax_args']['xlabel'] = 'Time'
     plot['data1']['ax_args']['ylabel'] = units
-    
+    #plot['data1']['ax_args']['ylabel'] = 'mols-1'
     # get data at the correct depth 
     plot['plot_depth'] = None
     if data.ndim > 1:

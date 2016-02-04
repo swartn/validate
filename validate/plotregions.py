@@ -414,9 +414,11 @@ def zonalmean(x, data, ax=None, ax_args=None, label='model', plot={}, color=None
 
 
 def taylordiagram(refdata, plotdata, fig=None, ax_args=None, plot={}):
+    print refdata.shape
     refdata = refdata.flatten()
     refstd = refdata.std(ddof=1)
     for i, (d, n) in enumerate(plotdata):
+        print d.shape
         plotdata[i] = d.flatten(), n
     plot['stats'] = {'obserations': {'standard deviation': float(refstd)}}
 
@@ -434,8 +436,11 @@ def taylordiagram(refdata, plotdata, fig=None, ax_args=None, plot={}):
     colors = plt.matplotlib.cm.jet(np.linspace(0, 1, len(samples)))
 
     for i, (stddev, corrcoef, n) in enumerate(samples):
+        if corrcoef < 0:
+            corrcoef = 0
         plot['stats'][n] = {'standard deviation': float(stddev),
                             'correlation coefficient': float(corrcoef)}
+           
         dia.add_sample(stddev, corrcoef,
                        marker='$%d$' % (i + 1), ms=10, ls='',
                        mfc=colors[i], mec=colors[i],

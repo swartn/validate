@@ -216,9 +216,9 @@ def timeaverage_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgr
     averaged = _check_dates(ifile, dates)
     
     if depthneeded is not None: # use is not because the truth value of an array is ambiguous
-        finalout = intlevel(remap(setc(time_mean(season(sel_var(ifile, var), seasons), dates['start_date'], dates['end_date'], averaged)), remapf, remapgrid), depthneeded)
+        finalout = intlevel(remap(setc(time_mean(season(sel_var(ifile, var), seasons), dates['start_date'], dates['end_date'], averaged), realm), remapf, remapgrid), depthneeded)
     else:
-        finalout = remap(setc(time_mean(mask(season(sel_var(ifile, var), seasons), realm), dates['start_date'], dates['end_date'], averaged)), remapf, remapgrid)
+        finalout = remap(setc(time_mean(mask(season(sel_var(ifile, var), seasons), realm), dates['start_date'], dates['end_date'], averaged), realm), remapf, remapgrid)
     
     # load data from final netcdf file into Dataset object
     nc = Dataset(finalout, 'r')
@@ -291,7 +291,7 @@ def full_detrend(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='
     data, units, depth = _load(nc, var)
     return data    
 
-def timeseries_load(ifile, var, dates, realm, scale, depthneeded=None, seasons=None):
+def timeseries_load(ifile, var, dates, realm, scale, depthneeded=None, seasons=None, cdostring=None):
     """ Loads the field mean data over specified dates from a file.
         Remaps and scales the data.
 
@@ -313,11 +313,12 @@ def timeseries_load(ifile, var, dates, realm, scale, depthneeded=None, seasons=N
     numpy array
     """
     _check_dates(ifile, dates)    
-   
-    if depthneeded is not None:
-        finalout = intlevel(setc(field_mean(season(sel_var(ifile, var), seasons), dates['start_date'], dates['end_date'])), depthneeded)
+    if cdostring:
+        finalout = cdos(ifile, cdostring)
+    elif depthneeded is not None:
+        finalout = intlevel(setc(field_mean(season(cdos(sel_var(ifile, var), cdostring), seasons), dates['start_date'], dates['end_date'])), depthneeded)
     else:
-        finalout = setc(field_mean(mask(season(sel_var(ifile, var), seasons), realm), dates['start_date'], dates['end_date']))    
+        finalout = setc(field_mean(mask(season(cdos(sel_var(ifile, var), cdostring), seasons), realm), dates['start_date'], dates['end_date']))    
 
     # Load data into Dataset object
     nc = Dataset(finalout, 'r')
@@ -494,7 +495,10 @@ def detrend(name, start_date, end_date):
         cdo.detrend(input=seldatestring + ' ' + name, output=out)
     return out    
 
-def setc(name):
+def setc(name, realm='ocean'):
+    if realm == 'atmos':
+#        cdo.setmisstoc(0, input=name, output=out)
+        return name
     out = 'netcdf/setc_' + split(name)
     if not os.path.isfile(out):
         cdo.setctomiss(0, input=name, output=out)
@@ -568,6 +572,16 @@ def season(name, seasonlist):
     if not os.path.isfile(out):
         cdo.selseas(seasonstring, input=name, output=out)
     return out
-    
+
+def cdos(name, string):
+    if string:
+        out = 'netcdf/cdo_' + split(name)
+        if not os.path.isfile(out):
+            s = 'cdo ' + string + ' ' + name + ' ' + out
+            print s
+            os.system(s)
+        return out
+    return name
+
 if __name__ == "__main__":
     pass

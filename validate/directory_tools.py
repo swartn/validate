@@ -168,6 +168,22 @@ def _load_masks(files):
             os.system('ln -s ' + f + ' ./mask/land')
             print f
             print 'found land'
+        fxvars = ['areacello',
+                  'basin',
+                  'deptho',
+                  'thkcello',
+                  'volcello',
+                  'areacella',
+                  'orog',
+                  'orograw',
+                  'mrsofc',
+                  'rootd',
+                  'sftgif',
+                  ]
+        if var in fxvars:
+            print f
+            print 'found ' + var
+            os.system('ln -s ' + f + ' ./mask/' + var)          
 
 #    used to be hard coded for known directory path
 #    os.system('ln -s /raid/rc40/data/ncs/historical-' + run + '/fx/ocean/sftof/r0i0p0/*.nc ./mask/ocean')

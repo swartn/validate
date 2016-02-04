@@ -39,6 +39,7 @@ DEFAULTS = {'plotprojection': 'mercator',
             'comp_seasons': ['DJF', 'MAM', 'JJA', 'SON'],
             'alpha': 0.01,
             'sigma': 0.05,
+            'cdostring': None,
             }
 
 
@@ -169,12 +170,15 @@ def fill(plots, model_run, experiment, defaults={}):
             p['seasons'] = ['DJF', 'MAM', 'JJA', 'SON']
         if 'comp_seasons' not in p:
             p['comp_seasons'] = ['DJF', 'MAM', 'JJA', 'SON']
-        
+        if 'cmip5_file' not in p:
+            p['cmip5_file'] = None 
+        if 'cmip5_files' not in p:
+            p['cmip5_files'] = []                    
         if p['comp_models'] == 'all':
             p['comp_models'] = list(MODELS)
         if p['comp_cmips'] == 'all':
             p['comp_cmips'] = list(MODELS)
-              
+ 
         # remove plot from list if no variable is provided
         if 'variable' not in p:
             plots.remove(p)
