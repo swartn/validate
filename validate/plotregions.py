@@ -291,7 +291,6 @@ def mercator(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax
     x, y = m(lons, lats)
 
     cot = m.pcolor(x, y, data, **pcolor_args)
-
     if ax_args:
         plt.setp(ax, **ax_args)
 
@@ -347,9 +346,12 @@ def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=N
     cot = ax.pcolormesh(x, z, data, **pcolor_args)
     ax.contour(x, z, data, colors=['k'], vmin=pcolor_args['vmin'],
                vmax=pcolor_args['vmax'])
+
     ax.invert_yaxis()
     ax.autoscale(True, axis='both', tight='both')
+
     ax.set_yscale(plot['set_yscale'])
+
     if ax_args:
         plt.setp(ax, **ax_args)
 
@@ -362,7 +364,7 @@ def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=N
                     slons.append(x[index[1]])
                     sdepths.append(z[index[0]])
         ax.plot(slons, sdepths, '.', markersize=0.2, color='k')
-
+#    plt.show()
     box = ax.get_position()
     if cbaxis:
         fig.colorbar(cot, cax=cbaxis, label=cblabel)

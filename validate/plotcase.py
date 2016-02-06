@@ -81,6 +81,10 @@ def _section_data(data, plot):
     -------
     numpy array
     """
+    print data.shape
+    if plot['variable'] == 'msftmyz':
+        return data[plot['basin'], :, :]
+    
     try:
         if data.ndim == 3:
             zonmean = data.mean(axis=2)
@@ -140,6 +144,12 @@ def plotname(plot):
     plotname += '_' + plot['dates']['start_date'] + plot['dates']['end_date']
     season = ''.join(plot['seasons'])
     plotname += season
+
+    try: 
+        plotname += '_' + str(plot['basin'])
+    except:
+        pass
+    
     if plot['comp_flag'] == 'Model' or not plot['comp_flag']:
         return plotname
     try:
@@ -148,6 +158,8 @@ def plotname(plot):
     plotname += '_' + plot['comp_dates']['start_date'] + plot['comp_dates']['end_date']
     compseason = ''.join(plot['comp_seasons'])
     plotname += compseason
+
+    print plotname
     return plotname    
         
 
@@ -266,20 +278,24 @@ def section_climatology(plot, func):
     """
     print 'plotting section of ' + plot['variable']
     
+    
     # load data from netcdf file
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
 
     # calculate the zonal mean of the data
     zonmean = _section_data(data, plot)
-
     dft.filltitle(plot)
     _pcolor(data, plot, anom=False)
-    
+
+    fig = plt.figure(figsize=(10,3))
+    gs = gridspec.GridSpec(1, 1, width_ratios=[1, 1])    
     # plot the data
-    func(lat, depth, zonmean, plot=plot, ax_args=plot['data1']['ax_args'],
+    func(lat, depth, zonmean, plot=plot, ax=plt.subplot(gs[0, 0]), ax_args=plot['data1']['ax_args'],
          pcolor_args=plot['data1']['pcolor_args'], cblabel=units)
     
     plot_name = plotname(plot)
+#    plt.show()
+    print plot_name
     savefigures(plot_name, **plot)
     plot['units'] = units
     return plot_name
@@ -426,6 +442,7 @@ def map_trends(plot, func):
          **plot['plot_args'])
 
     plot_name = plotname(plot)
+
     savefigures(plot_name, **plot)
     plot['units'] = units
     return plot_name
@@ -510,9 +527,10 @@ def section_trends(plot, func):
     
     dft.filltitle(plot)
     _pcolor(zonmean, plot, anom=True)
-    
+    fig = plt.figure()
+    gs = gridspec.GridSpec(1, 1, width_ratios=[20, 1])    
     # make plot
-    func(x, depth, zonmean, anom=True, plot=plot, ax_args=plot['data1']['ax_args'],
+    func(x, depth, zonmean, anom=True, plot=plot, ax=plt.subplot(gs[0, 0]), ax_args=plot['data1']['ax_args'],
          pcolor_args=plot['data1']['pcolor_args'], cblabel=units)
 
     plot_name = plotname(plot)
@@ -626,7 +644,8 @@ def timeseries_comparison(plot, func):
     data, units, x, depth = pl.timeseries_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], seasons=plot['seasons'], cdostring=plot['cdostring'])
 
     plot['data1']['ax_args']['xlabel'] = 'Time'
-    plot['data1']['ax_args']['ylabel'] = units
+    if 'ylabel' not in plot['data1']['ax_args']:
+        plot['data1']['ax_args']['ylabel'] = units
     #plot['data1']['ax_args']['ylabel'] = 'mols-1'
     # get data at the correct depth 
     plot['plot_depth'] = None

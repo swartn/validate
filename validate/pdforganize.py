@@ -41,6 +41,8 @@ def orderplots(plotnames):
     """
     plotdict = {}
     for p in plotnames:
+        if 'basin' in p:
+            p['plot_depth'] = p['basin']
         try:
             p['plot_depth'] = str(p['plot_depth'])
         except:

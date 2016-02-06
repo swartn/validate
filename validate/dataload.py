@@ -181,8 +181,14 @@ def _load2(data, nc, units, depth, scale):
     numpy array
     string
     """
-    lon = nc.variables['lon'][:].squeeze()
-    lat = nc.variables['lat'][:].squeeze()
+    try:
+        lon = nc.variables['lon'][:].squeeze()
+    except:
+        lon = None
+    try:
+        lat = nc.variables['lat'][:].squeeze()
+    except:
+        lat = None
     depth = np.round(depth)
     units = _scale_units(units, scale)
     data = data * scale
@@ -214,8 +220,9 @@ def timeaverage_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgr
     numpy array
     """
     averaged = _check_dates(ifile, dates)
-    
-    if depthneeded is not None: # use is not because the truth value of an array is ambiguous
+    if var == 'msftmyz':
+        finalout = remap(setc(time_mean(season(sel_var(ifile, var), seasons), dates['start_date'], dates['end_date'], averaged), realm), remapf, remapgrid) 
+    elif depthneeded is not None: # use is not because the truth value of an array is ambiguous
         finalout = intlevel(remap(setc(time_mean(season(sel_var(ifile, var), seasons), dates['start_date'], dates['end_date'], averaged), realm), remapf, remapgrid), depthneeded)
     else:
         finalout = remap(setc(time_mean(mask(season(sel_var(ifile, var), seasons), realm), dates['start_date'], dates['end_date'], averaged), realm), remapf, remapgrid)
@@ -522,7 +529,10 @@ def remap(name, remapname, remapgrid):
     out = 'netcdf/' + remapname + '-' + remapgrid + split(name)
     if not os.path.isfile(out):
         remap = get_remap_function(remapname)
-        remap(remapgrid, input=name, output=out)
+        try:
+            remap(remapgrid, input=name, output=out)
+        except:
+            return name
     return out
 
 def field_mean(name, start_date, end_date):
