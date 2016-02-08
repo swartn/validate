@@ -534,13 +534,13 @@ plots:
 #          plot_projection: 'global_map'
 #          data_type: 'climatology'
 
-        - variable: 'zosga'
-          plot_projection: 'global_map'
-          data_type: 'climatology'
+#        - variable: 'zosga'
+#          plot_projection: 'global_map'
+#          data_type: 'climatology'
 
-        - variable: 'zossga'
-          plot_projection: 'global_map'
-          data_type: 'climatology'
+#        - variable: 'zossga'
+#          plot_projection: 'global_map'
+#          data_type: 'climatology'
 
 #depth
 
@@ -611,16 +611,19 @@ plots:
           plot_projection: 'section'
           data_type: 'climatology'
           basin: 0
+          set_yscale: 'linear'
 
         - variable: 'msftmyz'
           plot_projection: 'section'
           data_type: 'climatology'
           basin: 1
-
+          set_yscale: 'linear'
+          
         - variable: 'msftmyz'
           plot_projection: 'section'
           data_type: 'climatology'
           basin: 2
+          set_yscale: 'linear'
 
         - variable: 'thetao'
           plot_projection: 'section'
