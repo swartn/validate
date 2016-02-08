@@ -219,18 +219,20 @@ def map_climatology_comparison(plot, func):
     data, units, lon, lat, depth = pl.timeaverage_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
     # get data at correct depth
     data = _depth_data(data, depth, plot)
-
-    fulldata = pl.full_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
-    fulldata2 = pl.full_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], depthneeded=list(depth), seasons=plot['comp_seasons'])
+    try:
+        fulldata = pl.full_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], seasons=plot['seasons'])
+        fulldata2 = pl.full_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], depthneeded=list(depth), seasons=plot['comp_seasons'])
   
-    if len(fulldata.shape) == len(fulldata2.shape):
-        fulldepthdata = _full_depth_data(fulldata, depth, plot)
-        fulldepthdata2 = _full_depth_data(fulldata2, depth, plot)
-        pvalues = ttest(fulldepthdata, fulldepthdata2)
-    else:
-        pvalues = None 
+        if len(fulldata.shape) == len(fulldata2.shape):
+            fulldepthdata = _full_depth_data(fulldata, depth, plot)
+            fulldepthdata2 = _full_depth_data(fulldata2, depth, plot)
+            pvalues = ttest(fulldepthdata, fulldepthdata2)
+        else:
+            pvalues = None 
+            plot['alpha'] = None
+    except:
+        pvalues = None
         plot['alpha'] = None
-
     # get comparison data from netcdf file
     data2, units, lon2, lat2, depth = pl.timeaverage_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['scale'], plot['remap'], plot['remap_grid'], [plot['plot_depth']], seasons=plot['comp_seasons'])
     # get comparison data at correct depth
