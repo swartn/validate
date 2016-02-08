@@ -589,24 +589,23 @@ plots:
             - 4000
 
 #sections
-#        - variable: 'to'
-#          plot_projection: 'section'
-#          data_type: 'climatology'
-
         - variable: 'so'
           plot_projection: 'section'
           data_type: 'climatology'
           comp_obs:
             - observations
-
+          set_yscale: 'linear'
+          
         - variable: 'uo'
           plot_projection: 'section'
           data_type: 'climatology'
-
+          set_yscale: 'linear'
+          
         - variable: 'vo'
           plot_projection: 'section'
           data_type: 'climatology'
-
+          set_yscale: 'linear'
+          
         - variable: 'msftmyz'
           plot_projection: 'section'
           data_type: 'climatology'
@@ -630,7 +629,8 @@ plots:
           data_type: 'climatology'
           comp_obs:
             - observations
-
+          set_yscale: 'linear'
+          
 
 #taylor
         - variable: 'thetao'
