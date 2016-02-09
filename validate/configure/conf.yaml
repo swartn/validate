@@ -527,8 +527,12 @@ plots:
 #          data_type: 'climatology'
 
         - variable: 'msftbarot'
-          plot_projection: 'global_map'
+          plot_projection: 'mercator'
           data_type: 'climatology'
+          plot_args:
+              draw_contour: True
+          scale: 0.000000001
+          units: 'Sv'
 
 #        - variable: 'pbo'
 #          plot_projection: 'global_map'

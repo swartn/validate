@@ -121,7 +121,7 @@ def draw_trend_stipple(data, cvalues, lon, lat, m):
         m.plot(a,b, '.', markersize=0.2, color='k')      
   
 def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
-               latmin=-50, latmax=50, lonmin=0, lonmax=360,
+               latmin=-50, latmax=50, lonmin=0, lonmax=360, draw_contour=False,
                fill_continents=False, fill_oceans=False, draw_parallels=True, draw_meridians=False, plot={}):
     """Pcolor a var in a global map, using ax if supplied"""
     # setup a basic global map
@@ -145,7 +145,9 @@ def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, 
 
     if ax_args:
         plt.setp(ax, **ax_args)
-
+    if draw_contour:
+        m.contour(x, y, data, colors=['k'], 
+                   vmin=pcolor_args['vmin'], vmax=pcolor_args['vmax'])
     ax.autoscale(enable=True, axis='both', tight=True)
     m.drawcoastlines(linewidth=1.25, ax=ax)
 
@@ -173,7 +175,7 @@ def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, 
 
 
 def polar_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
-              latmin=40, latmax=80, lonmin=0, lonmax=360, lon_0=0,
+              latmin=40, latmax=80, lonmin=0, lonmax=360, lon_0=0, draw_contour=False,
               fill_continents=False, fill_oceans=False, draw_parallels=False, draw_meridians=False, plot={}):
     """Pcolor a var in a north polar map, using ax if supplied"""
     if not ax:
@@ -198,6 +200,9 @@ def polar_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, a
     if ax_args:
         plt.setp(ax, **ax_args)
 
+    if draw_contour:
+        m.contour(x, y, data, colors=['k'], 
+                   vmin=pcolor_args['vmin'], vmax=pcolor_args['vmax'])
     m.drawcoastlines()
     if fill_continents:
         m.fillcontinents(color='0.8', ax=ax)
@@ -222,7 +227,7 @@ def polar_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, a
 
 
 def polar_map_south(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
-                    latmin=-80, latmax=-40, lonmin=0, lonmax=360, lon_0=0,
+                    latmin=-80, latmax=-40, lonmin=0, lonmax=360, lon_0=0, draw_contour=False,
                     fill_continents=False, fill_oceans=False, draw_parallels=False, draw_meridians=False, plot={}):
     """Pcolor a var in a south polar map, using ax if supplied"""
     if not ax:
@@ -247,6 +252,10 @@ def polar_map_south(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=N
     if ax_args:
         plt.setp(ax, **ax_args)
 
+    if draw_contour:
+        m.contour(x, y, data, colors=['k'], 
+                   vmin=pcolor_args['vmin'], vmax=pcolor_args['vmax'])
+                   
     m.drawcoastlines()
     if fill_continents:
         m.fillcontinents(color='0.8', ax=ax)
@@ -272,7 +281,7 @@ def polar_map_south(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=N
 
 
 def mercator(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False, plot={},
-             latmin=-80, latmax=80, lonmin=0, lonmax=360, 
+             latmin=-80, latmax=80, lonmin=0, lonmax=360, draw_contour=False,
              fill_continents=False, fill_oceans=False, draw_parallels=False, draw_meridians=False):
     """Pcolor a var in a mercator plot, using ax if supplied"""
     if not pcolor_args:
@@ -294,6 +303,10 @@ def mercator(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax
     if ax_args:
         plt.setp(ax, **ax_args)
 
+    if draw_contour:
+        m.contour(x, y, data, colors=['k'], 
+                  vmin=pcolor_args['vmin'], vmax=pcolor_args['vmax'])
+                   
     m.drawcoastlines()
     if fill_continents:
         m.fillcontinents(color='0.8', ax=ax)
