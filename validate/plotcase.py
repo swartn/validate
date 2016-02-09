@@ -97,6 +97,8 @@ def _section_data(data, plot):
 
 
 def _pcolor(data, plot, anom=False):
+    if anom or plot['divergent']:
+        anom = True    
     if not plot['data1']['pcolor_flag']:
         plot['data1']['pcolor_args'] = default_pcolor_args(data, anom)
 

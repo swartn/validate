@@ -145,7 +145,8 @@ plots:
         - variable: 'uas'
           plot_projection: 'global_map'
           data_type: 'climatology'
-
+          divergent: True
+          
         - variable: 'psl'
           plot_projection: 'global_map'
           data_type: 'climatology'
@@ -186,7 +187,8 @@ plots:
             - 10000
             - 5000
             - 1000
-
+          divergent: True
+          
         - variable: 'ta'
           plot_projection: 'global_map'
           data_type: 'climatology'
@@ -206,7 +208,8 @@ plots:
           data_type: 'climatology'
           comp_obs:
              - 20CR
-
+          divergent: True
+          
         - variable: 'ta'
           plot_projection: 'section'
           data_type: 'climatology'
@@ -282,7 +285,8 @@ plots:
           data_type: 'climatology'
           seasons:
              - 'DJF'
-
+          divergent: True
+          
         - variable: 'psl'
           plot_projection: 'global_map'
           data_type: 'climatology'
@@ -331,6 +335,7 @@ plots:
             - 1000
           seasons:
              - 'DJF'
+          divergent: True
 
         - variable: 'ta'
           plot_projection: 'global_map'
@@ -353,7 +358,8 @@ plots:
           data_type: 'climatology'
           seasons:
              - 'DJF'
-
+          divergent: True
+          
         - variable: 'ta'
           plot_projection: 'section'
           data_type: 'climatology'
@@ -382,7 +388,8 @@ plots:
           data_type: 'climatology'
           seasons:
              - 'JJA'
-
+          divergent: True
+          
         - variable: 'psl'
           plot_projection: 'global_map'
           data_type: 'climatology'
@@ -431,7 +438,8 @@ plots:
             - 1000
           seasons:
              - 'JJA'
-
+          divergent: True
+          
         - variable: 'ta'
           plot_projection: 'global_map'
           data_type: 'climatology'
@@ -453,7 +461,8 @@ plots:
           data_type: 'climatology'
           seasons:
              - 'JJA'
-
+          divergent: True
+          
         - variable: 'ta'
           plot_projection: 'section'
           data_type: 'climatology'
@@ -581,7 +590,8 @@ plots:
             - 1000
             - 2000
             - 4000
-
+          divergent: True
+          
         - variable: 'vo'
           plot_projection: 'mercator'
           data_type: 'climatology'
@@ -591,7 +601,8 @@ plots:
             - 1000
             - 2000
             - 4000
-
+          divergent: True
+          
 #sections
         - variable: 'so'
           plot_projection: 'section'
@@ -604,12 +615,14 @@ plots:
           plot_projection: 'section'
           data_type: 'climatology'
           set_yscale: 'linear'
-          
+          divergent: True
+                    
         - variable: 'vo'
           plot_projection: 'section'
           data_type: 'climatology'
           set_yscale: 'linear'
-          
+          divergent: True
+                    
         - variable: 'msftmyz'
           plot_projection: 'section'
           data_type: 'climatology'
@@ -666,7 +679,7 @@ plots:
           data1:
               ax_args:
                   ylabel: 'kgs-1      
-
+          divergent: True
 
 
 #             OCEANBGCHEM
@@ -681,6 +694,7 @@ plots:
           data_type: 'climatology'
           scale: 31536000
           units: 'kg m-2 y-1'
+          divergent: True
 
         - variable: 'epc100'
           plot_projection: 'global_map'
@@ -713,7 +727,8 @@ plots:
         - variable: 'dpco2'
           plot_projection: 'global_map'
           data_type: 'climatology'
-
+          divergent: True
+          
         - variable: 'dissic'
           plot_projection: 'mercator'
           data_type: 'climatology'

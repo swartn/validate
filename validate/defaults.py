@@ -41,6 +41,7 @@ DEFAULTS = {'plotprojection': 'mercator',
             'sigma': 0.05,
             'cdostring': None,
             'units': None,
+            'divergent': False,
             }
 
 
