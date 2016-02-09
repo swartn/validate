@@ -675,23 +675,33 @@ plots:
         - variable: 'fgco2'
           plot_projection: 'global_map'
           data_type: 'climatology'
+          scale: 31536000
+          units: 'kg m-2 y-1'
 
         - variable: 'epc100'
           plot_projection: 'global_map'
           data_type: 'climatology'
-
+          scale: 31536000
+          units: 'mol m-2 y-1'
+          
         - variable: 'epcalc100'
           plot_projection: 'global_map'
           data_type: 'climatology'
+          scale: 31536000
+          units: 'mol m-2 y-1'
 
         - variable: 'intpp'
           plot_projection: 'global_map'
           data_type: 'climatology'
-
+          scale: 31536000
+          units: 'mol m-2 y-1'
+          
         - variable: 'frc'
           plot_projection: 'global_map'
           data_type: 'climatology'
-
+          scale: 31536000
+          units: 'mol m-2 y-1'
+          
         - variable: 'intdic'
           plot_projection: 'global_map'
           data_type: 'climatology'
@@ -699,14 +709,7 @@ plots:
         - variable: 'dpco2'
           plot_projection: 'global_map'
           data_type: 'climatology'
-        
-        - variable: 'no3'
-          plot_projection: 'global_map'
-          data_type: 'climatology'
-          comp_obs:
-            - observations
 
-#depth
         - variable: 'dissic'
           plot_projection: 'mercator'
           data_type: 'climatology'
@@ -732,7 +735,9 @@ plots:
             - 4000
           comp_obs:
             - observations
-
+          scale: 1000
+          units: 'mmol m-3'
+            
         - variable: 'ph'
           plot_projection: 'mercator'
           data_type: 'climatology'
@@ -745,6 +750,7 @@ plots:
             - 4000
           comp_obs:
             - observations
+          units: ''
 
         - variable: 'talk'
           plot_projection: 'mercator'
@@ -769,16 +775,20 @@ plots:
           plot_projection: 'section'
           data_type: 'climatology'
           frequency: 'yr'
-
+          scale: 1000
+          units: 'mmol m-3'
+        
         - variable: 'ph'
           plot_projection: 'section'
           data_type: 'climatology'
           frequency: 'yr'
-
+          units: ''
+          
         - variable: 'talk'
           plot_projection: 'section'
           data_type: 'climatology'
           frequency: 'yr'
+
 
 #taylor
         - variable: 'dissic'
