@@ -40,6 +40,7 @@ DEFAULTS = {'plotprojection': 'mercator',
             'alpha': 0.01,
             'sigma': 0.05,
             'cdostring': None,
+            'units': None,
             }
 
 
@@ -178,6 +179,8 @@ def fill(plots, model_run, experiment, defaults={}):
             p['comp_models'] = list(MODELS)
         if p['comp_cmips'] == 'all':
             p['comp_cmips'] = list(MODELS)
+        if 'comp_scale' not in p:
+            p['comp_scale'] = p['scale']
  
         # remove plot from list if no variable is provided
         if 'variable' not in p:
