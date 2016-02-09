@@ -173,7 +173,7 @@ def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, 
 
 
 def polar_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
-              latmin=30, latmax=80, lonmin=0, lonmax=360,
+              latmin=40, latmax=80, lonmin=0, lonmax=360, lon_0=0,
               fill_continents=False, fill_oceans=False, draw_parallels=False, draw_meridians=False, plot={}):
     """Pcolor a var in a north polar map, using ax if supplied"""
     if not ax:
@@ -188,7 +188,7 @@ def polar_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, a
         if key not in pcolor_args or (pcolor_args[key] is None):
             pcolor_args[key] = value
 
-    m = Basemap(projection='npstere', boundinglat=latmin, lon_0=270, resolution='c', ax=ax)
+    m = Basemap(projection='npstere', boundinglat=latmin, lon_0=lon_0, resolution='c', ax=ax)
 
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
@@ -222,7 +222,7 @@ def polar_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, a
 
 
 def polar_map_south(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
-                    latmin=-80, latmax=-30, lonmin=0, lonmax=360,
+                    latmin=-80, latmax=-40, lonmin=0, lonmax=360, lon_0=0,
                     fill_continents=False, fill_oceans=False, draw_parallels=False, draw_meridians=False, plot={}):
     """Pcolor a var in a south polar map, using ax if supplied"""
     if not ax:
@@ -237,7 +237,7 @@ def polar_map_south(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=N
         if key not in pcolor_args or (pcolor_args[key] is None):
             pcolor_args[key] = value
 
-    m = Basemap(projection='spstere', boundinglat=latmax, lon_0=270, resolution='c', ax=ax)
+    m = Basemap(projection='spstere', boundinglat=latmax, lon_0=lon_0, resolution='c', ax=ax)
 
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
