@@ -343,7 +343,10 @@ def getrealm(f):
     string of realm
     """
     nc = Dataset(f, 'r')
-    return str(nc.__getattribute__('modeling_realm'))
+    realm = str(nc.__getattribute__('modeling_realm'))
+    if 'seaIce' in realm:
+        realm = 'seaIce'
+    return realm
 
 
 def getrealmcat(realm):
