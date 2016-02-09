@@ -30,6 +30,7 @@ DEFAULTS = {'plotprojection': 'mercator',
             'frequency': 'mon',
             'realization': 1,
             'scale': 1,
+            'shift': 0,
             'pdf': True,
             'png': False,
             'comp_flag': None,
@@ -182,7 +183,8 @@ def fill(plots, model_run, experiment, defaults={}):
             p['comp_cmips'] = list(MODELS)
         if 'comp_scale' not in p:
             p['comp_scale'] = p['scale']
- 
+        if 'comp_shift' not in p:
+            p['comp_shift'] = p['shift'] 
         # remove plot from list if no variable is provided
         if 'variable' not in p:
             plots.remove(p)

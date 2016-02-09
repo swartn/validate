@@ -568,6 +568,9 @@ plots:
             - 4000
           comp_obs:
             - observations
+          shift: -273.15
+          comp_shift: 0
+          units: 'C'
 
         - variable: 'so'
           plot_projection: 'mercator'
@@ -647,7 +650,9 @@ plots:
           comp_obs:
             - observations
           set_yscale: 'linear'
-          
+          shift: -273.15
+          comp_shift: 0
+          units: 'C'          
 
 #taylor
         - variable: 'thetao'
@@ -656,6 +661,9 @@ plots:
           comp_obs:
              - observations
           comp_cmips: 'all'
+          shift: -273.15
+          comp_shift: 0
+          units: 'C'
 
         - variable: 'so'
           plot_projection: 'taylor'

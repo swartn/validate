@@ -97,7 +97,7 @@ def _check_dates(ifile, dates):
     return False
 
 
-def _scale_units(units, scale):
+def _scale_units(units, scale, shift):
     """ Corrects the units to match the scale applied to the data
 
     Parameters
@@ -109,6 +109,10 @@ def _scale_units(units, scale):
     -------
     string
     """
+    if shift < 0:
+        units = '(' + units + ' - ' + str(abs(shift)) + ')'
+    if shift > 0:
+        units = '(' + units + ' + ' + str(shift) + ')'   
     if scale != 1:
         units = units + ' * ' + str(scale)
     return units
@@ -161,7 +165,7 @@ def _load(nc, var):
     return data, units, depth
 
 
-def _load2(data, nc, units, depth, scale):
+def _load2(data, nc, units, depth, scale, shift):
     """ Extracts the data from a netCDF4 Dataset along
         with the units and associated depths
 
@@ -190,12 +194,12 @@ def _load2(data, nc, units, depth, scale):
     except:
         lat = None
     depth = np.round(depth)
-    units = _scale_units(units, scale)
-    data = data * scale
+    units = _scale_units(units, scale, shift)
+    data = (data + shift) * scale
     return data, lon, lat, depth, units
 
 
-def timeaverage_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', depthneeded=None, seasons=None):
+def timeaverage_load(ifile, var, dates, realm, scale, shift, remapf='remapdis', remapgrid='r360x180', depthneeded=None, seasons=None):
     """ Loads the data from a file and remaps it.
         Applies a time average over specified dates and scales the data.
 
@@ -232,12 +236,12 @@ def timeaverage_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgr
 
     # extract relevent information from Dataset object
     data, units, depth = _load(nc, var)
-    data, lon, lat, depth, units = _load2(data, nc, units, depth, scale)
+    data, lon, lat, depth, units = _load2(data, nc, units, depth, scale, shift)
 
     return data, units, lon, lat, depth
 
 
-def trends_load(ifile, var, dates, scale, remapf='remapdis', remapgrid='r360x180', depthneeded=None, seasons=None):
+def trends_load(ifile, var, dates, scale, shift, remapf='remapdis', remapgrid='r360x180', depthneeded=None, seasons=None):
     """ Loads the trend data over specified dates from a file
         Remaps and scales the data.
 
@@ -271,11 +275,11 @@ def trends_load(ifile, var, dates, scale, remapf='remapdis', remapgrid='r360x180
 
     # Extract relevent information from Dataset object
     data, units, depth = _load(nc, var)
-    data, lon, lat, depth, units = _load2(data, nc, units, depth, scale)
+    data, lon, lat, depth, units = _load2(data, nc, units, depth, scale, shift)
 
     return data, units, lon, lat, depth
 
-def full_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', depthneeded=None, seasons=None):
+def full_load(ifile, var, dates, realm, scale, shift, remapf='remapdis', remapgrid='r360x180', depthneeded=None, seasons=None):
 
     averaged = _check_dates(ifile, dates)
     
@@ -288,7 +292,7 @@ def full_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r36
     data, units, depth = _load(nc, var)
     return data
 
-def full_detrend(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', depthneeded=None, seasons=None):
+def full_detrend(ifile, var, dates, realm, scale, shift, remapf='remapdis', remapgrid='r360x180', depthneeded=None, seasons=None):
     if depthneeded is not None:
         pass
     else:
@@ -298,7 +302,7 @@ def full_detrend(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='
     data, units, depth = _load(nc, var)
     return data    
 
-def timeseries_load(ifile, var, dates, realm, scale, depthneeded=None, seasons=None, cdostring=None):
+def timeseries_load(ifile, var, dates, realm, scale, shift, depthneeded=None, seasons=None, cdostring=None):
     """ Loads the field mean data over specified dates from a file.
         Remaps and scales the data.
 
@@ -342,11 +346,11 @@ def timeseries_load(ifile, var, dates, realm, scale, depthneeded=None, seasons=N
     x = np.array(x)
 
     depth = np.round(depth)
-    units = _scale_units(units, scale)
-    data = data * scale
+    units = _scale_units(units, scale, shift)
+    data = (data + shift) * scale
     return data, units, x, depth
 
-def histogram_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', trends=False, depthneeded=None, seasons=None):
+def histogram_load(ifile, var, dates, realm, scale, shift, remapf='remapdis', remapgrid='r360x180', trends=False, depthneeded=None, seasons=None):
     
     _check_dates(ifile, dates)
 
@@ -376,11 +380,11 @@ def histogram_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid
     x = np.array(x)
 
     depth = np.round(depth)
-    units = _scale_units(units, scale)
-    data = data * scale
+    units = _scale_units(units, scale, shift)
+    data = (data + shift) * scale
     return data, units, x, depth
 
-def full_section_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', depthneeded=None, seasons=None):
+def full_section_load(ifile, var, dates, realm, scale, shift, remapf='remapdis', remapgrid='r360x180', depthneeded=None, seasons=None):
     averaged = _check_dates(ifile, dates)
     if depthneeded is not None:
         finalout = intlevel(zonal_mean(remap(sel_date(setc(season(sel_var(ifile, var), seasons)), dates['start_date'], dates['end_date'], averaged), remapf, remapgrid)), depthneeded)    
@@ -391,7 +395,7 @@ def full_section_load(ifile, var, dates, realm, scale, remapf='remapdis', remapg
     data, units, depth = _load(nc, var)
     return data
         
-def zonal_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r360x180', trends=False, depthneeded=None, seasons=None):
+def zonal_load(ifile, var, dates, realm, scale, shift, remapf='remapdis', remapgrid='r360x180', trends=False, depthneeded=None, seasons=None):
     """ Loads the zonal mean data over specified dates from a file.
         Remaps and scales the data.
 
@@ -432,8 +436,8 @@ def zonal_load(ifile, var, dates, realm, scale, remapf='remapdis', remapgrid='r3
     x = nc.variables['lat'][:].squeeze()
 
     depth = np.round(depth)
-    units = _scale_units(units, scale)
-    data = data * scale
+    units = _scale_units(units, scale, shift)
+    data = (data + shift) * scale
     return data, units, x, depth
 
 def split(name):
