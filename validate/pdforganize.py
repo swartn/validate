@@ -96,8 +96,16 @@ def pdfmarks(plotdict):
                 f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + proj + ") /Count -" + str(len(plotdict[realm][var][proj].keys())) + " /OUT pdfmark\n")
                 for dt in plotdict[realm][var][proj]:
                     f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + dt + ") /Count -" + str(len(plotdict[realm][var][proj][dt].keys())) + " /OUT pdfmark\n")
+                    ordered_depth_list = []
                     for depth in plotdict[realm][var][proj][dt]:
+                        ordered_depth_list.append(depth)
+                    try:
+                        ordered_depth_list.sort(key=float)
+                    except:
+                        ordered_depth_list.sort()
+                    for depth in ordered_depth_list:
                         f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + depth + ") /Count -" + str(len(plotdict[realm][var][proj][dt][depth].keys())) + " /OUT pdfmark\n")
+                        
                         for dates in plotdict[realm][var][proj][dt][depth]:
                             f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + dates + ") /Count -" + str(len(plotdict[realm][var][proj][dt][depth][dates].keys())) + " /OUT pdfmark\n")
                             for season in plotdict[realm][var][proj][dt][depth][dates]:
