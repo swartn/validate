@@ -300,6 +300,7 @@ def full_detrend(ifile, var, dates, realm, scale, shift, remapf='remapdis', rema
     
     nc = Dataset(finalout, 'r')
     data, units, depth = _load(nc, var)
+    data = (data + shift) * scale
     return data    
 
 def timeseries_load(ifile, var, dates, realm, scale, shift, depthneeded=None, seasons=None, cdostring=None):

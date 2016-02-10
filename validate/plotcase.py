@@ -81,7 +81,6 @@ def _section_data(data, plot):
     -------
     numpy array
     """
-    print data.shape
     if plot['variable'] == 'msftmyz':
         return data[plot['basin'], :, :]
     
@@ -304,8 +303,7 @@ def section_climatology(plot, func):
          pcolor_args=plot['data1']['pcolor_args'], cblabel=units)
     
     plot_name = plotname(plot)
-#    plt.show()
-    print plot_name
+
     savefigures(plot_name, **plot)
     plot['units'] = units
     return plot_name
@@ -825,7 +823,12 @@ def taylor_full(plot, func):
     refdata, units, lon, lat, depth = pl.timeaverage_load(plot['obs_file'][plot['comp_obs'][0]], plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons']) 
  
     dft.filltitle(plot)
-    
+    cmip5data = []
+
+    for f in plot['cmip5_files']:
+        plot['comp_model'] = f
+        data, units, lon, lat, depth = pl.timeaverage_load(f, plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons'])
+        cmip5data.append(data)
     # get data from models and cmip and append to plotdata list
     if plot['cmip5_file']:
         plot['comp_model'] = 'cmip5'
@@ -839,9 +842,10 @@ def taylor_full(plot, func):
         plot['comp_model'] = i
         data, units, lon, lat, depth = pl.timeaverage_load(plot['id_file'][i], plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons'])
         plotdata.append((data, i))
+
             
     # make plot
-    pr.taylordiagram(refdata, plotdata, plot=plot, ax_args=plot['data1']['ax_args'])
+    pr.taylordiagram(refdata, plotdata, cmip5data, plot=plot, ax_args=plot['data1']['ax_args'])
     
     plot_name = plotname(plot)
     plt.tight_layout()
@@ -875,7 +879,12 @@ def taylor(plot, func):
     refdata = _depth_data(data, depth, plot)
     
     dft.filltitle(plot)
-    
+    cmip5data = []
+
+    for f in plot['cmip5_files']:
+        plot['comp_model'] = f
+        data, units, lon, lat, depth = pl.timeaverage_load(f, plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons'])
+        cmip5data.append(data)    
     # get data from models and cmip and append to plotdata list
     if plot['cmip5_file']:
         plot['comp_model'] = 'cmip5'
@@ -891,7 +900,7 @@ def taylor(plot, func):
         plotdata.append((_depth_data(data, depth, plot), i))
             
     # make plot
-    pr.taylordiagram(refdata, plotdata, plot=plot, ax_args=plot['data1']['ax_args'])
+    pr.taylordiagram(refdata, plotdata, cmip5data, plot=plot, ax_args=plot['data1']['ax_args'])
     
     plot_name = plotname(plot)
     plt.tight_layout()

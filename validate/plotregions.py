@@ -22,6 +22,7 @@ from colormaps import viridis
 from taylor import TaylorDiagram
 from operator import itemgetter
 from math import ceil
+import matplotlib.patches as mpatches
 import cdo
 cdo = cdo.Cdo()
 plt.close('all')
@@ -428,45 +429,60 @@ def zonalmean(x, data, ax=None, ax_args=None, label='model', plot={}, color=None
     plot['stats'] = 'N/A'
 
 
-def taylordiagram(refdata, plotdata, fig=None, ax_args=None, plot={}):
-    print refdata.shape
+def taylordiagram(refdata, plotdata, unlabelled_data, fig=None, ax_args=None, plot={}):
+
     refdata = refdata.flatten()
     refstd = refdata.std(ddof=1)
     for i, (d, n) in enumerate(plotdata):
-        print d.shape
         plotdata[i] = d.flatten(), n
     plot['stats'] = {'obserations': {'standard deviation': float(refstd)}}
+    
+    for i, d in enumerate(unlabelled_data):
+        unlabelled_data[i] = d.flatten()
 
     samples = [[m.std(ddof=1), np.corrcoef(refdata, m)[0, 1], n] for m, n in plotdata]
+    unlabelled_samples = [[m.std(ddof=1), np.corrcoef(refdata, m)[0,1]] for m in unlabelled_data]
+    
     if not fig:
         fig = plt.figure()
     else:
         fig = plt.gcf()
 
     stdrange = max(samples, key=itemgetter(1))[0] * 1.3 / refstd
-    if stdrange <= refstd * 1.1 / refstd:
-        stdrange = refstd * 1.1 / refstd
+    if stdrange <= refstd * 1.5 / refstd:
+        stdrange = refstd * 1.5 / refstd
 
     dia = TaylorDiagram(refstd, fig=fig, label='obs', srange=(0, stdrange))
     colors = plt.matplotlib.cm.jet(np.linspace(0, 1, len(samples)))
-
+    
     for i, (stddev, corrcoef, n) in enumerate(samples):
         if corrcoef < 0:
             corrcoef = 0
         plot['stats'][n] = {'standard deviation': float(stddev),
-                            'correlation coefficient': float(corrcoef)}
-           
+                            'correlation coefficient': float(corrcoef)} 
         dia.add_sample(stddev, corrcoef,
-                       marker='$%d$' % (i + 1), ms=10, ls='',
+                       marker='.', ms=12, ls='',
                        mfc=colors[i], mec=colors[i],
-                       label=n)
+                       label=n, zorder=2)
+    fig.legend(dia.samplePoints,
+               [p.get_label() for p in dia.samplePoints],
+               numpoints=1, prop=dict(size='small'), loc='upper right')
+    
+    for i, (stddev, corrcoef) in enumerate(unlabelled_samples):
+        if corrcoef < 0:
+            corrcoef = 0           
+        dia.add_sample(stddev, corrcoef,
+                       marker='.', ms=5, ls='',
+                       mfc='grey', mec='grey',
+                       label=None, zorder=1) 
+                       
+
+   
     dia.add_grid()
 
     contours = dia.add_contours(colors='0.5')
     plt.clabel(contours, inline=1, fontsize=10)
-    fig.legend(dia.samplePoints,
-               [p.get_label() for p in dia.samplePoints],
-               numpoints=1, prop=dict(size='small'), loc='upper right')
+
     if 'title' in ax_args:
         plt.title(ax_args['title'])
 
