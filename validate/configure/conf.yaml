@@ -625,24 +625,14 @@ plots:
           data_type: 'climatology'
           set_yscale: 'linear'
           divergent: True
-                    
-        - variable: 'msftmyz'
-          plot_projection: 'section'
-          data_type: 'climatology'
-          basin: 0
-          set_yscale: 'linear'
-
-        - variable: 'msftmyz'
-          plot_projection: 'section'
-          data_type: 'climatology'
-          basin: 1
-          set_yscale: 'linear'
           
         - variable: 'msftmyz'
           plot_projection: 'section'
           data_type: 'climatology'
           basin: 2
           set_yscale: 'linear'
+          scale: 0.000000001
+          units: 'Sv'
 
         - variable: 'thetao'
           plot_projection: 'section'
