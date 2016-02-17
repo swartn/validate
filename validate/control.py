@@ -10,6 +10,8 @@ from various modules to produce the plots layed out in conf.yaml
 import sys
 import yaml
 import os
+import matplotlib as mpl
+mpl.use('Cairo')
 from directory_tools import getfiles, remfiles, getobsfiles, getidfiles, cmip, move_tarfile
 from plotter import loop
 from pdforganize import arrange

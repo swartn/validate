@@ -392,13 +392,16 @@ def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=N
                          'min': float(vals[0]),
                          'max': float(vals[1]),
                          }
+        snam = ['min: ', 'max: ', 'rmse: '] 
     else:
         vals = [str(np.round(data.min(), 1)), str(np.round(data.max(), 1)), str(np.round(data.mean(), 1))]
         plot['stats'] = {'mean': float(vals[2]),
                          'min': float(vals[0]),
                          'max': float(vals[1]),
                          }
-
+        snam = ['min: ', 'max: ', 'mean: ']
+    val = [s + v for s, v in zip(snam, vals)]
+    ax.text(0.01, 0.01, '  '.join(val), horizontalalignment='left', verticalalignment='bottom', fontsize=7, transform = ax.transAxes) 
 
 def timeseries(x, data, ax=None, ax_args=None, label='model', plot={}, color=None, zorder=None):
     """ Makes a timeseries line plot, using ax if supplied
