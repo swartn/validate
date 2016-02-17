@@ -13,8 +13,9 @@ import glob
 import numpy as np
 from numpy import mean, sqrt, square
 from mpl_toolkits.basemap import Basemap, addcyclic, maskoceans
-import matplotlib.pyplot as plt
 import matplotlib as mpl
+mpl.use('Cairo')
+import matplotlib.pyplot as plt
 import brewer2mpl
 from discrete_cmap import discrete_cmap
 from netCDF4 import Dataset
