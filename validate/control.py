@@ -10,7 +10,7 @@ from various modules to produce the plots layed out in conf.yaml
 import sys
 import yaml
 import os
-from directory_tools import getfiles, remfiles, getobsfiles, getidfiles, cmip
+from directory_tools import getfiles, remfiles, getobsfiles, getidfiles, cmip, move_tarfile
 from plotter import loop
 from pdforganize import arrange
 from defaults import fill
@@ -22,7 +22,7 @@ def execute(options, **kwargs):
         process the data, and output the plots and figures.
 
     """
-    def plot(run=None, experiment='historical', data_root="", observations_root="", cmip5_root="", cmip5_means='', loadcmip5=False, ignorecheck=False, debugging=False, plots=[], defaults={}, delete={}, obs={}, **kwargs):
+    def plot(run=None, experiment='historical', data_root="", observations_root="", cmip5_root="", output_root=None, cmip5_means='', loadcmip5=False, ignorecheck=False, debugging=False, plots=[], defaults={}, delete={}, obs={}, **kwargs):
         """Calls modules required to find the data,
            process the data, and output the plots and figures
         """
@@ -53,6 +53,9 @@ def execute(options, **kwargs):
         
         # organize plots in joined.pdf file
         arrange(plotnames)
+        
+        #create tarfile and move to output
+        move_tarfile(output_root)
 
 
     # if conf.yaml exists in the current directory use that for the configuration

@@ -11,6 +11,7 @@ import os
 from netCDF4 import Dataset, num2date, date2num
 import datetime
 import itertools
+import tarfile
 import cmipdata as cd
 import cdo
 cdo = cdo.Cdo()
@@ -726,6 +727,21 @@ def cmip(plots, cmipdir, cmipmeandir, expname, load):
             getcmipfiles(plots, expname)
             break
 
+
+
+def make_tarfile(output_filename, source_dir):
+    with tarfile.open(output_filename, "w:gz") as tar:
+        tar.add(source_dir, arcname=os.path.basename(source_dir))
+        
+def move_tarfile(location):
+    if location is not None:
+        make_tarfile('plots.tar.gz', 'plots')
+        make_tarfile('logs.tar.gz', 'logs')
+        plots_new_name = os.path.join(location, 'plots.tar.gz')
+        logs_new_name = os.path.join(location, 'logs.tar.gz')
+        os.system('scp plots.tar.gz "%s"' % plots_new_name)
+        os.system('scp logs.tar.gz "%s"' % logs_new_name)        
+            
 
 if __name__ == "__main__":
     #importcmip('/raid/ra40/CMIP5_OTHER_DOWNLOADS/')
