@@ -7,14 +7,13 @@ using matplotlib.
 .. moduleauthor:: David Fallis
 """
 
+import matplotlib as mpl
 import subprocess
 import os
 import glob
 import numpy as np
 from numpy import mean, sqrt, square
 from mpl_toolkits.basemap import Basemap, addcyclic, maskoceans
-import matplotlib as mpl
-mpl.use('Cairo')
 import matplotlib.pyplot as plt
 import brewer2mpl
 from discrete_cmap import discrete_cmap
@@ -109,7 +108,7 @@ def draw_stipple(pvalues, lon, lat, m, alpha):
                     slons.append(lon[index[1]])
                     slats.append(lat[index[0]])
         a,b = m(slons, slats)
-        m.plot(a,b, '.', markersize=0.2, color='k')
+        m.plot(a,b, '.', markersize=0.2, color='k', zorder=1)
 
 def draw_trend_stipple(data, cvalues, lon, lat, m):        
         slons = []
@@ -120,7 +119,7 @@ def draw_trend_stipple(data, cvalues, lon, lat, m):
                     slons.append(lon[index[1]])
                     slats.append(lat[index[0]])
         a,b = m(slons, slats)
-        m.plot(a,b, '.', markersize=0.2, color='k')      
+        m.plot(a,b, '.', markersize=0.2, color='k', zorder=1)      
   
 def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
                latmin=-50, latmax=50, lonmin=0, lonmax=360, draw_contour=False,
@@ -207,7 +206,7 @@ def polar_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, a
                    vmin=pcolor_args['vmin'], vmax=pcolor_args['vmax'])
     m.drawcoastlines()
     if fill_continents:
-        m.fillcontinents(color='0.8', ax=ax)
+        m.fillcontinents(color='0.8', ax=ax, zorder=2)
     if draw_parallels:
         m.drawparallels(np.arange(-80., 81., 20.))
     if draw_meridians:
@@ -260,7 +259,7 @@ def polar_map_south(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=N
                    
     m.drawcoastlines()
     if fill_continents:
-        m.fillcontinents(color='0.8', ax=ax)
+        m.fillcontinents(color='0.8', ax=ax, zorder=2)
     if draw_parallels:
         m.drawparallels(np.arange(-80., 81., 20.))
     if draw_meridians:
@@ -311,7 +310,7 @@ def mercator(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax
                    
     m.drawcoastlines()
     if fill_continents:
-        m.fillcontinents(color='0.8', ax=ax)
+        m.fillcontinents(color='0.8', ax=ax, zorder=2)
     if draw_parallels:
         m.drawparallels(np.arange(-80., 81., 20.))
     if draw_meridians:

@@ -15,7 +15,6 @@ import plotregions as pr
 import numpy as np
 import scipy as sp
 import matplotlib as mpl
-mpl.use('Cairo')
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import matplotlib.ticker as ticker
