@@ -620,6 +620,7 @@ plots:
           set_yscale: 'linear'
           scale: 0.000000001
           units: 'Sv'
+          divergent: True
 
         - variable: 'thetao'
           plot_projection: 'section'
