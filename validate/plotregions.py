@@ -440,17 +440,18 @@ def zonalmean(x, data, ax=None, ax_args=None, label='model', plot={}, color=None
 
 def taylordiagram(refdata, plotdata, unlabelled_data, fig=None, ax_args=None, plot={}):
 
-    refdata = refdata.flatten()
+    flatrefdata = refdata.flatten()
     refstd = refdata.std(ddof=1)
     for i, (d, n) in enumerate(plotdata):
         plotdata[i] = d.flatten(), n
+
     plot['stats'] = {'obserations': {'standard deviation': float(refstd)}}
     
     for i, d in enumerate(unlabelled_data):
         unlabelled_data[i] = d.flatten()
 
-    samples = [[m.std(ddof=1), np.corrcoef(refdata, m)[0, 1], n] for m, n in plotdata]
-    unlabelled_samples = [[m.std(ddof=1), np.corrcoef(refdata, m)[0,1]] for m in unlabelled_data]
+    samples = [[m.std(ddof=1), np.ma.corrcoef(flatrefdata, m)[0, 1], n] for m, n in plotdata]
+    unlabelled_samples = [[m.std(ddof=1), np.ma.corrcoef(flatrefdata, m)[0,1]] for m in unlabelled_data]
     
     if not fig:
         fig = plt.figure()
@@ -465,6 +466,7 @@ def taylordiagram(refdata, plotdata, unlabelled_data, fig=None, ax_args=None, pl
     colors = plt.matplotlib.cm.jet(np.linspace(0, 1, len(samples)))
     
     for i, (stddev, corrcoef, n) in enumerate(samples):
+        print corrcoef
         if corrcoef < 0:
             corrcoef = 0
         plot['stats'][n] = {'standard deviation': float(stddev),
@@ -478,8 +480,9 @@ def taylordiagram(refdata, plotdata, unlabelled_data, fig=None, ax_args=None, pl
                numpoints=1, prop=dict(size='small'), loc='upper right')
     
     for i, (stddev, corrcoef) in enumerate(unlabelled_samples):
-        if corrcoef < 0:
-            corrcoef = 0           
+        print corrcoef
+        if corrcoef <= 0:
+            continue           
         dia.add_sample(stddev, corrcoef,
                        marker='.', ms=5, ls='',
                        mfc='grey', mec='grey',

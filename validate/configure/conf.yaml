@@ -467,15 +467,21 @@ plots:
         - variable: 'nep'
           plot_projection: 'mercator'
           data_type: 'climatology'
-
+          scale: 31536000
+          units: 'kg m-2 y-1
+          
         - variable: 'gpp'
           plot_projection: 'mercator'
           data_type: 'climatology'
-
+          scale: 31536000
+          units: 'kg m-2 y-1
+          
         - variable: 'npp'
           plot_projection: 'mercator'
           data_type: 'climatology'
-
+          scale: 31536000
+          units: 'kg m-2 y-1
+          
         - variable: 'lai'
           plot_projection: 'mercator'
           data_type: 'climatology'
@@ -802,6 +808,7 @@ plots:
           comp_obs:
              - observations
           comp_cmips: 'all'
+          frequency: 'yr'
 
         - variable: 'no3'
           plot_projection: 'taylor'
@@ -809,6 +816,7 @@ plots:
           comp_obs:
              - observations
           comp_cmips: 'all'
+          frequency: 'yr'
 
         - variable: 'ph'
           plot_projection: 'taylor'
@@ -816,13 +824,15 @@ plots:
           comp_obs:
              - observations
           comp_cmips: 'all'
-
+          frequency: 'yr'
+          
         - variable: 'talk'
           plot_projection: 'taylor'
           data_type: 'climatology'
           comp_obs:
              - observations
           comp_cmips: 'all'
+          frequency: 'yr' 
 
         - variable: 'chl'
           plot_projection: 'taylor'
@@ -830,6 +840,7 @@ plots:
           comp_obs:
              - observations
           comp_cmips: 'all'
+          frequency: 'yr'
 
 #         SEAICE
 
