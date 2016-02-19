@@ -468,19 +468,19 @@ plots:
           plot_projection: 'mercator'
           data_type: 'climatology'
           scale: 31536000
-          units: 'kg m-2 y-1
+          units: 'kg m-2 y-1'
           
         - variable: 'gpp'
           plot_projection: 'mercator'
           data_type: 'climatology'
           scale: 31536000
-          units: 'kg m-2 y-1
+          units: 'kg m-2 y-1'
           
         - variable: 'npp'
           plot_projection: 'mercator'
           data_type: 'climatology'
           scale: 31536000
-          units: 'kg m-2 y-1
+          units: 'kg m-2 y-1'
           
         - variable: 'lai'
           plot_projection: 'mercator'
