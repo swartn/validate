@@ -593,7 +593,6 @@ def cdos(name, string):
         out = 'netcdf/cdo_' + split(name)
         if not os.path.isfile(out):
             s = 'cdo ' + string + ' ' + name + ' ' + out
-            print s
             os.system(s)
         return out
     return name

@@ -56,7 +56,6 @@ def model_average(var, model, expname, frequency):
     # skip if the new file was already made
     if not os.path.isfile(new):
         ensstring = 'cmipfiles/' + var + '_*' + frequency + '_*' + model + '_' + expname + '_*.nc'
-        print ensstring
         ens = cd.mkensemble(ensstring, prefix='cmipfiles/')
         ens = cd.cat_exp_slices(ens)
         means, stdevs = cd.ens_stats(ens, var)

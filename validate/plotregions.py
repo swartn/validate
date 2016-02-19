@@ -466,7 +466,6 @@ def taylordiagram(refdata, plotdata, unlabelled_data, fig=None, ax_args=None, pl
     colors = plt.matplotlib.cm.jet(np.linspace(0, 1, len(samples)))
     
     for i, (stddev, corrcoef, n) in enumerate(samples):
-        print corrcoef
         if corrcoef < 0:
             corrcoef = 0
         plot['stats'][n] = {'standard deviation': float(stddev),
@@ -480,7 +479,6 @@ def taylordiagram(refdata, plotdata, unlabelled_data, fig=None, ax_args=None, pl
                numpoints=1, prop=dict(size='small'), loc='upper right')
     
     for i, (stddev, corrcoef) in enumerate(unlabelled_samples):
-        print corrcoef
         if corrcoef <= 0:
             continue           
         dia.add_sample(stddev, corrcoef,

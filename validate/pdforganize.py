@@ -52,7 +52,6 @@ def orderplots(plotnames):
                 p['plot_depth'] = str(float(p['plot_depth'])/100)
             except:
                 pass
-            print p['plot_depth']
         p['season'] = ''.join(p['seasons'])
     for p in plotnames:
         plotdict[p['realm']] = {}
