@@ -6,16 +6,26 @@ import shutil
 import subprocess
 
 
-def copy_configuration_file():
-    path = os.path.join('configure', 'conf.yaml')
+def copy_configuration_file(confile):
+    path = os.path.join('configure', confile)
     confile = pkg_resources.resource_filename('validate', path)
-    shutil.copy(confile, '.')
+    shutil.copy(confile, './conf.yaml')
 
 def args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-m', '--maps',
+                        action='store_true',
+                        default=False,
+                        help='gets configuration for maps only')
+                        
     args = parser.parse_args()
+    opts = vars(args)
+    confile = 'conf.yaml'
+    if opts['maps']:
+        confile='conf_maps.yaml'
+    
     if not os.path.isfile('conf.yaml'):
-        copy_configuration_file()
+        copy_configuration_file(confile)
     try:
         p = subprocess.Popen(['kwrite', 'conf.yaml'])
     except:
