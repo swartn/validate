@@ -374,7 +374,7 @@ def _trend_units(data, units, plot):
     string
     """
     if plot['frequency'] == 'day':
-        data = data * 365
+        data = data * 3650
     if plot['frequency'] == 'mon':
         data = data * 120
     if plot['frequency'] == 'year':

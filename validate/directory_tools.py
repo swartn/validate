@@ -598,20 +598,13 @@ def get_cmip_average(plots, directory):
         if var in variables:
             variables[var].append(f)
     for p in plots:
-        print 'a'
         if p['comp_cmips']:
-            print 'b'
             for cfile in variables[p['variable']]:
-                print 'c'
                 if getfrequency(cfile) == p['frequency'] and getexperiment(cfile) == p['experiment']:
-                    print 'd'
                     p['cmip5_file'] = cfile
                     break
             else:
                 p['cmip5_file'] = None
-                
-        print p['cmip5_file']
-            
     
 def cmip_average(var, frequency, files, sd, ed, expname):
     """ Creates and stores a netCDF file with the average data

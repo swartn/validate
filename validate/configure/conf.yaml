@@ -156,10 +156,14 @@ plots:
         - variable: 'pr'
           plot_projection: 'global_map'
           data_type: 'climatology'
+          scale: 31536000
+          units: 'kg m-2 y-1'
 
         - variable: 'prsn'
           plot_projection: 'global_map'
           data_type: 'climatology'
+          scale: 31536000
+          units: 'kg m-2 y-1'
 
 #depth
         - variable: 'zg'
@@ -227,6 +231,8 @@ plots:
           comp_obs:
              - 20CR
           comp_cmips: 'all'
+          scale: 31536000
+          units: 'kg m-2 y-1'
 
 #taylor
         - variable: 'ta'
@@ -257,6 +263,9 @@ plots:
           comp_obs:
              - 20CR
           comp_cmips: 'all'
+          scale: 31536000
+          units: 'kg m-2 y-1'
+
 
 #        ATMOS DJF
 
@@ -285,13 +294,17 @@ plots:
           data_type: 'climatology'
           seasons:
              - 'DJF'
-
+          scale: 31536000
+          units: 'kg m-2 y-1'
+          
         - variable: 'prsn'
           plot_projection: 'global_map'
           data_type: 'climatology'
           seasons:
              - 'DJF'
-
+          scale: 31536000
+          units: 'kg m-2 y-1'
+          
 #depth
         - variable: 'zg'
           plot_projection: 'global_map'
@@ -388,13 +401,17 @@ plots:
           data_type: 'climatology'
           seasons:
              - 'JJA'
+          scale: 31536000
+          units: 'kg m-2 y-1'
 
         - variable: 'prsn'
           plot_projection: 'global_map'
           data_type: 'climatology'
           seasons:
              - 'JJA'
-
+          scale: 31536000
+          units: 'kg m-2 y-1'
+          
 #depth
         - variable: 'zg'
           plot_projection: 'global_map'
@@ -862,7 +879,9 @@ plots:
           data_type: 'climatology'
           plot_args:
               fill_continents: True
-
+          scale: 31536000
+          units: 'kg m-2 y-1'
+          
         - variable: 'strairx'
           plot_projection: 'polar_map'
           data_type: 'climatology'
@@ -886,6 +905,8 @@ plots:
           data_type: 'climatology'
           plot_args:
               fill_continents: True
+          scale: 31536000
+          units: 'kg m-2 y-1'
 
         - variable: 'strairy'
           plot_projection: 'polar_map'
@@ -911,7 +932,9 @@ plots:
           data_type: 'climatology'
           plot_args:
               fill_continents: True
-
+          scale: 31536000
+          units: 'kg m-2 y-1'
+          
         - variable: 'strairx'
           plot_projection: 'polar_map_south'
           data_type: 'climatology'
@@ -935,6 +958,8 @@ plots:
           data_type: 'climatology'
           plot_args:
               fill_continents: True
+          scale: 31536000
+          units: 'kg m-2 y-1'
 
         - variable: 'strairy'
           plot_projection: 'polar_map_south'
