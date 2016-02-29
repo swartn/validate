@@ -17,12 +17,17 @@ def args():
                         action='store_true',
                         default=False,
                         help='gets configuration for maps only')
-                        
+    parser.add_argument('-t', '--taylor',
+                        action='store_true',
+                        default=False,
+                        help='gets configuration for taylor diagrams only')                        
     args = parser.parse_args()
     opts = vars(args)
     confile = 'conf.yaml'
     if opts['maps']:
-        confile='conf_maps.yaml'
+        confile = 'conf_maps.yaml'
+    if opts['taylor']:
+        confile = 'conf_taylor.yaml'
     
     if not os.path.isfile('conf.yaml'):
         copy_configuration_file(confile)
