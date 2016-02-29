@@ -20,7 +20,11 @@ def args():
     parser.add_argument('-t', '--taylor',
                         action='store_true',
                         default=False,
-                        help='gets configuration for taylor diagrams only')                        
+                        help='gets configuration for taylor diagrams only')
+    parser.add_argument('-s', '--simple',
+                        action='store_true',
+                        default=False,
+                        help='gets configuration for simple plot only')     
     args = parser.parse_args()
     opts = vars(args)
     confile = 'conf.yaml'
@@ -28,6 +32,8 @@ def args():
         confile = 'conf_maps.yaml'
     if opts['taylor']:
         confile = 'conf_taylor.yaml'
+    if opts['simple']:
+        confile = 'conf_simple.yaml'
     
     if not os.path.isfile('conf.yaml'):
         copy_configuration_file(confile)

@@ -1,0 +1,36 @@
+run: 'CanESM2'
+experiment: 'historical'
+
+defaults:
+          dates:
+              start_date: '1979-01'
+              end_date: '2000-01'
+          png: True
+plots:
+
+#        ATMOS ALL YEAR
+
+#surface
+        - variable: 'tas'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+
+delete:
+          del_netcdf: False
+          del_mask: True
+          del_ncstore: True
+          del_ENS_MEAN_cmipfiles: True
+          del_ENS_STD_cmipfiles: True
+          del_cmipfiles: False
+
+#data_root: '/raid/rc40/data/ncs/historical-edr/'
+data_root: '/fs/cetus/fs2/crb/CCCma_Output/CMIP5/output/CCCma/CanESM2/historical/'
+#observations_root: '/raid/rc40/data/ncs/obs4comp/'
+observations_root: '/fs/cava/dev/crb/sata/ccrna03/data/utmp/dwf/obs4comp/'
+#cmip5_root: '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
+cmip5_root: '/fs/cetus/fs2/crb/AR5/CMIP5_OTHER_DOWNLOADS/'
+#cmip5_means: '/home/004/david_fallis_sept2015/meanstorage/'
+cmip5_means: '/fs/cava/dev/crb/sata/ccrna03/data/utmp/dwf/cmip5_means/'
+#output_root: '/home/004/david_fallis_sept2015/output'
+output_root: '/fs/cava/dev/crb/sata/ccrna03/data/utmp/dwf/cron/'
