@@ -28,6 +28,9 @@ def args():
     parser.add_argument('-c', '--cmip5-root',
                         default=argparse.SUPPRESS,
                         help="directory to find cmip5 files")
+    parser.add_argument('-t', '--output-root',
+                        default=argparse.SUPPRESS,
+                        help="directory to output the tar file")
     parser.add_argument('-i', '--ignorecheck', action='store_false', 
                         default=argparse.SUPPRESS,
                         help="ignore plot checking")      
