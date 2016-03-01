@@ -125,13 +125,13 @@
 
 
 
-run: 'edr'
+run: 'CanESM2'
 experiment: 'historical'
 
 defaults:
           dates:
               start_date: '1979-01'
-              end_date: '2000-01'
+              end_date: '2005-01'
           png: True
 plots:
 
