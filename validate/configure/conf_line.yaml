@@ -6,7 +6,12 @@
 # run : A three letter string associated with the run ID to be tested.             
 #            
 #             example:             
-#                 model_run = 'edr'
+#                 run: 'edr'
+#
+#experiment : The type of experiment
+#
+#             example
+#                 experiment: 'historical'
 #
 # plots : A list of dictionaries specifying the plots to be produced. At a minimum
 #         to produce a plot, the dictionary must have a 'variable' and 'plot_projection'
@@ -24,32 +29,27 @@
 #                               'time_series'
 #                               'zonal_mean'
 #                               'taylor'
-#          climatology' : Boolean to produce climatology plot.
-#          compare_climatology' : Boolean to produce climatology comparison.
-#          trends : Boolean to produce trends plot.
-#          compare_trends' : Boolean to produce trends comparison.
-#          compare : A dictionary mapping comparison options
-#                      'obs'
-#                      'cmip5',
-#                      'model'
-#                      'runid'
-#                      to booleans
+#          data_type: The type of data to be displayed
+#                     Either 'climatology' or 'trends'
 #          comp_models : A list of strings of cmip5 model names to compare
 #          comp_ids : A list of strings of run IDs to compare
-#          climatology_dates : A dictionary mapping
+#          comp_cmips : A list of strings of cmip5 model names to be used
+#                       for the cmip average
+#                       'all' can be used to select all the models
+#          dates : A dictionary mapping
 #                                'start_date'
 #                                'end_date'
-#                                to the dates to use in the climatology plots.
+#                                to the dates to use in the plots.
 #                                Should be of the form 'yyyy-mm-dd' or 'yyyy-mm'
 #                                ex. {'start_date': '1970-01-01', 'end_date': '1990-01'}
-#          trends_dates : A dictionary mapping
+#          comp_dates : A dictionary mapping
 #                           'start_date'
 #                           'end_date'
-#                           to the dates to use in the trends plots.
+#                           to the dates to used for the comparison data.
 #                           Should be of the form 'yyyy-mm-dd' or 'yyyy-mm'
 #                           ex. {'start_date': '1970-01-01', 'end_date': '1990-01'}
 #          realization : integer or string of realizaion number
-#                          ex. '1'
+#                          ex. 'r1i1p1'
 #          depth_type : string of the depth type used for the variable in the netCDF file.
 #                         required for depths to be specified and for section plots
 #                         ex 'plev'
@@ -129,63 +129,64 @@ run: 'edr'
 experiment: 'historical'
 
 defaults:
-            climatology: True
-            climatology_dates:
-              start_date: '1980-01'
+          dates:
+              start_date: '1979-01'
               end_date: '2000-01'
-            compare_climatology: True
+          png: True
+plots:
 
-            trends: False
-            trends_dates:
-              start_date: '1991-01'
-              end_date: '2000-01'
-            compare_trends: False
+#        ATMOS ALL YEAR
 
-            realization: '1'
-            scale: 1
-            pdf: True
 
-plots:    
-        - variable: 'psl'
-          plot_projection: 'taylor'
-          compare: 
-              cmip5: True
-              model: True
-              obs: True
-              runid: True
-          comp_models: 
-            - CanCM4
-            - NorESM1-M
-          comp_ids: 
-            - cvu
-       
-        - variable: 'ta'
-          plot_projection: 'mercator'
-          compare: 
-              cmip5: True
-              model: True
-              obs: True
-              runid: True
-          depths:
-            - 50000
-            - 100000
-          comp_models: 
-            - CanCM4
-            - NorESM1-M
-          comp_ids: 
-            - cvu   
+
+
+#zonal mean 
+        - variable: 'pr'
+          plot_projection: 'zonal_mean'
+          data_type: 'climatology'
+          comp_obs:
+             - 20CR
+          comp_cmips: 'all'
+          scale: 31536000
+          units: 'kg m-2 y-1'    
+
+
+
+#timeseries
+        - variable: 'fgco2'
+          plot_projection: 'time_series'
+          data_type: 'climatology'
+          cdostring: 'fldsum -seldate,1979-01,2000-01 -mul mask/areacello'
+          data1:
+              ax_args:
+                  ylabel: 'kgs-1'      
+          divergent: True
+
+#zonal mean 
+        - variable: 'pr'
+          plot_projection: 'zonal_mean'
+          data_type: 'trends'
+          comp_obs:
+             - 20CR
+          comp_cmips: 'all'
+
+
 
 delete:
-          del_fldmeanfiles: True
+          del_netcdf: False
           del_mask: True
           del_ncstore: True
-          del_remapfiles: True
-          del_trendfiles: True
-          del_zonalfiles: True
           del_ENS_MEAN_cmipfiles: True
           del_ENS_STD_cmipfiles: True
           del_cmipfiles: False
 
-          
-observations_root: '/raid/rc40/data/ncs/obs4comp'
-cmip5_root: '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
+#data_root: '/raid/rc40/data/ncs/historical-edr/'
+data_root: '/fs/cetus/fs2/crb/CCCma_Output/CMIP5/output/CCCma/CanESM2/historical/'
+#observations_root: '/raid/rc40/data/ncs/obs4comp/'
+observations_root: '/fs/cava/dev/crb/sata/ccrna03/data/utmp/dwf/obs4comp/'
+#cmip5_root: '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
+cmip5_root: '/fs/cetus/fs2/crb/AR5/CMIP5_OTHER_DOWNLOADS/'
+#cmip5_means: '/home/004/david_fallis_sept2015/meanstorage/'
+cmip5_means: '/fs/cava/dev/crb/sata/ccrna03/data/utmp/dwf/cmip5_means/'
+#output_root: '/home/004/david_fallis_sept2015/output'
+output_root: '/fs/cava/dev/crb/sata/ccrna03/data/utmp/dwf/standard/line/'

@@ -140,31 +140,31 @@ plots:
 #surface
         - variable: 'tas'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
 
         - variable: 'uas'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           divergent: True
           
         - variable: 'psl'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           comp_obs:
             - 20CR
 
         - variable: 'pr'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
 
         - variable: 'prsn'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
 
 #depth
         - variable: 'zg'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           depths:
             - 100000
             - 85000
@@ -177,7 +177,7 @@ plots:
 
         - variable: 'ua'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           depths:
             - 100000
             - 85000
@@ -191,7 +191,7 @@ plots:
           
         - variable: 'ta'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           depths:
             - 100000
             - 85000
@@ -205,20 +205,20 @@ plots:
 #section
         - variable: 'ua'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
           comp_obs:
              - 20CR
           divergent: True
           
         - variable: 'ta'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
           comp_obs:
              - 20CR
 
         - variable: 'zg'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
 
 
 
@@ -227,39 +227,39 @@ plots:
 #surface
         - variable: 'tas'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           seasons:
              - 'DJF'
 
         - variable: 'uas'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           seasons:
              - 'DJF'
           divergent: True
           
         - variable: 'psl'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           seasons:
              - 'DJF'
 
         - variable: 'pr'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           seasons:
              - 'DJF'
 
         - variable: 'prsn'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           seasons:
              - 'DJF'
 
 #depth
         - variable: 'zg'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           depths:
             - 100000
             - 85000
@@ -274,7 +274,7 @@ plots:
 
         - variable: 'ua'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           depths:
             - 100000
             - 85000
@@ -290,7 +290,7 @@ plots:
 
         - variable: 'ta'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           depths:
             - 100000
             - 85000
@@ -306,21 +306,21 @@ plots:
 #section
         - variable: 'ua'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
           seasons:
              - 'DJF'
           divergent: True
           
         - variable: 'ta'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
           seasons:
              - 'DJF'
 
 
         - variable: 'zg'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
           seasons:
              - 'DJF'
 
@@ -330,39 +330,39 @@ plots:
 #surface
         - variable: 'tas'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           seasons:
              - 'JJA'
 
         - variable: 'uas'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           seasons:
              - 'JJA'
           divergent: True
           
         - variable: 'psl'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           seasons:
              - 'JJA'
 
         - variable: 'pr'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           seasons:
              - 'JJA'
 
         - variable: 'prsn'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           seasons:
              - 'JJA'
 
 #depth
         - variable: 'zg'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           depths:
             - 100000
             - 85000
@@ -377,7 +377,7 @@ plots:
 
         - variable: 'ua'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           depths:
             - 100000
             - 85000
@@ -393,7 +393,7 @@ plots:
           
         - variable: 'ta'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           depths:
             - 100000
             - 85000
@@ -409,92 +409,86 @@ plots:
 #section
         - variable: 'ua'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
           seasons:
              - 'JJA'
           divergent: True
           
         - variable: 'ta'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
           seasons:
              - 'JJA'
 
 
         - variable: 'zg'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
           seasons:
              - 'JJA'
 
 #         LAND
         - variable: 'nep'
           plot_projection: 'mercator'
-          data_type: 'climatology'
-          scale: 31536000
-          units: 'kg m-2 y-1'
-          
+          data_type: 'trends'
+
         - variable: 'gpp'
           plot_projection: 'mercator'
-          data_type: 'climatology'
-          scale: 31536000
-          units: 'kg m-2 y-1'
-          
+          data_type: 'trends'
+
         - variable: 'npp'
           plot_projection: 'mercator'
-          data_type: 'climatology'
-          scale: 31536000
-          units: 'kg m-2 y-1'
-          
+          data_type: 'trends'
+
         - variable: 'lai'
           plot_projection: 'mercator'
-          data_type: 'climatology'
+          data_type: 'trends'
 
         - variable: 'cSoil'
           plot_projection: 'mercator'
-          data_type: 'climatology'
+          data_type: 'trends'
 
         - variable: 'cRoot'
           plot_projection: 'mercator'
-          data_type: 'climatology'
+          data_type: 'trends'
 
         - variable: 'cVeg'
           plot_projection: 'mercator'
-          data_type: 'climatology'
+          data_type: 'trends'
 
         - variable: 'cWood'
           plot_projection: 'mercator'
-          data_type: 'climatology'
+          data_type: 'trends'
 
         - variable: 'cLeaf'
           plot_projection: 'mercator'
-          data_type: 'climatology'
+          data_type: 'trends'
 
         - variable: 'cLitter'
           plot_projection: 'mercator'
-          data_type: 'climatology'
+          data_type: 'trends'
 
 #        OCEAN
 
 #surface
         - variable: 'tos'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           comp_obs:
             - observations
 
         - variable: 'sos'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
 
 
 #        - variable: 'zos'
 #          plot_projection: 'global_map'
-#          data_type: 'climatology'
+#          data_type: 'trends'
 
         - variable: 'msftbarot'
           plot_projection: 'mercator'
-          data_type: 'climatology'
+          data_type: 'trends'
           plot_args:
               draw_contour: True
           scale: 0.000000001
@@ -502,21 +496,21 @@ plots:
 
 #        - variable: 'pbo'
 #          plot_projection: 'global_map'
-#          data_type: 'climatology'
+#          data_type: 'trends'
 
 #        - variable: 'zosga'
 #          plot_projection: 'global_map'
-#          data_type: 'climatology'
+#          data_type: 'trends'
 
 #        - variable: 'zossga'
 #          plot_projection: 'global_map'
-#          data_type: 'climatology'
+#          data_type: 'trends'
 
 #depth
 
         - variable: 'thetao'
           plot_projection: 'mercator'
-          data_type: 'climatology'
+          data_type: 'trends'
           depths:
             - 100
             - 500
@@ -531,7 +525,7 @@ plots:
 
         - variable: 'so'
           plot_projection: 'mercator'
-          data_type: 'climatology'
+          data_type: 'trends'
           depths:
             - 100
             - 500
@@ -543,7 +537,7 @@ plots:
 
         - variable: 'uo'
           plot_projection: 'mercator'
-          data_type: 'climatology'
+          data_type: 'trends'
           depths:
             - 100
             - 500
@@ -554,7 +548,7 @@ plots:
           
         - variable: 'vo'
           plot_projection: 'mercator'
-          data_type: 'climatology'
+          data_type: 'trends'
           depths:
             - 100
             - 500
@@ -566,26 +560,26 @@ plots:
 #sections
         - variable: 'so'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
           comp_obs:
             - observations
           set_yscale: 'linear'
           
         - variable: 'uo'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
           set_yscale: 'linear'
           divergent: True
                     
         - variable: 'vo'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
           set_yscale: 'linear'
           divergent: True
           
         - variable: 'msftmyz'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
           basin: 2
           set_yscale: 'linear'
           scale: 0.000000001
@@ -594,7 +588,7 @@ plots:
 
         - variable: 'thetao'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
           comp_obs:
             - observations
           set_yscale: 'linear'
@@ -603,56 +597,57 @@ plots:
           units: 'C'          
 
 
+
 #             OCEANBGCHEM
         - variable: 'chl'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           comp_obs:
             - observations
 
         - variable: 'fgco2'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           scale: 31536000
           units: 'kg m-2 y-1'
           divergent: True
 
         - variable: 'epc100'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           scale: 31536000
           units: 'mol m-2 y-1'
           
         - variable: 'epcalc100'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           scale: 31536000
           units: 'mol m-2 y-1'
 
         - variable: 'intpp'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           scale: 31536000
           units: 'mol m-2 y-1'
           
         - variable: 'frc'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           scale: 31536000
           units: 'mol m-2 y-1'
           
         - variable: 'intdic'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
 
         - variable: 'dpco2'
           plot_projection: 'global_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           divergent: True
           
         - variable: 'dissic'
           plot_projection: 'mercator'
-          data_type: 'climatology'
+          data_type: 'trends'
           frequency: 'yr'
           depths:
             - 100
@@ -665,7 +660,7 @@ plots:
 
         - variable: 'no3'
           plot_projection: 'mercator'
-          data_type: 'climatology'
+          data_type: 'trends'
           frequency: 'yr'
           depths:
             - 100
@@ -680,7 +675,7 @@ plots:
             
         - variable: 'ph'
           plot_projection: 'mercator'
-          data_type: 'climatology'
+          data_type: 'trends'
           frequency: 'yr'
           depths:
             - 100
@@ -694,7 +689,7 @@ plots:
 
         - variable: 'talk'
           plot_projection: 'mercator'
-          data_type: 'climatology'
+          data_type: 'trends'
           frequency: 'yr'
           depths:
             - 100
@@ -708,27 +703,26 @@ plots:
 #sections
         - variable: 'dissic'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
           frequency: 'yr'
 
         - variable: 'no3'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
           frequency: 'yr'
           scale: 1000
           units: 'mmol m-3'
         
         - variable: 'ph'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
           frequency: 'yr'
           units: ''
           
         - variable: 'talk'
           plot_projection: 'section'
-          data_type: 'climatology'
+          data_type: 'trends'
           frequency: 'yr'
-
 
 
 
@@ -737,103 +731,101 @@ plots:
 #np
         - variable: 'sic'
           plot_projection: 'polar_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
 
         - variable: 'tsice'
           plot_projection: 'polar_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
 
         - variable: 'pr'
           plot_projection: 'polar_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
 
         - variable: 'strairx'
           plot_projection: 'polar_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
 
         - variable: 'sit'
           plot_projection: 'polar_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
 
         - variable: 'snd'
           plot_projection: 'polar_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
 
         - variable: 'prsn'
           plot_projection: 'polar_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
 
         - variable: 'strairy'
           plot_projection: 'polar_map'
-          data_type: 'climatology'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
 
 #sp
         - variable: 'sic'
           plot_projection: 'polar_map_south'
-          data_type: 'climatology'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
 
         - variable: 'tsice'
           plot_projection: 'polar_map_south'
-          data_type: 'climatology'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
 
         - variable: 'pr'
           plot_projection: 'polar_map_south'
-          data_type: 'climatology'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
 
         - variable: 'strairx'
           plot_projection: 'polar_map_south'
-          data_type: 'climatology'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
 
         - variable: 'sit'
           plot_projection: 'polar_map_south'
-          data_type: 'climatology'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
 
         - variable: 'snd'
           plot_projection: 'polar_map_south'
-          data_type: 'climatology'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
 
         - variable: 'prsn'
           plot_projection: 'polar_map_south'
-          data_type: 'climatology'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
 
         - variable: 'strairy'
           plot_projection: 'polar_map_south'
-          data_type: 'climatology'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
-
-
-
+              
 delete:
           del_netcdf: False
           del_mask: True
