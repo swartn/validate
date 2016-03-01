@@ -33,7 +33,26 @@ def args():
                         action='store_true',
                         default=False,
                         help='gets configuration for simple plot only')
-                             
+    parser.add_argument('-a', '--atmosphere',
+                        action='store_true',
+                        default=False,
+                        help='gets configuration for atmosphere plots only')
+    parser.add_argument('-o', '--ocean',
+                        action='store_true',
+                        default=False,
+                        help='gets configuration for ocean plots only')
+    parser.add_argument('-d', '--land',
+                        action='store_true',
+                        default=False,
+                        help='gets configuration for land plots only') 
+    parser.add_argument('-c', '--ocnbgchem',
+                        action='store_true',
+                        default=False,
+                        help='gets configuration for ocnbgchem plots only')
+    parser.add_argument('-i', '--seaice',
+                        action='store_true',
+                        default=False,
+                        help='gets configuration for seaice plots only')    
     args = parser.parse_args()
     opts = vars(args)
     confile = 'conf.yaml'
@@ -46,8 +65,17 @@ def args():
     if opts['line']:
         confile = 'conf_line.yaml'
     if opts['trends']:
-        confile = 'conf_trends.yaml'    
-    
+        confile = 'conf_trends.yaml' 
+    if opts['atmosphere']:
+        confile = 'conf_atmos.yaml'
+    if opts['ocean']:
+        confile = 'conf_ocean.yaml'
+    if opts['land']:
+        confile = 'conf_land.yaml'  
+    if opts['ocnbgchem']:
+        confile = 'conf_ocnbgchem.yaml'  
+    if opts['seaice']:
+        confile = 'conf_seaice.yaml'                
     if not os.path.isfile('conf.yaml'):
         copy_configuration_file(confile)
     try:

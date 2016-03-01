@@ -106,11 +106,11 @@ MODELS = ['bcc-csm1-1',
 piControl = {'dates': {'start_date': '2900-01',
                        'end_date': '3000-01'},
              }
-historical = {'dates': {'start_date': '2900-01',
-                        'end_date': '3000-01'},
+historical = {'dates': {'start_date': '1986-01',
+                        'end_date': '2005-01'},
               }
-rcp = {'dates': {'start_date': '2900-01',
-                 'end_date': '3000-01'},
+rcp = {'dates': {'start_date': '2081-01',
+                 'end_date': '2100-01'},
        }                        
 
 def fill(plots, model_run, experiment, defaults={}):
