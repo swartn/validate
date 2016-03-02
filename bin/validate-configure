@@ -13,22 +13,6 @@ def copy_configuration_file(confile):
 
 def args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--maps',
-                        action='store_true',
-                        default=False,
-                        help='gets configuration for maps only')
-    parser.add_argument('-t', '--taylor',
-                        action='store_true',
-                        default=False,
-                        help='gets configuration for taylor diagrams only')
-    parser.add_argument('-l', '--line',
-                        action='store_true',
-                        default=False,
-                        help='gets configuration for line plots only')
-    parser.add_argument('-n', '--trends',
-                        action='store_true',
-                        default=False,
-                        help='gets configuration for trend maps only')
     parser.add_argument('-s', '--simple',
                         action='store_true',
                         default=False,
@@ -52,20 +36,13 @@ def args():
     parser.add_argument('-i', '--seaice',
                         action='store_true',
                         default=False,
-                        help='gets configuration for seaice plots only')    
+                        help='gets configuration for seaice plots only')
+                         
     args = parser.parse_args()
     opts = vars(args)
     confile = 'conf.yaml'
-    if opts['maps']:
-        confile = 'conf_maps.yaml'
-    if opts['taylor']:
-        confile = 'conf_taylor.yaml'
     if opts['simple']:
         confile = 'conf_simple.yaml'
-    if opts['line']:
-        confile = 'conf_line.yaml'
-    if opts['trends']:
-        confile = 'conf_trends.yaml' 
     if opts['atmosphere']:
         confile = 'conf_atmos.yaml'
     if opts['ocean']:
