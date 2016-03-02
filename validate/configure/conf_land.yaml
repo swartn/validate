@@ -141,60 +141,40 @@ plots:
           data_type: 'climatology'
           scale: 31536000
           units: 'kg m-2 y-1'
-          
-        - variable: 'gpp'
-          plot_projection: 'mercator'
-          data_type: 'climatology'
-          scale: 31536000
-          units: 'kg m-2 y-1'
-          
-        - variable: 'npp'
-          plot_projection: 'mercator'
-          data_type: 'climatology'
-          scale: 31536000
-          units: 'kg m-2 y-1'
-          
-        - variable: 'lai'
-          plot_projection: 'mercator'
-          data_type: 'climatology'
 
-        - variable: 'cSoil'
-          plot_projection: 'mercator'
-          data_type: 'climatology'
-
-        - variable: 'cRoot'
-          plot_projection: 'mercator'
-          data_type: 'climatology'
-
-        - variable: 'cVeg'
-          plot_projection: 'mercator'
-          data_type: 'climatology'
-
-        - variable: 'cWood'
-          plot_projection: 'mercator'
-          data_type: 'climatology'
-
-        - variable: 'cLeaf'
-          plot_projection: 'mercator'
-          data_type: 'climatology'
-
-        - variable: 'cLitter'
-          plot_projection: 'mercator'
-          data_type: 'climatology'
-
-
-#         LAND
         - variable: 'nep'
           plot_projection: 'mercator'
           data_type: 'trends'
-
+          scale: 31536000
+          units: 'kg m-2 y-1'
+          
+        - variable: 'gpp'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          scale: 31536000
+          units: 'kg m-2 y-1'
+ 
         - variable: 'gpp'
           plot_projection: 'mercator'
           data_type: 'trends'
+          scale: 31536000
+          units: 'kg m-2 y-1'   
+                 
+        - variable: 'npp'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          scale: 31536000
+          units: 'kg m-2 y-1'
 
         - variable: 'npp'
           plot_projection: 'mercator'
           data_type: 'trends'
+          scale: 31536000
+          units: 'kg m-2 y-1'
+          
+        - variable: 'lai'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
 
         - variable: 'lai'
           plot_projection: 'mercator'
@@ -202,11 +182,23 @@ plots:
 
         - variable: 'cSoil'
           plot_projection: 'mercator'
+          data_type: 'climatology'
+
+        - variable: 'cSoil'
+          plot_projection: 'mercator'
           data_type: 'trends'
+        
+        - variable: 'cRoot'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
 
         - variable: 'cRoot'
           plot_projection: 'mercator'
           data_type: 'trends'
+ 
+        - variable: 'cVeg'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
 
         - variable: 'cVeg'
           plot_projection: 'mercator'
@@ -214,7 +206,15 @@ plots:
 
         - variable: 'cWood'
           plot_projection: 'mercator'
+          data_type: 'climatology'
+
+        - variable: 'cWood'
+          plot_projection: 'mercator'
           data_type: 'trends'
+
+        - variable: 'cLeaf'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
 
         - variable: 'cLeaf'
           plot_projection: 'mercator'
@@ -222,7 +222,17 @@ plots:
 
         - variable: 'cLitter'
           plot_projection: 'mercator'
+          data_type: 'climatology'
+
+        - variable: 'cLitter'
+          plot_projection: 'mercator'
           data_type: 'trends'
+
+
+
+
+
+
 
 delete:
           del_netcdf: False
