@@ -135,12 +135,27 @@ defaults:
           png: True
 plots:
 
-#         SEAICE
-
-#np
         - variable: 'sic'
           plot_projection: 'polar_map'
           data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'sic'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'sic'
+          plot_projection: 'polar_map'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'sic'
+          plot_projection: 'polar_map_south'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
 
@@ -150,66 +165,61 @@ plots:
           plot_args:
               fill_continents: True
 
+        - variable: 'tsice'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'tsice'
+          plot_projection: 'polar_map'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'tsice'
+          plot_projection: 'polar_map_south'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+
         - variable: 'pr'
           plot_projection: 'polar_map'
           data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          scale: 31536000
+          units: 'kg m-2 y-1'
+
+        - variable: 'pr'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          scale: 31536000
+          units: 'kg m-2 y-1'
+
+        - variable: 'pr'
+          plot_projection: 'polar_map'
+          data_type: 'trends'
           plot_args:
               fill_continents: True
           scale: 31536000
           units: 'kg m-2 y-1'
           
+        - variable: 'pr'
+          plot_projection: 'polar_map_south'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+          scale: 31536000
+          units: 'kg m-2 y-1'
+
         - variable: 'strairx'
           plot_projection: 'polar_map'
           data_type: 'climatology'
           plot_args:
               fill_continents: True
-
-        - variable: 'sit'
-          plot_projection: 'polar_map'
-          data_type: 'climatology'
-          plot_args:
-              fill_continents: True
-
-        - variable: 'snd'
-          plot_projection: 'polar_map'
-          data_type: 'climatology'
-          plot_args:
-              fill_continents: True
-
-        - variable: 'prsn'
-          plot_projection: 'polar_map'
-          data_type: 'climatology'
-          plot_args:
-              fill_continents: True
-          scale: 31536000
-          units: 'kg m-2 y-1'
-
-        - variable: 'strairy'
-          plot_projection: 'polar_map'
-          data_type: 'climatology'
-          plot_args:
-              fill_continents: True
-
-#sp
-        - variable: 'sic'
-          plot_projection: 'polar_map_south'
-          data_type: 'climatology'
-          plot_args:
-              fill_continents: True
-
-        - variable: 'tsice'
-          plot_projection: 'polar_map_south'
-          data_type: 'climatology'
-          plot_args:
-              fill_continents: True
-
-        - variable: 'pr'
-          plot_projection: 'polar_map_south'
-          data_type: 'climatology'
-          plot_args:
-              fill_continents: True
-          scale: 31536000
-          units: 'kg m-2 y-1'
           
         - variable: 'strairx'
           plot_projection: 'polar_map_south'
@@ -217,8 +227,70 @@ plots:
           plot_args:
               fill_continents: True
 
+
+        - variable: 'strairx'
+          plot_projection: 'polar_map'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+
+
+        - variable: 'strairx'
+          plot_projection: 'polar_map_south'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'strairy'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'strairy'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'strairy'
+          plot_projection: 'polar_map'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'strairy'
+          plot_projection: 'polar_map_south'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+              
+        - variable: 'sit'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
         - variable: 'sit'
           plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'sit'
+          plot_projection: 'polar_map'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'sit'
+          plot_projection: 'polar_map_south'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'snd'
+          plot_projection: 'polar_map'
           data_type: 'climatology'
           plot_args:
               fill_continents: True
@@ -228,6 +300,26 @@ plots:
           data_type: 'climatology'
           plot_args:
               fill_continents: True
+
+        - variable: 'snd'
+          plot_projection: 'polar_map'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'snd'
+          plot_projection: 'polar_map_south'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+
+        - variable: 'prsn'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          scale: 31536000
+          units: 'kg m-2 y-1'
 
         - variable: 'prsn'
           plot_projection: 'polar_map_south'
@@ -237,113 +329,23 @@ plots:
           scale: 31536000
           units: 'kg m-2 y-1'
 
-        - variable: 'strairy'
-          plot_projection: 'polar_map_south'
-          data_type: 'climatology'
-          plot_args:
-              fill_continents: True
-
-
-
-#         SEAICE
-
-#np
-        - variable: 'sic'
-          plot_projection: 'polar_map'
-          data_type: 'trends'
-          plot_args:
-              fill_continents: True
-
-        - variable: 'tsice'
-          plot_projection: 'polar_map'
-          data_type: 'trends'
-          plot_args:
-              fill_continents: True
-
-        - variable: 'pr'
-          plot_projection: 'polar_map'
-          data_type: 'trends'
-          plot_args:
-              fill_continents: True
-
-        - variable: 'strairx'
-          plot_projection: 'polar_map'
-          data_type: 'trends'
-          plot_args:
-              fill_continents: True
-
-        - variable: 'sit'
-          plot_projection: 'polar_map'
-          data_type: 'trends'
-          plot_args:
-              fill_continents: True
-
-        - variable: 'snd'
-          plot_projection: 'polar_map'
-          data_type: 'trends'
-          plot_args:
-              fill_continents: True
-
         - variable: 'prsn'
           plot_projection: 'polar_map'
           data_type: 'trends'
           plot_args:
               fill_continents: True
-
-        - variable: 'strairy'
-          plot_projection: 'polar_map'
-          data_type: 'trends'
-          plot_args:
-              fill_continents: True
-
-#sp
-        - variable: 'sic'
-          plot_projection: 'polar_map_south'
-          data_type: 'trends'
-          plot_args:
-              fill_continents: True
-
-        - variable: 'tsice'
-          plot_projection: 'polar_map_south'
-          data_type: 'trends'
-          plot_args:
-              fill_continents: True
-
-        - variable: 'pr'
-          plot_projection: 'polar_map_south'
-          data_type: 'trends'
-          plot_args:
-              fill_continents: True
-
-        - variable: 'strairx'
-          plot_projection: 'polar_map_south'
-          data_type: 'trends'
-          plot_args:
-              fill_continents: True
-
-        - variable: 'sit'
-          plot_projection: 'polar_map_south'
-          data_type: 'trends'
-          plot_args:
-              fill_continents: True
-
-        - variable: 'snd'
-          plot_projection: 'polar_map_south'
-          data_type: 'trends'
-          plot_args:
-              fill_continents: True
+          scale: 31536000
+          units: 'kg m-2 y-1'
 
         - variable: 'prsn'
           plot_projection: 'polar_map_south'
           data_type: 'trends'
           plot_args:
               fill_continents: True
+          scale: 31536000
+          units: 'kg m-2 y-1'
 
-        - variable: 'strairy'
-          plot_projection: 'polar_map_south'
-          data_type: 'trends'
-          plot_args:
-              fill_continents: True
+
 delete:
           del_netcdf: False
           del_mask: True
