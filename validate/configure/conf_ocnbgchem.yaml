@@ -135,12 +135,25 @@ defaults:
           png: True
 plots:
 
-#             OCEANBGCHEM
         - variable: 'chl'
           plot_projection: 'global_map'
           data_type: 'climatology'
           comp_obs:
             - observations
+
+        - variable: 'chl'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+          comp_obs:
+            - observations
+
+        - variable: 'chl'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_cmips: 'all'
+          frequency: 'yr'
 
         - variable: 'fgco2'
           plot_projection: 'global_map'
@@ -149,11 +162,24 @@ plots:
           units: 'kg m-2 y-1'
           divergent: True
 
+        - variable: 'fgco2'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+          scale: 31536000
+          units: 'kg m-2 y-1/decade'
+          divergent: True
+
         - variable: 'epc100'
           plot_projection: 'global_map'
           data_type: 'climatology'
           scale: 31536000
           units: 'mol m-2 y-1'
+
+        - variable: 'epc100'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+          scale: 31536000
+          units: 'mol m-2 y-1/decade'
           
         - variable: 'epcalc100'
           plot_projection: 'global_map'
@@ -161,25 +187,52 @@ plots:
           scale: 31536000
           units: 'mol m-2 y-1'
 
+        - variable: 'epcalc100'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+          scale: 31536000
+          units: 'mol m-2 y-1/decade'
+
         - variable: 'intpp'
           plot_projection: 'global_map'
           data_type: 'climatology'
           scale: 31536000
           units: 'mol m-2 y-1'
-          
+
+        - variable: 'intpp'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+          scale: 31536000
+          units: 'mol m-2 y-1/decade'
+        
         - variable: 'frc'
           plot_projection: 'global_map'
           data_type: 'climatology'
           scale: 31536000
           units: 'mol m-2 y-1'
-          
+   
+        - variable: 'frc'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+          scale: 31536000
+          units: 'mol m-2 y-1/decade'
+   
         - variable: 'intdic'
           plot_projection: 'global_map'
           data_type: 'climatology'
 
+        - variable: 'intdic'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+
         - variable: 'dpco2'
           plot_projection: 'global_map'
           data_type: 'climatology'
+          divergent: True
+
+        - variable: 'dpco2'
+          plot_projection: 'global_map'
+          data_type: 'trends'
           divergent: True
           
         - variable: 'dissic'
@@ -195,6 +248,37 @@ plots:
           comp_obs:
             - observations
 
+        - variable: 'dissic'
+          plot_projection: 'mercator'
+          data_type: 'trends'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+          
+        - variable: 'dissic'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          frequency: 'yr'
+
+        - variable: 'dissic'
+          plot_projection: 'section'
+          data_type: 'trends'
+          frequency: 'yr'
+          
+        - variable: 'dissic'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_cmips: 'all'
+          frequency: 'yr'       
+
         - variable: 'no3'
           plot_projection: 'mercator'
           data_type: 'climatology'
@@ -209,84 +293,128 @@ plots:
             - observations
           scale: 1000
           units: 'mmol m-3'
+
+        - variable: 'no3'
+          plot_projection: 'mercator'
+          data_type: 'trends'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+          scale: 1000
+          units: 'mmol m-3/decade'
+
+        - variable: 'no3'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          frequency: 'yr'
+          scale: 1000
+          units: 'mmol m-3'
+
+        - variable: 'no3'
+          plot_projection: 'section'
+          data_type: 'trends'
+          frequency: 'yr'
+          scale: 1000
+          units: 'mmol m-3'
+
+        - variable: 'no3'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_cmips: 'all'
+          frequency: 'yr'
+
+        - variable: 'ph'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+          units: ''
+
+        - variable: 'ph'
+          plot_projection: 'mercator'
+          data_type: 'trends'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+          units: '/decade'
+          
+        - variable: 'ph'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          frequency: 'yr'
+          units: ''
+          
+        - variable: 'ph'
+          plot_projection: 'section'
+          data_type: 'trends'
+          frequency: 'yr'
+          units: '/decade'
+
+        - variable: 'ph'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_cmips: 'all'
+          frequency: 'yr'   
+
+        - variable: 'talk'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+      
+        - variable: 'talk'
+          plot_projection: 'mercator'
+          data_type: 'trends'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
             
-        - variable: 'ph'
-          plot_projection: 'mercator'
-          data_type: 'climatology'
-          frequency: 'yr'
-          depths:
-            - 100
-            - 500
-            - 1000
-            - 2000
-            - 4000
-          comp_obs:
-            - observations
-          units: ''
-
-        - variable: 'talk'
-          plot_projection: 'mercator'
-          data_type: 'climatology'
-          frequency: 'yr'
-          depths:
-            - 100
-            - 500
-            - 1000
-            - 2000
-            - 4000
-          comp_obs:
-            - observations
-
-#sections
-        - variable: 'dissic'
-          plot_projection: 'section'
-          data_type: 'climatology'
-          frequency: 'yr'
-
-        - variable: 'no3'
-          plot_projection: 'section'
-          data_type: 'climatology'
-          frequency: 'yr'
-          scale: 1000
-          units: 'mmol m-3'
-        
-        - variable: 'ph'
-          plot_projection: 'section'
-          data_type: 'climatology'
-          frequency: 'yr'
-          units: ''
-          
         - variable: 'talk'
           plot_projection: 'section'
           data_type: 'climatology'
           frequency: 'yr'
 
-
-#taylor
-        - variable: 'dissic'
-          plot_projection: 'taylor'
-          data_type: 'climatology'
-          comp_obs:
-             - observations
-          comp_cmips: 'all'
+        - variable: 'talk'
+          plot_projection: 'section'
+          data_type: 'trends'
           frequency: 'yr'
-
-        - variable: 'no3'
-          plot_projection: 'taylor'
-          data_type: 'climatology'
-          comp_obs:
-             - observations
-          comp_cmips: 'all'
-          frequency: 'yr'
-
-        - variable: 'ph'
-          plot_projection: 'taylor'
-          data_type: 'climatology'
-          comp_obs:
-             - observations
-          comp_cmips: 'all'
-          frequency: 'yr'
-          
+         
         - variable: 'talk'
           plot_projection: 'taylor'
           data_type: 'climatology'
@@ -294,177 +422,6 @@ plots:
              - observations
           comp_cmips: 'all'
           frequency: 'yr' 
-
-        - variable: 'chl'
-          plot_projection: 'taylor'
-          data_type: 'climatology'
-          comp_obs:
-             - observations
-          comp_cmips: 'all'
-          frequency: 'yr'
-
-
-        - variable: 'chl'
-          plot_projection: 'global_map'
-          data_type: 'trends'
-          comp_obs:
-            - observations
-
-        - variable: 'fgco2'
-          plot_projection: 'global_map'
-          data_type: 'trends'
-          scale: 31536000
-          units: 'kg m-2 y-1'
-          divergent: True
-
-        - variable: 'epc100'
-          plot_projection: 'global_map'
-          data_type: 'trends'
-          scale: 31536000
-          units: 'mol m-2 y-1'
-          
-        - variable: 'epcalc100'
-          plot_projection: 'global_map'
-          data_type: 'trends'
-          scale: 31536000
-          units: 'mol m-2 y-1'
-
-        - variable: 'intpp'
-          plot_projection: 'global_map'
-          data_type: 'trends'
-          scale: 31536000
-          units: 'mol m-2 y-1'
-          
-        - variable: 'frc'
-          plot_projection: 'global_map'
-          data_type: 'trends'
-          scale: 31536000
-          units: 'mol m-2 y-1'
-          
-        - variable: 'intdic'
-          plot_projection: 'global_map'
-          data_type: 'trends'
-
-        - variable: 'dpco2'
-          plot_projection: 'global_map'
-          data_type: 'trends'
-          divergent: True
-          
-        - variable: 'dissic'
-          plot_projection: 'mercator'
-          data_type: 'trends'
-          frequency: 'yr'
-          depths:
-            - 100
-            - 500
-            - 1000
-            - 2000
-            - 4000
-          comp_obs:
-            - observations
-
-        - variable: 'no3'
-          plot_projection: 'mercator'
-          data_type: 'trends'
-          frequency: 'yr'
-          depths:
-            - 100
-            - 500
-            - 1000
-            - 2000
-            - 4000
-          comp_obs:
-            - observations
-          scale: 1000
-          units: 'mmol m-3'
-            
-        - variable: 'ph'
-          plot_projection: 'mercator'
-          data_type: 'trends'
-          frequency: 'yr'
-          depths:
-            - 100
-            - 500
-            - 1000
-            - 2000
-            - 4000
-          comp_obs:
-            - observations
-          units: ''
-
-        - variable: 'talk'
-          plot_projection: 'mercator'
-          data_type: 'trends'
-          frequency: 'yr'
-          depths:
-            - 100
-            - 500
-            - 1000
-            - 2000
-            - 4000
-          comp_obs:
-            - observations
-
-#sections
-        - variable: 'dissic'
-          plot_projection: 'section'
-          data_type: 'trends'
-          frequency: 'yr'
-
-        - variable: 'no3'
-          plot_projection: 'section'
-          data_type: 'trends'
-          frequency: 'yr'
-          scale: 1000
-          units: 'mmol m-3'
-        
-        - variable: 'ph'
-          plot_projection: 'section'
-          data_type: 'trends'
-          frequency: 'yr'
-          units: ''
-          
-        - variable: 'talk'
-          plot_projection: 'section'
-          data_type: 'trends'
-          frequency: 'yr'
-
-
-#taylor
-        - variable: 'dissic'
-          plot_projection: 'taylor'
-          data_type: 'trends'
-          comp_obs:
-             - observations
-          comp_cmips: 'all'
-
-        - variable: 'no3'
-          plot_projection: 'taylor'
-          data_type: 'trends'
-          comp_obs:
-             - observations
-          comp_cmips: 'all'
-
-        - variable: 'ph'
-          plot_projection: 'taylor'
-          data_type: 'trends'
-          comp_obs:
-             - observations
-          comp_cmips: 'all'
-
-        - variable: 'talk'
-          plot_projection: 'taylor'
-          data_type: 'trends'
-          comp_obs:
-             - observations
-          comp_cmips: 'all'
-
-        - variable: 'chl'
-          plot_projection: 'taylor'
-          data_type: 'trends'
-          comp_obs:
-             - observations
-          comp_cmips: 'all'
 
 delete:
           del_netcdf: False
