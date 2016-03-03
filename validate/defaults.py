@@ -258,11 +258,11 @@ def _section_labels(datanumber, pl):
 def filltitle(p):
     def fill(comp):
         if not p['data1']['title_flag']:
-            p['data1']['ax_args']['title'] = p['variable'] + ' Model: ' + p['model_ID']
+            p['data1']['ax_args']['title'] = p['variable'] + ' ' + p['model_ID']
         if not p['data2']['title_flag']:
-            p['data2']['ax_args']['title'] = p['variable'] + ' Model: ' + comp
+            p['data2']['ax_args']['title'] = p['variable'] + ' ' + comp
         if not p['comp']['title_flag']:
-            p['comp']['ax_args']['title'] = p['variable'] + ' Model: ' + p['model_ID'] + '-' + comp
+            p['comp']['ax_args']['title'] = p['variable'] + ' ' + p['model_ID'] + '-' + comp
 #        if p['is_depth']:
 #           p['data1']['ax_args']['title'] += ' Depth: ' + str(p['plot_depth'])
 #           p['data2']['ax_args']['title'] += ' Depth: ' + str(p['plot_depth'])
