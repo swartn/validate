@@ -280,7 +280,7 @@ def polar_map_south(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=N
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
     x, y = m(-135, -20)
-    ax.text(x, y, '  '.join(val), fontsize=7, bbox={'facecolor':'white'})
+    ax.text(x, y, '  '.join(val), fontsize=7)
 
 
 def mercator(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False, plot={},
