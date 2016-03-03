@@ -135,47 +135,32 @@ defaults:
           png: True
 plots:
 
-
-
-#        OCEAN
-
-#surface
         - variable: 'tos'
           plot_projection: 'global_map'
           data_type: 'climatology'
           comp_obs:
             - observations
 
+        - variable: 'tos'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+          comp_obs:
+            - observations
+
+        - variable: 'tos'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_cmips: 'all'
+
         - variable: 'sos'
           plot_projection: 'global_map'
           data_type: 'climatology'
 
-
-#        - variable: 'zos'
-#          plot_projection: 'global_map'
-#          data_type: 'climatology'
-
-        - variable: 'msftbarot'
-          plot_projection: 'mercator'
-          data_type: 'climatology'
-          plot_args:
-              draw_contour: True
-          scale: 0.000000001
-          units: 'Sv'
-
-#        - variable: 'pbo'
-#          plot_projection: 'global_map'
-#          data_type: 'climatology'
-
-#        - variable: 'zosga'
-#          plot_projection: 'global_map'
-#          data_type: 'climatology'
-
-#        - variable: 'zossga'
-#          plot_projection: 'global_map'
-#          data_type: 'climatology'
-
-#depth
+        - variable: 'sos'
+          plot_projection: 'global_map'
+          data_type: 'trends'
 
         - variable: 'thetao'
           plot_projection: 'mercator'
@@ -192,9 +177,9 @@ plots:
           comp_shift: 0
           units: 'C'
 
-        - variable: 'so'
+        - variable: 'thetao'
           plot_projection: 'mercator'
-          data_type: 'climatology'
+          data_type: 'trends'
           depths:
             - 100
             - 500
@@ -203,57 +188,9 @@ plots:
             - 4000
           comp_obs:
             - observations
-
-        - variable: 'uo'
-          plot_projection: 'mercator'
-          data_type: 'climatology'
-          depths:
-            - 100
-            - 500
-            - 1000
-            - 2000
-            - 4000
-          divergent: True
-          
-        - variable: 'vo'
-          plot_projection: 'mercator'
-          data_type: 'climatology'
-          depths:
-            - 100
-            - 500
-            - 1000
-            - 2000
-            - 4000
-          divergent: True
-          
-#sections
-        - variable: 'so'
-          plot_projection: 'section'
-          data_type: 'climatology'
-          comp_obs:
-            - observations
-          set_yscale: 'linear'
-          
-        - variable: 'uo'
-          plot_projection: 'section'
-          data_type: 'climatology'
-          set_yscale: 'linear'
-          divergent: True
-                    
-        - variable: 'vo'
-          plot_projection: 'section'
-          data_type: 'climatology'
-          set_yscale: 'linear'
-          divergent: True
-          
-        - variable: 'msftmyz'
-          plot_projection: 'section'
-          data_type: 'climatology'
-          basin: 2
-          set_yscale: 'linear'
-          scale: 0.000000001
-          units: 'Sv'
-          divergent: True
+          shift: -273.15
+          comp_shift: 0
+          units: 'C'
 
         - variable: 'thetao'
           plot_projection: 'section'
@@ -265,7 +202,16 @@ plots:
           comp_shift: 0
           units: 'C'          
 
-#taylor
+        - variable: 'thetao'
+          plot_projection: 'section'
+          data_type: 'trends'
+          comp_obs:
+            - observations
+          set_yscale: 'linear'
+          shift: -273.15
+          comp_shift: 0
+          units: 'C'  
+
         - variable: 'thetao'
           plot_projection: 'taylor'
           data_type: 'climatology'
@@ -276,6 +222,45 @@ plots:
           comp_shift: 0
           units: 'C'
 
+
+        - variable: 'so'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+
+        - variable: 'so'
+          plot_projection: 'mercator'
+          data_type: 'trends'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+
+        - variable: 'so'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          comp_obs:
+            - observations
+          set_yscale: 'linear'
+
+        - variable: 'so'
+          plot_projection: 'section'
+          data_type: 'trends'
+          comp_obs:
+            - observations
+          set_yscale: 'linear'
+
         - variable: 'so'
           plot_projection: 'taylor'
           data_type: 'climatology'
@@ -283,92 +268,16 @@ plots:
              - observations
           comp_cmips: 'all'
 
-        - variable: 'tos'
-          plot_projection: 'taylor'
+        - variable: 'uo'
+          plot_projection: 'mercator'
           data_type: 'climatology'
-          comp_obs:
-             - observations
-          comp_cmips: 'all'
-
-#timeseries
-        - variable: 'fgco2'
-          plot_projection: 'time_series'
-          data_type: 'climatology'
-          cdostring: 'fldsum -seldate,1979-01,2000-01 -mul mask/areacello'
-          data1:
-              ax_args:
-                  ylabel: 'kgs-1'      
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
           divergent: True
-
-
-
-
-#        OCEAN
-
-#surface
-        - variable: 'tos'
-          plot_projection: 'global_map'
-          data_type: 'trends'
-          comp_obs:
-            - observations
-
-        - variable: 'sos'
-          plot_projection: 'global_map'
-          data_type: 'trends'
-
-
-#        - variable: 'zos'
-#          plot_projection: 'global_map'
-#          data_type: 'trends'
-
-        - variable: 'msftbarot'
-          plot_projection: 'mercator'
-          data_type: 'trends'
-          plot_args:
-              draw_contour: True
-          scale: 0.000000001
-          units: 'Sv'
-
-#        - variable: 'pbo'
-#          plot_projection: 'global_map'
-#          data_type: 'trends'
-
-#        - variable: 'zosga'
-#          plot_projection: 'global_map'
-#          data_type: 'trends'
-
-#        - variable: 'zossga'
-#          plot_projection: 'global_map'
-#          data_type: 'trends'
-
-#depth
-
-        - variable: 'thetao'
-          plot_projection: 'mercator'
-          data_type: 'trends'
-          depths:
-            - 100
-            - 500
-            - 1000
-            - 2000
-            - 4000
-          comp_obs:
-            - observations
-          shift: -273.15
-          comp_shift: 0
-          units: 'C'
-
-        - variable: 'so'
-          plot_projection: 'mercator'
-          data_type: 'trends'
-          depths:
-            - 100
-            - 500
-            - 1000
-            - 2000
-            - 4000
-          comp_obs:
-            - observations
 
         - variable: 'uo'
           plot_projection: 'mercator'
@@ -381,6 +290,29 @@ plots:
             - 4000
           divergent: True
           
+        - variable: 'uo'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          set_yscale: 'linear'
+          divergent: True
+       
+        - variable: 'uo'
+          plot_projection: 'section'
+          data_type: 'trends'
+          set_yscale: 'linear'
+          divergent: True
+        
+        - variable: 'vo'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          divergent: True
+      
         - variable: 'vo'
           plot_projection: 'mercator'
           data_type: 'trends'
@@ -391,18 +323,10 @@ plots:
             - 2000
             - 4000
           divergent: True
-          
-#sections
-        - variable: 'so'
+                 
+        - variable: 'vo'
           plot_projection: 'section'
-          data_type: 'trends'
-          comp_obs:
-            - observations
-          set_yscale: 'linear'
-          
-        - variable: 'uo'
-          plot_projection: 'section'
-          data_type: 'trends'
+          data_type: 'climatology'
           set_yscale: 'linear'
           divergent: True
                     
@@ -411,7 +335,32 @@ plots:
           data_type: 'trends'
           set_yscale: 'linear'
           divergent: True
+ 
+        - variable: 'msftbarot'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          plot_args:
+              draw_contour: True
+          scale: 0.000000001
+          units: 'Sv'
+
+        - variable: 'msftbarot'
+          plot_projection: 'mercator'
+          data_type: 'trends'
+          plot_args:
+              draw_contour: True
+          scale: 0.000000001
+          units: 'Sv'
           
+        - variable: 'msftmyz'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          basin: 2
+          set_yscale: 'linear'
+          scale: 0.000000001
+          units: 'Sv'
+          divergent: True
+
         - variable: 'msftmyz'
           plot_projection: 'section'
           data_type: 'trends'
@@ -419,22 +368,10 @@ plots:
           set_yscale: 'linear'
           scale: 0.000000001
           units: 'Sv'
-          divergent: True
 
-        - variable: 'thetao'
-          plot_projection: 'section'
-          data_type: 'trends'
-          comp_obs:
-            - observations
-          set_yscale: 'linear'
-          shift: -273.15
-          comp_shift: 0
-          units: 'C'          
-
-#timeseries
         - variable: 'fgco2'
           plot_projection: 'time_series'
-          data_type: 'trends'
+          data_type: 'climatology'
           cdostring: 'fldsum -seldate,1979-01,2000-01 -mul mask/areacello'
           data1:
               ax_args:
