@@ -108,7 +108,7 @@ def draw_stipple(pvalues, lon, lat, m, alpha):
                     slons.append(lon[index[1]])
                     slats.append(lat[index[0]])
         a,b = m(slons, slats)
-        m.plot(a,b, '.', markersize=0.2, color='k', zorder=1)
+        m.plot(a,b, '.', markersize=0.3, color='k', zorder=1)
 
 def draw_trend_stipple(data, cvalues, lon, lat, m):        
         slons = []
@@ -119,7 +119,7 @@ def draw_trend_stipple(data, cvalues, lon, lat, m):
                     slons.append(lon[index[1]])
                     slats.append(lat[index[0]])
         a,b = m(slons, slats)
-        m.plot(a,b, '.', markersize=0.2, color='k', zorder=1)      
+        m.plot(a,b, '.', markersize=0.3, color='k', zorder=1)      
   
 def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
                latmin=-50, latmax=50, lonmin=0, lonmax=360, draw_contour=False,
@@ -171,9 +171,7 @@ def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, 
 
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
-    x, y = (8000000, -100000)
-    print x
-    print y
+    x, y = (9000000, -800000)
     ax.text(x, y, '  '.join(val), fontsize=7)
 
 
@@ -409,7 +407,7 @@ def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=N
                          }
         snam = ['min: ', 'max: ', 'mean: ']
     val = [s + v for s, v in zip(snam, vals)]
-    ax.text(0.01, 0.01, '  '.join(val), horizontalalignment='left', verticalalignment='bottom', fontsize=7, transform = ax.transAxes) 
+    ax.text(.75, -.2, '  '.join(val), horizontalalignment='left', verticalalignment='bottom', fontsize=7, transform = ax.transAxes) 
 
 def timeseries(x, data, ax=None, ax_args=None, label='model', plot={}, color=None, zorder=None):
     """ Makes a timeseries line plot, using ax if supplied

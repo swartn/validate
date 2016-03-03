@@ -52,7 +52,13 @@ def orderplots(plotnames):
                 p['plot_depth'] = str(float(p['plot_depth'])/100)
             except:
                 pass
+        if p['plot_depth'] == 'None':
+            p['plot_depth'] = 'surface'
+        if p['plot_projection'] == 'section':
+            p['plot_depth'] = '--'
         p['season'] = ''.join(p['seasons'])
+        if p['season'] == 'DJFMAMJJASON':
+            p['season'] = 'annual'
     for p in plotnames:
         plotdict[p['realm']] = {}
     for p in plotnames:

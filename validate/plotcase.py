@@ -397,8 +397,10 @@ def trend_significance(residuals, sigma=0.05):
     
     cs = np.empty(shape=[x, y])    
     for (i,j), rcor in np.ndenumerate(rcorrs):
-        #neff = float(nt * (1-rcor) / (1 + rcor))
-        neff = nt
+        neff = float(nt * (1-rcor) / (1 + rcor))
+        #neff = nt
+        print neff
+        print nt
         a = residuals[:,i,j]
         b = a * a
         d = sum(b)
@@ -411,6 +413,7 @@ def trend_significance(residuals, sigma=0.05):
 
         cs[i][j] = c
     return cs
+
 
 def map_trends(plot, func):
     """ Loads and plots the trend data on a map.
@@ -779,21 +782,21 @@ def zonalmean_comparison(plot, func):
     dft.filltitle(plot)
    
     # make plot
-    func(x, data, plot=plot, ax=ax, ax_args=plot['data1']['ax_args'], color='b', zorder=6)
+    func(x, data, plot=plot, ax=ax, ax_args=plot['data1']['ax_args'], color='r', zorder=6)
     handles = [mpatches.Patch(color='b', label=plot['model_ID'])] 
     
     # plot comparison data on the same axis
     if plot['comp_cmips']:
         plot['comp_model'] = 'cmip5'
-        zonalmeandata(plot, plot['cmip5_file'], ax, depth, func, color='g', zorder=4)
+        zonalmeandata(plot, plot['cmip5_file'], ax, depth, func, color='k', zorder=4)
         handles.append(mpatches.Patch(color='g', label='cmip5')) 
     for o in plot['comp_obs']:
         plot['comp_model'] = o
-        zonalmeandata(plot, plot['obs_file'][o], ax, depth, func, color='k', zorder=5)
+        zonalmeandata(plot, plot['obs_file'][o], ax, depth, func, color='b', zorder=5)
         handles.append(mpatches.Patch(color='k', label=str(plot['comp_model'])))
     for model in plot['comp_models']:
         plot['comp_model'] = model
-        zonalmeandata(plot, plot['model_file'][model], ax, depth, func, color='r', zorder=2)        
+        zonalmeandata(plot, plot['model_file'][model], ax, depth, func, color='g', zorder=2)        
         handles.append(mpatches.Patch(color='r', label=str(plot['comp_model'])))        
     for f in plot['cmip5_files']:
         plot['comp_model'] = 'cmip'
