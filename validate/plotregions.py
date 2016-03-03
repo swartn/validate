@@ -171,7 +171,9 @@ def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, 
 
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
-    x, y = m(10, -88)
+    x, y = (8000000, -100000)
+    print x
+    print y
     ax.text(x, y, '  '.join(val), fontsize=7)
 
 
@@ -223,7 +225,7 @@ def polar_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, a
 
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
-    x, y = m(-135, 12)
+    x, y = m(135, 20)
     ax.text(x, y, '  '.join(val), fontsize=7)
 
 
@@ -277,8 +279,8 @@ def polar_map_south(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=N
     m.colorbar(mappable=cot, location='right', label=cblabel)
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
-    x, y = m(-45, -12)
-    ax.text(x, y, '  '.join(val), fontsize=7)
+    x, y = m(-135, -20)
+    ax.text(x, y, '  '.join(val), fontsize=7, bbox={'facecolor':'white'})
 
 
 def mercator(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False, plot={},
@@ -326,7 +328,7 @@ def mercator(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax
     m.colorbar(mappable=cot, location='right', label=cblabel)
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
-    x, y = m(lonmin + 1, latmin + 1)
+    x, y = m(lonmin + 2, latmin - 2)
     ax.text(x, y, '  '.join(val), fontsize=7)
 
 
