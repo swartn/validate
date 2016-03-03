@@ -169,7 +169,7 @@ plots:
           comp_obs:
             - 20CR 
           scale: 31536000
-          units: 'kg m-2 y-1' 
+          units: 'kg m-2 y-1/decade' 
 
         - variable: 'pr'
           plot_projection: 'global_map'
@@ -179,7 +179,7 @@ plots:
           comp_obs:
              - 20CR
           scale: 31536000
-          units: 'kg m-2 y-1'
+          units: 'kg m-2 y-1/decade'
 
         - variable: 'pr'
           plot_projection: 'global_map'
@@ -189,7 +189,7 @@ plots:
           comp_obs:
              - 20CR
           scale: 31536000
-          units: 'kg m-2 y-1'
+          units: 'kg m-2 y-1/decade'
 
         - variable: 'pr'
           plot_projection: 'zonal_mean'
@@ -801,7 +801,7 @@ plots:
           plot_projection: 'global_map'
           data_type: 'trends'
           scale: 31536000
-          units: 'kg m-2 y-1'              
+          units: 'kg m-2 y-1/decade'              
                  
         - variable: 'prsn'
           plot_projection: 'global_map'
@@ -809,7 +809,7 @@ plots:
           seasons:
              - 'DJF'
           scale: 31536000
-          units: 'kg m-2 y-1' 
+          units: 'kg m-2 y-1/decade' 
           
         - variable: 'prsn'
           plot_projection: 'global_map'
@@ -817,7 +817,7 @@ plots:
           seasons:
              - 'JJA'
           scale: 31536000
-          units: 'kg m-2 y-1'
+          units: 'kg m-2 y-1/decade'
  
 
 

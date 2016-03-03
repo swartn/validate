@@ -190,7 +190,7 @@ plots:
             - observations
           shift: -273.15
           comp_shift: 0
-          units: 'C'
+          units: 'C/decade'
 
         - variable: 'thetao'
           plot_projection: 'section'
@@ -210,7 +210,7 @@ plots:
           set_yscale: 'linear'
           shift: -273.15
           comp_shift: 0
-          units: 'C'  
+          units: 'C/decade'  
 
         - variable: 'thetao'
           plot_projection: 'taylor'
@@ -350,7 +350,7 @@ plots:
           plot_args:
               draw_contour: True
           scale: 0.000000001
-          units: 'Sv'
+          units: 'Sv/decade'
           
         - variable: 'msftmyz'
           plot_projection: 'section'
@@ -367,7 +367,7 @@ plots:
           basin: 2
           set_yscale: 'linear'
           scale: 0.000000001
-          units: 'Sv'
+          units: 'Sv/decade'
 
         - variable: 'fgco2'
           plot_projection: 'time_series'

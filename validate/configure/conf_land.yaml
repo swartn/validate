@@ -146,7 +146,7 @@ plots:
           plot_projection: 'mercator'
           data_type: 'trends'
           scale: 31536000
-          units: 'kg m-2 y-1'
+          units: 'kg m-2 y-1/decade'
           
         - variable: 'gpp'
           plot_projection: 'mercator'
@@ -158,7 +158,7 @@ plots:
           plot_projection: 'mercator'
           data_type: 'trends'
           scale: 31536000
-          units: 'kg m-2 y-1'   
+          units: 'kg m-2 y-1/decade'   
                  
         - variable: 'npp'
           plot_projection: 'mercator'
@@ -170,7 +170,7 @@ plots:
           plot_projection: 'mercator'
           data_type: 'trends'
           scale: 31536000
-          units: 'kg m-2 y-1'
+          units: 'kg m-2 y-1/decade'
           
         - variable: 'lai'
           plot_projection: 'mercator'

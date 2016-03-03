@@ -205,7 +205,7 @@ plots:
           plot_args:
               fill_continents: True
           scale: 31536000
-          units: 'kg m-2 y-1'
+          units: 'kg m-2 y-1/decade'
           
         - variable: 'pr'
           plot_projection: 'polar_map_south'
@@ -213,7 +213,7 @@ plots:
           plot_args:
               fill_continents: True
           scale: 31536000
-          units: 'kg m-2 y-1'
+          units: 'kg m-2 y-1/decade'
 
         - variable: 'strairx'
           plot_projection: 'polar_map'
@@ -335,7 +335,7 @@ plots:
           plot_args:
               fill_continents: True
           scale: 31536000
-          units: 'kg m-2 y-1'
+          units: 'kg m-2 y-1/decade'
 
         - variable: 'prsn'
           plot_projection: 'polar_map_south'
@@ -343,7 +343,7 @@ plots:
           plot_args:
               fill_continents: True
           scale: 31536000
-          units: 'kg m-2 y-1'
+          units: 'kg m-2 y-1/decade'
 
 
 delete:
