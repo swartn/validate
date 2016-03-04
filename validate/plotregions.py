@@ -462,7 +462,7 @@ def taylordiagram(refdata, plotdata, unlabelled_data, fig=None, ax_args=None, pl
     if stdrange <= refstd * 1.5 / refstd:
         stdrange = refstd * 1.5 / refstd
 
-    dia = TaylorDiagram(refstd, fig=fig, label='obs', srange=(0, stdrange))
+    dia = TaylorDiagram(refstd, fig=fig, label=plot['comp_obs'][0], srange=(0, stdrange))
     colors = plt.matplotlib.cm.jet(np.linspace(0, 1, len(samples)))
     
     for i, (stddev, corrcoef, n) in enumerate(samples):
