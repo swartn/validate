@@ -64,10 +64,6 @@ def _check_dates_outside(ifile, start_date, end_date):
     # convert dates to datetime object
     start = datetime.datetime(*year_mon_day(start_date))
     end = datetime.datetime(*year_mon_day(end_date))
-    print start
-    print end
-    print nc_time.units
-    print cal
     # convert datetime objects to integers
     start = date2num(start, nc_time.units, calendar=cal)
     end = date2num(end, nc_time.units, calendar=cal)

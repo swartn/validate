@@ -105,7 +105,9 @@ def pdfmarks(plotdict):
             f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + var + ") /Count -" + str(len(plotdict[realm][var].keys())) + " /OUT pdfmark\n")
             for proj in plotdict[realm][var]:
                 f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + proj + ") /Count -" + str(len(plotdict[realm][var][proj].keys())) + " /OUT pdfmark\n")
-                for dt in plotdict[realm][var][proj]:
+                ordered_dt_list = plotdict[realm][var][proj].keys()
+                ordered_dt_list.sort()
+                for dt in ordered_dt_list:
                     f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + dt + ") /Count -" + str(len(plotdict[realm][var][proj][dt].keys())) + " /OUT pdfmark\n")
                     ordered_depth_list = []
                     for depth in plotdict[realm][var][proj][dt]:
