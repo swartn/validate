@@ -169,6 +169,15 @@ plots:
           units: 'kg m-2 y-1/decade'
           divergent: True
 
+        - variable: 'fgco2'
+          plot_projection: 'time_series'
+          data_type: 'climatology'
+          cdostring: 'fldsum -seldate,1979-01,2000-01 -mul mask/areacello'
+          data1:
+              ax_args:
+                  ylabel: 'kgs-1'      
+          divergent: True
+
         - variable: 'epc100'
           plot_projection: 'global_map'
           data_type: 'climatology'

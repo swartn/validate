@@ -371,14 +371,7 @@ plots:
           scale: 0.000000001
           units: 'Sv/decade'
 
-        - variable: 'fgco2'
-          plot_projection: 'time_series'
-          data_type: 'climatology'
-          cdostring: 'fldsum -seldate,1979-01,2000-01 -mul mask/areacello'
-          data1:
-              ax_args:
-                  ylabel: 'kgs-1'      
-          divergent: True
+
 
 delete:
           del_netcdf: False
