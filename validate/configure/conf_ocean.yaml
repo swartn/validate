@@ -295,13 +295,15 @@ plots:
           data_type: 'climatology'
           set_yscale: 'linear'
           divergent: True
-       
+
+                 
         - variable: 'uo'
           plot_projection: 'section'
           data_type: 'trends'
           set_yscale: 'linear'
           divergent: True
-        
+
+                  
         - variable: 'vo'
           plot_projection: 'mercator'
           data_type: 'climatology'

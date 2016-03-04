@@ -265,12 +265,14 @@ plots:
           plot_projection: 'section'
           data_type: 'climatology'
           frequency: 'yr'
-
+          set_yscale: 'linear'
+          
         - variable: 'dissic'
           plot_projection: 'section'
           data_type: 'trends'
           frequency: 'yr'
-          
+          set_yscale: 'linear'
+                    
         - variable: 'dissic'
           plot_projection: 'taylor'
           data_type: 'climatology'
@@ -315,14 +317,16 @@ plots:
           frequency: 'yr'
           scale: 1000
           units: 'mmol m-3'
-
+          set_yscale: 'linear'
+          
         - variable: 'no3'
           plot_projection: 'section'
           data_type: 'trends'
           frequency: 'yr'
           scale: 1000
           units: 'mmol m-3'
-
+          set_yscale: 'linear'
+          
         - variable: 'no3'
           plot_projection: 'taylor'
           data_type: 'climatology'
@@ -364,12 +368,14 @@ plots:
           data_type: 'climatology'
           frequency: 'yr'
           units: ''
-          
+          set_yscale: 'linear'
+                    
         - variable: 'ph'
           plot_projection: 'section'
           data_type: 'trends'
           frequency: 'yr'
           units: '/decade'
+          set_yscale: 'linear'
 
         - variable: 'ph'
           plot_projection: 'taylor'
@@ -409,11 +415,13 @@ plots:
           plot_projection: 'section'
           data_type: 'climatology'
           frequency: 'yr'
-
+          set_yscale: 'linear'
+          
         - variable: 'talk'
           plot_projection: 'section'
           data_type: 'trends'
           frequency: 'yr'
+          set_yscale: 'linear'
          
         - variable: 'talk'
           plot_projection: 'taylor'
