@@ -399,8 +399,6 @@ def trend_significance(residuals, sigma=0.05):
     for (i,j), rcor in np.ndenumerate(rcorrs):
         neff = float(nt * (1-rcor) / (1 + rcor))
         #neff = nt
-        print neff
-        print nt
         a = residuals[:,i,j]
         b = a * a
         d = sum(b)
