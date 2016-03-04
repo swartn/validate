@@ -830,7 +830,7 @@ def taylor_full(plot, func):
     for f in plot['cmip5_files']:
         plot['comp_model'] = f
         data, units, lon, lat, depth = pl.timeaverage_load(f, plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons'])
-        cmip5data.append(data)
+        cmip5data.append((data, f))
     # get data from models and cmip and append to plotdata list
     if plot['cmip5_file']:
         plot['comp_model'] = 'cmip5'
@@ -886,7 +886,7 @@ def taylor(plot, func):
     for f in plot['cmip5_files']:
         plot['comp_model'] = f
         data, units, lon, lat, depth = pl.timeaverage_load(f, plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons'])
-        cmip5data.append(data)    
+        cmip5data.append((data, f))    
     # get data from models and cmip and append to plotdata list
     if plot['cmip5_file']:
         plot['comp_model'] = 'cmip5'

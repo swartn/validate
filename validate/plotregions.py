@@ -447,11 +447,11 @@ def taylordiagram(refdata, plotdata, unlabelled_data, fig=None, ax_args=None, pl
 
     plot['stats'] = {'obserations': {'standard deviation': float(refstd)}}
     
-    for i, d in enumerate(unlabelled_data):
-        unlabelled_data[i] = d.flatten()
+    for i, (d, n) in enumerate(unlabelled_data):
+        unlabelled_data[i] = d.flatten(), n
 
     samples = [[m.std(ddof=1), np.ma.corrcoef(flatrefdata, m)[0, 1], n] for m, n in plotdata]
-    unlabelled_samples = [[m.std(ddof=1), np.ma.corrcoef(flatrefdata, m)[0,1]] for m in unlabelled_data]
+    unlabelled_samples = [[m.std(ddof=1), np.ma.corrcoef(flatrefdata, m)[0,1], n] for m, n in unlabelled_data]
     
     if not fig:
         fig = plt.figure()
@@ -478,9 +478,11 @@ def taylordiagram(refdata, plotdata, unlabelled_data, fig=None, ax_args=None, pl
                [p.get_label() for p in dia.samplePoints],
                numpoints=1, prop=dict(size='small'), loc='upper right')
     
-    for i, (stddev, corrcoef) in enumerate(unlabelled_samples):
+    for i, (stddev, corrcoef, n) in enumerate(unlabelled_samples):
         if corrcoef <= 0:
-            continue           
+            continue
+        plot['stats'][n] = {'standard deviation': float(stddev),
+                            'correlation coefficient': float(corrcoef)}         
         dia.add_sample(stddev, corrcoef,
                        marker='.', ms=5, ls='',
                        mfc='grey', mec='grey',
