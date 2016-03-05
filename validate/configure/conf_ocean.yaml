@@ -188,8 +188,6 @@ plots:
             - 4000
           comp_obs:
             - observations
-          shift: -273.15
-          comp_shift: 0
           units: 'C/decade'
 
         - variable: 'thetao'
@@ -208,8 +206,6 @@ plots:
           comp_obs:
             - observations
           set_yscale: 'linear'
-          shift: -273.15
-          comp_shift: 0
           units: 'C/decade'  
 
         - variable: 'thetao'
