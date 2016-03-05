@@ -54,9 +54,9 @@ def default_pcolor_args(data, anom=False):
 
     else:
         # otherwise, center around the mean
-        vmin = data.mean() - data.std() * 3.0
-        vmax = data.mean() + data.std() * 3.0
-        # Use true min/max if they are closer to the mean than the 3-std spread.
+        vmin = data.mean() - data.std() * 3.5
+        vmax = data.mean() + data.std() * 3.5
+        # Use true min/max if they are closer to the mean than the 3.5-std spread.
         if vmax > data.max():
             vmax = data.max()
         if vmin < data.min():
