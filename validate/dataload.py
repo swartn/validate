@@ -438,7 +438,12 @@ def zonal_load(ifile, var, dates, realm, scale, shift, remapf='remapdis', remapg
 
     # extract relevent data
     data, units, depth = _load(nc, var)
-    x = nc.variables['lat'][:].squeeze()
+    for i in nc.variables:
+        print i
+    try:
+        x = nc.variables['lat'][:].squeeze()
+    except:
+        x = nc.variables['y'][:].squeeze()
 
     depth = np.round(depth)
     units = _scale_units(units, scale, shift)
