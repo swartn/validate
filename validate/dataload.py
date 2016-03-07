@@ -425,7 +425,7 @@ def zonal_load(ifile, var, dates, realm, scale, shift, remapf='remapdis', remapg
     
     if trends:
         if depthneeded is not None:
-            finalout = intlevel(zonal_mean(remap(trend(setc(season(sel_var(ifile, var)), seasons), dates['start_date'], dates['end_date']), remapf, remapgrid)), depthneeded)    
+            finalout = intlevel(zonal_mean(remap(trend(setc(season(sel_var(ifile, var), seasons)), dates['start_date'], dates['end_date']), remapf, remapgrid)), depthneeded)    
         else:
             finalout = zonal_mean(remap(trend(setc(mask(season(sel_var(ifile, var), seasons), realm)), dates['start_date'], dates['end_date']), remapf, remapgrid))   
     else:
