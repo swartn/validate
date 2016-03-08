@@ -180,8 +180,9 @@ def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, 
     if cvalues is not None:
         draw_trend_stipple(data, cvalues, lon, lat, m)
     
-    m.colorbar(mappable=cot, location='right', label=cblabel)
-
+    cbar = m.colorbar(mappable=cot, location='right', label=cblabel)
+    cbar.solids.set_edgecolor("face") 
+ 
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
     x, y = (9000000, -800000)
@@ -232,8 +233,8 @@ def polar_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, a
     if cvalues is not None:
         draw_trend_stipple(data, cvalues, lon, lat, m)
             
-    m.colorbar(mappable=cot, location='right', label=cblabel)
-
+    cbar = m.colorbar(mappable=cot, location='right', label=cblabel)
+    cbar.solids.set_edgecolor("face") 
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
     x, y = m(135, 20)
@@ -287,7 +288,9 @@ def polar_map_south(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=N
     if cvalues is not None:
         draw_trend_stipple(data, cvalues, lon, lat, m)
            
-    m.colorbar(mappable=cot, location='right', label=cblabel)
+    cbar = m.colorbar(mappable=cot, location='right', label=cblabel)
+    cbar.solids.set_edgecolor("face")
+    
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
     x, y = m(-135, -20)
@@ -336,7 +339,8 @@ def mercator(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax
     if cvalues is not None:
         draw_trend_stipple(data, cvalues, lon, lat, m)
    
-    m.colorbar(mappable=cot, location='right', label=cblabel)
+    cbar = m.colorbar(mappable=cot, location='right', label=cblabel)
+    cbar.solids.set_edgecolor("face") 
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
     x, y = m(lonmin + 2, latmin - 2)
