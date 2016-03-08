@@ -60,10 +60,6 @@ def default_pcolor_args(data, anom=False):
         # otherwise, center around the mean
         vmin = mean - std * 3.0
         vmax = mean + std * 3.0
-        print dmax
-        print dmin
-        print vmin
-        print vmax
         
         if vmax > dmax and vmin < dmin:
             vmax = dmax
@@ -78,13 +74,6 @@ def default_pcolor_args(data, anom=False):
             if vmin < dmin:
                 vmin = dmin
             vmax = dmax            
-        print vmin
-        print vmax    
-        # Use true min/max if they are closer to the mean than the 3.0-std spread.
-#        if vmax > dmax:
-#            vmax = dmax
-#        if vmin < dmin:
-#            vmin = dmin()
         # New mpl, colorblind friendly, continuously varying, default cmap
         cmap = viridis
 
@@ -200,7 +189,7 @@ def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, 
 
 
 def polar_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
-              latmin=40, latmax=80, lonmin=0, lonmax=360, lon_0=180, draw_contour=False,
+              latmin=45, latmax=80, lonmin=0, lonmax=360, lon_0=180, draw_contour=False,
               fill_continents=False, fill_oceans=False, draw_parallels=True, draw_meridians=True, plot={}):
     """Pcolor a var in a north polar map, using ax if supplied"""
     if not ax:
@@ -252,7 +241,7 @@ def polar_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, a
 
 
 def polar_map_south(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
-                    latmin=-80, latmax=-40, lonmin=0, lonmax=360, lon_0=180, draw_contour=False,
+                    latmin=-80, latmax=-45, lonmin=0, lonmax=360, lon_0=180, draw_contour=False,
                     fill_continents=False, fill_oceans=False, draw_parallels=True, draw_meridians=True, plot={}):
     """Pcolor a var in a south polar map, using ax if supplied"""
     if not ax:
