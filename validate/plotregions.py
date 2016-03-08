@@ -53,14 +53,38 @@ def default_pcolor_args(data, anom=False):
         cmap = anom_cmap()
 
     else:
+        mean = data.mean()
+        std = data.std()
+        dmax = data.max()
+        dmin = data.min()       
         # otherwise, center around the mean
-        vmin = data.mean() - data.std() * 3.5
-        vmax = data.mean() + data.std() * 3.5
-        # Use true min/max if they are closer to the mean than the 3.5-std spread.
-        if vmax > data.max():
-            vmax = data.max()
-        if vmin < data.min():
-            vmin = data.min()
+        vmin = mean - std * 3.0
+        vmax = mean + std * 3.0
+        print dmax
+        print dmin
+        print vmin
+        print vmax
+        
+        if vmax > dmax and vmin < dmin:
+            vmax = dmax
+            vmin = dmin
+        elif vmin < dmin:
+            vmax = vmax + dmin - vmin
+            if vmax > dmax:
+                vmax = dmax
+            vmin = dmin
+        elif vmax > dmax:
+            vmin = vmin + dmax - vmax
+            if vmin < dmin:
+                vmin = dmin
+            vmax = dmax            
+        print vmin
+        print vmax    
+        # Use true min/max if they are closer to the mean than the 3.0-std spread.
+#        if vmax > dmax:
+#            vmax = dmax
+#        if vmin < dmin:
+#            vmin = dmin()
         # New mpl, colorblind friendly, continuously varying, default cmap
         cmap = viridis
 
