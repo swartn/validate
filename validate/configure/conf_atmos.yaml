@@ -255,6 +255,12 @@ plots:
           comp_obs:
              - 20CR
 
+        - variable: 'psl'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+            - 20CR
+          comp_cmips: 'all'
 
         - variable: 'tas'
           plot_projection: 'global_map'
@@ -299,7 +305,14 @@ plots:
              - 'JJA'
           comp_obs:
              - 20CR             
-             
+ 
+        - variable: 'tas'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+            - 20CR
+          comp_cmips: 'all'
+            
         - variable: 'ta'
           plot_projection: 'global_map'
           data_type: 'climatology'
