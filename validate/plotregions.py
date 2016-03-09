@@ -209,7 +209,6 @@ def polar_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, a
 
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
-
     cot = m.pcolor(x, y, data, **pcolor_args)
 
     if ax_args:

@@ -36,8 +36,6 @@ DEFAULTS = {'plotprojection': 'mercator',
             'comp_flag': None,
             'remap': 'remapdis',
             'remap_grid': 'r360x180',
-            'seasons': ['DJF', 'MAM', 'JJA', 'SON'],
-            'comp_seasons': ['DJF', 'MAM', 'JJA', 'SON'],
             'alpha': 0.05,
             'sigma': 0.05,
             'cdostring': None,
@@ -172,7 +170,7 @@ def fill(plots, model_run, experiment, defaults={}):
         if 'seasons' not in p:
             p['seasons'] = ['DJF', 'MAM', 'JJA', 'SON']
         if 'comp_seasons' not in p:
-            p['comp_seasons'] = ['DJF', 'MAM', 'JJA', 'SON']
+            p['comp_seasons'] = p['seasons']
         if 'cmip5_file' not in p:
             p['cmip5_file'] = None 
         if 'cmip5_files' not in p:
