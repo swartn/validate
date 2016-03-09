@@ -115,6 +115,8 @@ def _comp_pcolor(data, obs, plot, anom=False):
     ptype : string
             'climatology' or 'trends'
     """
+    if anom or plot['divergent']:
+        anom = True  
     if not plot['data1']['pcolor_flag'] and not plot['data2']['pcolor_flag']:
         d1pca = default_pcolor_args(data, anom)
         d2pca = default_pcolor_args(obs, anom)
