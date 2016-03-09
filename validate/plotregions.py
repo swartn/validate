@@ -26,7 +26,7 @@ import matplotlib.patches as mpatches
 import cdo
 cdo = cdo.Cdo()
 plt.close('all')
-font = {'size': 12}
+font = {'size': 9}
 plt.rc('font', **font)
 
 
@@ -168,9 +168,9 @@ def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, 
     if fill_continents:
         m.fillcontinents(color='0.8', ax=ax, zorder=2)
     if draw_parallels:
-        m.drawparallels(np.arange(-80, 81, 20), labels=[1, 0, 0, 0], linewidth=0, ax=ax)
+        m.drawparallels(np.arange(-80, 81, 20), labels=[1, 0, 0, 0], linewidth=0, ax=ax, fontsize=9)
     if draw_meridians:
-        m.drawmeridians(np.arange(0, 360, 90), labels=[0, 0, 0, 1], linewidth=0, yoffset=0.5e6, ax=ax)
+        m.drawmeridians(np.arange(0, 360, 90), labels=[0, 0, 0, 1], linewidth=0, yoffset=0.5e6, ax=ax, fontsize=9)
     if fill_oceans:
         m.drawlsmask(ocean_color='0.7')
 
@@ -221,9 +221,9 @@ def polar_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, a
     if fill_continents:
         m.fillcontinents(color='0.8', ax=ax, zorder=2)
     if draw_parallels:
-        m.drawparallels(np.arange(-80., 81., 20.))
+        m.drawparallels(np.arange(-80., 81., 20.), fontsize=9)
     if draw_meridians:
-        m.drawmeridians(np.arange(-180., 181., 20.))
+        m.drawmeridians(np.arange(-180., 181., 20.), fontsize=9)
     m.drawmapboundary()
 
     if alpha:
@@ -274,9 +274,9 @@ def polar_map_south(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=N
     if fill_continents:
         m.fillcontinents(color='0.8', ax=ax, zorder=2)
     if draw_parallels:
-        m.drawparallels(np.arange(-80., 81., 20.))
+        m.drawparallels(np.arange(-80., 81., 20.), fontsize=9)
     if draw_meridians:
-        m.drawmeridians(np.arange(-180., 181., 20.))
+        m.drawmeridians(np.arange(-180., 181., 20.), fontsize=9)
     if fill_oceans:
         m.drawlsmask(ocean_color='0.7')
     m.drawmapboundary()
@@ -327,9 +327,9 @@ def mercator(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax
     if fill_continents:
         m.fillcontinents(color='0.8', ax=ax, zorder=2)
     if draw_parallels:
-        m.drawparallels(np.arange(-80., 81., 20.))
+        m.drawparallels(np.arange(-80., 81., 20.), fontsize=9)
     if draw_meridians:
-        m.drawmeridians(np.arange(-180., 181., 20.))
+        m.drawmeridians(np.arange(-180., 181., 20.), fontsize=9)
     m.drawmapboundary()
     
     if alpha:
