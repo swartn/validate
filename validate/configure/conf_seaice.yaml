@@ -142,10 +142,36 @@ plots:
               fill_continents: True
 
         - variable: 'sic'
-          plot_projection: 'polar_map_south'
+          plot_projection: 'polar_map'
           data_type: 'climatology'
           plot_args:
               fill_continents: True
+          seasons:
+            - DJF
+
+        - variable: 'sic'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - MAM
+
+        - variable: 'sic'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - JJA
+
+        - variable: 'sic'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - SON
 
         - variable: 'sic'
           plot_projection: 'polar_map'
@@ -154,11 +180,113 @@ plots:
               fill_continents: True
 
         - variable: 'sic'
+          plot_projection: 'polar_map'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - DJF
+
+        - variable: 'sic'
+          plot_projection: 'polar_map'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - MAM
+
+        - variable: 'sic'
+          plot_projection: 'polar_map'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - JJA
+
+        - variable: 'sic'
+          plot_projection: 'polar_map'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - SON
+
+        - variable: 'sic'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True            
+
+        - variable: 'sic'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - DJF
+            
+        - variable: 'sic'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - MAM
+            
+        - variable: 'sic'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - JJA
+            
+        - variable: 'sic'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - SON              
+                     
+        - variable: 'sic'
           plot_projection: 'polar_map_south'
           data_type: 'trends'
           plot_args:
               fill_continents: True
 
+        - variable: 'sic'
+          plot_projection: 'polar_map_south'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - DJF
+            
+        - variable: 'sic'
+          plot_projection: 'polar_map_south'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - MAM
+  
+        - variable: 'sic'
+          plot_projection: 'polar_map_south'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - JJA
+  
+        - variable: 'sic'
+          plot_projection: 'polar_map_south'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - SON
+  
         - variable: 'tsice'
           plot_projection: 'polar_map'
           data_type: 'climatology'
@@ -227,13 +355,11 @@ plots:
           plot_args:
               fill_continents: True
 
-
         - variable: 'strairx'
           plot_projection: 'polar_map'
           data_type: 'trends'
           plot_args:
               fill_continents: True
-
 
         - variable: 'strairx'
           plot_projection: 'polar_map_south'
@@ -272,10 +398,75 @@ plots:
               fill_continents: True
 
         - variable: 'sit'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - DJA    
+              
+        - variable: 'sit'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - MAM              
+              
+        - variable: 'sit'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - JJA              
+              
+        - variable: 'sit'
+          plot_projection: 'polar_map'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - SON              
+
+        - variable: 'sit'
           plot_projection: 'polar_map_south'
           data_type: 'climatology'
           plot_args:
               fill_continents: True
+
+        - variable: 'sit'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - DJA    
+              
+        - variable: 'sit'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - MAM              
+              
+        - variable: 'sit'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - JJA              
+              
+        - variable: 'sit'
+          plot_projection: 'polar_map_south'
+          data_type: 'climatology'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - SON  
+
 
         - variable: 'sit'
           plot_projection: 'polar_map'
@@ -284,10 +475,74 @@ plots:
               fill_continents: True
 
         - variable: 'sit'
+          plot_projection: 'polar_map'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - DJA    
+              
+        - variable: 'sit'
+          plot_projection: 'polar_map'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - MAM              
+              
+        - variable: 'sit'
+          plot_projection: 'polar_map'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - JJA              
+              
+        - variable: 'sit'
+          plot_projection: 'polar_map'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - SON              
+
+        - variable: 'sit'
           plot_projection: 'polar_map_south'
           data_type: 'trends'
           plot_args:
               fill_continents: True
+
+        - variable: 'sit'
+          plot_projection: 'polar_map_south'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - DJA    
+              
+        - variable: 'sit'
+          plot_projection: 'polar_map_south'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - MAM              
+              
+        - variable: 'sit'
+          plot_projection: 'polar_map_south'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - JJA              
+              
+        - variable: 'sit'
+          plot_projection: 'polar_map_south'
+          data_type: 'trends'
+          plot_args:
+              fill_continents: True
+          seasons:
+            - SON  
 
         - variable: 'snd'
           plot_projection: 'polar_map'
