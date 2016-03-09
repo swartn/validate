@@ -185,7 +185,7 @@ def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, 
  
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
-    x, y = (9000000, -800000)
+    x, y = (9000000, -1000000)
     ax.text(x, y, '  '.join(val), fontsize=7)
 
 
