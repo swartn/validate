@@ -403,7 +403,7 @@ plots:
           plot_args:
               fill_continents: True
           seasons:
-            - DJA    
+            - DJF    
               
         - variable: 'sit'
           plot_projection: 'polar_map'
@@ -441,7 +441,7 @@ plots:
           plot_args:
               fill_continents: True
           seasons:
-            - DJA    
+            - DJF    
               
         - variable: 'sit'
           plot_projection: 'polar_map_south'
@@ -480,7 +480,7 @@ plots:
           plot_args:
               fill_continents: True
           seasons:
-            - DJA    
+            - DJF    
               
         - variable: 'sit'
           plot_projection: 'polar_map'
@@ -518,7 +518,7 @@ plots:
           plot_args:
               fill_continents: True
           seasons:
-            - DJA    
+            - DJF    
               
         - variable: 'sit'
           plot_projection: 'polar_map_south'

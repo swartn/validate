@@ -61,7 +61,6 @@ def default_pcolor_args(data, anom=False):
         # otherwise, center around the mean
         vmin = mean - std * 3.0
         vmax = mean + std * 3.0
-        
         if vmax > dmax and vmin < dmin:
             vmax = dmax
             vmin = dmin

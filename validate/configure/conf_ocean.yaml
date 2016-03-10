@@ -186,8 +186,6 @@ plots:
             - 1000
             - 2000
             - 4000
-          comp_obs:
-            - observations
           units: 'C/decade'
 
         - variable: 'thetao'
@@ -203,8 +201,6 @@ plots:
         - variable: 'thetao'
           plot_projection: 'section'
           data_type: 'trends'
-          comp_obs:
-            - observations
           set_yscale: 'linear'
           units: 'C/decade'  
 
@@ -240,8 +236,6 @@ plots:
             - 1000
             - 2000
             - 4000
-          comp_obs:
-            - observations
 
         - variable: 'so'
           plot_projection: 'section'
@@ -253,8 +247,6 @@ plots:
         - variable: 'so'
           plot_projection: 'section'
           data_type: 'trends'
-          comp_obs:
-            - observations
           set_yscale: 'linear'
 
         - variable: 'so'

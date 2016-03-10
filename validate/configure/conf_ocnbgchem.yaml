@@ -144,8 +144,6 @@ plots:
         - variable: 'chl'
           plot_projection: 'global_map'
           data_type: 'trends'
-          comp_obs:
-            - observations
 
         - variable: 'chl'
           plot_projection: 'taylor'
@@ -269,13 +267,13 @@ plots:
             - 1000
             - 2000
             - 4000
-          comp_obs:
-            - observations
           
         - variable: 'dissic'
           plot_projection: 'section'
           data_type: 'climatology'
           frequency: 'yr'
+          comp_obs:
+            - observations          
           set_yscale: 'linear'
           
         - variable: 'dissic'
@@ -317,8 +315,6 @@ plots:
             - 1000
             - 2000
             - 4000
-          comp_obs:
-            - observations
           scale: 1000
           units: 'mmol m-3/decade'
 
@@ -329,6 +325,8 @@ plots:
           scale: 1000
           units: 'mmol m-3'
           set_yscale: 'linear'
+          comp_obs:
+            - observations
           
         - variable: 'no3'
           plot_projection: 'section'
@@ -419,13 +417,13 @@ plots:
             - 1000
             - 2000
             - 4000
-          comp_obs:
-            - observations
             
         - variable: 'talk'
           plot_projection: 'section'
           data_type: 'climatology'
           frequency: 'yr'
+          comp_obs:
+            - observations          
           set_yscale: 'linear'
           
         - variable: 'talk'
