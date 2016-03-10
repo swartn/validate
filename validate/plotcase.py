@@ -548,8 +548,8 @@ def section_trends(plot, func):
     
     dft.filltitle(plot)
     _pcolor(zonmean, plot, anom=True)
-    fig = plt.figure()
-    gs = gridspec.GridSpec(1, 1, width_ratios=[20, 1])    
+    fig = plt.figure(figsize=(10,3))
+    gs = gridspec.GridSpec(1, 1, width_ratios=[1, 1])   
     # make plot
     func(x, depth, zonmean, anom=True, plot=plot, ax=plt.subplot(gs[0, 0]), ax_args=plot['data1']['ax_args'],
          pcolor_args=plot['data1']['pcolor_args'], cblabel=units)
