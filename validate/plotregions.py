@@ -30,6 +30,7 @@ font = {'size': 9}
 plt.rc('font', **font)
 
 
+
 def default_pcolor_args(data, anom=False):
     """Returns a dict with default pcolor params as key:value pairs
 
@@ -375,9 +376,10 @@ def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=N
 
     cot = ax.pcolormesh(x, z, data, **pcolor_args)
     if plot['variable'] == 'msftmyz':
-        cts = np.arange(-25,25, 1)
-        ax.contour(x, z, data, cts, colors=['k'], vmin=pcolor_args['vmin'],
+        cts = np.around(np.arange(-25,25, 2), decimals=1)
+        cs = ax.contour(x, z, data, cts, colors=['k'], vmin=pcolor_args['vmin'],
                    vmax=pcolor_args['vmax'])
+        plt.clabel(cs,  inline=True, fmt='%r', fontsize= 3)
     else:
         ax.contour(x, z, data, colors=['k'], vmin=pcolor_args['vmin'],
                    vmax=pcolor_args['vmax'])
