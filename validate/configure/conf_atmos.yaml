@@ -312,7 +312,21 @@ plots:
           comp_obs:
             - 20CR
           comp_cmips: 'all'
-            
+
+        - variable: 'tas'
+          plot_projection: 'time_series'
+          data_type: 'climatology'
+          comp_obs:
+            - 20CR
+          comp_cmips: 'all'
+
+        - variable: 'tas'
+          plot_projection: 'time_series'
+          data_type: 'trends'
+          comp_obs:
+            - 20CR
+          comp_cmips: 'all'
+                      
         - variable: 'ta'
           plot_projection: 'global_map'
           data_type: 'climatology'
