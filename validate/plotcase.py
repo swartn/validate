@@ -693,24 +693,24 @@ def timeseries_comparison(plot, func):
     
     # make plot
     func(x, data, plot=plot, ax=ax, label=plot['model_ID'], ax_args=plot['data1']['ax_args'], color='r', zorder=6)
-    handles = [mpatches.Patch(color='b', label=plot['model_ID'])]
+    handles = [mpatches.Patch(color='r', label=plot['model_ID'])]
 
     # plot comparison data on the same axis
     if plot['cmip5_file']:
         plot['comp_model'] = 'cmip5'
         data, x = timeseriesdata(plot, plot['cmip5_file'], depth)
         func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='k', zorder=4)
-        handles.append(mpatches.Patch(color='g', label=str(plot['comp_model'])))
+        handles.append(mpatches.Patch(color='k', label=str(plot['comp_model'])))
     for o in plot['comp_obs']:
         plot['comp_model'] = o
         data, x = timeseriesdata(plot, plot['obs_file'][o], depth)
         func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='b', zorder=5)
-        handles.append(mpatches.Patch(color='k', label=str(plot['comp_model'])))
+        handles.append(mpatches.Patch(color='b', label=str(plot['comp_model'])))
     for model in plot['comp_models']:
         plot['comp_model'] = model
         data, x = timeseriesdata(plot, plot['model_file'][model], depth)
         func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='g', zorder=2)
-        handles.append(mpatches.Patch(color='r', label=str(plot['comp_model'])))
+        handles.append(mpatches.Patch(color='g', label=str(plot['comp_model'])))
     for f in plot['cmip5_files']:
         try:
             plot['comp_model'] = 'cmip'
