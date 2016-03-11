@@ -23,6 +23,7 @@ from taylor import TaylorDiagram
 from operator import itemgetter
 from math import ceil
 import matplotlib.patches as mpatches
+from matplotlib.colors import LogNorm
 import cdo
 cdo = cdo.Cdo()
 plt.close('all')
@@ -154,7 +155,6 @@ def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, 
     m = Basemap(projection='kav7', llcrnrlat=latmin, urcrnrlat=latmax, llcrnrlon=lonmin, urcrnrlon=lonmax, lon_0=-180, resolution='c', ax=ax)
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
-
     cot = m.pcolor(x, y, data, **pcolor_args)
 
     if ax_args:

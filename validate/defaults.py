@@ -8,6 +8,7 @@ existence checks will not be needed later.
 .. moduleauthor:: David Fallis
 """
 import numpy as np
+from matplotlib.colors import LogNorm
 
 OLD=_DEFAULTS = {'plotprojection': 'global_map',
             'climatology': False,
@@ -111,6 +112,9 @@ rcp = {'dates': {'start_date': '2081-01',
                  'end_date': '2100-01'},
        }                        
 
+norms = {'lognorm': LogNorm()}
+
+
 def fill(plots, model_run, experiment, defaults={}):
     """ Fills the blank spaces in plots with default values and returns the list
 
@@ -210,6 +214,7 @@ def fill(plots, model_run, experiment, defaults={}):
         p['experiment'] = experiment
         p['plot_depth'] = 0
         
+        
         def _fill_args(data):
             if 'ax_args' not in p[data]:
                 p[data]['ax_args'] = {}
@@ -223,6 +228,12 @@ def fill(plots, model_run, experiment, defaults={}):
                 p[data]['pcolor_flag'] = False
             else:
                 p[data]['pcolor_flag'] = True
+            if 'norm' in p[data]['pcolor_args']:
+                try:
+                    p[data]['pcolor_args']['norm'] = norms[p[data]['pcolor_args']['norm']]
+                except:
+                    pass 
+              
 
         _fill_args('data1')
         _fill_args('data2')

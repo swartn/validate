@@ -100,8 +100,9 @@ def _pcolor(data, plot, anom=False):
     if anom or plot['divergent']:
         anom = True    
     if not plot['data1']['pcolor_flag']:
-        plot['data1']['pcolor_args'] = default_pcolor_args(data, anom)
-
+        dpa = default_pcolor_args(data, anom)
+        for key in dpa:
+            plot['data1']['pcolor_args'][key] = dpa[key]
 
 def _comp_pcolor(data, obs, plot, anom=False):
     """ Gives the data and observations the same colorbar
@@ -126,9 +127,10 @@ def _comp_pcolor(data, obs, plot, anom=False):
 
         d1pca['vmin'] = vmin
         d1pca['vmax'] = vmax
-
-        plot['data1']['pcolor_args'] = d1pca
-        plot['data2']['pcolor_args'] = d1pca
+        for key in d1pca:
+            plot['data1']['pcolor_args'][key] = d1pca[key]
+        for key in d1pca:
+            plot['data2']['pcolor_args'][key] = d1pca[key]        
 
 
 def savefigures(plotname, png=False, pdf=False, **kwargs):
