@@ -377,8 +377,10 @@ def _trend_units(data, units, plot):
     """
     if plot['frequency'] == 'day':
         data = data * 3650
+        data = data * len(plot['seasons']) / 4
     if plot['frequency'] == 'mon':
         data = data * 120
+        data = data * len(plot['seasons']) / 4
     if plot['frequency'] == 'year':
         data = data * 10
     units = units + '/decade'
