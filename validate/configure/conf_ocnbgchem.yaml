@@ -160,7 +160,7 @@ plots:
           units: 'kg m-2 y-1'
           divergent: True
           comp_obs:
-            - observations
+            - landshuetzer
 
         - variable: 'fgco2'
           plot_projection: 'global_map'
@@ -241,7 +241,7 @@ plots:
           data_type: 'climatology'
           divergent: True
           comp_obs:
-            - observations
+            - landschuetzer
 
         - variable: 'dpco2'
           plot_projection: 'global_map'
@@ -253,7 +253,7 @@ plots:
           data_type: 'climatology'
           divergent: True
           comp_obs:
-            - observations
+            - landschuetzer
 
         - variable: 'spco2'
           plot_projection: 'global_map'
