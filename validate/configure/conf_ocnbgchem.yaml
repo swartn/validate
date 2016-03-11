@@ -140,7 +140,13 @@ plots:
           data_type: 'climatology'
           comp_obs:
             - observations
-
+          data1:
+              pcolor_args: 
+                  norm: lognorm
+          data2:
+              pcolor_args: 
+                  norm: lognorm
+                  
         - variable: 'chl'
           plot_projection: 'global_map'
           data_type: 'trends'
@@ -239,26 +245,22 @@ plots:
         - variable: 'dpco2'
           plot_projection: 'global_map'
           data_type: 'climatology'
-          divergent: True
           comp_obs:
             - landschuetzer
 
         - variable: 'dpco2'
           plot_projection: 'global_map'
           data_type: 'trends'
-          divergent: True
 
         - variable: 'spco2'
           plot_projection: 'global_map'
           data_type: 'climatology'
-          divergent: True
           comp_obs:
             - landschuetzer
 
         - variable: 'spco2'
           plot_projection: 'global_map'
           data_type: 'trends'
-          divergent: True
                     
         - variable: 'dissic'
           plot_projection: 'mercator'
