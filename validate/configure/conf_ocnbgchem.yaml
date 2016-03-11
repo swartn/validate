@@ -183,6 +183,8 @@ plots:
           data_type: 'climatology'
           scale: 31536000
           units: 'mol m-2 y-1'
+          comp_obs:
+            - observations
 
         - variable: 'epc100'
           plot_projection: 'global_map'
@@ -238,12 +240,26 @@ plots:
           plot_projection: 'global_map'
           data_type: 'climatology'
           divergent: True
+          comp_obs:
+            - observations
 
         - variable: 'dpco2'
           plot_projection: 'global_map'
           data_type: 'trends'
           divergent: True
-          
+
+        - variable: 'spco2'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          divergent: True
+          comp_obs:
+            - observations
+
+        - variable: 'spco2'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+          divergent: True
+                    
         - variable: 'dissic'
           plot_projection: 'mercator'
           data_type: 'climatology'

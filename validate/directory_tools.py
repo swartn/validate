@@ -501,6 +501,7 @@ def getobs(plots, obsroot, o):
     obsroot : string
               directory path to find observations
     """
+    
     obsfiles = traverse(obsroot)
     variables = _variable_dictionary(plots)
     for f in obsfiles:
