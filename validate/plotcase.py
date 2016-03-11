@@ -785,21 +785,21 @@ def zonalmean_comparison(plot, func):
    
     # make plot
     func(x, data, plot=plot, ax=ax, ax_args=plot['data1']['ax_args'], color='r', zorder=6)
-    handles = [mpatches.Patch(color='b', label=plot['model_ID'])] 
+    handles = [mpatches.Patch(color='r', label=plot['model_ID'])] 
     
     # plot comparison data on the same axis
     if plot['comp_cmips']:
         plot['comp_model'] = 'cmip5'
         zonalmeandata(plot, plot['cmip5_file'], ax, depth, func, color='k', zorder=4)
-        handles.append(mpatches.Patch(color='g', label='cmip5')) 
+        handles.append(mpatches.Patch(color='k', label='cmip5')) 
     for o in plot['comp_obs']:
         plot['comp_model'] = o
         zonalmeandata(plot, plot['obs_file'][o], ax, depth, func, color='b', zorder=5)
-        handles.append(mpatches.Patch(color='k', label=str(plot['comp_model'])))
+        handles.append(mpatches.Patch(color='b', label=str(plot['comp_model'])))
     for model in plot['comp_models']:
         plot['comp_model'] = model
         zonalmeandata(plot, plot['model_file'][model], ax, depth, func, color='g', zorder=2)        
-        handles.append(mpatches.Patch(color='r', label=str(plot['comp_model'])))        
+        handles.append(mpatches.Patch(color='g', label=str(plot['comp_model'])))        
     for f in plot['cmip5_files']:
         plot['comp_model'] = 'cmip'
         zonalmeandata(plot, f, ax, depth, func, color='0.75', zorder=1)
