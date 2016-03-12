@@ -392,7 +392,7 @@ def histogram_load(ifile, var, dates, realm, scale, shift, remapf='remapdis', re
 def full_section_load(ifile, var, dates, realm, scale, shift, remapf='remapdis', remapgrid='r360x180', depthneeded=None, seasons=None):
     averaged = _check_dates(ifile, dates)
     if depthneeded is not None:
-        finalout = intlevel(zonal_mean(remap(sel_date(setc(season(sel_var(ifile, var), seasons)), dates['start_date'], dates['end_date'], averaged), remapf, remapgrid)), depthneeded)    
+        finalout = intlevel(zonal_mean(remap(sel_date(setc(mask(season(sel_var(ifile, var), seasons), realm)), dates['start_date'], dates['end_date'], averaged), remapf, remapgrid)), depthneeded)    
     else:
         finalout = zonal_mean(remap(sel_date(setc(mask(season(sel_var(ifile, var), seasons), realm)), dates['start_date'], dates['end_date'], averaged), remapf, remapgrid))
  
@@ -425,12 +425,12 @@ def zonal_load(ifile, var, dates, realm, scale, shift, remapf='remapdis', remapg
     
     if trends:
         if depthneeded is not None:
-            finalout = intlevel(zonal_mean(remap(trend(setc(season(sel_var(ifile, var), seasons)), dates['start_date'], dates['end_date']), remapf, remapgrid)), depthneeded)    
+            finalout = intlevel(zonal_mean(remap(trend(setc(mask(season(sel_var(ifile, var), seasons), realm)), dates['start_date'], dates['end_date']), remapf, remapgrid)), depthneeded)    
         else:
             finalout = zonal_mean(remap(trend(setc(mask(season(sel_var(ifile, var), seasons), realm)), dates['start_date'], dates['end_date']), remapf, remapgrid))   
     else:
         if depthneeded is not None:
-            finalout = intlevel(zonal_mean(remap(time_mean(setc(season(sel_var(ifile, var), seasons)), dates['start_date'], dates['end_date'], averaged), remapf, remapgrid)), depthneeded)    
+            finalout = intlevel(zonal_mean(remap(time_mean(setc(mask(season(sel_var(ifile, var), seasons), realm)), dates['start_date'], dates['end_date'], averaged), remapf, remapgrid)), depthneeded)    
         else:
             finalout = zonal_mean(remap(time_mean(setc(mask(season(sel_var(ifile, var), seasons), realm)), dates['start_date'], dates['end_date'], averaged), remapf, remapgrid))
     
@@ -478,14 +478,16 @@ def mask(name, realm):
             except:
                 with open('logs/log.txt', 'a') as outfile:
                     outfile.write('WARNING: Land data was not masked\n')
-                return name             
+                os.remove(out)
+                return name
         elif realm == 'land':
             try:
                 cdo.ifthen(input='mask/land ' + name, output=out) 
             except:
                 with open('logs/log.txt', 'a') as outfile:
                     outfile.write('WARNING: Ocean data was not masked\n')
-                return name 
+                os.remove(out)
+                return name
         else:
             out = name
     return out
@@ -544,6 +546,7 @@ def remap(name, remapname, remapgrid):
         try:
             remap(remapgrid, input=name, output=out)
         except:
+            os.remove(out)
             return name
     return out
 

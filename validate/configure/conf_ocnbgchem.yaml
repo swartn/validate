@@ -138,6 +138,8 @@ plots:
         - variable: 'chl'
           plot_projection: 'global_map'
           data_type: 'climatology'
+          scale: 1000000
+          units: mg m-3
           comp_obs:
             - observations
           data1:
@@ -150,6 +152,8 @@ plots:
         - variable: 'chl'
           plot_projection: 'global_map'
           data_type: 'trends'
+          scale: 1000000
+          units: mg m-3/decade
 
         - variable: 'chl'
           plot_projection: 'taylor'
@@ -162,8 +166,9 @@ plots:
         - variable: 'fgco2'
           plot_projection: 'global_map'
           data_type: 'climatology'
-          scale: 31536000
-          units: 'kg m-2 y-1'
+          scale: 8600727000
+          comp_scale: -31536000000 
+          units: 'g m-2 y-1'
           divergent: True
           comp_obs:
             - landschuetzer
@@ -171,17 +176,18 @@ plots:
         - variable: 'fgco2'
           plot_projection: 'global_map'
           data_type: 'trends'
-          scale: 31536000
-          units: 'kg m-2 y-1/decade'
+          scale: 8600727000
+          units: 'g m-2 y-1/decade'
           divergent: True
 
         - variable: 'fgco2'
           plot_projection: 'time_series'
           data_type: 'climatology'
           cdostring: 'fldsum -seldate,1979-01,2000-01 -mul mask/areacello'
+          scale: 0.2728
           data1:
               ax_args:
-                  ylabel: 'kgs-1'      
+                  ylabel: 'kg s-1'      
           divergent: True
 
         - variable: 'epc100'

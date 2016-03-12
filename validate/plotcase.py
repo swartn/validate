@@ -329,17 +329,20 @@ def section_climatology_comparison(plot, func):
     string : name of the plot
     """
     print 'plotting section comparison of ' + plot['variable']
-    # load data from netcdf file
-    zonmean, units, x, depth = pl.zonal_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['shift'], seasons=plot['seasons'])
 
     # load comparison data from netcdf file
-    zonmean2, units2, x2, depth2 = pl.zonal_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons'])
+    zonmean2, units2, x2, depth2 = pl.zonal_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], seasons=plot['comp_seasons'])
+    
+    # load data from netcdf file
+    zonmean, units, x, depth = pl.zonal_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['shift'], depthneeded=list(depth2), seasons=plot['seasons'])
+
+
 
     if plot['units']:
         units = plot['units']
+    fulldata2 = pl.full_section_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], seasons=plot['comp_seasons'])
+    fulldata = pl.full_section_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['shift'], depthneeded=list(depth2), seasons=plot['seasons'])
 
-    fulldata = pl.full_section_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['shift'], seasons=plot['seasons'])
-    fulldata2 = pl.full_section_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons'])
     pvalues = ttest(fulldata, fulldata2)
     
     dft.filltitle(plot)
@@ -349,11 +352,11 @@ def section_climatology_comparison(plot, func):
     # make plots of data, comparison data, data - comparison data
     fig = plt.figure(figsize=(6, 8))
     gs = gridspec.GridSpec(3, 2, width_ratios=[20, 1])
-    func(x, depth, zonmean, plot=plot, ax=plt.subplot(gs[0, 0]), ax_args=plot['data1']['ax_args'],
+    func(x, depth2, zonmean, plot=plot, ax=plt.subplot(gs[0, 0]), ax_args=plot['data1']['ax_args'],
          pcolor_args=plot['data1']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[0, 1]))
-    func(x, depth, zonmean2, plot=plot, ax=plt.subplot(gs[1, 0]), ax_args=plot['data2']['ax_args'],
+    func(x, depth2, zonmean2, plot=plot, ax=plt.subplot(gs[1, 0]), ax_args=plot['data2']['ax_args'],
          pcolor_args=plot['data2']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[1, 1]))
-    func(x, depth, compdata, anom=True, rmse=True, pvalues=pvalues, alpha=plot['alpha'], plot=plot, ax=plt.subplot(gs[2, 0]), ax_args=plot['comp']['ax_args'],
+    func(x, depth2, compdata, anom=True, rmse=True, pvalues=pvalues, alpha=plot['alpha'], plot=plot, ax=plt.subplot(gs[2, 0]), ax_args=plot['comp']['ax_args'],
          pcolor_args=plot['comp']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[2, 1]))
 
     plt.tight_layout()
@@ -580,9 +583,11 @@ def section_trends_comp(plot, func):
     """
     print 'plotting section trends of ' + plot['variable']
 
-    zonmean, units, x, depth = pl.zonal_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['shift'], plot['remap'], plot['remap_grid'], trends=True, seasons=plot['seasons'])
+    zonmean2, units2, x2, depth2 = pl.zonal_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], plot['remap'], plot['remap_grid'], trends=True, seasons=plot['comp_seasons'])
 
-    zonmean2, units2, x2, depth2 = pl.zonal_load(plot['comp_file'], plot['variable'], plot['comp_dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], plot['remap'], plot['remap_grid'], trends=True, depthneeded=list(depth), seasons=plot['comp_seasons'])
+    zonmean, units, x, depth = pl.zonal_load(plot['ifile'], plot['variable'], plot['dates'], plot['realm_cat'], plot['scale'], plot['shift'], plot['remap'], plot['remap_grid'], trends=True, depthneeded=list(depth2), seasons=plot['seasons'])
+
+
 
     # scale data based on frequency
     zonmean, units = _trend_units(zonmean, units, plot)
