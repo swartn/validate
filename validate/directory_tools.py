@@ -454,9 +454,7 @@ def getidfiles(plots, root, experiment):
                 p['id_file'][i] = filedict[(p['frequency'], p['variable'], str(p['realization']))]
 
 
-def remfiles(del_mask=True, del_ncstore=True, del_netcdf=True,
-             del_cmipfiles=True, del_ENS_MEAN_cmipfiles=True,
-             del_ENS_STD_cmipfiles=True, **kwargs):
+def remfiles(del_mask=True, del_ncstore=True, del_netcdf=True, **kwargs):
     """ Option to delete the directories used to store processed .nc files
 
     Paremeters
@@ -474,12 +472,8 @@ def remfiles(del_mask=True, del_ncstore=True, del_netcdf=True,
         os.system('rm -rf ncstore')
     if del_netcdf:
         os.system('rm -rf netcdf')
-    if del_cmipfiles:
-        os.system('rm -rf cmipfiles')
-    if del_ENS_MEAN_cmipfiles:
-        os.system('rm -rf ENS-MEAN_cmipfiles')
-    if del_ENS_STD_cmipfiles:
-        os.system('rm -rf ENS-STD_cmipfiles')
+
+
 
 
 def getobsfiles(plots, obsroot):
