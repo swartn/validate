@@ -291,6 +291,8 @@ plots:
             - 1000
             - 2000
             - 4000
+          units: 'mmol m-3/decade'
+          scale: 1000
           
         - variable: 'dissic'
           plot_projection: 'section'
@@ -305,7 +307,9 @@ plots:
           data_type: 'trends'
           frequency: 'yr'
           set_yscale: 'linear'
-                    
+          units: 'mmol m-3/decade'
+          scale: 1000
+                      
         - variable: 'dissic'
           plot_projection: 'taylor'
           data_type: 'climatology'
