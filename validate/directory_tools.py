@@ -136,8 +136,6 @@ def _mkdir():
     mkthedir('mask')
     mkthedir('plots')
     mkthedir('logs')
-    mkthedir('ENS-MEAN_cmipfiles')
-    mkthedir('ENS-STD_cmipfiles')
     mkthedir('netcdf')
 
 
@@ -483,10 +481,12 @@ def remfiles(del_mask=True, del_ncstore=True, del_netcdf=True,
     if del_ENS_STD_cmipfiles:
         os.system('rm -rf ENS-STD_cmipfiles')
 
+
 def getobsfiles(plots, obsroot):
     obsdirectories = [o for o in os.listdir(obsroot) if os.path.isdir(os.path.join(obsroot,o))]
     for o in obsdirectories:
         getobs (plots, obsroot + o, o)
+
 
 def getobs(plots, obsroot, o):
     """ For every plot in the dictionary of plots
@@ -501,7 +501,6 @@ def getobs(plots, obsroot, o):
     obsroot : string
               directory path to find observations
     """
-    
     obsfiles = traverse(obsroot)
     variables = _variable_dictionary(plots)
     for f in obsfiles:
@@ -530,6 +529,7 @@ def getobs(plots, obsroot, o):
         if 'trends_dates' not in p:
             fill_dates('trends', p)
 
+
 def model_files(var, model, expname, frequency, cmipdir):
     prefix = cmipdir + '/' + var + '/'
     ensstring = prefix + var + '_*' + frequency + '_*' + model + '_' + expname + '_*.nc'
@@ -537,6 +537,7 @@ def model_files(var, model, expname, frequency, cmipdir):
     ens = cd.cat_exp_slices(ens, delete=False, output_prefix='cmipfiles/')
     mfiles = ens.lister('ncfile')
     return mfiles, ens
+
     
 def model_average(ens, var, model):
     """ Creates and stores a netCDF file with the average data
@@ -552,10 +553,12 @@ def model_average(ens, var, model):
         os.remove(stdevs[0])
     return new
 
+
 def cmip_files(model_files):
     files = list(model_files.values())
     allfiles = [item for sublist in files for item in sublist]
     return list(set(allfiles))
+
 
 def get_cmip_average(plots, directory):
     averagefiles = traverse(directory)
@@ -573,6 +576,7 @@ def get_cmip_average(plots, directory):
                     break
             else:
                 p['cmip5_file'] = None
+
     
 def cmip_average(var, frequency, files, sd, ed, expname):
     """ Creates and stores a netCDF file with the average data
@@ -588,7 +592,6 @@ def cmip_average(var, frequency, files, sd, ed, expname):
         newerfilelist = []
         for f in files:
             time = f.replace('.nc', '_time.nc')
-            
             # try to select the date range
 #            try:
             os.system('cdo -L seldate,' + sd + ',' + ed + ' -selvar,' + var + ' ' + f + ' ' + time)
@@ -616,7 +619,6 @@ def cmip_average(var, frequency, files, sd, ed, expname):
         cdo.ensmean(input=filestring, output=out)
     return out
 
-
 def getcmipfiles(plots, expname, cmipdir):
     """ Loop through the plots and create the comparison files if cdo operations are needed 
         and map the keys in the compare dictionary to the correct file names.
@@ -624,8 +626,7 @@ def getcmipfiles(plots, expname, cmipdir):
     # get the date ranges need for each variable
     startdates = min_start_dates(plots)
     enddates = max_end_dates(plots)
-    cmip5_variables = {}
-    
+    cmip5_variables = {}  
     for p in plots:
         p['model_files'] = {}
         p['model_file'] = {}
@@ -673,7 +674,6 @@ def getcmipfiles(plots, expname, cmipdir):
                 p['comp_cmips'] = []
 
 
-
 def cmip(plots, cmipdir, cmipmeandir, expname, load):
     """ Import the netCDF files if needed
         and call the functions to modify and map the cmip5 files
@@ -686,10 +686,10 @@ def cmip(plots, cmipdir, cmipmeandir, expname, load):
             break
 
 
-
 def make_tarfile(output_filename, source_dir):
     with tarfile.open(output_filename, "w:gz") as tar:
         tar.add(source_dir, arcname=os.path.basename(source_dir))
+ 
         
 def move_tarfile(location):
     if location is not None:
