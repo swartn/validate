@@ -840,23 +840,34 @@ def taylor_full(plot, func):
 
     for f in plot['cmip5_files']:
         plot['comp_model'] = f
-        data, units, lon, lat, depth = pl.timeaverage_load(f, plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons'])
-        cmip5data.append((data, f))
+        try:
+            data, units, lon, lat, depth = pl.timeaverage_load(f, plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons'])
+            cmip5data.append((data, f))
+        except:
+            continue
     # get data from models and cmip and append to plotdata list
     if plot['cmip5_file']:
         plot['comp_model'] = 'cmip5'
-        data, units, lon, lat, depth = pl.timeaverage_load(plot['cmip5_file'], plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons'])
-        plotdata.append((data, 'cmip5'))
+        try:
+            data, units, lon, lat, depth = pl.timeaverage_load(plot['cmip5_file'], plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons'])
+            plotdata.append((data, 'cmip5'))
+        except:
+            pass
     for model in plot['comp_models']:
         plot['comp_model'] = model
-        data, units, lon, lat, depth = pl.timeaverage_load(plot['model_file'][model], plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons'])
-        plotdata.append((data, model))
+        try:
+            data, units, lon, lat, depth = pl.timeaverage_load(plot['model_file'][model], plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons'])
+            plotdata.append((data, model))
+        except:
+            continue
     for i in plot['comp_ids']:
         plot['comp_model'] = i
-        data, units, lon, lat, depth = pl.timeaverage_load(plot['id_file'][i], plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons'])
-        plotdata.append((data, i))
-
-            
+        try:
+            data, units, lon, lat, depth = pl.timeaverage_load(plot['id_file'][i], plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons'])
+            plotdata.append((data, i))
+        except:
+            continue
+   
     # make plot
     pr.taylordiagram(refdata, plotdata, cmip5data, plot=plot, ax_args=plot['data1']['ax_args'])
     
@@ -896,22 +907,32 @@ def taylor(plot, func):
 
     for f in plot['cmip5_files']:
         plot['comp_model'] = f
-        data, units, lon, lat, depth = pl.timeaverage_load(f, plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons'])
-        cmip5data.append((data, f))    
-    # get data from models and cmip and append to plotdata list
+        try:
+            data, units, lon, lat, depth = pl.timeaverage_load(f, plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=list(depth), seasons=plot['comp_seasons'])
+            cmip5data.append((data, f))
+        except:
+            continue    
     if plot['cmip5_file']:
         plot['comp_model'] = 'cmip5'
-        data, units, lon, lat, depth = pl.timeaverage_load(plot['cmip5_file'], plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=[plot['plot_depth']], seasons=plot['comp_seasons'])
-        plotdata.append((_depth_data(data, depth, plot), c))
+        try:
+            data, units, lon, lat, depth = pl.timeaverage_load(plot['cmip5_file'], plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=[plot['plot_depth']], seasons=plot['comp_seasons'])
+            plotdata.append((_depth_data(data, depth, plot), c))
+        except:
+            pass
     for model in plot['comp_models']:
         plot['comp_model'] = model
-        data, units, lon, lat, depth = pl.timeaverage_load(plot['model_file'][model], plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=[plot['plot_depth']], seasons=plot['comp_seasons'])
-        plotdata.append((_depth_data(data, depth, plot), model))
+        try:
+            data, units, lon, lat, depth = pl.timeaverage_load(plot['model_file'][model], plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=[plot['plot_depth']], seasons=plot['comp_seasons'])
+            plotdata.append((_depth_data(data, depth, plot), model))
+        except:
+            continue
     for i in plot['comp_ids']:
         plot['comp_model'] = i
-        data, units, lon, lat, depth = pl.timeaverage_load(plot['id_file'][i], plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=[plot['plot_depth']], seasons=plot['comp_seasons'])
-        plotdata.append((_depth_data(data, depth, plot), i))
-            
+        try:
+            data, units, lon, lat, depth = pl.timeaverage_load(plot['id_file'][i], plot['variable'], plot['dates'], plot['realm_cat'], plot['comp_scale'], plot['comp_shift'], depthneeded=[plot['plot_depth']], seasons=plot['comp_seasons'])
+            plotdata.append((_depth_data(data, depth, plot), i))
+        except:
+            continue    
     # make plot
     pr.taylordiagram(refdata, plotdata, cmip5data, plot=plot, ax_args=plot['data1']['ax_args'])
     

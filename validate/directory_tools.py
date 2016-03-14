@@ -702,6 +702,4 @@ def move_tarfile(location):
             
 
 if __name__ == "__main__":
-    #importcmip('/raid/ra40/CMIP5_OTHER_DOWNLOADS/')
-    for f in model_files('tas', 'HadCM3', 'historical', 'mon', 'root'):
-        print f
+    pass
