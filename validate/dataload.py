@@ -546,7 +546,10 @@ def remap(name, remapname, remapgrid):
         try:
             remap(remapgrid, input=name, output=out)
         except:
-            os.remove(out)
+            try:
+                os.remove(out)
+            except:
+                pass
             return name
     return out
 
