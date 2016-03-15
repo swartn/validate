@@ -161,7 +161,6 @@ plots:
           comp_obs:
              - observations
           comp_cmips: 'all'
-          frequency: 'yr'
 
         - variable: 'fgco2'
           plot_projection: 'global_map'
@@ -382,8 +381,6 @@ plots:
             - 1000
             - 2000
             - 4000
-          comp_obs:
-            - observations
           units: ''
 
         - variable: 'ph'
@@ -396,8 +393,6 @@ plots:
             - 1000
             - 2000
             - 4000
-          comp_obs:
-            - observations
           units: '/decade'
           
         - variable: 'ph'
@@ -412,15 +407,7 @@ plots:
           data_type: 'trends'
           frequency: 'yr'
           units: '/decade'
-          set_yscale: 'linear'
-
-        - variable: 'ph'
-          plot_projection: 'taylor'
-          data_type: 'climatology'
-          comp_obs:
-             - observations
-          comp_cmips: 'all'
-          frequency: 'yr'   
+          set_yscale: 'linear'  
 
         - variable: 'talk'
           plot_projection: 'mercator'
