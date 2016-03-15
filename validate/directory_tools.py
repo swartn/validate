@@ -137,6 +137,7 @@ def _mkdir():
     mkthedir('plots')
     mkthedir('logs')
     mkthedir('netcdf')
+    mkthedir('cmipfiles')
 
 
 def _logfile(run, experiment):
@@ -454,7 +455,7 @@ def getidfiles(plots, root, experiment):
                 p['id_file'][i] = filedict[(p['frequency'], p['variable'], str(p['realization']))]
 
 
-def remfiles(del_mask=True, del_ncstore=True, del_netcdf=True, **kwargs):
+def remfiles(del_mask=True, del_ncstore=True, del_netcdf=True, del_cmipfiles=True, **kwargs):
     """ Option to delete the directories used to store processed .nc files
 
     Paremeters
@@ -472,7 +473,8 @@ def remfiles(del_mask=True, del_ncstore=True, del_netcdf=True, **kwargs):
         os.system('rm -rf ncstore')
     if del_netcdf:
         os.system('rm -rf netcdf')
-
+    if del_cmipfiles:
+        os.system('rm -rf cmipfiles')
 
 
 
