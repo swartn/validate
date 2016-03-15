@@ -151,11 +151,11 @@ def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, 
     for key, value in default_pcolor_args(data).iteritems():
         if key not in pcolor_args or (pcolor_args[key] is None):
             pcolor_args[key] = value
-
+        
     m = Basemap(projection='kav7', llcrnrlat=latmin, urcrnrlat=latmax, llcrnrlon=lonmin, urcrnrlon=lonmax, lon_0=-180, resolution='c', ax=ax)
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
-    cot = m.pcolor(x, y, data, **pcolor_args)
+    cot = m.pcolormesh(x, y, data, **pcolor_args)
 
     if ax_args:
         plt.setp(ax, **ax_args)
@@ -209,7 +209,7 @@ def polar_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, a
 
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
-    cot = m.pcolor(x, y, data, **pcolor_args)
+    cot = m.pcolormesh(x, y, data, **pcolor_args)
 
     if ax_args:
         plt.setp(ax, **ax_args)
@@ -261,7 +261,7 @@ def polar_map_south(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=N
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
 
-    cot = m.pcolor(x, y, data, **pcolor_args)
+    cot = m.pcolormesh(x, y, data, **pcolor_args)
 
     if ax_args:
         plt.setp(ax, **ax_args)
@@ -315,7 +315,7 @@ def mercator(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
 
-    cot = m.pcolor(x, y, data, **pcolor_args)
+    cot = m.pcolormesh(x, y, data, **pcolor_args)
     if ax_args:
         plt.setp(ax, **ax_args)
 
@@ -373,7 +373,7 @@ def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=N
         if key not in pcolor_args or (pcolor_args[key] is None):
             pcolor_args[key] = value
 
-    cot = ax.pcolormesh(x, z, data, **pcolor_args)
+    cot = ax.pcolormesh(x, z, data, shading='gouraud', **pcolor_args)
     if plot['variable'] == 'msftmyz':
         cts = np.around(np.arange(-25,25, 2), decimals=1)
         cs = ax.contour(x, z, data, cts, colors=['k'], vmin=pcolor_args['vmin'],
