@@ -180,6 +180,15 @@ plots:
           divergent: True
 
         - variable: 'fgco2'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          scale: 8600727000
+          comp_scale:-31536000000 
+          comp_obs:
+            - landschuetzer
+          comp_cmips: 'all'
+
+        - variable: 'fgco2'
           plot_projection: 'time_series'
           data_type: 'climatology'
           cdostring: 'fldsum -seldate,1979-01,2000-01 -mul mask/areacello'
@@ -202,6 +211,14 @@ plots:
           data_type: 'trends'
           scale: 31536000
           units: 'mol m-2 y-1/decade'
+
+        - variable: 'epc100'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          scale: 31536000
+          comp_obs:
+            - observations
+          comp_cmips: 'all'
           
         - variable: 'epcalc100'
           plot_projection: 'global_map'
@@ -257,6 +274,13 @@ plots:
           plot_projection: 'global_map'
           data_type: 'trends'
 
+        - variable: 'dpco2'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+            - landschuetzer
+          comp_cmips: 'all'
+
         - variable: 'spco2'
           plot_projection: 'global_map'
           data_type: 'climatology'
@@ -266,6 +290,13 @@ plots:
         - variable: 'spco2'
           plot_projection: 'global_map'
           data_type: 'trends'
+
+        - variable: 'spco2'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+            - landschuetzer
+          comp_cmips: 'all'
                     
         - variable: 'dissic'
           plot_projection: 'mercator'
