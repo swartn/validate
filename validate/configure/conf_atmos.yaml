@@ -845,8 +845,6 @@ plots:
              - 'JJA'
           scale: 31536000
           units: 'kg m-2 y-1/decade'
- 
-
 
 delete:
           del_netcdf: False

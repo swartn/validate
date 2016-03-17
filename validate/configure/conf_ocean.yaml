@@ -277,6 +277,7 @@ plots:
             - 2000
             - 4000
           divergent: True
+          scale: 1000
           
         - variable: 'uo'
           plot_projection: 'section'
@@ -290,7 +291,7 @@ plots:
           data_type: 'trends'
           set_yscale: 'linear'
           divergent: True
-
+          scale: 1000
                   
         - variable: 'vo'
           plot_projection: 'mercator'
@@ -313,7 +314,8 @@ plots:
             - 2000
             - 4000
           divergent: True
-                 
+          scale: 1000
+          
         - variable: 'vo'
           plot_projection: 'section'
           data_type: 'climatology'
@@ -325,7 +327,8 @@ plots:
           data_type: 'trends'
           set_yscale: 'linear'
           divergent: True
- 
+          scale: 1000
+          
         - variable: 'msftbarot'
           plot_projection: 'mercator'
           data_type: 'climatology'

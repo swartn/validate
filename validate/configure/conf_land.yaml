@@ -145,8 +145,8 @@ plots:
         - variable: 'nep'
           plot_projection: 'mercator'
           data_type: 'trends'
-          scale: 31536000
-          units: 'kg m-2 y-1/decade'
+          scale: 3153600000
+          units: 'kg m-2 y-1/decade * 100'
           
         - variable: 'gpp'
           plot_projection: 'mercator'
@@ -157,8 +157,8 @@ plots:
         - variable: 'gpp'
           plot_projection: 'mercator'
           data_type: 'trends'
-          scale: 31536000
-          units: 'kg m-2 y-1/decade'   
+          scale: 3153600000
+          units: 'kg m-2 y-1/decade * 100'   
                  
         - variable: 'npp'
           plot_projection: 'mercator'
@@ -169,8 +169,8 @@ plots:
         - variable: 'npp'
           plot_projection: 'mercator'
           data_type: 'trends'
-          scale: 31536000
-          units: 'kg m-2 y-1/decade'
+          scale: 3153600000
+          units: 'kg m-2 y-1/decade * 100'
           
         - variable: 'lai'
           plot_projection: 'mercator'
@@ -179,6 +179,7 @@ plots:
         - variable: 'lai'
           plot_projection: 'mercator'
           data_type: 'trends'
+          scale: 100
 
         - variable: 'cSoil'
           plot_projection: 'mercator'
@@ -187,7 +188,8 @@ plots:
         - variable: 'cSoil'
           plot_projection: 'mercator'
           data_type: 'trends'
-        
+          scale: 100
+          
         - variable: 'cRoot'
           plot_projection: 'mercator'
           data_type: 'climatology'
@@ -195,7 +197,8 @@ plots:
         - variable: 'cRoot'
           plot_projection: 'mercator'
           data_type: 'trends'
- 
+          scale: 100
+          
         - variable: 'cVeg'
           plot_projection: 'mercator'
           data_type: 'climatology'
@@ -203,7 +206,8 @@ plots:
         - variable: 'cVeg'
           plot_projection: 'mercator'
           data_type: 'trends'
-
+          scale: 100
+          
         - variable: 'cWood'
           plot_projection: 'mercator'
           data_type: 'climatology'
@@ -211,7 +215,8 @@ plots:
         - variable: 'cWood'
           plot_projection: 'mercator'
           data_type: 'trends'
-
+          scale: 100
+          
         - variable: 'cLeaf'
           plot_projection: 'mercator'
           data_type: 'climatology'
@@ -219,7 +224,8 @@ plots:
         - variable: 'cLeaf'
           plot_projection: 'mercator'
           data_type: 'trends'
-
+          scale: 100
+          
         - variable: 'cLitter'
           plot_projection: 'mercator'
           data_type: 'climatology'
@@ -227,7 +233,7 @@ plots:
         - variable: 'cLitter'
           plot_projection: 'mercator'
           data_type: 'trends'
-
+          scale: 100
 
 
 
