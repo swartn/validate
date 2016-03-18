@@ -205,23 +205,10 @@ def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None,
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
     ax.text(a, b, '  '.join(val), fontsize=7)
-    
-
-def _fix_1Ddata(z, data, ax_args):
-    """ Extends section data if it is in only on dimension
-    """
-    newdata = range(0, 5)
-    for n in range(0, 5):
-        newdata[n] = data
-    ax_args['ylabel'] = ''
-    ax_args['yticks'] = []
-    return np.array(range(0, 5)), np.array(newdata), ax_args
 
 
 def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=None, pcolor_args=None, plot={}, cblabel='', anom=False, cbaxis=None):
     """Pcolor a var in a section, using ax if supplied"""
-    if len(data.shape) == 1:
-        z, data, ax_args = _fix_1Ddata(z, data, ax_args)
     if not ax:
         fig, ax = plt.subplots(1, 1, figsize=(8, 8))
         fig.subplots_adjust(top=0.8, right=0.8)
