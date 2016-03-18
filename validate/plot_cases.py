@@ -10,8 +10,8 @@ to the correct plot.
 .. moduleauthor:: David Fallis
 """
 
-import dataload as pl
-import plotregions as pr
+import data_loader as pl
+import projections as pr
 import numpy as np
 import scipy as sp
 import matplotlib as mpl
@@ -21,7 +21,7 @@ import matplotlib.ticker as ticker
 from matplotlib import gridspec
 import defaults as dft
 import datetime
-from plotregions import default_pcolor_args
+from projections import default_pcolor_args
 
 
 def _1d_depth_data(data, depth, plot):

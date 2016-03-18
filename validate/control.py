@@ -13,10 +13,10 @@ import os
 import matplotlib as mpl
 mpl.use('AGG')
 from directory_tools import getfiles, remfiles, getobsfiles, getidfiles, cmip, move_tarfile
-from plotter import loop
-from pdforganize import arrange
+from plot_iterator import loop
+from pdf_organizer import arrange
 from defaults import fill
-from check import check_inputs
+from syntax_check import check_inputs
           
 def execute(options, **kwargs):
     """ Gets the configuration and contains the function that

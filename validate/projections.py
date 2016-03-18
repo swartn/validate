@@ -31,7 +31,6 @@ font = {'size': 9}
 plt.rc('font', **font)
 
 
-
 def default_pcolor_args(data, anom=False):
     """Returns a dict with default pcolor params as key:value pairs
 
@@ -249,7 +248,7 @@ def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=N
                     slons.append(x[index[1]])
                     sdepths.append(z[index[0]])
         ax.plot(slons, sdepths, '.', markersize=0.2, color='k')
-#    plt.show()
+
     box = ax.get_position()
     if cbaxis:
         fig.colorbar(cot, cax=cbaxis, label=cblabel)
@@ -353,9 +352,7 @@ def taylordiagram(refdata, labelled_data, unlabelled_data, fig=None, ax_args=Non
                        marker='.', ms=5, ls='',
                        mfc='grey', mec='grey',
                        label=None, zorder=1) 
-                       
-
-   
+  
     dia.add_grid()
 
     contours = dia.add_contours(colors='0.5')

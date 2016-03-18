@@ -10,9 +10,8 @@ through all of the specified plots that will be produced.
 import os
 import glob
 
-import plotregions as pr
 import defaults as dft
-import plotcase as pc
+import plot_cases as pc
 import matplotlib.pyplot as plt
 from yamllog import log
 from copy import deepcopy
