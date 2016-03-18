@@ -24,7 +24,7 @@ def execute(options, **kwargs):
         process the data, and output the plots and figures.
 
     """
-    def plot(run=None, experiment='historical', data_root="", observations_root="", cmip5_root="", output_root=None, cmip5_means='', loadcmip5=False, ignorecheck=False, debugging=False, plots=[], defaults={}, delete={}, obs={}, **kwargs):
+    def plot(run=None, experiment='historical', direct_data_root= "", data_root="", observations_root="", cmip5_root="", output_root=None, cmip5_means='', loadcmip5=False, ignorecheck=False, debugging=False, plots=[], defaults={}, delete={}, obs={}, **kwargs):
         """Calls modules required to find the data,
            process the data, and output the plots and figures
         """
@@ -36,7 +36,7 @@ def execute(options, **kwargs):
         fill(plots, run, experiment, defaults)
         
         # find and modify if necessary the files for the model and experiment
-        getfiles(plots, data_root, run, experiment)
+        getfiles(plots, direct_data_root, data_root, run, experiment)
         
         # find the observations files
         getobsfiles(plots, observations_root)

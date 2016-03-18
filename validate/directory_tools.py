@@ -369,7 +369,7 @@ def getrealmcat(realm):
     return realm_cat
 
 
-def getfiles(plots, root, run, experiment):
+def getfiles(plots, directroot, root, run, experiment):
     """ For every plot in the dictionary of plots
         maps the key 'ifile' to the name of the file
         needed to make the plot
@@ -383,8 +383,10 @@ def getfiles(plots, root, run, experiment):
     """
     _mkdir()
     _logfile(run, experiment)
-    #files = traverse(root + experiment + '-' + run)
-    files = traverse(root)
+    if directroot:
+        files = traverse(directroot)
+    else:
+        files = traverse(root + '/' + experiment + '-' + run)
     _load_masks(files)
 
     realms = {}
