@@ -24,32 +24,32 @@ def single(plot):
     """ Calls the appropriate functions to output the plot
     """
     def pregion_standard(pl):
-        return {'global_map': (pr.worldmap, pc.colormap),
-                'section': (pr.section, pc.section),
-                'polar_map': (pr.worldmap, pc.colormap),
-                'polar_map_south': (pr.worldmap, pc.colormap),
-                'mercator': (pr.worldmap, pc.colormap),
+        return {'global_map': pc.colormap,
+                'section': pc.section,
+                'polar_map': pc.colormap,
+                'polar_map_south': pc.colormap,
+                'mercator': pc.colormap,
                 }[pl]
-    func_region, func_case = pregion_standard(plot['plot_projection'])
-    return func_case(plot, func_region)
+    func_case = pregion_standard(plot['plot_projection'])
+    return func_case(plot)
 
 
 def compare(plot):
     """ Calls the appropriate functions to output the plot
     """
     def pregion_comp(pl):
-        return {'global_map': (pr.worldmap, pc.colormap_comparison),
-                'section': (pr.section, pc.section_comparison),
-                'polar_map': (pr.worldmap, pc.colormap_comparison),
-                'polar_map_south': (pr.worldmap, pc.colormap_comparison),
-                'mercator': (pr.worldmap, pc.colormap_comparison),
-                'time_series': (pr.timeseries, pc.timeseries),
-                'histogram': (pr.histogram, pc.histogram),
-                'zonal_mean': (pr.zonalmean, pc.zonalmean),
-                'taylor': (pr.taylordiagram, pc.taylor),
+        return {'global_map': pc.colormap_comparison,
+                'section': pc.section_comparison,
+                'polar_map': pc.colormap_comparison,
+                'polar_map_south': pc.colormap_comparison,
+                'mercator': pc.colormap_comparison,
+                'time_series': pc.timeseries,
+                'histogram': pc.histogram,
+                'zonal_mean': pc.zonalmean,
+                'taylor': pc.taylor,
                 }[pl]
-    func_region, func_case = pregion_comp(plot['plot_projection'])
-    return func_case(plot, func_region)
+    func_case = pregion_comp(plot['plot_projection'])
+    return func_case(plot)
 
 
 def _remove_plots():

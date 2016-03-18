@@ -169,7 +169,7 @@ def plotname(plot):
     return plotname    
         
 
-def colormap(plot, func):
+def colormap(plot):
     """ Loads and plots the data for a time averaged map
 
     Parameters
@@ -226,7 +226,7 @@ def ttest(data1, data2):
     t, p = sp.stats.ttest_ind(data1, data2, axis=0, equal_var=False)
     return p
 
-def colormap_comparison(plot, func):
+def colormap_comparison(plot):
     """ Loads and plots the data for a time averaged map.
         Loads and plots the data for comparison and plots the
         difference between the data and the comparison data.
@@ -329,7 +329,7 @@ def colormap_comparison(plot, func):
     return plot_name
 
 
-def section(plot, func):
+def section(plot):
     """ Loads and plots the data for a time average section map.
 
     Parameters
@@ -362,7 +362,7 @@ def section(plot, func):
     fig = plt.figure(figsize=(10,3))
     gs = gridspec.GridSpec(1, 1, width_ratios=[1, 1])    
     # plot the data
-    func(lat, depth, data, plot=plot, ax=plt.subplot(gs[0, 0]), ax_args=plot['data1']['ax_args'],
+    pr.section(lat, depth, data, plot=plot, ax=plt.subplot(gs[0, 0]), ax_args=plot['data1']['ax_args'],
          pcolor_args=plot['data1']['pcolor_args'], cblabel=units)
     
     plot_name = plotname(plot)
@@ -372,7 +372,7 @@ def section(plot, func):
     return plot_name
 
 
-def section_comparison(plot, func):
+def section_comparison(plot):
     """ Loads and plots the data for a time averaged section map.
         Loads and plots the data for comparison and plots the
         difference between the data and the comparison data.
@@ -433,11 +433,12 @@ def section_comparison(plot, func):
     # make plots of data, comparison data, data - comparison data
     fig = plt.figure(figsize=(6, 8))
     gs = gridspec.GridSpec(3, 2, width_ratios=[20, 1])
-    func(lat, depth, data, plot=plot, ax=plt.subplot(gs[0, 0]), ax_args=plot['data1']['ax_args'],
+    pr.section(lat, depth, data, plot=plot, ax=plt.subplot(gs[0, 0]), ax_args=plot['data1']['ax_args'],
          pcolor_args=plot['data1']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[0, 1]))
-    func(lat, depth, data2, plot=plot, ax=plt.subplot(gs[1, 0]), ax_args=plot['data2']['ax_args'],
+    pr.section(lat, depth, data2, plot=plot, ax=plt.subplot(gs[1, 0]), ax_args=plot['data2']['ax_args'],
          pcolor_args=plot['data2']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[1, 1]))
-    func(lat, depth, compdata, anom=True, rmse=True, pvalues=pvalues, alpha=plot['alpha'], plot=plot, ax=plt.subplot(gs[2, 0]), ax_args=plot['comp']['ax_args'],
+    pr.section(lat, depth, compdata, anom=True, rmse=True, pvalues=pvalues, 
+         alpha=plot['alpha'], plot=plot, ax=plt.subplot(gs[2, 0]), ax_args=plot['comp']['ax_args'],
          pcolor_args=plot['comp']['pcolor_args'], cblabel=units, cbaxis=plt.subplot(gs[2, 1]))
 
     plt.tight_layout()
@@ -512,7 +513,7 @@ def _histogram_data(plot, compfile):
     data, _ = _trend_units(data, '', plot)
     return data
 
-def histogram(plot, func):
+def histogram(plot):
     values = {}
     data, _, _, depth, units, _ = pl.dataload(plot['ifile'], plot['variable'], 
                               plot['comp_dates'], realm=plot['realm_cat'], 
@@ -563,7 +564,7 @@ def _timeseries_data(plot, compfile):
     return data, time
 
 
-def timeseries(plot, func):
+def timeseries(plot):
     print 'plotting timeseries comparison of ' + plot['variable']
 
     data, _, _, depth, units, time = pl.dataload(plot['ifile'], plot['variable'], 
@@ -594,36 +595,36 @@ def timeseries(plot, func):
     dft.filltitle(plot)
     
     # make plot
-    func(time, data, plot=plot, ax=ax, label=plot['model_ID'], ax_args=plot['data1']['ax_args'], color='r', zorder=6)
+    pr.timeseries(time, data, plot=plot, ax=ax, label=plot['model_ID'], ax_args=plot['data1']['ax_args'], color='r', zorder=6)
     handles = [mpatches.Patch(color='r', label=plot['model_ID'])]
 
     # plot comparison data on the same axis
     if plot['cmip5_file']:
         plot['comp_model'] = 'cmip5'
         data, x = _timeseries_data(plot, plot['cmip5_file'])
-        func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='k', zorder=4)
+        pr.timeseries(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='k', zorder=4)
         handles.append(mpatches.Patch(color='k', label=str(plot['comp_model'])))
     for o in plot['comp_obs']:
         plot['comp_model'] = o
         data, x = _timeseries_data(plot, plot['obs_file'][o])
-        func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='b', zorder=5)
+        pr.timeseries(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='b', zorder=5)
         handles.append(mpatches.Patch(color='b', label=str(plot['comp_model'])))
     for model in plot['comp_models']:
         plot['comp_model'] = model
         data, x = _timeseries_data(plot, plot['model_file'][model])
-        func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='g', zorder=2)
+        pr.timeseries(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='g', zorder=2)
         handles.append(mpatches.Patch(color='g', label=str(plot['comp_model'])))
     for i in plot['comp_ids']:
         plot['comp_model'] = i
         data, x = timeseriesdata(plot, plot['id_file'][i], depth)
-        func(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='y', zorder=3)
+        pr.timeseries(x, data, plot=plot, ax=ax, label=plot['comp_model'], ax_args=plot['data1']['ax_args'], color='y', zorder=3)
         handles.append(mpatches.Patch(color='y', label=str(plot['comp_model'])))
 
     for f in plot['cmip5_files']:
         try:
             plot['comp_model'] = 'cmip'
             data, x = _timeseries_data(plot, f)
-            func(x, data, plot=plot, ax=ax, label=None, ax_args=plot['data1']['ax_args'], color='0.75', zorder=1)
+            pr.timeseries(x, data, plot=plot, ax=ax, label=None, ax_args=plot['data1']['ax_args'], color='0.75', zorder=1)
         except:
             continue
 
@@ -644,7 +645,7 @@ def zonalmeandata(plot, compfile):
 
     return data
 
-def zonalmean(plot, func):
+def zonalmean(plot):
     """ Loads and plots a time average of the zonal means
         for each latitude. Loads and plots the data for comparison.
 
@@ -687,35 +688,35 @@ def zonalmean(plot, func):
     dft.filltitle(plot)
    
     # make plot
-    func(lat, data, plot=plot, ax=ax, ax_args=plot['data1']['ax_args'], color='r', zorder=6)
+    pr.zonalmean(lat, data, plot=plot, ax=ax, ax_args=plot['data1']['ax_args'], color='r', zorder=6)
     handles = [mpatches.Patch(color='r', label=plot['model_ID'])] 
     
     # plot comparison data on the same axis
     if plot['comp_cmips']:
         plot['comp_model'] = 'cmip5'
         data = zonalmeandata(plot, plot['cmip5_file'])
-        func(lat, data, plot=plot, ax=ax, label=plot['comp_model'], color='k', zorder=4)
+        pr.zonalmean(lat, data, plot=plot, ax=ax, label=plot['comp_model'], color='k', zorder=4)
         handles.append(mpatches.Patch(color='k', label='cmip5')) 
     for o in plot['comp_obs']:
         plot['comp_model'] = o
         data = zonalmeandata(plot, plot['obs_file'][o])
-        func(lat, data, plot=plot, ax=ax, label=plot['comp_model'], color='b', zorder=5)
+        pr.zonalmean(lat, data, plot=plot, ax=ax, label=plot['comp_model'], color='b', zorder=5)
         handles.append(mpatches.Patch(color='b', label=str(plot['comp_model'])))
     for m in plot['comp_models']:
         plot['comp_model'] = model
         data = zonalmeandata(plot, plot['model_file'][m])
-        func(lat, data, plot=plot, ax=ax, label=plot['comp_model'], color='g', zorder=2)        
+        pr.zonalmean(lat, data, plot=plot, ax=ax, label=plot['comp_model'], color='g', zorder=2)        
         handles.append(mpatches.Patch(color='g', label=str(plot['comp_model'])))
     for i in plot['comp_ids']:
         plot['comp_model'] = i
         data = zonalmeandata(plot, plot['id_file'][i])
-        func(lat, data, plot=plot, ax=ax, label=plot['comp_model'], color='y', zorder=3)
+        pr.zonalmean(lat, data, plot=plot, ax=ax, label=plot['comp_model'], color='y', zorder=3)
         handles.append(mpatches.Patch(color='y', label=str(plot['comp_model'])))
 
     for f in plot['cmip5_files']:
         plot['comp_model'] = 'cmip'
         data = zonalmeandata(plot, f)
-        func(lat, data, plot=plot, ax=ax, color='0.75', zorder=1)
+        pr.zonalmean(lat, data, plot=plot, ax=ax, color='0.75', zorder=1)
 
     ax.legend(handles=handles, loc='center left', bbox_to_anchor=(1, 0.5))
     plot_name = plotname(plot)
@@ -732,7 +733,7 @@ def taylordata(plot, compfile, depthneeded):
                                       depthneeded=depthneeded)
     return data
 
-def taylor(plot, func):
+def taylor(plot):
     print 'plotting taylor diagram of ' + plot['variable']
     for o in plot['obs_file']:
         refdata, _, _, depth, units, _ = pl.dataload(plot['obs_file'][o], plot['variable'], 
