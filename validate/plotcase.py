@@ -213,7 +213,7 @@ def colormap(plot, func):
 
     _pcolor(data, plot, anom=anom)
     # make plot
-    func(lon, lat, data, ax_args=plot['data1']['ax_args'],
+    pr.worldmap(plot['plot_projection'], lon, lat, data, ax_args=plot['data1']['ax_args'],
          pcolor_args=plot['data1']['pcolor_args'], cblabel=units, plot=plot, cvalues=cvalues,
          **plot['plot_args'])
 
@@ -313,15 +313,15 @@ def colormap_comparison(plot, func):
 
 
     # make plots of data, comparison data, data - comparison data
-    func(lon, lat, data, plot=plot, ax=axl, ax_args=plot['data1']['ax_args'],
+    pr.worldmap(plot['plot_projection'], lon, lat, data, plot=plot, ax=axl, ax_args=plot['data1']['ax_args'],
          pcolor_args=plot['data1']['pcolor_args'], cblabel=units, cvalues=cvalues,
          **plot['plot_args'])
-    func(lon, lat, data2, plot=plot, ax=axm, ax_args=plot['data2']['ax_args'],
+    pr.worldmap(plot['plot_projection'], lon, lat, data2, plot=plot, ax=axm, ax_args=plot['data2']['ax_args'],
          pcolor_args=plot['data2']['pcolor_args'], cblabel=units, cvalues=c2values,
          **plot['plot_args'])
-    func(lon, lat, compdata, pvalues=pvalues, alpha=plot['alpha'], anom=True, rmse=True, plot=plot, ax=axr, ax_args=plot['comp']['ax_args'],
-         pcolor_args=plot['comp']['pcolor_args'], cblabel=units,
-         **plot['plot_args'])
+    pr.worldmap(plot['plot_projection'], lon, lat, compdata, pvalues=pvalues, alpha=plot['alpha'], anom=True, 
+         rmse=True, plot=plot, ax=axr, ax_args=plot['comp']['ax_args'],
+         pcolor_args=plot['comp']['pcolor_args'], cblabel=units, **plot['plot_args'])
     
     plot_name = plotname(plot)
     savefigures(plot_name, **plot)
