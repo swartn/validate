@@ -174,10 +174,11 @@ def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, 
     if fill_oceans:
         m.drawlsmask(ocean_color='0.7')
 
-    if alpha:
+    if pvalues is not None:
         draw_stipple(pvalues, lon, lat, m, alpha)
 
     if cvalues is not None:
+        print 'cvalues is not None'
         draw_trend_stipple(data, cvalues, lon, lat, m)
     
     cbar = m.colorbar(mappable=cot, location='right', label=cblabel)
@@ -392,7 +393,7 @@ def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=N
     if ax_args:
         plt.setp(ax, **ax_args)
 
-    if alpha:
+    if pvalues is not None:
         slons = []
         sdepths = []
         for index, value in np.ndenumerate(pvalues):
@@ -442,7 +443,7 @@ def timeseries(x, data, ax=None, ax_args=None, label='model', plot={}, color=Non
     plot['stats'] = 'N/A'
 
 
-def zonalmean(x, data, ax=None, ax_args=None, label='model', plot={}, color=None, zorder=None):
+def zonalmean(x, data, ax=None, ax_args={}, label='model', plot={}, color=None, zorder=None):
     """ Makes a zonal mean line plot, using ax if supplied
     """
     if not ax:
@@ -450,24 +451,25 @@ def zonalmean(x, data, ax=None, ax_args=None, label='model', plot={}, color=None
     else:
         fig = plt.gcf()
     ax.plot(x, data, label=label, color=color, zorder=zorder)
-
-    plt.setp(ax, **ax_args)
+    
+    if ax_args:
+        plt.setp(ax, **ax_args)
     plot['stats'] = 'N/A'
 
 
-def taylordiagram(refdata, plotdata, unlabelled_data, fig=None, ax_args=None, plot={}):
+def taylordiagram(refdata, labelled_data, unlabelled_data, fig=None, ax_args=None, plot={}):
 
     flatrefdata = refdata.flatten()
     refstd = refdata.std(ddof=1)
-    for i, (d, n) in enumerate(plotdata):
-        plotdata[i] = d.flatten(), n
+    for i, (d, n, c) in enumerate(labelled_data):
+        labelled_data[i] = d.flatten(), n, c
 
     plot['stats'] = {'obserations': {'standard deviation': float(refstd)}}
     
     for i, (d, n) in enumerate(unlabelled_data):
         unlabelled_data[i] = d.flatten(), n
 
-    samples = [[m.std(ddof=1), np.ma.corrcoef(flatrefdata, m)[0, 1], n] for m, n in plotdata]
+    labelled_samples = [[m.std(ddof=1), np.ma.corrcoef(flatrefdata, m)[0, 1], n, c] for m, n, c in labelled_data]
     unlabelled_samples = [[m.std(ddof=1), np.ma.corrcoef(flatrefdata, m)[0,1], n] for m, n in unlabelled_data]
     
     if not fig:
@@ -475,21 +477,21 @@ def taylordiagram(refdata, plotdata, unlabelled_data, fig=None, ax_args=None, pl
     else:
         fig = plt.gcf()
 
-    stdrange = max(samples, key=itemgetter(1))[0] * 1.3 / refstd
+    stdrange = max(labelled_samples, key=itemgetter(1))[0] * 1.3 / refstd
     if stdrange <= refstd * 1.5 / refstd:
         stdrange = refstd * 1.5 / refstd
 
     dia = TaylorDiagram(refstd, fig=fig, label=plot['comp_obs'][0], srange=(0, stdrange))
-    colors = plt.matplotlib.cm.jet(np.linspace(0, 1, len(samples)))
+#    colors = plt.matplotlib.cm.jet(np.linspace(0, 1, len(samples)))
     
-    for i, (stddev, corrcoef, n) in enumerate(samples):
+    for i, (stddev, corrcoef, n, c) in enumerate(labelled_samples):
         if corrcoef < 0:
             corrcoef = 0
         plot['stats'][n] = {'standard deviation': float(stddev),
                             'correlation coefficient': float(corrcoef)} 
         dia.add_sample(stddev, corrcoef,
                        marker='.', ms=12, ls='',
-                       mfc=colors[i], mec=colors[i],
+                       mfc=c, mec=c,
                        label=n, zorder=2)
     fig.legend(dia.samplePoints,
                [p.get_label() for p in dia.samplePoints],

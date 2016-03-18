@@ -61,11 +61,11 @@ def trends(plot):
     print 'trend plot'
 
     def pregion_trends(pl):
-        return {'global_map': (pr.global_map, pc.map_trends),
-                'section': (pr.section, pc.section_trends),
-                'polar_map': (pr.polar_map, pc.map_trends),
-                'polar_map_south': (pr.polar_map_south, pc.map_trends),
-                'mercator': (pr.mercator, pc.map_trends),
+        return {'global_map': (pr.global_map, pc.map_climatology),
+                'section': (pr.section, pc.section_climatology),
+                'polar_map': (pr.polar_map, pc.map_climatology),
+                'polar_map_south': (pr.polar_map_south, pc.map_climatology),
+                'mercator': (pr.mercator, pc.map_climatology),
                 }[pl]
     func_region, func_case = pregion_trends(plot['plot_projection'])
     return func_case(plot, func_region)
@@ -77,11 +77,11 @@ def compare_trends(plot):
     print 'trend comparison plot'
 
     def pregion_ct(pl):
-        return {'global_map': (pr.global_map, pc.map_trends_comp),
-                'section': (pr.section, pc.section_trends_comp),
-                'polar_map': (pr.polar_map, pc.map_trends_comp),
-                'polar_map_south': (pr.polar_map_south, pc.map_trends_comp),
-                'mercator': (pr.mercator, pc.map_trends_comp),
+        return {'global_map': (pr.global_map, pc.map_climatology_comparison),
+                'section': (pr.section, pc.section_climatology_comparison),
+                'polar_map': (pr.polar_map, pc.map_climatology_comparison),
+                'polar_map_south': (pr.polar_map_south, pc.map_climatology_comparison),
+                'mercator': (pr.mercator, pc.map_climatology_comparison),
                 'time_series': (pr.histogram, pc.histogram),
                 'zonal_mean': (pr.zonalmean, pc.zonalmean_comparison),
                 'taylor': (pr.taylordiagram, pc.taylor),

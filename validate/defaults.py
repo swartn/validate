@@ -10,21 +10,6 @@ existence checks will not be needed later.
 import numpy as np
 from matplotlib.colors import LogNorm
 
-OLD=_DEFAULTS = {'plotprojection': 'global_map',
-            'climatology': False,
-            'compare_climatology': False,
-            'trends': False,
-            'compare_trends': False,
-            'frequency': 'mon',
-            'realization': 1,
-            'depths': [0],
-            'scale': 1,
-            'pdf': True,
-            'png': False,
-            'comp_flag': None,
-            'remap': 'remapdis',
-            'remap_grid': 'r360x180',
-            }
 DEFAULTS = {'plotprojection': 'mercator',
             'data_type': 'climatology',
             'set_yscale': 'log',
