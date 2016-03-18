@@ -169,7 +169,7 @@ def plotname(plot):
     return plotname    
         
 
-def map_climatology(plot, func):
+def colormap(plot, func):
     """ Loads and plots the data for a time averaged map
 
     Parameters
@@ -226,7 +226,7 @@ def ttest(data1, data2):
     t, p = sp.stats.ttest_ind(data1, data2, axis=0, equal_var=False)
     return p
 
-def map_climatology_comparison(plot, func):
+def colormap_comparison(plot, func):
     """ Loads and plots the data for a time averaged map.
         Loads and plots the data for comparison and plots the
         difference between the data and the comparison data.
@@ -329,7 +329,7 @@ def map_climatology_comparison(plot, func):
     return plot_name
 
 
-def section_climatology(plot, func):
+def section(plot, func):
     """ Loads and plots the data for a time average section map.
 
     Parameters
@@ -372,7 +372,7 @@ def section_climatology(plot, func):
     return plot_name
 
 
-def section_climatology_comparison(plot, func):
+def section_comparison(plot, func):
     """ Loads and plots the data for a time averaged section map.
         Loads and plots the data for comparison and plots the
         difference between the data and the comparison data.
@@ -563,7 +563,7 @@ def _timeseries_data(plot, compfile):
     return data, time
 
 
-def timeseries_comparison(plot, func):
+def timeseries(plot, func):
     print 'plotting timeseries comparison of ' + plot['variable']
 
     data, _, _, depth, units, time = pl.dataload(plot['ifile'], plot['variable'], 
@@ -644,7 +644,7 @@ def zonalmeandata(plot, compfile):
 
     return data
 
-def zonalmean_comparison(plot, func):
+def zonalmean(plot, func):
     """ Loads and plots a time average of the zonal means
         for each latitude. Loads and plots the data for comparison.
 
