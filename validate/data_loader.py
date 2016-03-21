@@ -168,16 +168,22 @@ def _time(ds):
     
 def dataload(ifile, var, dates, realm='atmos', scale=1, shift=0, 
              remapf='remapdis', remapgrid='r360x180', seasons=None,
-             datatype='full', depthneeded=None, section=False, fieldmean=False):
+             datatype='full', depthneeded=None, section=False, fieldmean=False,
+             cdostring=None):
 
     time_averaged_bool = _check_dates(ifile, dates)
     
     sel_var_file = sel_var(ifile, var)
     masked_file = mask(sel_var_file, realm)
     c_file = setc(masked_file, realm)
+    
+    if cdostring is not None:
+        c_file = cdos(c_file, cdostring)
+
     remapped_file = remap(c_file, remapf, remapgrid)
     seasonal_file = season(remapped_file, seasons)
     ofile = sel_date(seasonal_file, dates['start_date'], dates['end_date'], time_averaged_bool)
+
         
     if datatype == 'climatology':
         ofile = time_mean(ofile, time_averaged_bool)

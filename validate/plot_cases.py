@@ -187,7 +187,8 @@ def colormap(plot):
                                           plot['dates'], realm=plot['realm_cat'], 
                                           scale=plot['scale'], shift=plot['shift'], 
                                           remapf=plot['remap'], remapgrid=plot['remap_grid'], 
-                                          seasons=plot['seasons'], datatype=plot['data_type'])
+                                          seasons=plot['seasons'], datatype=plot['data_type'],
+                                          cdostring=plot['cdostring'])
     if plot['data_type'] == 'trends':
         data, units = _trend_units(data, units, plot)
     if plot['units']:
@@ -246,7 +247,8 @@ def colormap_comparison(plot):
                                           plot['dates'], realm=plot['realm_cat'], 
                                           scale=plot['scale'], shift=plot['shift'], 
                                           remapf=plot['remap'], remapgrid=plot['remap_grid'], 
-                                          seasons=plot['seasons'], datatype=plot['data_type'])
+                                          seasons=plot['seasons'], datatype=plot['data_type'],
+                                          cdostring=plot['cdostring'])
     data = _depth_data(data, depth, plot)
     
     data2, _, _, _, _, _ = pl.dataload(plot['comp_file'], plot['variable'], 
@@ -254,6 +256,7 @@ def colormap_comparison(plot):
                                         scale=plot['comp_scale'], shift=plot['comp_shift'], 
                                         remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                         seasons=plot['comp_seasons'], datatype=plot['data_type'],
+                                        cdostring=plot['cdostring'],
                                         depthneeded=[plot['plot_depth']])
     data2 = _depth_data(data2, depth, plot)
     
@@ -348,7 +351,7 @@ def section(plot):
                                         scale=plot['scale'], shift=plot['shift'], 
                                         remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                         seasons=plot['seasons'], datatype=plot['data_type'],
-                                        section=True)
+                                        section=True, cdostring=plot['cdostring'])
 
     if plot['data_type'] == 'trends':
         data, units = _trend_units(data, units, plot)
@@ -392,14 +395,15 @@ def section_comparison(plot):
                                         scale=plot['comp_scale'], shift=plot['comp_shift'], 
                                         remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                         seasons=plot['comp_seasons'], datatype=plot['data_type'],
-                                        section=True)
+                                        section=True, cdostring=plot['cdostring'])
     print depth.shape
     data, _, lat, depth, units, _ = pl.dataload(plot['ifile'], plot['variable'], 
                                         plot['dates'], realm=plot['realm_cat'], 
                                         scale=plot['scale'], shift=plot['shift'], 
                                         remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                         seasons=plot['seasons'], datatype=plot['data_type'],
-                                        section=True, depthneeded=list(depth))
+                                        section=True, cdostring=plot['cdostring'], 
+                                        depthneeded=list(depth))
 
     if plot['data_type'] == 'trends':
         data, units = _trend_units(data, units, plot)
@@ -509,7 +513,8 @@ def _histogram_data(plot, compfile):
                               scale=plot['comp_scale'], shift=plot['comp_shift'], 
                               remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                               seasons=plot['comp_seasons'], datatype=plot['data_type'],
-                              fieldmean=True, depthneeded=plot['plot_depth'])
+                              fieldmean=True, cdostring=plot['cdostring'],
+                              depthneeded=plot['plot_depth'])
     data, _ = _trend_units(data, '', plot)
     return data
 
@@ -520,7 +525,7 @@ def histogram(plot):
                               scale=plot['comp_scale'], shift=plot['comp_shift'], 
                               remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                               seasons=plot['comp_seasons'], datatype=plot['data_type'],
-                              fieldmean=True)
+                              cdostring=plot['cdostring'], fieldmean=True)
     
     data = _1d_depth_data(data, depth, plot)
     data, units = _trend_units(data, units, plot)
@@ -559,6 +564,7 @@ def _timeseries_data(plot, compfile):
                                          scale=plot['comp_scale'], shift=plot['comp_shift'], 
                                          remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                          seasons=plot['comp_seasons'], fieldmean=True,
+                                         cdostring=plot['cdostring'],
                                          depthneeded=[plot['plot_depth']])
 
     return data, time
@@ -571,7 +577,8 @@ def timeseries(plot):
                                          plot['dates'], realm=plot['realm_cat'], 
                                          scale=plot['scale'], shift=plot['shift'], 
                                          remapf=plot['remap'], remapgrid=plot['remap_grid'], 
-                                         seasons=plot['seasons'], fieldmean=True)
+                                         seasons=plot['seasons'], fieldmean=True,
+                                         cdostring=plot['cdostring'])
     
     plot['data1']['ax_args']['xlabel'] = 'Time'
     if 'ylabel' not in plot['data1']['ax_args']:
