@@ -365,8 +365,6 @@ delete:
           del_netcdf: False
           del_mask: True
           del_ncstore: True
-          del_ENS_MEAN_cmipfiles: True
-          del_ENS_STD_cmipfiles: True
           del_cmipfiles: False
 
 #direct_data_root: '/raid/rc40/data/ncs/historical-edr/'

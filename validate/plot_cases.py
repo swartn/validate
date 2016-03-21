@@ -672,7 +672,6 @@ def zonalmeandata(plot, compfile):
                                   external_function=plot['external_function'],
                                   external_function_args=plot['external_function_args'],
                                   depthneeded=[plot['plot_depth']])
-
     return data
 
 def zonalmean(plot):
