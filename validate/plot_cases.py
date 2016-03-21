@@ -188,7 +188,9 @@ def colormap(plot):
                                           scale=plot['scale'], shift=plot['shift'], 
                                           remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                           seasons=plot['seasons'], datatype=plot['data_type'],
-                                          cdostring=plot['cdostring'])
+                                          cdostring=plot['cdostring'],
+                                          external_function=plot['external_function'],
+                                          external_function_args=plot['external_function_args'])
     if plot['data_type'] == 'trends':
         data, units = _trend_units(data, units, plot)
     if plot['units']:
@@ -248,7 +250,9 @@ def colormap_comparison(plot):
                                           scale=plot['scale'], shift=plot['shift'], 
                                           remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                           seasons=plot['seasons'], datatype=plot['data_type'],
-                                          cdostring=plot['cdostring'])
+                                          cdostring=plot['cdostring'],
+                                          external_function=plot['external_function'],
+                                          external_function_args=plot['external_function_args'])
     data = _depth_data(data, depth, plot)
     
     data2, _, _, _, _, _ = pl.dataload(plot['comp_file'], plot['variable'], 
@@ -257,6 +261,8 @@ def colormap_comparison(plot):
                                         remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                         seasons=plot['comp_seasons'], datatype=plot['data_type'],
                                         cdostring=plot['cdostring'],
+                                        external_function=plot['external_function'],
+                                        external_function_args=plot['external_function_args'],
                                         depthneeded=[plot['plot_depth']])
     data2 = _depth_data(data2, depth, plot)
     
@@ -351,7 +357,9 @@ def section(plot):
                                         scale=plot['scale'], shift=plot['shift'], 
                                         remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                         seasons=plot['seasons'], datatype=plot['data_type'],
-                                        section=True, cdostring=plot['cdostring'])
+                                        section=True, cdostring=plot['cdostring'],
+                                        external_function=plot['external_function'],
+                                        external_function_args=plot['external_function_args'])
 
     if plot['data_type'] == 'trends':
         data, units = _trend_units(data, units, plot)
@@ -395,14 +403,18 @@ def section_comparison(plot):
                                         scale=plot['comp_scale'], shift=plot['comp_shift'], 
                                         remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                         seasons=plot['comp_seasons'], datatype=plot['data_type'],
-                                        section=True, cdostring=plot['cdostring'])
+                                        section=True, cdostring=plot['cdostring'],
+                                        external_function=plot['external_function'],
+                                        external_function_args=plot['external_function_args'])
     print depth.shape
     data, _, lat, depth, units, _ = pl.dataload(plot['ifile'], plot['variable'], 
                                         plot['dates'], realm=plot['realm_cat'], 
                                         scale=plot['scale'], shift=plot['shift'], 
                                         remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                         seasons=plot['seasons'], datatype=plot['data_type'],
-                                        section=True, cdostring=plot['cdostring'], 
+                                        section=True, cdostring=plot['cdostring'],
+                                        external_function=plot['external_function'],
+                                        external_function_args=plot['external_function_args'], 
                                         depthneeded=list(depth))
 
     if plot['data_type'] == 'trends':
@@ -514,6 +526,8 @@ def _histogram_data(plot, compfile):
                               remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                               seasons=plot['comp_seasons'], datatype=plot['data_type'],
                               fieldmean=True, cdostring=plot['cdostring'],
+                              external_function=plot['external_function'],
+                              external_function_args=plot['external_function_args'],
                               depthneeded=plot['plot_depth'])
     data, _ = _trend_units(data, '', plot)
     return data
@@ -525,7 +539,9 @@ def histogram(plot):
                               scale=plot['comp_scale'], shift=plot['comp_shift'], 
                               remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                               seasons=plot['comp_seasons'], datatype=plot['data_type'],
-                              cdostring=plot['cdostring'], fieldmean=True)
+                              cdostring=plot['cdostring'], fieldmean=True,
+                              external_function=plot['external_function'],
+                              external_function_args=plot['external_function_args'])
     
     data = _1d_depth_data(data, depth, plot)
     data, units = _trend_units(data, units, plot)
@@ -565,6 +581,8 @@ def _timeseries_data(plot, compfile):
                                          remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                          seasons=plot['comp_seasons'], fieldmean=True,
                                          cdostring=plot['cdostring'],
+                                         external_function=plot['external_function'],
+                                         external_function_args=plot['external_function_args'],
                                          depthneeded=[plot['plot_depth']])
 
     return data, time
@@ -578,7 +596,9 @@ def timeseries(plot):
                                          scale=plot['scale'], shift=plot['shift'], 
                                          remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                          seasons=plot['seasons'], fieldmean=True,
-                                         cdostring=plot['cdostring'])
+                                         cdostring=plot['cdostring'],
+                                         external_function=plot['external_function'],
+                                         external_function_args=plot['external_function_args'])
     
     plot['data1']['ax_args']['xlabel'] = 'Time'
     if 'ylabel' not in plot['data1']['ax_args']:
@@ -648,7 +668,10 @@ def zonalmeandata(plot, compfile):
                                   scale=plot['comp_scale'], shift=plot['comp_shift'], 
                                   remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                   seasons=plot['comp_seasons'], datatype=plot['data_type'],
-                                  section=True, depthneeded=[plot['plot_depth']])
+                                  section=True, 
+                                  external_function=plot['external_function'],
+                                  external_function_args=plot['external_function_args'],
+                                  depthneeded=[plot['plot_depth']])
 
     return data
 
@@ -671,7 +694,9 @@ def zonalmean(plot):
                                         scale=plot['scale'], shift=plot['shift'], 
                                         remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                         seasons=plot['seasons'], datatype=plot['data_type'],
-                                        section=True)
+                                        section=True,
+                                        external_function=plot['external_function'],
+                                        external_function_args=plot['external_function_args'])
 
     plot['data1']['ax_args']['xlabel'] = 'Latitude'
     if 'ylabel' not in plot['data1']['ax_args']:
@@ -737,6 +762,8 @@ def taylordata(plot, compfile, depthneeded):
                                       scale=plot['comp_scale'], shift=plot['comp_shift'], 
                                       remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                       seasons=plot['comp_seasons'], datatype=plot['data_type'],
+                                      external_function=plot['external_function'],
+                                      external_function_args=plot['external_function_args'],
                                       depthneeded=depthneeded)
     return data
 
@@ -747,13 +774,17 @@ def taylor(plot):
                                              plot['comp_dates'], realm=plot['realm_cat'], 
                                              scale=plot['comp_scale'], shift=plot['comp_shift'], 
                                              remapf=plot['remap'], remapgrid=plot['remap_grid'], 
-                                             seasons=plot['comp_seasons'], datatype=plot['data_type']) 
+                                             seasons=plot['comp_seasons'], datatype=plot['data_type'],
+                                             external_function=plot['external_function'],
+                                             external_function_args=plot['external_function_args']) 
         break
     data, _, _, _, _, _, = pl.dataload(plot['ifile'], plot['variable'], 
                                   plot['dates'], realm=plot['realm_cat'], 
                                   scale=plot['scale'], shift=plot['shift'], 
                                   remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                   seasons=plot['comp_seasons'], datatype=plot['data_type'],
+                                  external_function=plot['external_function'],
+                                  external_function_args=plot['external_function_args'],
                                   depthneeded=list(depth))
     labelled_data = [(data, plot['model_ID'], 'r')]
     unlabelled_data = []

@@ -27,6 +27,8 @@ DEFAULTS = {'plotprojection': 'mercator',
             'cdostring': None,
             'units': None,
             'divergent': False,
+            'external_function': None,
+            'external_function_args': {},
             }
 
 

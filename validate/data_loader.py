@@ -14,6 +14,7 @@ import os
 from netCDF4 import Dataset, num2date, date2num
 import numpy as np
 import datetime
+from .functions import external
 import cdo
 cdo = cdo.Cdo()
 
@@ -165,11 +166,17 @@ def _time(ds):
     x = [datetime.datetime(*item.timetuple()[:6]) for item in x]
     x = np.array(x)
     return x
+
+def get_external_function(name):
+    def external_functions(function_name):
+        return {'sample': external.sample,
+               }[function_name]
+    return external_functions(name)
     
 def dataload(ifile, var, dates, realm='atmos', scale=1, shift=0, 
              remapf='remapdis', remapgrid='r360x180', seasons=None,
              datatype='full', depthneeded=None, section=False, fieldmean=False,
-             cdostring=None):
+             cdostring=None, external_function=None, external_function_args={}):
 
     time_averaged_bool = _check_dates(ifile, dates)
     
@@ -184,7 +191,9 @@ def dataload(ifile, var, dates, realm='atmos', scale=1, shift=0,
     seasonal_file = season(remapped_file, seasons)
     ofile = sel_date(seasonal_file, dates['start_date'], dates['end_date'], time_averaged_bool)
 
-        
+    if external_function is not None:
+        ofile = get_external_function(external_function)(ofile, **external_function_args)        
+            
     if datatype == 'climatology':
         ofile = time_mean(ofile, time_averaged_bool)
     elif datatype == 'trends':
@@ -301,7 +310,7 @@ def get_remap_function(remap):
     return cdoremap(remap)
 
 def remap(name, remapname, remapgrid):
-    out = 'netcdf/' + remapname + '-' + remapgrid + split(name)
+    out = 'netcdf/' + remapname + '-' + remapgrid + '_' + split(name)
     if not os.path.isfile(out):
         remap = get_remap_function(remapname)
         try:
