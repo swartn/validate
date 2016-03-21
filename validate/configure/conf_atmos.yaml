@@ -321,7 +321,7 @@ plots:
           comp_cmips: 'all'
 
         - variable: 'tas'
-          plot_projection: 'time_series'
+          plot_projection: 'histogram'
           data_type: 'trends'
           comp_obs:
             - 20CR
