@@ -10,21 +10,6 @@ existence checks will not be needed later.
 import numpy as np
 from matplotlib.colors import LogNorm
 
-OLD=_DEFAULTS = {'plotprojection': 'global_map',
-            'climatology': False,
-            'compare_climatology': False,
-            'trends': False,
-            'compare_trends': False,
-            'frequency': 'mon',
-            'realization': 1,
-            'depths': [0],
-            'scale': 1,
-            'pdf': True,
-            'png': False,
-            'comp_flag': None,
-            'remap': 'remapdis',
-            'remap_grid': 'r360x180',
-            }
 DEFAULTS = {'plotprojection': 'mercator',
             'data_type': 'climatology',
             'set_yscale': 'log',
@@ -42,6 +27,8 @@ DEFAULTS = {'plotprojection': 'mercator',
             'cdostring': None,
             'units': None,
             'divergent': False,
+            'external_function': None,
+            'external_function_args': {},
             }
 
 
@@ -167,8 +154,7 @@ def fill(plots, model_run, experiment, defaults={}):
             p['data2'] = {}
         if 'comp' not in p:
             p['comp'] = {}
-        if 'plot_args' not in p:
-            p['plot_args'] = {}
+
         if 'depths' not in p:
             p['depths'] = [""]
         if 'seasons' not in p:
@@ -206,7 +192,10 @@ def fill(plots, model_run, experiment, defaults={}):
             for key in piControl:
                 if key not in p:
                     p[key] = historical[key]
-        
+
+        if 'plot_args' not in p:
+            p['plot_args'] = {}
+               
         if 'comp_dates' not in p:
             p['comp_dates'] = p['dates']
           
@@ -214,6 +203,20 @@ def fill(plots, model_run, experiment, defaults={}):
         p['experiment'] = experiment
         p['plot_depth'] = 0
         
+        def _default_plot_args(projection):
+            if projection == 'global_map':
+                return {'latmin': 50, 'latmax': 50, 'lonmin': 0, 'lonmax': 360}
+            if projection == 'mercator':
+                return {'latmin': -80, 'latmax': 80, 'lonmin': 0, 'lonmax': 360}
+            if projection == 'polar_map':
+                return {'latmin': 45, 'latmax': 80, 'lonmin': 0, 'lonmax': 360, 'lon_0': 180}
+            if projection == 'polar_map_south':
+                return {'latmin': -80, 'latmax': -45, 'lonmin': 0, 'lonmax': 360, 'lon_0': 180}
+            return {}
+        default_pargs = _default_plot_args(p['plot_projection'])
+        for key in default_pargs:
+            if key not in p['plot_args']:
+                p['plot_args'][key] = default_pargs[key]
         
         def _fill_args(data):
             if 'ax_args' not in p[data]:
@@ -267,11 +270,11 @@ def _section_labels(datanumber, pl):
 def filltitle(p):
     def fill(comp):
         if not p['data1']['title_flag']:
-            p['data1']['ax_args']['title'] = p['variable'] + ' ' + p['model_ID'] + ' ' + p['dates']['start_date'] + ' - ' + p['dates']['end_date']
+            p['data1']['ax_args']['title'] = p['variable'] + ' ' + p['data_type'] + ' ' + p['model_ID'] + ' ' + p['dates']['start_date'] + ' - ' + p['dates']['end_date']
         if not p['data2']['title_flag']:
-            p['data2']['ax_args']['title'] = p['variable'] + ' ' + comp + ' ' + p['comp_dates']['start_date'] + ' - ' + p['comp_dates']['end_date']
+            p['data2']['ax_args']['title'] = p['variable'] + ' ' + p['data_type'] + ' ' + comp + ' ' + p['comp_dates']['start_date'] + ' - ' + p['comp_dates']['end_date']
         if not p['comp']['title_flag']:
-            p['comp']['ax_args']['title'] = p['variable'] + ' ' + p['model_ID'] + '-' + comp
+            p['comp']['ax_args']['title'] = p['variable'] + ' ' + p['data_type'] + ' ' + p['model_ID'] + '-' + comp
 #        if p['is_depth']:
 #           p['data1']['ax_args']['title'] += ' Depth: ' + str(p['plot_depth'])
 #           p['data2']['ax_args']['title'] += ' Depth: ' + str(p['plot_depth'])

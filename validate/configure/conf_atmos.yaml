@@ -321,7 +321,7 @@ plots:
           comp_cmips: 'all'
 
         - variable: 'tas'
-          plot_projection: 'time_series'
+          plot_projection: 'histogram'
           data_type: 'trends'
           comp_obs:
             - 20CR
@@ -850,16 +850,14 @@ delete:
           del_netcdf: False
           del_mask: True
           del_ncstore: True
-          del_ENS_MEAN_cmipfiles: True
-          del_ENS_STD_cmipfiles: True
           del_cmipfiles: False
 
-#data_root: '/raid/rc40/data/ncs/historical-edr/'
-data_root: '/fs/cetus/fs2/crb/CCCma_Output/CMIP5/output/CCCma/CanESM2/historical/'
+#direct_data_root: '/raid/rc40/data/ncs/historical-edr/'
+direct_data_root: '/fs/cetus/fs2/crb/CCCma_Output/CMIP5/output/CCCma/CanESM2/historical/'
 #observations_root: '/raid/rc40/data/ncs/obs4comp/'
 observations_root: '/fs/cetus/fs2/crb/users/acrn004/obs4comp/'
 #cmip5_root: '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
-cmip5_root: '/fs/cetus/fs2/crb/AR5/CMIP5_OTHER_DOWNLOADS/'
+cmip5_root: '/fs/cetus/fs2/crb/users/acrn004/cmip5/'
 #cmip5_means: '/home/004/david_fallis_sept2015/meanstorage/'
 cmip5_means: '/fs/cetus/fs2/crb/users/acrn004/cmip5_means/'
 #output_root: '/home/004/david_fallis_sept2015/output'

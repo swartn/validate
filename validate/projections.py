@@ -31,7 +31,6 @@ font = {'size': 9}
 plt.rc('font', **font)
 
 
-
 def default_pcolor_args(data, anom=False):
     """Returns a dict with default pcolor params as key:value pairs
 
@@ -134,36 +133,57 @@ def draw_trend_stipple(data, cvalues, lon, lat, m):
                     slats.append(lat[index[0]])
         a,b = m(slons, slats)
         m.plot(a,b, '.', markersize=0.3, color='k', zorder=1)      
-  
-def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
-               latmin=-50, latmax=50, lonmin=0, lonmax=360, draw_contour=False,
-               fill_continents=False, fill_oceans=False, draw_parallels=True, draw_meridians=False, plot={}):
-    """Pcolor a var in a global map, using ax if supplied"""
-    # setup a basic global map
+
+
+def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None,
+              ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
+              latmin=-80, latmax=80, lonmin=0, lonmax=360, lon_0=180, draw_contour=False,
+              fill_continents=False, draw_parallels=True, draw_meridians=False,
+              plot={}):
     if not ax:
         fig, ax = plt.subplots(1, 1, figsize=(8, 8))
     else:
         fig = plt.gcf()
-
+    
     if not pcolor_args:
         pcolor_args = default_pcolor_args(data, anom)
 
     for key, value in default_pcolor_args(data).iteritems():
         if key not in pcolor_args or (pcolor_args[key] is None):
             pcolor_args[key] = value
-        
-    m = Basemap(projection='kav7', llcrnrlat=latmin, urcrnrlat=latmax, llcrnrlon=lonmin, urcrnrlon=lonmax, lon_0=-180, resolution='c', ax=ax)
+
+    if projection == 'global_map':
+        m = Basemap(projection='kav7', llcrnrlat=latmin, urcrnrlat=latmax, 
+                    llcrnrlon=lonmin, urcrnrlon=lonmax, 
+                    lon_0=-180, resolution='c', ax=ax)
+        a, b = (9000000, -1000000)
+    if projection == 'mercator':
+        m = Basemap(projection='merc', llcrnrlat=latmin, urcrnrlat=latmax, 
+                    llcrnrlon=lonmin, urcrnrlon=lonmax, 
+                    lat_ts=20, resolution='c', ax=ax)
+        a, b = m(lonmin + 2, latmin - 2)
+    if projection == 'polar_map':
+        m = Basemap(projection='npstere', boundinglat=latmin, 
+                    lon_0=lon_0, resolution='c', round=True, ax=ax)
+        a, b = m(135, 20)
+    if projection == 'polar_map_south':
+        m = Basemap(projection='spstere', boundinglat=latmax, 
+                    lon_0=lon_0, resolution='c', round=True, ax=ax)
+        a, b = m(-135, -20)   
+
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
     cot = m.pcolormesh(x, y, data, **pcolor_args)
-
+    
     if ax_args:
         plt.setp(ax, **ax_args)
+    
     if draw_contour:
         m.contour(x, y, data, colors=['k'], 
                    vmin=pcolor_args['vmin'], vmax=pcolor_args['vmax'])
+    
     ax.autoscale(enable=True, axis='both', tight=True)
-    m.drawcoastlines(linewidth=1.25, ax=ax)
+    m.drawcoastlines(linewidth=1.25, ax=ax)     
 
     if fill_continents:
         m.fillcontinents(color='0.8', ax=ax, zorder=2)
@@ -171,196 +191,23 @@ def global_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, 
         m.drawparallels(np.arange(-80, 81, 20), labels=[1, 0, 0, 0], linewidth=0, ax=ax, fontsize=9)
     if draw_meridians:
         m.drawmeridians(np.arange(0, 360, 90), labels=[0, 0, 0, 1], linewidth=0, yoffset=0.5e6, ax=ax, fontsize=9)
-    if fill_oceans:
-        m.drawlsmask(ocean_color='0.7')
 
-    if alpha:
+    if pvalues is not None:
         draw_stipple(pvalues, lon, lat, m, alpha)
 
     if cvalues is not None:
         draw_trend_stipple(data, cvalues, lon, lat, m)
-    
+
     cbar = m.colorbar(mappable=cot, location='right', label=cblabel)
     cbar.solids.set_edgecolor("face") 
  
     vals, snam = stats(plot, data, rmse)
     val = [s + v for s, v in zip(snam, vals)]
-    x, y = (9000000, -1000000)
-    ax.text(x, y, '  '.join(val), fontsize=7)
-
-
-def polar_map(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
-              latmin=45, latmax=80, lonmin=0, lonmax=360, lon_0=180, draw_contour=False,
-              fill_continents=False, fill_oceans=False, draw_parallels=True, draw_meridians=True, plot={}):
-    """Pcolor a var in a north polar map, using ax if supplied"""
-    if not ax:
-        fig, ax = plt.subplots(1, 1, figsize=(8, 8))
-    else:
-        fig = plt.gcf()
-
-    if not pcolor_args:
-        pcolor_args = default_pcolor_args(data, anom)
-
-    for key, value in default_pcolor_args(data).iteritems():
-        if key not in pcolor_args or (pcolor_args[key] is None):
-            pcolor_args[key] = value
-
-    m = Basemap(projection='npstere', boundinglat=latmin, lon_0=lon_0, resolution='c', round=True, ax=ax)
-
-    lons, lats = np.meshgrid(lon, lat)
-    x, y = m(lons, lats)
-    cot = m.pcolormesh(x, y, data, **pcolor_args)
-
-    if ax_args:
-        plt.setp(ax, **ax_args)
-
-    if draw_contour:
-        m.contour(x, y, data, colors=['k'], 
-                   vmin=pcolor_args['vmin'], vmax=pcolor_args['vmax'])
-    m.drawcoastlines()
-    if fill_continents:
-        m.fillcontinents(color='0.8', ax=ax, zorder=2)
-    if draw_parallels:
-        m.drawparallels(np.arange(-80., 81., 20.), fontsize=9)
-    if draw_meridians:
-        m.drawmeridians(np.arange(-180., 181., 20.), fontsize=9)
-    m.drawmapboundary()
-
-    if alpha:
-        draw_stipple(pvalues, lon, lat, m, alpha)    
-
-    if cvalues is not None:
-        draw_trend_stipple(data, cvalues, lon, lat, m)
-            
-    cbar = m.colorbar(mappable=cot, location='right', label=cblabel)
-    cbar.solids.set_edgecolor("face") 
-    vals, snam = stats(plot, data, rmse)
-    val = [s + v for s, v in zip(snam, vals)]
-    x, y = m(135, 20)
-    ax.text(x, y, '  '.join(val), fontsize=7)
-
-
-def polar_map_south(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
-                    latmin=-80, latmax=-45, lonmin=0, lonmax=360, lon_0=180, draw_contour=False,
-                    fill_continents=False, fill_oceans=False, draw_parallels=True, draw_meridians=True, plot={}):
-    """Pcolor a var in a south polar map, using ax if supplied"""
-    if not ax:
-        fig, ax = plt.subplots(1, 1, figsize=(8, 8))
-    else:
-        fig = plt.gcf()
-
-    if not pcolor_args:
-        pcolor_args = default_pcolor_args(data, anom)
-
-    for key, value in default_pcolor_args(data).iteritems():
-        if key not in pcolor_args or (pcolor_args[key] is None):
-            pcolor_args[key] = value
-
-    m = Basemap(projection='spstere', boundinglat=latmax, lon_0=lon_0, resolution='c', round=True, ax=ax)
-
-    lons, lats = np.meshgrid(lon, lat)
-    x, y = m(lons, lats)
-
-    cot = m.pcolormesh(x, y, data, **pcolor_args)
-
-    if ax_args:
-        plt.setp(ax, **ax_args)
-
-    if draw_contour:
-        m.contour(x, y, data, colors=['k'], 
-                   vmin=pcolor_args['vmin'], vmax=pcolor_args['vmax'])
-                   
-    m.drawcoastlines()
-    if fill_continents:
-        m.fillcontinents(color='0.8', ax=ax, zorder=2)
-    if draw_parallels:
-        m.drawparallels(np.arange(-80., 81., 20.), fontsize=9)
-    if draw_meridians:
-        m.drawmeridians(np.arange(-180., 181., 20.), fontsize=9)
-    if fill_oceans:
-        m.drawlsmask(ocean_color='0.7')
-    m.drawmapboundary()
- 
-    if alpha:
-        draw_stipple(pvalues, lon, lat, m, alpha)
-
-    if cvalues is not None:
-        draw_trend_stipple(data, cvalues, lon, lat, m)
-           
-    cbar = m.colorbar(mappable=cot, location='right', label=cblabel)
-    cbar.solids.set_edgecolor("face")
-    
-    vals, snam = stats(plot, data, rmse)
-    val = [s + v for s, v in zip(snam, vals)]
-    x, y = m(-135, -20)
-    ax.text(x, y, '  '.join(val), fontsize=7)
-
-
-def mercator(lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None, ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False, plot={},
-             latmin=-80, latmax=80, lonmin=0, lonmax=360, draw_contour=False,
-             fill_continents=False, fill_oceans=False, draw_parallels=False, draw_meridians=False):
-    """Pcolor a var in a mercator plot, using ax if supplied"""
-    if not pcolor_args:
-        pcolor_args = default_pcolor_args(data, anom)
-    for key, value in default_pcolor_args(data).iteritems():
-        if key not in pcolor_args or (pcolor_args[key] is None):
-            pcolor_args[key] = value
-
-    if not ax:
-        fig, ax = plt.subplots(1, 1, figsize=(8, 8))
-    else:
-        fig = plt.gcf()
-    m = Basemap(projection='merc', llcrnrlat=latmin, urcrnrlat=latmax, llcrnrlon=lonmin, urcrnrlon=lonmax, lat_ts=20, resolution='c', ax=ax)
-
-    lons, lats = np.meshgrid(lon, lat)
-    x, y = m(lons, lats)
-
-    cot = m.pcolormesh(x, y, data, **pcolor_args)
-    if ax_args:
-        plt.setp(ax, **ax_args)
-
-    if draw_contour:
-        m.contour(x, y, data, colors=['k'], 
-                  vmin=pcolor_args['vmin'], vmax=pcolor_args['vmax'])
-                   
-    m.drawcoastlines()
-    if fill_continents:
-        m.fillcontinents(color='0.8', ax=ax, zorder=2)
-    if draw_parallels:
-        m.drawparallels(np.arange(-80., 81., 20.), fontsize=9)
-    if draw_meridians:
-        m.drawmeridians(np.arange(-180., 181., 20.), fontsize=9)
-    m.drawmapboundary()
-    
-    if alpha:
-        draw_stipple(pvalues, lon, lat, m, alpha)
-
-    if cvalues is not None:
-        draw_trend_stipple(data, cvalues, lon, lat, m)
-   
-    cbar = m.colorbar(mappable=cot, location='right', label=cblabel)
-    cbar.solids.set_edgecolor("face") 
-    vals, snam = stats(plot, data, rmse)
-    val = [s + v for s, v in zip(snam, vals)]
-    x, y = m(lonmin + 2, latmin - 2)
-    ax.text(x, y, '  '.join(val), fontsize=7)
-
-
-def _fix_1Ddata(z, data, ax_args):
-    """ Extends section data if it is in only on dimension
-    """
-    newdata = range(0, 5)
-    for n in range(0, 5):
-        newdata[n] = data
-    ax_args['ylabel'] = ''
-    ax_args['yticks'] = []
-    return np.array(range(0, 5)), np.array(newdata), ax_args
+    ax.text(a, b, '  '.join(val), fontsize=7)
 
 
 def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=None, pcolor_args=None, plot={}, cblabel='', anom=False, cbaxis=None):
     """Pcolor a var in a section, using ax if supplied"""
-    if len(data.shape) == 1:
-        z, data, ax_args = _fix_1Ddata(z, data, ax_args)
     if not ax:
         fig, ax = plt.subplots(1, 1, figsize=(8, 8))
         fig.subplots_adjust(top=0.8, right=0.8)
@@ -392,7 +239,7 @@ def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=N
     if ax_args:
         plt.setp(ax, **ax_args)
 
-    if alpha:
+    if pvalues is not None:
         slons = []
         sdepths = []
         for index, value in np.ndenumerate(pvalues):
@@ -401,7 +248,7 @@ def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=N
                     slons.append(x[index[1]])
                     sdepths.append(z[index[0]])
         ax.plot(slons, sdepths, '.', markersize=0.2, color='k')
-#    plt.show()
+
     box = ax.get_position()
     if cbaxis:
         fig.colorbar(cot, cax=cbaxis, label=cblabel)
@@ -442,7 +289,7 @@ def timeseries(x, data, ax=None, ax_args=None, label='model', plot={}, color=Non
     plot['stats'] = 'N/A'
 
 
-def zonalmean(x, data, ax=None, ax_args=None, label='model', plot={}, color=None, zorder=None):
+def zonalmean(x, data, ax=None, ax_args={}, label='model', plot={}, color=None, zorder=None):
     """ Makes a zonal mean line plot, using ax if supplied
     """
     if not ax:
@@ -450,24 +297,25 @@ def zonalmean(x, data, ax=None, ax_args=None, label='model', plot={}, color=None
     else:
         fig = plt.gcf()
     ax.plot(x, data, label=label, color=color, zorder=zorder)
-
-    plt.setp(ax, **ax_args)
+    
+    if ax_args:
+        plt.setp(ax, **ax_args)
     plot['stats'] = 'N/A'
 
 
-def taylordiagram(refdata, plotdata, unlabelled_data, fig=None, ax_args=None, plot={}):
+def taylordiagram(refdata, labelled_data, unlabelled_data, fig=None, ax_args=None, plot={}):
 
     flatrefdata = refdata.flatten()
     refstd = refdata.std(ddof=1)
-    for i, (d, n) in enumerate(plotdata):
-        plotdata[i] = d.flatten(), n
+    for i, (d, n, c) in enumerate(labelled_data):
+        labelled_data[i] = d.flatten(), n, c
 
     plot['stats'] = {'obserations': {'standard deviation': float(refstd)}}
     
     for i, (d, n) in enumerate(unlabelled_data):
         unlabelled_data[i] = d.flatten(), n
 
-    samples = [[m.std(ddof=1), np.ma.corrcoef(flatrefdata, m)[0, 1], n] for m, n in plotdata]
+    labelled_samples = [[m.std(ddof=1), np.ma.corrcoef(flatrefdata, m)[0, 1], n, c] for m, n, c in labelled_data]
     unlabelled_samples = [[m.std(ddof=1), np.ma.corrcoef(flatrefdata, m)[0,1], n] for m, n in unlabelled_data]
     
     if not fig:
@@ -475,21 +323,21 @@ def taylordiagram(refdata, plotdata, unlabelled_data, fig=None, ax_args=None, pl
     else:
         fig = plt.gcf()
 
-    stdrange = max(samples, key=itemgetter(1))[0] * 1.3 / refstd
+    stdrange = max(labelled_samples, key=itemgetter(1))[0] * 1.3 / refstd
     if stdrange <= refstd * 1.5 / refstd:
         stdrange = refstd * 1.5 / refstd
 
     dia = TaylorDiagram(refstd, fig=fig, label=plot['comp_obs'][0], srange=(0, stdrange))
-    colors = plt.matplotlib.cm.jet(np.linspace(0, 1, len(samples)))
+#    colors = plt.matplotlib.cm.jet(np.linspace(0, 1, len(samples)))
     
-    for i, (stddev, corrcoef, n) in enumerate(samples):
+    for i, (stddev, corrcoef, n, c) in enumerate(labelled_samples):
         if corrcoef < 0:
             corrcoef = 0
         plot['stats'][n] = {'standard deviation': float(stddev),
                             'correlation coefficient': float(corrcoef)} 
         dia.add_sample(stddev, corrcoef,
                        marker='.', ms=12, ls='',
-                       mfc=colors[i], mec=colors[i],
+                       mfc=c, mec=c,
                        label=n, zorder=2)
     fig.legend(dia.samplePoints,
                [p.get_label() for p in dia.samplePoints],
@@ -504,9 +352,7 @@ def taylordiagram(refdata, plotdata, unlabelled_data, fig=None, ax_args=None, pl
                        marker='.', ms=5, ls='',
                        mfc='grey', mec='grey',
                        label=None, zorder=1) 
-                       
-
-   
+  
     dia.add_grid()
 
     contours = dia.add_contours(colors='0.5')

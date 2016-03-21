@@ -10,9 +10,8 @@ through all of the specified plots that will be produced.
 import os
 import glob
 
-import plotregions as pr
 import defaults as dft
-import plotcase as pc
+import plot_cases as pc
 import matplotlib.pyplot as plt
 from yamllog import log
 from copy import deepcopy
@@ -20,74 +19,36 @@ from copy import deepcopy
 DEBUGGING = False
 
 
-def climatology(plot):
+def single(plot):
     """ Calls the appropriate functions to output the plot
     """
-    print 'climatology plot'
-
     def pregion_standard(pl):
-        return {'global_map': (pr.global_map, pc.map_climatology),
-                'section': (pr.section, pc.section_climatology),
-                'polar_map': (pr.polar_map, pc.map_climatology),
-                'polar_map_south': (pr.polar_map_south, pc.map_climatology),
-                'mercator': (pr.mercator, pc.map_climatology),
+        return {'global_map': pc.colormap,
+                'section': pc.section,
+                'polar_map': pc.colormap,
+                'polar_map_south': pc.colormap,
+                'mercator': pc.colormap,
                 }[pl]
-    func_region, func_case = pregion_standard(plot['plot_projection'])
-    return func_case(plot, func_region)
+    func_case = pregion_standard(plot['plot_projection'])
+    return func_case(plot)
 
 
-def compare_climatology(plot):
+def compare(plot):
     """ Calls the appropriate functions to output the plot
     """
-    print 'climatology comparison plot'
-
     def pregion_comp(pl):
-        return {'global_map': (pr.global_map, pc.map_climatology_comparison),
-                'section': (pr.section, pc.section_climatology_comparison),
-                'polar_map': (pr.polar_map, pc.map_climatology_comparison),
-                'polar_map_south': (pr.polar_map_south, pc.map_climatology_comparison),
-                'mercator': (pr.mercator, pc.map_climatology_comparison),
-                'time_series': (pr.timeseries, pc.timeseries_comparison),
-                'zonal_mean': (pr.zonalmean, pc.zonalmean_comparison),
-                'taylor': (pr.taylordiagram, pc.taylor),
+        return {'global_map': pc.colormap_comparison,
+                'section': pc.section_comparison,
+                'polar_map': pc.colormap_comparison,
+                'polar_map_south': pc.colormap_comparison,
+                'mercator': pc.colormap_comparison,
+                'time_series': pc.timeseries,
+                'histogram': pc.histogram,
+                'zonal_mean': pc.zonalmean,
+                'taylor': pc.taylor,
                 }[pl]
-    func_region, func_case = pregion_comp(plot['plot_projection'])
-    return func_case(plot, func_region)
-
-
-def trends(plot):
-    """ Calls the appropriate functions to output the plot
-    """
-    print 'trend plot'
-
-    def pregion_trends(pl):
-        return {'global_map': (pr.global_map, pc.map_trends),
-                'section': (pr.section, pc.section_trends),
-                'polar_map': (pr.polar_map, pc.map_trends),
-                'polar_map_south': (pr.polar_map_south, pc.map_trends),
-                'mercator': (pr.mercator, pc.map_trends),
-                }[pl]
-    func_region, func_case = pregion_trends(plot['plot_projection'])
-    return func_case(plot, func_region)
-
-
-def compare_trends(plot):
-    """ Calls the appropriate functions to output the plot
-    """
-    print 'trend comparison plot'
-
-    def pregion_ct(pl):
-        return {'global_map': (pr.global_map, pc.map_trends_comp),
-                'section': (pr.section, pc.section_trends_comp),
-                'polar_map': (pr.polar_map, pc.map_trends_comp),
-                'polar_map_south': (pr.polar_map_south, pc.map_trends_comp),
-                'mercator': (pr.mercator, pc.map_trends_comp),
-                'time_series': (pr.histogram, pc.histogram),
-                'zonal_mean': (pr.zonalmean, pc.zonalmean_comparison),
-                'taylor': (pr.taylordiagram, pc.taylor),
-                }[pl]
-    func_region, func_case = pregion_ct(plot['plot_projection'])
-    return func_case(plot, func_region)
+    func_case = pregion_comp(plot['plot_projection'])
+    return func_case(plot)
 
 
 def _remove_plots():
@@ -137,10 +98,8 @@ def makeplot_without_catching(p, plotnames, func):
 
 
 def calltheplot(plot, plotnames, ptype):
-    funcs = {'climatology': climatology,
-             'trends': trends,
-             'compare_climatology': compare_climatology,
-             'compare_trends': compare_trends,
+    funcs = {'single': single,
+             'compare': compare,
              }
     if DEBUGGING:
         makeplot_without_catching(plot, plotnames, funcs[ptype])
@@ -172,18 +131,13 @@ def comp_loop(plot, plotnames, ptype):
 
 
 def loop_plot_types(plot, plotnames):
-    if plot['plot_projection'] == 'time_series' or plot['plot_projection'] == 'zonal_mean' or plot['plot_projection'] == 'taylor':
+    if plot['plot_projection'] == 'time_series' or plot['plot_projection'] == 'zonal_mean' or plot['plot_projection'] == 'taylor' or plot['plot_projection'] == 'histogram':
         plot['comp_model'] = 'Model'
-        if plot['data_type'] == 'climatology':
-            calltheplot(plot, plotnames, 'compare_climatology')
-        else:
-            calltheplot(plot, plotnames, 'compare_trends')       
+        calltheplot(plot, plotnames, 'compare')    
     else:
         plot['comp_model'] = 'Model'
-        calltheplot(plot, plotnames, plot['data_type'])
-        comp_loop(plot, plotnames, 'compare_' + plot['data_type'])
-
-
+        calltheplot(plot, plotnames, 'single')
+        comp_loop(plot, plotnames, 'compare')
 
 def loop(plots, debug):
     """ Loops though the list of plots and the depths within
