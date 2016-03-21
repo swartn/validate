@@ -856,8 +856,8 @@ delete:
           del_ENS_STD_cmipfiles: True
           del_cmipfiles: False
 
-#data_root: '/raid/rc40/data/ncs/historical-edr/'
-data_root: '/fs/cetus/fs2/crb/CCCma_Output/CMIP5/output/CCCma/CanESM2/historical/'
+#direct_data_root: '/raid/rc40/data/ncs/historical-edr/'
+direct_data_root: '/fs/cetus/fs2/crb/CCCma_Output/CMIP5/output/CCCma/CanESM2/historical/'
 #observations_root: '/raid/rc40/data/ncs/obs4comp/'
 observations_root: '/fs/cetus/fs2/crb/users/acrn004/obs4comp/'
 #cmip5_root: '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
