@@ -157,19 +157,27 @@ def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None,
                     llcrnrlon=lonmin, urcrnrlon=lonmax, 
                     lon_0=-180, resolution='c', ax=ax)
         a, b = (9000000, -1000000)
+        parallel_labels = [1, 0, 0, 0]
+        meridian_labels = [0, 0, 0, 1]
     if projection == 'mercator':
         m = Basemap(projection='merc', llcrnrlat=latmin, urcrnrlat=latmax, 
                     llcrnrlon=lonmin, urcrnrlon=lonmax, 
                     lat_ts=20, resolution='c', ax=ax)
         a, b = m(lonmin + 2, latmin - 2)
+        parallel_labels = [0, 0, 0, 0]
+        meridian_labels = [0, 0, 0, 0]
     if projection == 'polar_map':
         m = Basemap(projection='npstere', boundinglat=latmin, 
                     lon_0=lon_0, resolution='c', round=True, ax=ax)
         a, b = m(135, 20)
+        parallel_labels = [0, 0, 0, 0]
+        meridian_labels = [0, 0, 0, 0]
     if projection == 'polar_map_south':
         m = Basemap(projection='spstere', boundinglat=latmax, 
                     lon_0=lon_0, resolution='c', round=True, ax=ax)
-        a, b = m(-135, -20)   
+        a, b = m(-135, -20) 
+        parallel_labels = [0, 0, 0, 0]
+        meridian_labels = [0, 0, 0, 0]  
 
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
@@ -188,9 +196,9 @@ def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None,
     if fill_continents:
         m.fillcontinents(color='0.8', ax=ax, zorder=2)
     if draw_parallels:
-        m.drawparallels(np.arange(-80, 81, 20), labels=[1, 0, 0, 0], linewidth=0, ax=ax, fontsize=9)
+        m.drawparallels(np.arange(-80, 81, 20), labels=parallel_labels, linewidth=0, ax=ax, fontsize=9)
     if draw_meridians:
-        m.drawmeridians(np.arange(0, 360, 90), labels=[0, 0, 0, 1], linewidth=0, yoffset=0.5e6, ax=ax, fontsize=9)
+        m.drawmeridians(np.arange(0, 360, 90), labels=meridian_labels, linewidth=0, yoffset=0.5e6, ax=ax, fontsize=9)
 
     if pvalues is not None:
         draw_stipple(pvalues, lon, lat, m, alpha)
