@@ -183,7 +183,7 @@ plots:
           plot_projection: 'taylor'
           data_type: 'climatology'
           scale: 8600727000
-          comp_scale:-31536000000 
+          comp_scale: -31536000000 
           comp_obs:
             - landschuetzer
           comp_cmips: 'all'
