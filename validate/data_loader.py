@@ -18,6 +18,13 @@ from .functions import external
 import cdo
 cdo = cdo.Cdo()
 
+preprocessed_data_root = ''
+
+def silent_remove(name):
+    try: 
+        os.remove(name)
+    except OSError:
+        pass
 
 def _check_averaged(ifile):
     """ Returns True if there is only one timestep in the netcdf file
@@ -175,7 +182,7 @@ def get_external_function(name):
     
 def dataload(ifile, var, dates, realm='atmos', scale=1, shift=0, 
              remapf='remapdis', remapgrid='r360x180', seasons=None,
-             datatype='full', depthneeded=None, section=False, fieldmean=False,
+             datatype='full', depthneeded=None, section=False, fieldmean=False, gridweights=False,
              cdostring=None, external_function=None, external_function_args={}):
 
     time_averaged_bool = _check_dates(ifile, dates)
@@ -209,6 +216,8 @@ def dataload(ifile, var, dates, realm='atmos', scale=1, shift=0,
 
     if fieldmean:
         ofile = field_mean(ofile)
+    
+
 
     dataset = Dataset(ofile, 'r')
     ncvar = _ncvar(dataset, var)
@@ -218,7 +227,15 @@ def dataload(ifile, var, dates, realm='atmos', scale=1, shift=0,
     depth = _depth(dataset, ncvar)
     lon, lat = _lon_lat(dataset)
     time = _time(dataset)
-    return data, lon, lat, depth, units, time
+
+    if gridweights:
+        gfile = grid_weights(ofile)    
+        gdataset = Dataset(gfile, 'r')
+        gncvar = _ncvar(gdataset, 'cell_weights')
+        weights = gncvar[:].squeeze()
+    else:
+        weights = None
+    return data, lon, lat, depth, units, time, weights
 
 
 def split(name):
@@ -251,7 +268,7 @@ def mask(name, realm):
             except:
                 with open('logs/log.txt', 'a') as outfile:
                     outfile.write('WARNING: Land data was not masked\n')
-                os.remove(out)
+                silent_remove(out)
                 return name
         elif realm == 'land':
             try:
@@ -259,7 +276,7 @@ def mask(name, realm):
             except:
                 with open('logs/log.txt', 'a') as outfile:
                     outfile.write('WARNING: Ocean data was not masked\n')
-                os.remove(out)
+                silent_remove(out)
                 return name
         else:
             out = name
@@ -379,5 +396,19 @@ def cdos(name, string):
         return out
     return name
 
+def grid_weights(name):
+    out = 'netcdf/gridweights_' + split(name)
+    if not os.path.isfile(out):
+        cdo.gridweights(input=name, output=out)
+    return out
+
+def already_calculated(name):
+    if os.path.isfile(name):
+        return name
+    precalc = preprocessed_data_root + '/' + split(name)
+    if os.path.isfile(precalc):
+        return precalc
+    return None
+    
 if __name__ == "__main__":
     pass

@@ -94,24 +94,6 @@ def anom_cmap():
     cmap_anom = discrete_cmap(ncols, cmap_anom)
     return cmap_anom
 
-
-def stats(plot, data, rmse):
-    if rmse:
-        vals = [str(np.round(data.min(), 1)), str(np.round(data.max(), 1)), str(np.round(sqrt(mean(square(data))), 1))]
-        snam = ['min: ', 'max: ', 'rmse: ']
-        plot['stats'] = {'rmse': float(vals[2]),
-                         'min': float(vals[0]),
-                         'max': float(vals[1]),
-                         }
-    else:
-        vals = [str(np.round(data.min(), 1)), str(np.round(data.max(), 1)), str(np.round(data.mean(), 1))]
-        snam = ['min: ', 'max: ', 'mean: ']
-        plot['stats'] = {'mean': float(vals[2]),
-                         'min': float(vals[0]),
-                         'max': float(vals[1]),
-                         }
-    return vals, snam
-
 def draw_stipple(pvalues, lon, lat, m, alpha):
         slons = []
         slats = []
@@ -138,6 +120,7 @@ def draw_trend_stipple(data, cvalues, lon, lat, m):
 def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None,
               ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
               latmin=-80, latmax=80, lonmin=0, lonmax=360, lon_0=180, draw_contour=False,
+              label=None,
               fill_continents=False, draw_parallels=True, draw_meridians=False,
               plot={}):
     if not ax:
@@ -208,11 +191,8 @@ def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None,
 
     cbar = m.colorbar(mappable=cot, location='right', label=cblabel)
     cbar.solids.set_edgecolor("face") 
- 
-    vals, snam = stats(plot, data, rmse)
-    val = [s + v for s, v in zip(snam, vals)]
-    ax.text(a, b, '  '.join(val), fontsize=7)
-
+    if label is not None:
+        ax.text(a, b, label, fontsize=7)
 
 def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=None, pcolor_args=None, plot={}, cblabel='', anom=False, cbaxis=None):
     """Pcolor a var in a section, using ax if supplied"""
@@ -263,7 +243,7 @@ def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=N
     else:
         tl = fig.add_axes([box.x1 + box.width * 0.05, box.y0, 0.02, box.height])
         fig.colorbar(cot, cax=tl, label=cblabel)
-
+    """
     if rmse:
         vals = [str(np.round(data.min(), 1)), str(np.round(data.max(), 1)), str(np.round(sqrt(mean(square(data))), 1))]
         plot['stats'] = {'rmse': float(vals[2]),
@@ -278,6 +258,12 @@ def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=N
                          'max': float(vals[1]),
                          }
         snam = ['min: ', 'max: ', 'mean: ']
+    """
+    vals = [str(np.round(data.min(), 1)), str(np.round(data.max(), 1))]
+    plot['stats'] = {'min': float(vals[0]),
+                     'max': float(vals[1]),
+                     }
+    snam = ['min: ', 'max: ']    
     val = [s + v for s, v in zip(snam, vals)]
     ax.text(.75, -.2, '  '.join(val), horizontalalignment='left', verticalalignment='bottom', fontsize=7, transform = ax.transAxes) 
 

@@ -13,6 +13,7 @@ to the correct plot.
 import data_loader as pl
 import projections as pr
 import numpy as np
+from numpy import mean, sqrt, square
 import scipy as sp
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -167,8 +168,64 @@ def plotname(plot):
 
     print plotname
     return plotname    
-        
 
+
+def weighted_mean(data, weights=None):
+    if weights is None:
+        weights = np.ones(data.shape)
+
+    flattened_data = data.flatten()
+    flattened_weights = weights.flatten()    
+
+    mean = np.ma.average(flattened_data, weights=flattened_weights)    
+    return mean
+    
+def corr(obs, data, weights=None):
+    """Compute a weighted correlation coefficient and std dev for obs and model
+
+    Returns:
+       r : correlation coefficient
+       ovar : weighted stddev of obs
+       dvar : weighted stddev of data
+
+    """
+
+    if not weights:
+        weights = np.ones(obs.shape)
+
+    obsf = obs.flatten()
+    dataf = data.flatten()
+    weightsf = weights.flatten()
+
+    obar = np.ma.average(obsf, weights=weightsf)
+    dbar = np.ma.average(dataf, weights=weightsf)
+    ovar = np.sqrt(np.ma.average((obsf-obar)**2, weights=weightsf))
+    dvar = np.sqrt(np.ma.average((dataf-dbar)**2, weights=weightsf))
+
+    r = 1.0 / np.nansum(weightsf) * np.nansum( ( (obsf-obar)*(dataf-dbar)*weightsf )
+                                        / (ovar*dvar) )
+
+    return r, ovar, dvar
+        
+def stats(plot, data, weights=None, rmse=False):
+    if rmse:
+        vals = [str(np.round(data.min(), 1)), str(np.round(data.max(), 1)), str(np.round(sqrt(mean(square(data))), 1))]
+        snam = ['min: ', 'max: ', 'rmse: ']
+        plot['stats'] = {'rmse': float(vals[2]),
+                         'min': float(vals[0]),
+                         'max': float(vals[1]),
+                         }
+    else:
+        vals = [str(np.round(data.min(), 1)), str(np.round(data.max(), 1)), str(np.round(weighted_mean(data, weights=weights), 1))]
+        snam = ['min: ', 'max: ', 'mean: ']
+        plot['stats'] = {'mean': float(vals[2]),
+                         'min': float(vals[0]),
+                         'max': float(vals[1]),
+                         }
+    val = [s + v for s, v in zip(snam, vals)]
+    label = '  '.join(val)
+    return label
+    
 def colormap(plot):
     """ Loads and plots the data for a time averaged map
 
@@ -183,23 +240,25 @@ def colormap(plot):
     """
     print 'plotting map of ' + plot['variable']
     # load data from netcdf file
-    data, lon, lat, depth, units, _ = pl.dataload(plot['ifile'], plot['variable'], 
+    data, lon, lat, depth, units, _, weights = pl.dataload(plot['ifile'], plot['variable'], 
                                           plot['dates'], realm=plot['realm_cat'], 
                                           scale=plot['scale'], shift=plot['shift'], 
                                           remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                           seasons=plot['seasons'], datatype=plot['data_type'],
                                           cdostring=plot['cdostring'],
+                                          gridweights = True,
                                           external_function=plot['external_function'],
                                           external_function_args=plot['external_function_args'])
+
     if plot['data_type'] == 'trends':
         data, units = _trend_units(data, units, plot)
     if plot['units']:
         units = plot['units']
     # get data at correct depth
     data = _depth_data(data, depth, plot)
-    
+
     if plot['sigma'] and plot['data_type'] == 'trends':
-        detrenddata, _, _, _, _, _ = pl.dataload(plot['ifile'], plot['variable'],
+        detrenddata, _, _, _, _, _, _ = pl.dataload(plot['ifile'], plot['variable'],
                                          plot['dates'], realm=plot['realm_cat'],
                                          scale=plot['scale'], shift=plot['shift'],
                                          remapf=plot['remap'], remapgrid=plot['remap_grid'],
@@ -214,9 +273,11 @@ def colormap(plot):
 
     anom = True if plot['divergent'] or plot['data_type'] == 'trends' else False
 
+    label = stats(plot, data, weights=weights, rmse=False) 
+    
     _pcolor(data, plot, anom=anom)
-    # make plot
-    pr.worldmap(plot['plot_projection'], lon, lat, data, ax_args=plot['data1']['ax_args'],
+    # make plot    
+    pr.worldmap(plot['plot_projection'], lon, lat, data, ax_args=plot['data1']['ax_args'], label=label,
          pcolor_args=plot['data1']['pcolor_args'], cblabel=units, plot=plot, cvalues=cvalues,
          **plot['plot_args'])
 
@@ -245,17 +306,17 @@ def colormap_comparison(plot):
     """
     print 'plotting comparison map of ' + plot['variable']
     # load data from netcdf file
-    data, lon, lat, depth, units, _ = pl.dataload(plot['ifile'], plot['variable'], 
+    data, lon, lat, depth, units, _, weights = pl.dataload(plot['ifile'], plot['variable'], 
                                           plot['dates'], realm=plot['realm_cat'], 
                                           scale=plot['scale'], shift=plot['shift'], 
                                           remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                           seasons=plot['seasons'], datatype=plot['data_type'],
-                                          cdostring=plot['cdostring'],
+                                          cdostring=plot['cdostring'], gridweights=True,
                                           external_function=plot['external_function'],
                                           external_function_args=plot['external_function_args'])
     data = _depth_data(data, depth, plot)
     
-    data2, _, _, _, _, _ = pl.dataload(plot['comp_file'], plot['variable'], 
+    data2, _, _, _, _, _, _ = pl.dataload(plot['comp_file'], plot['variable'], 
                                         plot['comp_dates'], realm=plot['realm_cat'], 
                                         scale=plot['comp_scale'], shift=plot['comp_shift'], 
                                         remapf=plot['remap'], remapgrid=plot['remap_grid'], 
@@ -264,7 +325,7 @@ def colormap_comparison(plot):
                                         external_function=plot['external_function'],
                                         external_function_args=plot['external_function_args'],
                                         depthneeded=[plot['plot_depth']])
-    data2 = _depth_data(data2, depth, plot)
+    data2 = _depth_data(data2, depth, {})
     
     if plot['data_type'] == 'trends':
         data, units = _trend_units(data, units, plot)
@@ -272,14 +333,14 @@ def colormap_comparison(plot):
     if plot['units']:
         units = plot['units']
     # get data at correct depth
-
+    print plot['plot_depth']
     if plot['alpha'] and plot['data_type'] == 'climatology':
-        fulldata, _, _, _, _, _ = pl.dataload(plot['ifile'], plot['variable'], 
+        fulldata, _, _, _, _, _, _ = pl.dataload(plot['ifile'], plot['variable'], 
                                       plot['dates'], realm=plot['realm_cat'], 
                                       scale=plot['scale'], shift=plot['shift'], 
                                       remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                       seasons=plot['seasons'], depthneeded=[plot['plot_depth']])
-        fulldata2, _, _, _, _, _, = pl.dataload(plot['comp_file'], plot['variable'], 
+        fulldata2, _, _, _, _, _, _ = pl.dataload(plot['comp_file'], plot['variable'], 
                                         plot['comp_dates'], realm=plot['realm_cat'], 
                                         scale=plot['comp_scale'], shift=plot['comp_shift'], 
                                         remapf=plot['remap'], remapgrid=plot['remap_grid'], 
@@ -289,7 +350,7 @@ def colormap_comparison(plot):
         pvalues = None
     
     if plot['sigma'] and plot['data_type'] == 'trends':
-        detrenddata, _, _, _, _, _ = pl.dataload(plot['ifile'], plot['variable'],
+        detrenddata, _, _, _, _, _, _ = pl.dataload(plot['ifile'], plot['variable'],
                                          plot['dates'], realm=plot['realm_cat'],
                                          scale=plot['scale'], shift=plot['shift'],
                                          remapf=plot['remap'], remapgrid=plot['remap_grid'],
@@ -297,7 +358,7 @@ def colormap_comparison(plot):
         detrenddata = _full_depth_data(detrenddata, depth, plot)
         siggrid = trend_significance(detrenddata, plot['sigma'])
         cvalues, _ = _trend_units(siggrid, units, plot)
-        detrenddata, _, _, _, _, _ = pl.dataload(plot['comp_file'], plot['variable'],
+        detrenddata, _, _, _, _, _, _ = pl.dataload(plot['comp_file'], plot['variable'],
                                          plot['comp_dates'], realm=plot['realm_cat'],
                                          scale=plot['comp_scale'], shift=plot['comp_shift'],
                                          remapf=plot['remap'], remapgrid=plot['remap_grid'],
@@ -317,19 +378,23 @@ def colormap_comparison(plot):
     anom = True if plot['divergent'] or plot['data_type'] == 'trends' else False
     _comp_pcolor(data, data2, plot)
 
+    label1 = stats(plot, data, weights=weights, rmse=False) 
+    label2 = stats(plot, data2, weights=weights, rmse=False) 
+    label3 = stats(plot, compdata, weights=weights, rmse=True)
+     
     dft.filltitle(plot)
     fig, (axl, axm, axr) = plt.subplots(3, 1, figsize=(8, 8))
 
 
     # make plots of data, comparison data, data - comparison data
     pr.worldmap(plot['plot_projection'], lon, lat, data, plot=plot, ax=axl, ax_args=plot['data1']['ax_args'],
-         pcolor_args=plot['data1']['pcolor_args'], cblabel=units, cvalues=cvalues,
+         pcolor_args=plot['data1']['pcolor_args'], cblabel=units, cvalues=cvalues, label=label1,
          **plot['plot_args'])
     pr.worldmap(plot['plot_projection'], lon, lat, data2, plot=plot, ax=axm, ax_args=plot['data2']['ax_args'],
-         pcolor_args=plot['data2']['pcolor_args'], cblabel=units, cvalues=c2values,
+         pcolor_args=plot['data2']['pcolor_args'], cblabel=units, cvalues=c2values, label=label2,
          **plot['plot_args'])
     pr.worldmap(plot['plot_projection'], lon, lat, compdata, pvalues=pvalues, alpha=plot['alpha'], anom=True, 
-         rmse=True, plot=plot, ax=axr, ax_args=plot['comp']['ax_args'],
+         rmse=True, plot=plot, ax=axr, ax_args=plot['comp']['ax_args'], label=label3,
          pcolor_args=plot['comp']['pcolor_args'], cblabel=units, **plot['plot_args'])
     
     plot_name = plotname(plot)
@@ -352,7 +417,7 @@ def section(plot):
     """
     print 'plotting section of ' + plot['variable']
     
-    data, _, lat, depth, units, _ = pl.dataload(plot['ifile'], plot['variable'], 
+    data, _, lat, depth, units, _, _ = pl.dataload(plot['ifile'], plot['variable'], 
                                         plot['dates'], realm=plot['realm_cat'], 
                                         scale=plot['scale'], shift=plot['shift'], 
                                         remapf=plot['remap'], remapgrid=plot['remap_grid'], 
@@ -398,7 +463,7 @@ def section_comparison(plot):
     string : name of the plot
     """
     print 'plotting section comparison of ' + plot['variable']
-    data2, _, _, depth, _, _ = pl.dataload(plot['comp_file'], plot['variable'], 
+    data2, _, _, depth, _, _, _ = pl.dataload(plot['comp_file'], plot['variable'], 
                                         plot['comp_dates'], realm=plot['realm_cat'], 
                                         scale=plot['comp_scale'], shift=plot['comp_shift'], 
                                         remapf=plot['remap'], remapgrid=plot['remap_grid'], 
@@ -406,8 +471,8 @@ def section_comparison(plot):
                                         section=True, cdostring=plot['cdostring'],
                                         external_function=plot['external_function'],
                                         external_function_args=plot['external_function_args'])
-    print depth.shape
-    data, _, lat, depth, units, _ = pl.dataload(plot['ifile'], plot['variable'], 
+
+    data, _, lat, depth, units, _, _ = pl.dataload(plot['ifile'], plot['variable'], 
                                         plot['dates'], realm=plot['realm_cat'], 
                                         scale=plot['scale'], shift=plot['shift'], 
                                         remapf=plot['remap'], remapgrid=plot['remap_grid'], 
@@ -429,13 +494,13 @@ def section_comparison(plot):
     _comp_pcolor(data, data2, plot, anom=anom)
 
     if plot['alpha'] and plot['data_type'] == 'climatology':
-        fulldata, _, _, _, _, _ = pl.dataload(plot['ifile'], plot['variable'], 
+        fulldata, _, _, _, _, _, _ = pl.dataload(plot['ifile'], plot['variable'], 
                                       plot['dates'], realm=plot['realm_cat'], 
                                       scale=plot['scale'], shift=plot['shift'], 
                                       remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                       seasons=plot['seasons'], depthneeded=list(depth),
                                       section=True)
-        fulldata2, _, _, _, _, _, = pl.dataload(plot['comp_file'], plot['variable'], 
+        fulldata2, _, _, _, _, _, _ = pl.dataload(plot['comp_file'], plot['variable'], 
                                         plot['comp_dates'], realm=plot['realm_cat'], 
                                         scale=plot['comp_scale'], shift=plot['comp_shift'], 
                                         remapf=plot['remap'], remapgrid=plot['remap_grid'], 
@@ -520,7 +585,7 @@ def trend_significance(residuals, sigma=0.05):
     return cs
 
 def _histogram_data(plot, compfile):
-    data, _, _, _, _, _ = pl.dataload(compfile, plot['variable'], 
+    data, _, _, _, _, _, _ = pl.dataload(compfile, plot['variable'], 
                               plot['comp_dates'], realm=plot['realm_cat'], 
                               scale=plot['comp_scale'], shift=plot['comp_shift'], 
                               remapf=plot['remap'], remapgrid=plot['remap_grid'], 
@@ -534,7 +599,7 @@ def _histogram_data(plot, compfile):
 
 def histogram(plot):
     values = {}
-    data, _, _, depth, units, _ = pl.dataload(plot['ifile'], plot['variable'], 
+    data, _, _, depth, units, _, _ = pl.dataload(plot['ifile'], plot['variable'], 
                               plot['comp_dates'], realm=plot['realm_cat'], 
                               scale=plot['comp_scale'], shift=plot['comp_shift'], 
                               remapf=plot['remap'], remapgrid=plot['remap_grid'], 
@@ -575,7 +640,7 @@ def histogram(plot):
     return plot_name
     
 def _timeseries_data(plot, compfile):
-    data, _, _, _, _, time = pl.dataload(compfile, plot['variable'], 
+    data, _, _, _, _, time, _ = pl.dataload(compfile, plot['variable'], 
                                          plot['comp_dates'], realm=plot['realm_cat'], 
                                          scale=plot['comp_scale'], shift=plot['comp_shift'], 
                                          remapf=plot['remap'], remapgrid=plot['remap_grid'], 
@@ -591,7 +656,7 @@ def _timeseries_data(plot, compfile):
 def timeseries(plot):
     print 'plotting timeseries comparison of ' + plot['variable']
 
-    data, _, _, depth, units, time = pl.dataload(plot['ifile'], plot['variable'], 
+    data, _, _, depth, units, time, _ = pl.dataload(plot['ifile'], plot['variable'], 
                                          plot['dates'], realm=plot['realm_cat'], 
                                          scale=plot['scale'], shift=plot['shift'], 
                                          remapf=plot['remap'], remapgrid=plot['remap_grid'], 
@@ -663,7 +728,7 @@ def timeseries(plot):
 
 def zonalmeandata(plot, compfile):
 
-    data, _, _, _, _, _ = pl.dataload(compfile, plot['variable'], 
+    data, _, _, _, _, _, _ = pl.dataload(compfile, plot['variable'], 
                                   plot['comp_dates'], realm=plot['realm_cat'], 
                                   scale=plot['comp_scale'], shift=plot['comp_shift'], 
                                   remapf=plot['remap'], remapgrid=plot['remap_grid'], 
@@ -688,7 +753,7 @@ def zonalmean(plot):
     string : name of the plot
     """
     print 'plotting zonal mean of ' + plot['variable']
-    data, _, lat, depth, units, _ = pl.dataload(plot['ifile'], plot['variable'], 
+    data, _, lat, depth, units, _, _ = pl.dataload(plot['ifile'], plot['variable'], 
                                         plot['dates'], realm=plot['realm_cat'], 
                                         scale=plot['scale'], shift=plot['shift'], 
                                         remapf=plot['remap'], remapgrid=plot['remap_grid'], 
@@ -756,7 +821,7 @@ def zonalmean(plot):
 
 
 def taylordata(plot, compfile, depthneeded):
-    data, _, _, _, _, _, = pl.dataload(compfile, plot['variable'], 
+    data, _, _, _, _, _, _ = pl.dataload(compfile, plot['variable'], 
                                       plot['comp_dates'], realm=plot['realm_cat'], 
                                       scale=plot['comp_scale'], shift=plot['comp_shift'], 
                                       remapf=plot['remap'], remapgrid=plot['remap_grid'], 
@@ -769,7 +834,7 @@ def taylordata(plot, compfile, depthneeded):
 def taylor(plot):
     print 'plotting taylor diagram of ' + plot['variable']
     for o in plot['obs_file']:
-        refdata, _, _, depth, units, _ = pl.dataload(plot['obs_file'][o], plot['variable'], 
+        refdata, _, _, depth, units, _, _ = pl.dataload(plot['obs_file'][o], plot['variable'], 
                                              plot['comp_dates'], realm=plot['realm_cat'], 
                                              scale=plot['comp_scale'], shift=plot['comp_shift'], 
                                              remapf=plot['remap'], remapgrid=plot['remap_grid'], 
@@ -777,7 +842,7 @@ def taylor(plot):
                                              external_function=plot['external_function'],
                                              external_function_args=plot['external_function_args']) 
         break
-    data, _, _, _, _, _, = pl.dataload(plot['ifile'], plot['variable'], 
+    data, _, _, _, _, _, _ = pl.dataload(plot['ifile'], plot['variable'], 
                                   plot['dates'], realm=plot['realm_cat'], 
                                   scale=plot['scale'], shift=plot['shift'], 
                                   remapf=plot['remap'], remapgrid=plot['remap_grid'], 
