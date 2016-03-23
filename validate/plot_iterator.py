@@ -45,7 +45,7 @@ def compare(plot):
                 'time_series': pc.timeseries,
                 'histogram': pc.histogram,
                 'zonal_mean': pc.zonalmean,
-                'taylor': pc.taylor,
+                'taylor': pc.taylor_depth,
                 }[pl]
     func_case = pregion_comp(plot['plot_projection'])
     return func_case(plot)
@@ -163,6 +163,9 @@ def loop(plots, debug):
             p['is_depth'] = False
         else:
             p['is_depth'] = True
+        if p['plot_projection'] == 'taylor':
+            loop_plot_types(p, plotnames)
+            continue
         for d in p['depths']:
             try:
                 p['depth'] = int(d)

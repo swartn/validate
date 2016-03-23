@@ -463,7 +463,16 @@ plots:
           comp_obs:
              - 20CR
           comp_cmips: 'all'             
-             
+          depths:
+            - 100000
+            - 85000
+            - 70000
+            - 50000
+            - 25000
+            - 10000
+            - 5000
+            - 1000
+                              
         - variable: 'uas'
           plot_projection: 'global_map'
           data_type: 'climatology'
@@ -661,7 +670,15 @@ plots:
           comp_obs:
              - 20CR
           comp_cmips: 'all'
-
+          depths:
+            - 100000
+            - 85000
+            - 70000
+            - 50000
+            - 25000
+            - 10000
+            - 5000
+            - 1000
 
            
         - variable: 'zg'

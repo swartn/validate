@@ -169,9 +169,12 @@ def _time(ds):
         cal = nc_time.calendar
     except:
         cal = 'standard'
-    x = num2date(nc_time[:], nc_time.units, cal)
-    x = [datetime.datetime(*item.timetuple()[:6]) for item in x]
-    x = np.array(x)
+    try:
+        x = num2date(nc_time[:], nc_time.units, cal)
+        x = [datetime.datetime(*item.timetuple()[:6]) for item in x]
+        x = np.array(x)
+    except:
+        x = None
     return x
 
 def get_external_function(name):
@@ -323,7 +326,7 @@ def get_remap_function(remap):
                 'remapcon': cdo.remapcon,
                 'remapcon2': cdo.remapcon2,
                 'remapplaf': cdo.remaplaf,
-                }[r]  
+                }[r]
     return cdoremap(remap)
 
 def remap(name, remapname, remapgrid):

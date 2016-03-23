@@ -347,7 +347,13 @@ plots:
              - observations
           comp_cmips: 'all'
           frequency: 'yr'       
-
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+            
         - variable: 'no3'
           plot_projection: 'mercator'
           data_type: 'climatology'
@@ -401,7 +407,13 @@ plots:
              - observations
           comp_cmips: 'all'
           frequency: 'yr'
-
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+            
         - variable: 'ph'
           plot_projection: 'mercator'
           data_type: 'climatology'
@@ -485,7 +497,13 @@ plots:
              - observations
           comp_cmips: 'all'
           frequency: 'yr' 
-
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+            
 delete:
           del_netcdf: False
           del_mask: True

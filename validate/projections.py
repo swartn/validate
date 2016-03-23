@@ -355,6 +355,54 @@ def taylordiagram(refdata, labelled_data, unlabelled_data, fig=None, ax_args=Non
     if 'title' in ax_args:
         plt.title(ax_args['title'])
 
+def taylor_from_stats(labelled_data, unlabelled_data, obs_label='observation', fig=None, label=None, ax_args=None):
+    if not fig:
+        fig = plt.figure()
+    else:
+        fig = plt.gcf()
+
+    stdrange = max([item['std'] for item in labelled_data]) * 1.3
+    if stdrange <= 1.5:
+        stdrange = 1.5
+ 
+    dia = TaylorDiagram(1, fig=fig, label=obs_label, srange=(0, stdrange))
+    handles_dictionary = {}
+    for i, sample in enumerate(labelled_data):
+        if sample['corrcoef'] < 0:
+            sample['corrcoef'] = 0
+        dia.add_sample(sample['std'], sample['corrcoef'],
+                       marker=sample['marker'], ms=8, ls='',
+                       mfc=sample['color'], mec=sample['color'],
+                       zorder=sample['zorder'],
+                       label=sample['name'])
+        handles_dictionary[sample['name']] = sample['color']
+    handles = [mpatches.Patch(color=color, label=name) for name, color in handles_dictionary.iteritems()]
+    handles = [mpatches.Patch(color='b')] + handles
+    labels = [obs_label] + handles_dictionary.keys()   
+  
+    fig.legend(handles, labels, numpoints=1, loc='upper right')
+
+
+    for sample in unlabelled_data:         
+        if sample['corrcoef'] < 0:
+            sample['corrcoef'] = 0
+        dia.add_sample(sample['std'], sample['corrcoef'],
+                       marker=sample['marker'], ms=8, ls='',
+                       mfc=sample['color'], mec=sample['color'],
+                       zorder=sample['zorder']-1,
+                       label=sample['name'])
+    
+    dia.add_grid()
+    
+    contours = dia.add_contours(colors='0.5')
+    plt.clabel(contours, inline=1, fontsize=10)
+
+    if 'title' in ax_args:
+        plt.title(ax_args['title'])    
+    if label is not None:
+         fig.text(0.1, 0, label, fontsize=7)       
+          
+           
 def histogram(data, values, ax=None, ax_args=None, plot={}):
     if not ax:
         fig, ax = plt.subplots(1, 1, figsize=(8, 8))

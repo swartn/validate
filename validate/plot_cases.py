@@ -180,36 +180,10 @@ def weighted_mean(data, weights=None):
     mean = np.ma.average(flattened_data, weights=flattened_weights)    
     return mean
     
-def corr(obs, data, weights=None):
-    """Compute a weighted correlation coefficient and std dev for obs and model
-
-    Returns:
-       r : correlation coefficient
-       ovar : weighted stddev of obs
-       dvar : weighted stddev of data
-
-    """
-
-    if not weights:
-        weights = np.ones(obs.shape)
-
-    obsf = obs.flatten()
-    dataf = data.flatten()
-    weightsf = weights.flatten()
-
-    obar = np.ma.average(obsf, weights=weightsf)
-    dbar = np.ma.average(dataf, weights=weightsf)
-    ovar = np.sqrt(np.ma.average((obsf-obar)**2, weights=weightsf))
-    dvar = np.sqrt(np.ma.average((dataf-dbar)**2, weights=weightsf))
-
-    r = 1.0 / np.nansum(weightsf) * np.nansum( ( (obsf-obar)*(dataf-dbar)*weightsf )
-                                        / (ovar*dvar) )
-
-    return r, ovar, dvar
         
 def stats(plot, data, weights=None, rmse=False):
     if rmse:
-        vals = [str(np.round(data.min(), 1)), str(np.round(data.max(), 1)), str(np.round(sqrt(mean(square(data))), 1))]
+        vals = [str(np.round(data.min(), 1)), str(np.round(data.max(), 1)), str(np.round(sqrt(weighted_mean(square(data), weights=weights)), 1))]
         snam = ['min: ', 'max: ', 'rmse: ']
         plot['stats'] = {'rmse': float(vals[2]),
                          'min': float(vals[0]),
@@ -831,6 +805,7 @@ def taylordata(plot, compfile, depthneeded):
                                       depthneeded=depthneeded)
     return data
 
+
 def taylor(plot):
     print 'plotting taylor diagram of ' + plot['variable']
     for o in plot['obs_file']:
@@ -894,12 +869,136 @@ def taylor(plot):
         plot['units'] = units
     plot['comp_file'] = plot['obs_file']
     return plot_name
+
+
+def weighted_std(data, weights=None):
+    if weights is None:
+        print 'weights is None'
+        weights = np.ones(data.shape)
+
+    flattened_data = data.flatten()
+    flattened_weights = weights.flatten()    
+
+    mean = np.ma.average(flattened_data, weights=flattened_weights)
+    std = np.sqrt(np.ma.average((flattened_data-mean)**2, weights=flattened_weights))
     
+    return std
+    
+def weighted_correlation(obs, data, weights=None):
+    """Compute a weighted correlation coefficient and std dev for obs and model
+
+    Returns:
+       r : correlation coefficient
+       ovar : weighted stddev of obs
+       dvar : weighted stddev of data
+
+    """
+
+    if weights is None:
+        weights = np.ones(obs.shape)
+
+    obsf = obs.flatten()
+    dataf = data.flatten()
+    weightsf = weights.flatten()
+
+    obar = np.ma.average(obsf, weights=weightsf)
+    dbar = np.ma.average(dataf, weights=weightsf)
+    ovar = np.sqrt(np.ma.average((obsf-obar)**2, weights=weightsf))
+    dvar = np.sqrt(np.ma.average((dataf-dbar)**2, weights=weightsf))
+
+    r = 1.0 / np.nansum(weightsf) * np.nansum( ( (obsf-obar)*(dataf-dbar)*weightsf )
+                                        / (ovar*dvar) )
+
+    return r, ovar, dvar
+
+def taylor_depthload(plot, compfile, depth, i, color, refdata, weights):
+    data, _, _, _, _, _, _ = pl.dataload(compfile, plot['variable'], 
+                                      plot['comp_dates'], realm=plot['realm_cat'], 
+                                      scale=plot['comp_scale'], shift=plot['comp_shift'], 
+                                      remapf=plot['remap'], remapgrid=plot['remap_grid'], 
+                                      seasons=plot['comp_seasons'], datatype=plot['data_type'],
+                                      external_function=plot['external_function'],
+                                      external_function_args=plot['external_function_args'],
+                                      depthneeded=depth)
+    corr, refstd, std = weighted_correlation(refdata, data, weights)
+    
+    
+    return {'name': plot['comp_model'],
+            'corrcoef': corr,
+            'std': std / refstd,
+            'color': color,
+            'marker': i,
+            'zorder': 2}
+          
+def taylor_depth(plot):
+    labelled_stats = []
+    unlabelled_stats = []
+    obs = plot['obs_file'].iterkeys().next()
+    plot['plot_depth'] = plot['depths'][0]
+    for i, d in enumerate(plot['depths']):
+        refdata, _, _, depth, units, _, weights = pl.dataload(plot['obs_file'][obs], plot['variable'], 
+                                      plot['comp_dates'], realm=plot['realm_cat'], 
+                                      scale=plot['comp_scale'], shift=plot['comp_shift'], 
+                                      remapf=plot['remap'], remapgrid=plot['remap_grid'], 
+                                      seasons=plot['comp_seasons'], datatype=plot['data_type'],
+                                      gridweights=True,
+                                      external_function=plot['external_function'],
+                                      external_function_args=plot['external_function_args'],
+                                      depthneeded=[d])
+     
+        refstd = weighted_std(refdata, weights)
+
+        data, _, _, _, _, _, _ = pl.dataload(plot['ifile'], plot['variable'], 
+                                      plot['comp_dates'], realm=plot['realm_cat'], 
+                                      scale=plot['comp_scale'], shift=plot['comp_shift'], 
+                                      remapf=plot['remap'], remapgrid=plot['remap_grid'], 
+                                      seasons=plot['comp_seasons'], datatype=plot['data_type'],
+                                      external_function=plot['external_function'],
+                                      external_function_args=plot['external_function_args'],
+                                      depthneeded=depth)
+        corrcoef, _, std = weighted_correlation(refdata, data, weights)
+        labelled_stats.append({'name': plot['model_ID'],
+                               'corrcoef': corrcoef,
+                               'std': std / refstd,
+                               'color': 'red',
+                               'marker': '$%d$' % (i+1),
+                               'zorder': 3})
+
+        if plot['cmip5_file']:
+            plot['comp_model'] = 'cmip5'
+            labelled_stats.append(taylor_depthload(plot, plot['cmip5_file'], depth, '$%d$' % (i+1), 'k', refdata, weights))
+
+        for m in plot['comp_models']:
+            plot['comp_model'] = model
+            labelled_stats.append(taylor_depthload(plot, plot['model_file'][m], depth, '$%d$' % (i+1), 'g', refdata, weights))
+
+        for c in plot['comp_ids']:
+            plot['comp_model'] = c
+            labelled_stats.append(taylor_depthload(plot, plot['id_file'][c], depth, '$%d$' % (i+1), 'y', refdata, weights))
+
+        for f in plot['cmip5_files']:
+            plot['comp_model'] = 'cmip'
+            unlabelled_stats.append(taylor_depthload(plot, f, depth, '$%d$' % (i+1), '0.75', refdata, weights))     
+            vals = [str(np.round(data.min(), 1)), str(np.round(data.max(), 1)), str(np.round(weighted_mean(data, weights=weights), 1))]
+            
+    
+    depthlist = [str(i + 1) + ': ' + str(d) for i, d in enumerate(plot['depths'])] 
+    label = '  '.join(depthlist)
+
+    if len(plot['depths']) <= 1:
+        for l in labelled_stats:
+            l['marker'] = '.'
+        for l in unlabelled_stats:
+            l['marker'] = '.'
+        label = None
+             
+    pr.taylor_from_stats(labelled_stats, unlabelled_stats, obs_label=obs,
+                         label=label, ax_args=plot['data1']['ax_args'])
+#    plot['stats'] = {'obserations': {'standard deviation': float(refstd)}}
     plot_name = plotname(plot)
     plt.tight_layout()
     savefigures(plot_name, **plot)
     if not plot['units']:
         plot['units'] = units
     plot['comp_file'] = plot['obs_file']
-    return plot_name
- 
+    return plot_name    

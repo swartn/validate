@@ -213,7 +213,12 @@ plots:
           shift: -273.15
           comp_shift: 0
           units: 'C'
-
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
 
         - variable: 'so'
           plot_projection: 'mercator'
@@ -255,7 +260,13 @@ plots:
           comp_obs:
              - observations
           comp_cmips: 'all'
-
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+            
         - variable: 'uo'
           plot_projection: 'mercator'
           data_type: 'climatology'
