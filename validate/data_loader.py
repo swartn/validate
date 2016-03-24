@@ -164,17 +164,17 @@ def _lon_lat(ds):
 
 
 def _time(ds):
-    nc_time = ds.variables['time']
+    try:
+        nc_time = ds.variables['time']
+    except:
+        return None
     try:
         cal = nc_time.calendar
     except:
         cal = 'standard'
-    try:
-        x = num2date(nc_time[:], nc_time.units, cal)
-        x = [datetime.datetime(*item.timetuple()[:6]) for item in x]
-        x = np.array(x)
-    except:
-        x = None
+    x = num2date(nc_time[:], nc_time.units, cal)
+    x = [datetime.datetime(*item.timetuple()[:6]) for item in x]
+    x = np.array(x)
     return x
 
 def get_external_function(name):
