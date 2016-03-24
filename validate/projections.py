@@ -382,7 +382,6 @@ def taylor_from_stats(labelled_data, unlabelled_data, obs_label='observation', f
   
     fig.legend(handles, labels, numpoints=1, loc='upper right')
 
-
     for sample in unlabelled_data:         
         if sample['corrcoef'] < 0:
             sample['corrcoef'] = 0
@@ -391,9 +390,9 @@ def taylor_from_stats(labelled_data, unlabelled_data, obs_label='observation', f
                        mfc=sample['color'], mec=sample['color'],
                        zorder=sample['zorder']-1,
                        label=sample['name'])
-    
-    dia.add_grid()
-    
+
+    dia.add_grid(True, axis='x', linestyle='--')
+                  
     contours = dia.add_contours(colors='0.5')
     plt.clabel(contours, inline=1, fontsize=10)
 

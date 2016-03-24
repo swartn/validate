@@ -94,7 +94,7 @@ class TaylorDiagram(object):
     def add_grid(self, *args, **kwargs):
         """Add a grid."""
 
-        self.ax.grid(*args, **kwargs)
+        self._ax.grid(*args, **kwargs)
 
     def add_contours(self, levels=5, **kwargs):
         """Add constant centered RMS difference contours, defined by
