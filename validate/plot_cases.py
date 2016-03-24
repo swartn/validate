@@ -793,84 +793,6 @@ def zonalmean(plot):
     savefigures(plot_name, **plot)
     return plot_name
 
-
-def taylordata(plot, compfile, depthneeded):
-    data, _, _, _, _, _, _ = pl.dataload(compfile, plot['variable'], 
-                                      plot['comp_dates'], realm=plot['realm_cat'], 
-                                      scale=plot['comp_scale'], shift=plot['comp_shift'], 
-                                      remapf=plot['remap'], remapgrid=plot['remap_grid'], 
-                                      seasons=plot['comp_seasons'], datatype=plot['data_type'],
-                                      external_function=plot['external_function'],
-                                      external_function_args=plot['external_function_args'],
-                                      depthneeded=depthneeded)
-    return data
-
-
-def taylor(plot):
-    print 'plotting taylor diagram of ' + plot['variable']
-    for o in plot['obs_file']:
-        refdata, _, _, depth, units, _, _ = pl.dataload(plot['obs_file'][o], plot['variable'], 
-                                             plot['comp_dates'], realm=plot['realm_cat'], 
-                                             scale=plot['comp_scale'], shift=plot['comp_shift'], 
-                                             remapf=plot['remap'], remapgrid=plot['remap_grid'], 
-                                             seasons=plot['comp_seasons'], datatype=plot['data_type'],
-                                             external_function=plot['external_function'],
-                                             external_function_args=plot['external_function_args']) 
-        break
-    data, _, _, _, _, _, _ = pl.dataload(plot['ifile'], plot['variable'], 
-                                  plot['dates'], realm=plot['realm_cat'], 
-                                  scale=plot['scale'], shift=plot['shift'], 
-                                  remapf=plot['remap'], remapgrid=plot['remap_grid'], 
-                                  seasons=plot['comp_seasons'], datatype=plot['data_type'],
-                                  external_function=plot['external_function'],
-                                  external_function_args=plot['external_function_args'],
-                                  depthneeded=list(depth))
-    labelled_data = [(data, plot['model_ID'], 'r')]
-    unlabelled_data = []
-    dft.filltitle(plot)
-
-    for f in plot['cmip5_files']:
-        plot['comp_model'] = f
-        try:
-            data = taylordata(plot, f, depth)
-            unlabelled_data.append((data, f))
-        except:
-            continue
-    # get data from models and cmip and append to plotdata list
-    if plot['cmip5_file']:
-        plot['comp_model'] = 'cmip5'
-        try:
-            data = taylordata(plot, plot['cmip5_file'], depth)
-            labelled_data.append((data, 'cmip5', 'k'))
-        except:
-            pass
-    for model in plot['comp_models']:
-        plot['comp_model'] = model
-        try:
-            data = taylordata(plot, plot['model_file'][model], depth)
-            plotdata.append((data, model, 'b'))
-        except:
-            continue
-    for i in plot['comp_ids']:
-        plot['comp_model'] = i
-        try:
-            data = taylordata(plot, plot['id_file'][i], depth)
-            plotdata.append((data, i, 'g'))
-        except:
-            continue
-    
-    # make plot
-    pr.taylordiagram(refdata, labelled_data, unlabelled_data, plot=plot, ax_args=plot['data1']['ax_args'])
-    
-    plot_name = plotname(plot)
-    plt.tight_layout()
-    savefigures(plot_name, **plot)
-    if not plot['units']:
-        plot['units'] = units
-    plot['comp_file'] = plot['obs_file']
-    return plot_name
-
-
 def weighted_std(data, weights=None):
     if weights is None:
         print 'weights is None'
@@ -911,7 +833,7 @@ def weighted_correlation(obs, data, weights=None):
 
     return r, ovar, dvar
 
-def taylor_depthload(plot, compfile, depth, i, color, refdata, weights):
+def taylor_load(plot, compfile, depth, i, color, refdata, weights):
     data, _, _, _, _, _, _ = pl.dataload(compfile, plot['variable'], 
                                       plot['comp_dates'], realm=plot['realm_cat'], 
                                       scale=plot['comp_scale'], shift=plot['comp_shift'], 
@@ -930,7 +852,7 @@ def taylor_depthload(plot, compfile, depth, i, color, refdata, weights):
             'marker': i,
             'zorder': 2}
           
-def taylor_depth(plot):
+def taylor(plot):
     labelled_stats = []
     unlabelled_stats = []
     obs = plot['obs_file'].iterkeys().next()
@@ -966,19 +888,19 @@ def taylor_depth(plot):
 
         if plot['cmip5_file']:
             plot['comp_model'] = 'cmip5'
-            labelled_stats.append(taylor_depthload(plot, plot['cmip5_file'], depth, '$%d$' % (i+1), 'k', refdata, weights))
+            labelled_stats.append(taylor_load(plot, plot['cmip5_file'], depth, '$%d$' % (i+1), 'k', refdata, weights))
 
         for m in plot['comp_models']:
             plot['comp_model'] = model
-            labelled_stats.append(taylor_depthload(plot, plot['model_file'][m], depth, '$%d$' % (i+1), 'g', refdata, weights))
+            labelled_stats.append(taylor_load(plot, plot['model_file'][m], depth, '$%d$' % (i+1), 'g', refdata, weights))
 
         for c in plot['comp_ids']:
             plot['comp_model'] = c
-            labelled_stats.append(taylor_depthload(plot, plot['id_file'][c], depth, '$%d$' % (i+1), 'y', refdata, weights))
+            labelled_stats.append(taylor_load(plot, plot['id_file'][c], depth, '$%d$' % (i+1), 'y', refdata, weights))
 
         for f in plot['cmip5_files']:
             plot['comp_model'] = 'cmip'
-            unlabelled_stats.append(taylor_depthload(plot, f, depth, '$%d$' % (i+1), '0.75', refdata, weights))     
+            unlabelled_stats.append(taylor_load(plot, f, depth, '$%d$' % (i+1), '0.75', refdata, weights))     
             vals = [str(np.round(data.min(), 1)), str(np.round(data.max(), 1)), str(np.round(weighted_mean(data, weights=weights), 1))]
             
     

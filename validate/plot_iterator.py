@@ -45,7 +45,7 @@ def compare(plot):
                 'time_series': pc.timeseries,
                 'histogram': pc.histogram,
                 'zonal_mean': pc.zonalmean,
-                'taylor': pc.taylor_depth,
+                'taylor': pc.taylor,
                 }[pl]
     func_case = pregion_comp(plot['plot_projection'])
     return func_case(plot)
