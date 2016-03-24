@@ -261,8 +261,13 @@ def colormap(plot):
     return plot_name
 
 def ttest(data1, data2):
-    t, p = sp.stats.ttest_ind(data1, data2, axis=0, equal_var=False)
-    return p
+    if data1.shape == data2.shape:
+        t, p = sp.stats.ttest_ind(data1, data2, axis=0, equal_var=False)
+        return p
+    else:
+        with open('logs/log.txt', 'a') as outfile:
+            outfile.write('Significance could not be calculated.\n')        
+    return None
 
 def colormap_comparison(plot):
     """ Loads and plots the data for a time averaged map.
@@ -289,7 +294,7 @@ def colormap_comparison(plot):
                                           external_function=plot['external_function'],
                                           external_function_args=plot['external_function_args'])
     data = _depth_data(data, depth, plot)
-    
+
     data2, _, _, _, _, _, _ = pl.dataload(plot['comp_file'], plot['variable'], 
                                         plot['comp_dates'], realm=plot['realm_cat'], 
                                         scale=plot['comp_scale'], shift=plot['comp_shift'], 
@@ -299,7 +304,6 @@ def colormap_comparison(plot):
                                         external_function=plot['external_function'],
                                         external_function_args=plot['external_function_args'],
                                         depthneeded=[plot['plot_depth']])
-    data2 = _depth_data(data2, depth, {})
     
     if plot['data_type'] == 'trends':
         data, units = _trend_units(data, units, plot)
@@ -307,7 +311,7 @@ def colormap_comparison(plot):
     if plot['units']:
         units = plot['units']
     # get data at correct depth
-    print plot['plot_depth']
+
     if plot['alpha'] and plot['data_type'] == 'climatology':
         fulldata, _, _, _, _, _, _ = pl.dataload(plot['ifile'], plot['variable'], 
                                       plot['dates'], realm=plot['realm_cat'], 
@@ -318,7 +322,7 @@ def colormap_comparison(plot):
                                         plot['comp_dates'], realm=plot['realm_cat'], 
                                         scale=plot['comp_scale'], shift=plot['comp_shift'], 
                                         remapf=plot['remap'], remapgrid=plot['remap_grid'], 
-                                        seasons=plot['comp_seasons'], depthneeded=[plot['plot_depth']])
+                                        seasons=plot['comp_seasons'], depthneeded=[plot['plot_depth']])    
         pvalues = ttest(fulldata, fulldata2)
     else:
         pvalues = None

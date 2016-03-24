@@ -264,7 +264,10 @@ def _section_labels(datanumber, pl):
     """
     pl[datanumber]['ax_args']['xlabel'] = 'Latitude'
     pl[datanumber]['ax_args']['xticks'] = np.arange(-80, 81, 20)
-    pl[datanumber]['ax_args']['ylabel'] = 'Depth'
+    if pl['realm'] == 'atmos':
+        pl[datanumber]['ax_args']['ylabel'] = 'Pressure'
+    else:
+        pl[datanumber]['ax_args']['ylabel'] = 'Depth'
     pass 
 
 def filltitle(p):

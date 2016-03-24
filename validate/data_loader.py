@@ -163,7 +163,9 @@ def _lon_lat(ds):
     return lon, lat
 
 
-def _time(ds):
+def _time(ds, time_averaged):
+    if time_averaged:
+        return None
     try:
         nc_time = ds.variables['time']
     except:
@@ -220,8 +222,6 @@ def dataload(ifile, var, dates, realm='atmos', scale=1, shift=0,
     if fieldmean:
         ofile = field_mean(ofile)
     
-
-
     dataset = Dataset(ofile, 'r')
     ncvar = _ncvar(dataset, var)
     rawdata = ncvar[:].squeeze()
@@ -229,7 +229,7 @@ def dataload(ifile, var, dates, realm='atmos', scale=1, shift=0,
     units = _units(ncvar, scale, shift)
     depth = _depth(dataset, ncvar)
     lon, lat = _lon_lat(dataset)
-    time = _time(dataset)
+    time = _time(dataset, time_averaged_bool)
 
     if gridweights:
         gfile = grid_weights(ofile)    
