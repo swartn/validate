@@ -130,7 +130,7 @@ experiment: 'historical'
 
 defaults:
           dates:
-              start_date: '1986-01'
+              start_date: '1980-01'
               end_date: '2005-01'
           png: True
 plots:
