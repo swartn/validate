@@ -15,6 +15,7 @@ from netCDF4 import Dataset, num2date, date2num
 import numpy as np
 import datetime
 from .functions import external
+import constants
 import cdo
 cdo = cdo.Cdo()
 
@@ -189,7 +190,6 @@ def dataload(ifile, var, dates, realm='atmos', scale=1, shift=0,
              remapf='remapdis', remapgrid='r360x180', seasons=None,
              datatype='full', depthneeded=None, section=False, fieldmean=False, gridweights=False,
              cdostring=None, external_function=None, external_function_args={}):
-
     time_averaged_bool = _check_dates(ifile, dates)
     
     sel_var_file = sel_var(ifile, var)
@@ -251,20 +251,29 @@ def sel_date(name, start_date, end_date, time_average=False):
     if time_average:
         return name
     out = 'netcdf/seldate_' + start_date + '_' + end_date + '_' + split(name)
-    if not os.path.isfile(out):
+    already_exists = already_calculated(out)
+    if already_exists is not None:
+        return already_exists
+    else:
         datestring = start_date + ',' + end_date
         cdo.seldate(datestring, input=name, output=out)
     return out
     
 def sel_var(name, variable):
     out = 'netcdf/sel_' + split(name)
-    if not os.path.isfile(out):
+    already_exists = already_calculated(out)
+    if already_exists is not None:
+        return already_exists
+    else:
         cdo.selvar(variable, input=name, output=out) 
     return out
 
 def mask(name, realm):
     out = 'netcdf/masked_' + split(name)
-    if not os.path.isfile(out):
+    already_exists = already_calculated(out)
+    if already_exists is not None:
+        return already_exists
+    else:
         if realm == 'ocean':
             try:
                 cdo.ifthen(input='mask/ocean ' + name, output=out)
@@ -289,29 +298,40 @@ def time_mean(name, time_average=False):
     if time_average:
        return name
     out = 'netcdf/climate_' + split(name)
-    if not os.path.isfile(out):
+    already_exists = already_calculated(out)
+    if already_exists is not None:
+        return already_exists
+    else:
         cdo.timmean(input=name, output=out)
     return out  
 
 def trend(name):
     out = 'netcdf/slope_' + split(name)
     outintercept = 'netcdf/intercept_' + split(name)
-    if not os.path.isfile(out):
+    already_exists = already_calculated(out)
+    if already_exists is not None:
+        return already_exists
+    else:
         cdo.trend(input=name, output=outintercept + ' ' + out)
     return out
 
 def detrend(name):
     out = 'netcdf/detrend_' + split(name)
-    if not os.path.isfile(out):
+    already_exists = already_calculated(out)
+    if already_exists is not None:
+        return already_exists
+    else:
         cdo.detrend(input=name, output=out)
     return out    
 
 def setc(name, realm='ocean'):
     if realm == 'atmos':
-#        cdo.setmisstoc(0, input=name, output=out)
         return name
     out = 'netcdf/setc_' + split(name)
-    if not os.path.isfile(out):
+    already_exists = already_calculated(out)
+    if already_exists is not None:
+        return already_exists
+    else:
         cdo.setctomiss(0, input=name, output=out)
     return out
 
@@ -331,7 +351,10 @@ def get_remap_function(remap):
 
 def remap(name, remapname, remapgrid):
     out = 'netcdf/' + remapname + '-' + remapgrid + '_' + split(name)
-    if not os.path.isfile(out):
+    already_exists = already_calculated(out)
+    if already_exists is not None:
+        return already_exists
+    else:
         remap = get_remap_function(remapname)
         try:
             remap(remapgrid, input=name, output=out)
@@ -345,13 +368,19 @@ def remap(name, remapname, remapgrid):
 
 def field_mean(name):
     out = 'netcdf/fldmean_' + split(name)
-    if not os.path.isfile(out):
+    already_exists = already_calculated(out)
+    if already_exists is not None:
+        return already_exists
+    else:
         cdo.fldmean(input=name, output=out)
     return out
 
 def zonal_mean(name):
     out = 'netcdf/zonmean_' + split(name)
-    if not os.path.isfile(out):
+    already_exists = already_calculated(out)
+    if already_exists is not None:
+        return already_exists
+    else:
         cdo.zonmean(input=name, output=out)
     return out
     
@@ -371,7 +400,10 @@ def intlevel(name, depthlist):
         depthname = depthname[:99]
     out = 'netcdf/level-' + str(depthname) + '_' + split(name)
     if depth:
-        if not os.path.isfile(out):
+        already_exists = already_calculated(out)
+        if already_exists is not None:
+            return already_exists
+        else:
             try:
                 cdo.intlevelx(str(depth), input=name, output=out)
             except:
@@ -386,7 +418,10 @@ def season(name, seasonlist):
     seasonstring = ','.join(seasonlist)
     outputstring = ''.join(seasonlist)
     out = 'netcdf/selseason-' + outputstring + '_' + split(name)
-    if not os.path.isfile(out):
+    already_exists = already_calculated(out)
+    if already_exists is not None:
+        return already_exists
+    else:
         cdo.selseas(seasonstring, input=name, output=out)
     return out
 
@@ -401,17 +436,27 @@ def cdos(name, string):
 
 def grid_weights(name):
     out = 'netcdf/gridweights_' + split(name)
-    if not os.path.isfile(out):
+    already_exists = already_calculated(out)
+    if already_exists is not None:
+         return already_exists
+    else:
         cdo.gridweights(input=name, output=out)
     return out
 
 def already_calculated(name):
     if os.path.isfile(name):
         return name
-    precalc = preprocessed_data_root + '/' + split(name)
-    if os.path.isfile(precalc):
-        return precalc
-    return None
+    try:
+        processed_root = constants.processed_cmip5_root
+    except:   
+        return None
+    
+    precalc = processed_root + '/' + split(name)
+    try:
+        if os.path.isfile(precalc):
+            return precalc
+    except:
+        return None
     
 if __name__ == "__main__":
     pass

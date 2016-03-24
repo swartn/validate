@@ -8,6 +8,7 @@ existence checks will not be needed later.
 .. moduleauthor:: David Fallis
 """
 import numpy as np
+import constants
 from matplotlib.colors import LogNorm
 
 DEFAULTS = {'plotprojection': 'mercator',
@@ -102,7 +103,7 @@ rcp = {'dates': {'start_date': '2081-01',
 norms = {'lognorm': LogNorm()}
 
 
-def fill(plots, model_run, experiment, defaults={}):
+def fill(plots, run, experiment, defaults={}):
     """ Fills the blank spaces in plots with default values and returns the list
 
     Parameters
@@ -199,7 +200,7 @@ def fill(plots, model_run, experiment, defaults={}):
         if 'comp_dates' not in p:
             p['comp_dates'] = p['dates']
           
-        p['model_ID'] = model_run
+        p['model_ID'] = run
         p['experiment'] = experiment
         p['plot_depth'] = 0
         

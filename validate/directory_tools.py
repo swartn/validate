@@ -672,7 +672,7 @@ def getcmipfiles(plots, expname, cmipdir):
                 p['comp_cmips'] = []
 
 
-def cmip(plots, cmipdir, cmipmeandir, expname, load):
+def cmip(plots, cmipdir, cmipmeandir, expname):
     """ Import the netCDF files if needed
         and call the functions to modify and map the cmip5 files
     """
