@@ -291,7 +291,7 @@ def zonalmean(x, data, ax=None, ax_args={}, label='model', plot={}, color=None, 
     else:
         fig = plt.gcf()
     ax.plot(x, data, label=label, color=color, zorder=zorder)
-    
+    plt.xlim(-90, 90)
     if ax_args:
         plt.setp(ax, **ax_args)
     plot['stats'] = 'N/A'
