@@ -488,7 +488,6 @@ def section_comparison(plot):
     else:
         pvalues = None
 
-    
     # make plots of data, comparison data, data - comparison data
     fig = plt.figure(figsize=(6, 8))
     gs = gridspec.GridSpec(3, 2, width_ratios=[20, 1])

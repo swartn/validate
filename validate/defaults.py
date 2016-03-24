@@ -241,12 +241,6 @@ def fill(plots, model_run, experiment, defaults={}):
         _fill_args('data1')
         _fill_args('data2')
         _fill_args('comp')
-        
-
-        if p['plot_projection'] == 'section':
-            _section_labels('data1', p)
-            _section_labels('data2', p)
-            _section_labels('comp', p)
          
 
 def _section_labels(datanumber, pl):
@@ -268,7 +262,7 @@ def _section_labels(datanumber, pl):
         pl[datanumber]['ax_args']['ylabel'] = 'Pressure'
     else:
         pl[datanumber]['ax_args']['ylabel'] = 'Depth'
-    pass 
+
 
 def filltitle(p):
     def fill(comp):
@@ -292,3 +286,8 @@ def filltitle(p):
             fill(p['comp_flag'])
         else:
             fill("")
+            
+    if p['plot_projection'] == 'section':
+        _section_labels('data1', p)
+        _section_labels('data2', p)
+        _section_labels('comp', p)
