@@ -896,16 +896,16 @@ def taylor(plot):
         for m in plot['comp_models']:
             plot['comp_model'] = model
             labelled_stats.append(taylor_load(plot, plot['model_file'][m], depth, '$%d$' % (i+1), 'g', refdata, weights))
-
         for c in plot['comp_ids']:
             plot['comp_model'] = c
             labelled_stats.append(taylor_load(plot, plot['id_file'][c], depth, '$%d$' % (i+1), 'y', refdata, weights))
 
         for f in plot['cmip5_files']:
             plot['comp_model'] = 'cmip'
-            unlabelled_stats.append(taylor_load(plot, f, depth, '$%d$' % (i+1), '0.75', refdata, weights))     
-            vals = [str(np.round(data.min(), 1)), str(np.round(data.max(), 1)), str(np.round(weighted_mean(data, weights=weights), 1))]
-            
+            try:
+                unlabelled_stats.append(taylor_load(plot, f, depth, '$%d$' % (i+1), '0.75', refdata, weights))     
+            except:
+                continue
     
     depthlist = [str(i + 1) + ': ' + str(d) for i, d in enumerate(plot['depths'])] 
     label = '  '.join(depthlist)
