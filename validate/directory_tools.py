@@ -517,16 +517,6 @@ def getobs(plots, obsroot, o):
                 print 'No ' + o + ' file was found for ' + p['variable']
                 p['comp_obs'].remove(o)
 
-    def fill_dates(dtype, p):
-        sd, ed = getdates(p['ifile'])
-        p[dtype + '_dates'] = {'start_date': str(sd) + '-01',
-                               'end_date': str(ed) + '-01'}
-    for p in plots:
-        if 'climatology_dates' not in p:
-            fill_dates('climatology', p)
-        if 'trends_dates' not in p:
-            fill_dates('trends', p)
-
 
 def model_files(var, model, expname, frequency, cmipdir):
     prefix = cmipdir + '/' + var + '/'
