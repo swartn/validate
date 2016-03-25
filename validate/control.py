@@ -46,27 +46,35 @@ def execute(options, **kwargs):
 #            check_inputs(plots, run, experiment, observations_root, cmip5_root, obs, defaults, delete)
 
         # fill options not specified using the defaults
+        print 'applying default values...'
         fill(plots, run, experiment, defaults)
         
         # find and modify if necessary the files for the model and experiment
+        print 'finding model files...'
         getfiles(plots, direct_data_root, data_root, run, experiment)
         
         # find the observations files
+        print 'finding observed files...'
         getobsfiles(plots, observations_root)
         
         # find the cmip5 files
+        print 'finding cmip5 files...'
         cmip(plots, cmip5_root, cmip5_means, experiment)
         
         # find the files from other runIds for comparison
+        print 'finding other model files...'
         getidfiles(plots, data_root, experiment)
         
         # THIS IS WHERE THE PLOTS ARE CREATED
+        print 'creating plots...'
         plotnames = loop(plots, debugging)
         
         # cleanup files and directories created during processing
+        print 'cleaning up...'
         remfiles(**delete)
         
         # organize plots in joined.pdf file
+        print 'merging plots...'
         arrange(plotnames)
         
         #create tarfile and move to output
