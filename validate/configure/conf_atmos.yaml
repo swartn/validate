@@ -321,6 +321,13 @@ plots:
           comp_cmips: 'all'
 
         - variable: 'tas'
+          plot_projection: 'zonal_mean'
+          data_type: 'climatology'
+          comp_obs:
+             - 20CR
+          comp_cmips: 'all'
+          
+        - variable: 'tas'
           plot_projection: 'histogram'
           data_type: 'trends'
           comp_obs:
@@ -522,6 +529,13 @@ plots:
           divergent: True
           comp_obs:
              - 20CR             
+
+        - variable: 'uas'
+          plot_projection: 'zonal_mean'
+          data_type: 'climatology'
+          comp_obs:
+             - 20CR
+          comp_cmips: 'all'
 
         - variable: 'ua'
           plot_projection: 'global_map'
