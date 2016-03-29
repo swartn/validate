@@ -916,7 +916,7 @@ def taylor(plot):
         for l in unlabelled_stats:
             l['marker'] = '.'
         label = None
-             
+    dft.filltitle(plot)         
     pr.taylor_from_stats(labelled_stats, unlabelled_stats, obs_label=obs,
                          label=label, ax_args=plot['data1']['ax_args'])
 #    plot['stats'] = {'obserations': {'standard deviation': float(refstd)}}
