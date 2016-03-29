@@ -261,7 +261,7 @@ def colormap(plot):
     return plot_name
 
 def ttest(data1, data2):
-    if data1.shape == data2.shape:
+    if data1.ndim == data2.ndim:
         t, p = sp.stats.ttest_ind(data1, data2, axis=0, equal_var=False)
         return p
     else:
@@ -310,9 +310,9 @@ def colormap_comparison(plot):
         data2, _ = _trend_units(data2, units, plot)
     if plot['units']:
         units = plot['units']
-    # get data at correct depth
 
     if plot['alpha'] and plot['data_type'] == 'climatology':
+
         fulldata, _, _, _, _, _, _ = pl.dataload(plot['ifile'], plot['variable'], 
                                       plot['dates'], realm=plot['realm_cat'], 
                                       scale=plot['scale'], shift=plot['shift'], 
@@ -326,6 +326,8 @@ def colormap_comparison(plot):
         pvalues = ttest(fulldata, fulldata2)
     else:
         pvalues = None
+        
+    print pvalues
     
     if plot['sigma'] and plot['data_type'] == 'trends':
         detrenddata, _, _, _, _, _, _ = pl.dataload(plot['ifile'], plot['variable'],
