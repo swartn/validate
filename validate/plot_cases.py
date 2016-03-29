@@ -326,8 +326,6 @@ def colormap_comparison(plot):
         pvalues = ttest(fulldata, fulldata2)
     else:
         pvalues = None
-        
-    print pvalues
     
     if plot['sigma'] and plot['data_type'] == 'trends':
         detrenddata, _, _, _, _, _, _ = pl.dataload(plot['ifile'], plot['variable'],
@@ -356,7 +354,7 @@ def colormap_comparison(plot):
         data2 = data2.transpose()
         compdata = data - data2
     anom = True if plot['divergent'] or plot['data_type'] == 'trends' else False
-    _comp_pcolor(data, data2, plot)
+    _comp_pcolor(data, data2, plot, anom=anom)
 
     label1 = stats(plot, data, weights=weights, rmse=False) 
     label2 = stats(plot, data2, weights=weights, rmse=False) 
