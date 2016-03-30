@@ -388,7 +388,9 @@ plots:
           data_type: 'climatology'
           plot_args:
               fill_continents: True
-
+          comp_obs:
+            - piomass
+            
         - variable: 'sit'
           plot_projection: 'polar_map'
           data_type: 'climatology'
@@ -396,7 +398,9 @@ plots:
               fill_continents: True
           seasons:
             - DJF    
-              
+          comp_obs:
+            - piomass
+                          
         - variable: 'sit'
           plot_projection: 'polar_map'
           data_type: 'climatology'
@@ -404,7 +408,9 @@ plots:
               fill_continents: True
           seasons:
             - MAM              
-              
+          comp_obs:
+            - piomass
+                          
         - variable: 'sit'
           plot_projection: 'polar_map'
           data_type: 'climatology'
@@ -412,7 +418,9 @@ plots:
               fill_continents: True
           seasons:
             - JJA              
-              
+          comp_obs:
+            - piomass
+                          
         - variable: 'sit'
           plot_projection: 'polar_map'
           data_type: 'climatology'
@@ -420,7 +428,9 @@ plots:
               fill_continents: True
           seasons:
             - SON              
-
+          comp_obs:
+            - piomass
+            
         - variable: 'sit'
           plot_projection: 'polar_map_south'
           data_type: 'climatology'
