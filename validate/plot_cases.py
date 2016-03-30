@@ -590,21 +590,33 @@ def histogram(plot):
     
     if plot['units']:
         units = plot['units']
-
-    values[plot['model_ID']] = data
-
+    values = []
+    
+    values.append({'name': plot['model_ID'],
+                   'data': data,
+                   'color': 'r'})
+                   
     for o in plot['comp_obs']:
-        values[o] = _histogram_data(plot, plot['obs_file'][o])
+        values.append({'name': o,
+                       'data': _histogram_data(plot, plot['obs_file'][o]),
+                       'color': 'b'})
 
     for i in plot['comp_ids']:
-        values[i] = _histogram_data(plot, plot['id_file'][i])
+        values.append({'name': i, 
+                       'data': _histogram_data(plot, plot['id_file'][i]),
+                       'color': 'y'})
 
-    for m in plot['comp_models']:  
-        values[m] = _histogram_data(plot, plot['model_file'][m])
+    for m in plot['comp_models']:
+        values.append({'name': m,
+                       'data': _histogram_data(plot, plot['model_file'][m]),
+                       'color': 'g'})
 
     cmipdata = []
     for f in plot['cmip5_files']:
-        cmipdata.append(_histogram_data(plot, f))
+        try:
+            cmipdata.append(_histogram_data(plot, f))
+        except:
+            continue
     
     
     dft.filltitle(plot)
@@ -846,7 +858,7 @@ def taylor_load(plot, compfile, depth, i, color, refdata, weights):
                                       external_function_args=plot['external_function_args'],
                                       depthneeded=depth)
     corr, refstd, std = weighted_correlation(refdata, data, weights)
-    
+    stats_dictionary(plot, compfile, depth, std, std / refstd, corr)
     
     return {'name': plot['comp_model'],
             'corrcoef': corr,
@@ -854,12 +866,28 @@ def taylor_load(plot, compfile, depth, i, color, refdata, weights):
             'color': color,
             'marker': i,
             'zorder': 2}
+
+def stats_dictionary(plot, filename, depth, sd, nsd, corrcoef):
+    if filename not in plot['stats']:
+        plot['stats'][filename] = {}
+
+    try: 
+        plot['stats'][filename][depth] = {'standard deviation': float(sd),
+                                      'normalized standard deviation': float(nsd),
+                                      'correlation coefficient': float(corrcoef)}
+    except:
+        plot['stats'][filename] = {'standard deviation': float(sd),
+                                      'normalized standard deviation': float(nsd),
+                                      'correlation coefficient': float(corrcoef)}        
+                                      
+#    plot['stats'] = {'obserations': {'standard deviation': float(refstd)}}
           
 def taylor(plot):
     labelled_stats = []
     unlabelled_stats = []
     obs = plot['obs_file'].iterkeys().next()
     plot['plot_depth'] = plot['depths'][0]
+    plot['stats'] = {}
     for i, d in enumerate(plot['depths']):
         refdata, _, _, depth, units, _, weights = pl.dataload(plot['obs_file'][obs], plot['variable'], 
                                       plot['comp_dates'], realm=plot['realm_cat'], 
@@ -870,8 +898,9 @@ def taylor(plot):
                                       external_function=plot['external_function'],
                                       external_function_args=plot['external_function_args'],
                                       depthneeded=[d])
-     
+        
         refstd = weighted_std(refdata, weights)
+        stats_dictionary(plot, obs, d, refstd, 1, 1)
 
         data, _, _, _, _, _, _ = pl.dataload(plot['ifile'], plot['variable'], 
                                       plot['comp_dates'], realm=plot['realm_cat'], 
@@ -888,7 +917,7 @@ def taylor(plot):
                                'color': 'red',
                                'marker': '$%d$' % (i+1),
                                'zorder': 3})
-
+        stats_dictionary(plot, plot['ifile'], d, std, std / refstd, corrcoef)
         if plot['cmip5_file']:
             plot['comp_model'] = 'cmip5'
             labelled_stats.append(taylor_load(plot, plot['cmip5_file'], depth, '$%d$' % (i+1), 'k', refdata, weights))
@@ -916,7 +945,8 @@ def taylor(plot):
         for l in unlabelled_stats:
             l['marker'] = '.'
         label = None
-    dft.filltitle(plot)         
+    dft.filltitle(plot)
+    
     pr.taylor_from_stats(labelled_stats, unlabelled_stats, obs_label=obs,
                          label=label, ax_args=plot['data1']['ax_args'])
 #    plot['stats'] = {'obserations': {'standard deviation': float(refstd)}}

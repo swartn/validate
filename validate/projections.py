@@ -414,9 +414,9 @@ def histogram(data, values, ax=None, ax_args=None, plot={}):
     
 #    colormap = plt.cm.gist_rainbow
 #    ax.set_color_cycle([colormap(i) for i in np.linspace(0, 0.9, len(values))])
-    for key in values:
-        plt.axvline(values[key], label=key, linewidth=4,
-                    color=next(ax._get_lines.color_cycle))
+    for sample in values:
+        plt.axvline(sample['data'], label=sample['name'], linewidth=4,
+                    color=sample['color'])
     plt.setp(ax, **ax_args)
     if 'title' in ax_args:
         plt.title(ax_args['title'])
