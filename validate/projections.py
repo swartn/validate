@@ -391,7 +391,8 @@ def taylor_from_stats(labelled_data, unlabelled_data, obs_label='observation', f
                        zorder=sample['zorder']-1,
                        label=sample['name'])
 
-    dia.add_grid(True, axis='x', linestyle='--')
+    dia.add_grid(True, axis='x', linestyle='--', alpha=0.6,
+                 color='0.5', zorder=0)
                   
     contours = dia.add_contours(colors='0.5')
     plt.clabel(contours, inline=1, fontsize=10)
