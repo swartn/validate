@@ -424,6 +424,17 @@ def histogram(data, values, ax=None, ax_args=None, plot={}):
     
     ax.legend(loc='best')
     
+def scatter(data, data2, ax=None, ax_args=None, plot={}):
+    print ax_args
+    if not ax:
+        fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+    else:
+        fig = plt.gcf()
+    x = data.flatten()
+    y = data2.flatten()
+    ax.scatter(x, y, marker='.', c='0.5', s=0.3)
+    if ax_args:
+        plt.setp(ax, **ax_args)  
 
 if __name__ == "__main__":
     pass

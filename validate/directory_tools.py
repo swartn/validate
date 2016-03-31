@@ -401,6 +401,8 @@ def getfiles(plots, directroot, root, run, experiment):
         vf[(getfrequency(f), getvariable(f), getrealization(f))].append(f)
     for p in plots:
         fvr.append((p['frequency'], p['variable'], str(p['realization'])))
+        for evar in p['extra_variables']:
+            fvr.append((p['frequency'], evar, str(p['realization'])))
     for key in vf.keys():
         if key not in fvr:
             del vf[key]
@@ -413,10 +415,19 @@ def getfiles(plots, directroot, root, run, experiment):
             p['ifile'] = filedict[(p['frequency'], p['variable'], str(p['realization']))]
         p['realm'] = realms[p['variable']]
         p['realm_cat'] = getrealmcat(p['realm'])
+        p['extra_ifiles'] = {}
+        p['extra_realms'] = {}
+        p['extra_realm_cats'] = {}
+        for evar in p['extra_variables']:
+            p['extra_ifiles'][evar] = filedict[(p['frequency'], evar, str(p['realization']))]
+            p['extra_realms'][evar] = realms[evar]
+            p['extra_realm_cats'][evar] = getrealmcat(p['extra_realms'][evar])
         
         if 'fill_continents' not in p['plot_args']:
             if p['realm_cat'] == 'ocean':
                 p['plot_args']['fill_continents'] = True
+
+      
 
 
 def getidfiles(plots, root, experiment):

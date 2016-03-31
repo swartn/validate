@@ -956,4 +956,48 @@ def taylor(plot):
     if not plot['units']:
         plot['units'] = units
     plot['comp_file'] = plot['obs_file']
-    return plot_name    
+    return plot_name
+
+def scatter(plot):
+    print 'plotting scatter map of ' + plot['variable'] + ' and ' + plot['extra_variables'][0]
+    # load data from netcdf file
+    data, lon, lat, depth, units, _, weights = pl.dataload(plot['ifile'], plot['variable'], 
+                                          plot['dates'], realm=plot['realm_cat'], 
+                                          scale=plot['scale'], shift=plot['shift'], 
+                                          remapf=plot['remap'], remapgrid=plot['remap_grid'], 
+                                          seasons=plot['seasons'], datatype=plot['data_type'],
+                                          cdostring=plot['cdostring'],
+                                          external_function=plot['external_function'],
+                                          external_function_args=plot['external_function_args'])
+    # get data at correct depth
+    data = _depth_data(data, depth, plot)
+    data2, _, _, _, units2, _, _ = pl.dataload(plot['extra_ifiles'][plot['extra_variables'][0]], 
+                                          plot['extra_variables'][0], 
+                                          plot['dates'], 
+                                          realm=plot['extra_realm_cats'][plot['extra_variables'][0]], 
+                                          scale=plot['extra_scales'][0], shift=plot['shift'], 
+                                          remapf=plot['remap'], remapgrid=plot['remap_grid'], 
+                                          seasons=plot['seasons'], datatype=plot['data_type'],
+                                          cdostring=plot['cdostring'],
+                                          external_function=plot['external_function'],
+                                          external_function_args=plot['external_function_args'],
+                                          depthneeded=[plot['plot_depth']])
+    if plot['data_type'] == 'trends':
+        data, units = _trend_units(data, units, plot)
+        data2, units2 = _trend_units(data2, units2, plot)
+    if plot['units']:
+        units = plot['units']
+    if not plot['data1']['title_flag']:
+        plot['data1']['ax_args']['title'] = plot['data_type'] + ' ' + plot['model_ID'] + ' ' + plot['dates']['start_date'] + ' - ' + plot['dates']['end_date']
+    plot['data1']['ax_args']['xlabel'] = plot['variable'] + ' ' + units
+    plot['data1']['ax_args']['ylabel'] = plot['extra_variables'][0] + ' ' + units2
+    
+
+    # make plot    
+    pr.scatter(data, data2, ax_args=plot['data1']['ax_args'], plot=plot)
+
+    plot_name = plotname(plot)
+    savefigures(plot_name, **plot)
+    plot['units'] = units
+    return plot_name
+       
