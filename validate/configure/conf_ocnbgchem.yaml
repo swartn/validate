@@ -197,6 +197,7 @@ plots:
               ax_args:
                   ylabel: 'kg s-1'      
           divergent: True
+          frequency: 'yr'
 
         - variable: 'epc100'
           plot_projection: 'global_map'
