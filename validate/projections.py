@@ -370,11 +370,17 @@ def taylor_from_stats(labelled_data, unlabelled_data, obs_label='observation', f
     for i, sample in enumerate(labelled_data):
         if sample['corrcoef'] < 0:
             sample['corrcoef'] = 0
-        dia.add_sample(sample['std'], sample['corrcoef'],
+        if 'color' not in sample:
+            dia.add_sample(sample['std'], sample['corrcoef'],
+                       marker=sample['marker'], ms=8, ls='',
+                       zorder=sample['zorder'],
+                       label=sample['name'])
+        else:
+            dia.add_sample(sample['std'], sample['corrcoef'],
                        marker=sample['marker'], ms=8, ls='',
                        mfc=sample['color'], mec=sample['color'],
                        zorder=sample['zorder'],
-                       label=sample['name'])
+                       label=sample['name'])        
         handles_dictionary[sample['name']] = sample['color']
     handles = [mpatches.Patch(color=color, label=name) for name, color in handles_dictionary.iteritems()]
     handles = [mpatches.Patch(color='b')] + handles
@@ -385,7 +391,13 @@ def taylor_from_stats(labelled_data, unlabelled_data, obs_label='observation', f
     for sample in unlabelled_data:         
         if sample['corrcoef'] < 0:
             sample['corrcoef'] = 0
-        dia.add_sample(sample['std'], sample['corrcoef'],
+        if 'color' not in sample:
+            dia.add_sample(sample['std'], sample['corrcoef'],
+                       marker=sample['marker'], ms=8, ls='',
+                       zorder=sample['zorder']-1,
+                       label=sample['name'])
+        else:         
+            dia.add_sample(sample['std'], sample['corrcoef'],
                        marker=sample['marker'], ms=8, ls='',
                        mfc=sample['color'], mec=sample['color'],
                        zorder=sample['zorder']-1,

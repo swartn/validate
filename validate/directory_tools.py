@@ -33,6 +33,8 @@ def _variable_dictionary(plots):
     variables = {}
     for p in plots:
         variables[p['variable']] = []
+        for evar in p['extra_variables']:
+            variables[evar] = []
     return variables
 
 
@@ -518,7 +520,7 @@ def getobs(plots, obsroot, o):
             variables[var].append(f)
     for p in plots:
         if o in p['comp_obs']:
-            if 'obs_files' not in p:
+            if 'obs_file' not in p:
                 p['obs_file'] = {}
             try:
                 p['obs_file'][o] = variables[p['variable']][0]
@@ -527,8 +529,24 @@ def getobs(plots, obsroot, o):
                     outfile.write('No observations file was found for ' + p['variable'] + '\n\n')
                 print 'No ' + o + ' file was found for ' + p['variable']
                 p['comp_obs'].remove(o)
-
-
+        if o in p['extra_obs']:
+            if 'extra_obs_files' not in p:
+                p['extra_obs_files'] = {}
+            for i, name in enumerate(p['extra_obs'][:]):
+               if name == o:
+                   try:
+                       p['extra_obs_files'][p['extra_variables'][i]] = variables[p['extra_variables'][i]][0]
+                   except:
+                       with open('logs/log.txt', 'a') as outfile:
+                           outfile.write('No observations file was found for ' + p['extra_variables'][i] + '\n\n')
+                       print 'No ' + o + ' file was found for ' + p['extra_variables'][i]
+                       p['extra_variables'].pop(i)
+                       p['extra_scales'].pop(i)
+                       p['extra_comp_scales'].pop(i)
+                       p['extra_shifts'].pop(i)
+                       p['extra_comp_shifts'].pop(i)                       
+                       p['extra_obs'].pop(i)
+                                          
 def model_files(var, model, expname, frequency, cmipdir):
     prefix = cmipdir + '/' + var + '/'
     ensstring = prefix + var + '_*' + frequency + '_*' + model + '_' + expname + '_*.nc'

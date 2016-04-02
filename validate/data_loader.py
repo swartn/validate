@@ -191,7 +191,7 @@ def dataload(ifile, var, dates, realm='atmos', scale=1, shift=0,
              datatype='full', depthneeded=None, section=False, fieldmean=False, gridweights=False,
              cdostring=None, external_function=None, external_function_args={}):
     time_averaged_bool = _check_dates(ifile, dates)
-    
+
     sel_var_file = sel_var(ifile, var)
     masked_file = mask(sel_var_file, realm)
     c_file = setc(masked_file, realm)
@@ -248,7 +248,9 @@ def split(name):
     return filename
 
 def sel_date(name, start_date, end_date, time_average=False):
+    print time_average
     if time_average:
+        
         return name
     out = 'netcdf/seldate_' + start_date + '_' + end_date + '_' + split(name)
     already_exists = already_calculated(out)

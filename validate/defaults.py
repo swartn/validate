@@ -29,6 +29,7 @@ DEFAULTS = {'plotprojection': 'mercator',
             'units': None,
             'divergent': False,
             'extra_variables': [],
+            'extra_obs': [],
             'external_function': None,
             'external_function_args': {},
             }
@@ -174,7 +175,16 @@ def fill(plots, run, experiment, defaults={}):
         if 'comp_scale' not in p:
             p['comp_scale'] = p['scale']
         if 'comp_shift' not in p:
-            p['comp_shift'] = p['shift'] 
+            p['comp_shift'] = p['shift']
+        if 'extra_scales' not in p:
+            p['extra_scales'] = [1] * len(p['extra_variables'])
+        if 'extra_comp_scales' not in p:
+            p['extra_comp_scales'] = p['extra_scales']
+        if 'extra_shifts' not in p:
+            p['extra_shifts'] = [0] * len(p['extra_variables'])
+        if 'extra_comp_shifts' not in p:
+            p['extra_comp_shifts'] = p['extra_shifts'] 
+
         # remove plot from list if no variable is provided
         if 'variable' not in p:
             plots.remove(p)

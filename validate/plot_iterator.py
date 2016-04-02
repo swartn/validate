@@ -46,6 +46,7 @@ def compare(plot):
                 'histogram': pc.histogram,
                 'zonal_mean': pc.zonalmean,
                 'taylor': pc.taylor,
+                'multivariable_taylor': pc.multivariable_taylor,
                 'scatter': pc.scatter,
                 }[pl]
     func_case = pregion_comp(plot['plot_projection'])
@@ -132,7 +133,7 @@ def comp_loop(plot, plotnames, ptype):
 
 
 def loop_plot_types(plot, plotnames):
-    if plot['plot_projection'] == 'time_series' or plot['plot_projection'] == 'zonal_mean' or plot['plot_projection'] == 'taylor' or plot['plot_projection'] == 'histogram' or plot['plot_projection'] == 'scatter':
+    if plot['plot_projection'] == 'time_series' or plot['plot_projection'] == 'zonal_mean' or plot['plot_projection'] == 'taylor' or plot['plot_projection'] == 'histogram' or plot['plot_projection'] == 'scatter' or plot['plot_projection'] == 'multivariable_taylor':
         plot['comp_model'] = 'Model'
         calltheplot(plot, plotnames, 'compare')    
     else:
