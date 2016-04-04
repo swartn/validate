@@ -191,13 +191,15 @@ plots:
         - variable: 'fgco2'
           plot_projection: 'time_series'
           data_type: 'climatology'
-          cdostring: 'fldsum -seldate,1979-01,2000-01 -mul mask/areacello'
+          external_function: 'field_integral'
           scale: 0.2728
+          comp_scale: -1
           data1:
               ax_args:
-                  ylabel: 'kg s-1'      
-          divergent: True
-          frequency: 'yr'
+                  ylabel: 'kg s-1'
+          frequency: 'mon'
+          comp_obs:
+            - landschuetzer
 
         - variable: 'epc100'
           plot_projection: 'global_map'

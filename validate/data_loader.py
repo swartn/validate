@@ -183,6 +183,7 @@ def _time(ds, time_averaged):
 def get_external_function(name):
     def external_functions(function_name):
         return {'sample': external.sample,
+                'field_integral': external.field_integral,
                }[function_name]
     return external_functions(name)
     
@@ -248,7 +249,6 @@ def split(name):
     return filename
 
 def sel_date(name, start_date, end_date, time_average=False):
-    print time_average
     if time_average:
         
         return name

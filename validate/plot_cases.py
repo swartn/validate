@@ -750,7 +750,6 @@ def zonalmean(plot):
                                         external_function=plot['external_function'],
                                         external_function_args=plot['external_function_args'])
 
-    plot['data1']['ax_args']['xlabel'] = 'Latitude'
     if 'ylabel' not in plot['data1']['ax_args']:
         if plot['units']:
             plot['data1']['ax_args']['ylabel'] = plot['units']
@@ -855,14 +854,9 @@ def weighted_correlation(obs, data, weights=None):
     dbar = np.ma.average(dataf, weights=weightsf)
     ovar = np.sqrt(np.ma.average((obsf-obar)**2, weights=weightsf))
     dvar = np.sqrt(np.ma.average((dataf-dbar)**2, weights=weightsf))
-    print obar
-    print dbar
-    print ovar
-    print dvar
-    print np.nansum(weightsf)
     r = 1.0 / np.nansum(weightsf) * np.nansum( ( (obsf-obar)*(dataf-dbar)*weightsf ) / (ovar*dvar) )
     r =  np.ma.average((obsf-obar)*(dataf-dbar), weights=weightsf) / (ovar*dvar)
-    print r
+
     return r, ovar, dvar
 
 def taylor_load(plot, compfile, depth, i, color, refdata, weights):

@@ -275,7 +275,10 @@ def _section_labels(datanumber, pl):
     else:
         pl[datanumber]['ax_args']['ylabel'] = 'Depth'
 
-
+def _zonal_labels(datanumber, pl):
+    pl[datanumber]['ax_args']['xlabel'] = 'Latitude'
+    pl[datanumber]['ax_args']['xticks'] = np.arange(-80, 81, 20)
+        
 def filltitle(p):
     def fill(comp):
         if not p['data1']['title_flag']:
@@ -303,3 +306,7 @@ def filltitle(p):
         _section_labels('data1', p)
         _section_labels('data2', p)
         _section_labels('comp', p)
+    if p['plot_projection'] == 'zonal_mean':
+        _zonal_labels('data1', p)
+        _zonal_labels('data2', p)
+        _zonal_labels('comp', p)    
