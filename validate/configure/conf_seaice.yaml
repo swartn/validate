@@ -390,7 +390,7 @@ plots:
               fill_continents: True
           comp_obs:
             - piomass
-            
+                        
         - variable: 'sit'
           plot_projection: 'polar_map'
           data_type: 'climatology'
@@ -400,7 +400,7 @@ plots:
             - DJF    
           comp_obs:
             - piomass
-                          
+                                      
         - variable: 'sit'
           plot_projection: 'polar_map'
           data_type: 'climatology'
@@ -410,7 +410,7 @@ plots:
             - MAM              
           comp_obs:
             - piomass
-                          
+                
         - variable: 'sit'
           plot_projection: 'polar_map'
           data_type: 'climatology'
