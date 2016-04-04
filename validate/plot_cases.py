@@ -1078,8 +1078,10 @@ def scatter(plot):
         units = plot['units']
     if not plot['data1']['title_flag']:
         plot['data1']['ax_args']['title'] = plot['data_type'] + ' ' + plot['model_ID'] + ' ' + plot['dates']['start_date'] + ' - ' + plot['dates']['end_date']
-    plot['data1']['ax_args']['xlabel'] = plot['variable'] + ' ' + units
-    plot['data1']['ax_args']['ylabel'] = plot['extra_variables'][0] + ' ' + units2
+    if 'xlabel' not in plot['data1']['ax_args']:
+        plot['data1']['ax_args']['xlabel'] = plot['variable'] + ' ' + units
+    if 'ylabel' not in plot['data1']['ax_args']:
+        plot['data1']['ax_args']['ylabel'] = plot['extra_variables'][0] + ' ' + units2
     
 
     # make plot    
