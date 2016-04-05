@@ -801,10 +801,12 @@ def zonalmean(plot):
         handles.append(mpatches.Patch(color='y', label=str(plot['comp_model'])))
 
     for f in plot['cmip5_files']:
-        plot['comp_model'] = 'cmip'
-        data = zonalmeandata(plot, f)
-        pr.zonalmean(lat, data, plot=plot, ax=ax, color='0.75', zorder=1)
-
+        try:
+            plot['comp_model'] = 'cmip'
+            data = zonalmeandata(plot, f)
+            pr.zonalmean(lat, data, plot=plot, ax=ax, color='0.75', zorder=1)
+        except:
+            continue
     ax.legend(handles=handles, loc='center left', bbox_to_anchor=(1, 0.5))
     plot_name = plotname(plot)
     savefigures(plot_name, **plot)
