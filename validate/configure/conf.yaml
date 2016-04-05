@@ -8,7 +8,7 @@
 #             example:             
 #                 run: 'edr'
 #
-#experiment : The type of experiment
+# experiment : The type of experiment
 #
 #             example
 #                 experiment: 'historical'
@@ -29,8 +29,11 @@
 #                               'time_series'
 #                               'zonal_mean'
 #                               'taylor'
+#                               'multivariable_taylor'
+#                               'histogram'
 #          data_type: The type of data to be displayed
 #                     Either 'climatology' or 'trends'
+#          comp_obs : A list of observations directory names to compare
 #          comp_models : A list of strings of cmip5 model names to compare
 #          comp_ids : A list of strings of run IDs to compare
 #          comp_cmips : A list of strings of cmip5 model names to be used
@@ -48,18 +51,21 @@
 #                           to the dates to used for the comparison data.
 #                           Should be of the form 'yyyy-mm-dd' or 'yyyy-mm'
 #                           ex. {'start_date': '1970-01-01', 'end_date': '1990-01'}
-#          realization : integer or string of realizaion number
-#                          ex. 'r1i1p1'
-#          depth_type : string of the depth type used for the variable in the netCDF file.
-#                         required for depths to be specified and for section plots
-#                         ex 'plev'
-#          depths : list of integers of the depths to be plotted in the units specified
+#          realization : integer of realization number
+#                          ex. 1
+#          depths : list of integers of the depths to be plotted in the units used by the netcdf file
 #                     under 'depth_type'
 #                     ex. [10000, 2500, 1000]
 #          frequency : time interval of data
 #                        ex. 'mon'
 #          scale : float
 #                    the data is mulitiplied by the scalar value
+#          comp_scale : float
+#                    the comparison data is multiplies by the scalar value
+#          shift : float
+#                    the data is shifted by the scalar values
+#          comp_shift : float
+#                    the comparison data is shited by the scalar value 
 #          remap : string
 #                    type of remapping
 #                    ex. 'remapdis'
@@ -71,15 +77,33 @@
 #                         'draw_parallels'
 #                         'draw_meridians'
 #                        ex. {'fill_continents': True}
-#          data1_args : A dictionary specifying the arguments for the model data plot
-#          data2_args : A dictionary specifying the arguments for the observations data plot.
-#                         It uses the came keys as 'data1_args'
-#          comp_args : A dictionary specifying the arguments for the comparsson plot of
-#                        the model and observations. It uses the same keys as 'data1_args'
+#          data1 : A dictionary specifying the arguments for the model data plot
+#                  pcolor_args : A dictionary for manually setting arguments for the colorbar
+#                  ax_args : A dictionary for manually setting matplotlib arguments for the axes
+#          data2 : A dictionary specifying the arguments for the observations data plot.
+#                      It uses the came keys as 'data1'
+#          comp : A dictionary specifying the arguments for the comparsson plot of
+#                      the model and observations. It uses the same keys as 'data1'
+#          seasons : A list of the seasons. Use the first letter of the months to declare
+#                        ex. ['DJA','JJA']
+#          comp_seasons : A list of the seasons to be used by the comparison data
+#          log_depth_axis : boolean
+#                           switches the y-axis on sections to a log scale
+#          yearmean : boolean
+                      Uses the yearly mean for time series plots even if 
+                      daily or monthly frequency is specified
+#          extra_variables : list of variables to be used by certain plots such as
+#                            multivariable_taylor and scatter
+#          extra_scales : list of scales to be used by extra_variables
+#                         Must be in the same order as the extra_variables
+#          extra_shifts : list of shifts to be used by extra_variables
+#                         Must be in the same order as extra_variables
+#          extra_obs : list of observation directory names to be used by extra_variables
+#          extra_comp_scales : list of scales to be used by extra_obs
+#          extra_comp_shifts : lists of shifts to be used by extra_obs
+#
 #          ifile : Can be used to specify a netCDF filename, including the directoy path
-#                    to be used for this plot.
-#          obs_file : Can be used to specify a filename, including the directory path, 
-#                        to be used for the observation data.
+#                    to be used for this plot..
 #                        
 # defaults : A  dictionary specifying any options to be applied to all of the plots,
 #            using the same keys as plots.
@@ -90,12 +114,10 @@
 #          to True if the temporary files should be deleted afeter the plots
 #          have been produced. Any keys not specified will be treated as True.
 #          Possible keys:
-#           del_fldmeanfiles
+#           del_netcdf
+#           del_cmipfiles
 #           del_mask
 #           del_ncstore
-#           del_remapfiles
-#           del_trendfiles
-#           del_zonalfiles
 #          
 #          example:
 #              delete = {
@@ -103,26 +125,26 @@
 #                  del_mask: True,
 #                  del_ncstore: False,
 #              }             
-#
-# obs : A dictionary mapping the name of the variable to the name of a netCDF
-#       file with observations data for that variable. The name must include
-#       the filepath. This will be overwritten if a file is specified in the 
-#       plot dictionary within plots.
 #      
-#       example:
-#           obs = {
-#               'no3' : '/raid/ra40/data/ncs/obs4comp/uncs_orca2_data_data_n_an_nomask.nc',
-#        }          
 #
-# observations_root : A string naming the directory where netCDF observation files can 
-#                     be found if they were not specifically specified in the plot or the
-#                     obs dictionary. To be found the files in the directory can be within 
-#                     subdirectories, but the filenames must begin with the variable
-#                     name followed by an underscore: 'var_*'
+# data_root            : A string naming the directory containing the output data based 
+#                        on the run ID
+# direct_data_root     : A string to be used when the data does not have a run ID or is
+#                        not stored in the standard format. The directory path should be directly 
+#                        to the loactions of the data 
+# observations_root    : A string naming the directory where netCDF observation files can 
+#                        be found if they were not specifically specified in the plot or the
+#                        obs dictionary. To be found the files in the directory can be within 
+#                        subdirectories, but the filenames must begin with the variable
+#                        name followed by an underscore: 'var_*'
 #            
-#                     example:
-#                         obsroot = '/raid/ra40/data/ncs/obs4comp/'                        
-
+#                        example:
+#                            obsroot = '/raid/ra40/data/ncs/obs4comp/'                        
+# cmip5_root           : A string naming the directory containing the cmip5_data
+# cmip5_means          : A string naming the the loactions of the cmip5 ensemble means
+# output_root          : The directory to output the tar logs and plots files
+# processed_cmip5_root : The location of a cache containing already partially processed
+#                        netcdf files to increase performance 
 
 
 run: 'CanESM2'
