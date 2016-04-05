@@ -1,2 +1,2 @@
--e git+https://github.com/fallisd/cmipdata.git@07057d88d7aa8948e809544b4ed1b9ee8b7b0a8a#egg=cmipdata-develop
+-e git+https://github.com/fallisd/cmipdata.git@e5f5f8251909f167b6db1b02872dcee7a07435e8#egg=cmipdata
 

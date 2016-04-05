@@ -24,28 +24,22 @@ Then edit the conf.yaml file to the following:
 
     defaults:
                 climatology: True
-                compare_climatology: False
                 climatology_dates:
                   start_date: '1980-01'
                   end_date: '2000-01'
                 png: True
 
     plots:    
-            - variable: 'ta'
-              plot_projection: 'section'
+            - variable: 'tas'
+              plot_projection: 'zonal_mean'
 
     delete:
-              del_fldmeanfiles: True
+              del_netcdf: False
               del_mask: True
               del_ncstore: True
-              del_remapfiles: True
-              del_trendfiles: True
-              del_zonalfiles: True
-              del_ENS_MEAN_cmipfiles: True
-              del_ENS_STD_cmipfiles: True
               del_cmipfiles: False
 
-              
+    direct_data_root: '/raid/rc40/data/ncs/historical-edr/'        
     observations_root: '/raid/rc40/data/ncs/obs4comp'
     cmip5_root: '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
 

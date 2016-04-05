@@ -1,0 +1,549 @@
+# conf
+# ===============
+# File used to configure the output of running the validation package.
+# Several parameters can be defined.
+# 
+# run : A three letter string associated with the run ID to be tested.             
+#            
+#             example:             
+#                 run: 'edr'
+#
+# experiment : The type of experiment
+#
+#             example
+#                 experiment: 'historical'
+#
+# plots : A list of dictionaries specifying the plots to be produced. At a minimum
+#         to produce a plot, the dictionary must have a 'variable' and 'plot_projection'
+#         specified. The rest of the keys are options for customizing the plots.
+#         Possible keys:
+#          variable' : The variable to be plotted.
+#                       ex. 'ta'
+#          plot_projection' : The plot to be made.
+#                              options:
+#                               'global_map'
+#                               'mercator'
+#                               'polar_map'
+#                               'polar_map_south'
+#                               'section'
+#                               'time_series'
+#                               'zonal_mean'
+#                               'taylor'
+#                               'multivariable_taylor'
+#                               'histogram'
+#          data_type: The type of data to be displayed
+#                     Either 'climatology' or 'trends'
+#          comp_obs : A list of observations directory names to compare
+#          comp_models : A list of strings of cmip5 model names to compare
+#          comp_ids : A list of strings of run IDs to compare
+#          comp_cmips : A list of strings of cmip5 model names to be used
+#                       for the cmip average
+#                       'all' can be used to select all the models
+#          dates : A dictionary mapping
+#                                'start_date'
+#                                'end_date'
+#                                to the dates to use in the plots.
+#                                Should be of the form 'yyyy-mm-dd' or 'yyyy-mm'
+#                                ex. {'start_date': '1970-01-01', 'end_date': '1990-01'}
+#          comp_dates : A dictionary mapping
+#                           'start_date'
+#                           'end_date'
+#                           to the dates to used for the comparison data.
+#                           Should be of the form 'yyyy-mm-dd' or 'yyyy-mm'
+#                           ex. {'start_date': '1970-01-01', 'end_date': '1990-01'}
+#          realization : integer of realization number
+#                          ex. 1
+#          depths : list of integers of the depths to be plotted in the units used by the netcdf file
+#                     under 'depth_type'
+#                     ex. [10000, 2500, 1000]
+#          frequency : time interval of data
+#                        ex. 'mon'
+#          scale : float
+#                    the data is mulitiplied by the scalar value
+#          comp_scale : float
+#                    the comparison data is multiplies by the scalar value
+#          shift : float
+#                    the data is shifted by the scalar values
+#          comp_shift : float
+#                    the comparison data is shited by the scalar value 
+#          remap : string
+#                    type of remapping
+#                    ex. 'remapdis'
+#          remap_grid : string
+#                       remapping grid or filename with grid   
+#          plot_args : dictionary with some boolean options for the map plots
+#                        options:
+#                         'fill_continents'
+#                         'draw_parallels'
+#                         'draw_meridians'
+#                        ex. {'fill_continents': True}
+#          data1 : A dictionary specifying the arguments for the model data plot
+#                  pcolor_args : A dictionary for manually setting arguments for the colorbar
+#                  ax_args : A dictionary for manually setting matplotlib arguments for the axes
+#          data2 : A dictionary specifying the arguments for the observations data plot.
+#                      It uses the came keys as 'data1'
+#          comp : A dictionary specifying the arguments for the comparsson plot of
+#                      the model and observations. It uses the same keys as 'data1'
+#          seasons : A list of the seasons. Use the first letter of the months to declare
+#                        ex. ['DJA','JJA']
+#          comp_seasons : A list of the seasons to be used by the comparison data
+#          log_depth_axis : boolean
+#                           switches the y-axis on sections to a log scale
+#          yearmean : boolean
+                      Uses the yearly mean for time series plots even if 
+                      daily or monthly frequency is specified
+#          extra_variables : list of variables to be used by certain plots such as
+#                            multivariable_taylor and scatter
+#          extra_scales : list of scales to be used by extra_variables
+#                         Must be in the same order as the extra_variables
+#          extra_shifts : list of shifts to be used by extra_variables
+#                         Must be in the same order as extra_variables
+#          extra_obs : list of observation directory names to be used by extra_variables
+#          extra_comp_scales : list of scales to be used by extra_obs
+#          extra_comp_shifts : lists of shifts to be used by extra_obs
+#
+#          ifile : Can be used to specify a netCDF filename, including the directoy path
+#                    to be used for this plot..
+#                        
+# defaults : A  dictionary specifying any options to be applied to all of the plots,
+#            using the same keys as plots.
+#            It will not overwrite values declared in plots.          
+#                        
+#         
+# delete : A dictionary mapping directories to booleans. The booleans are set
+#          to True if the temporary files should be deleted afeter the plots
+#          have been produced. Any keys not specified will be treated as True.
+#          Possible keys:
+#           del_netcdf
+#           del_cmipfiles
+#           del_mask
+#           del_ncstore
+#          
+#          example:
+#              delete = {
+#                  del_fldmeanfiles: True,
+#                  del_mask: True,
+#                  del_ncstore: False,
+#              }             
+#      
+#
+# data_root            : A string naming the directory containing the output data based 
+#                        on the run ID
+# direct_data_root     : A string to be used when the data does not have a run ID or is
+#                        not stored in the standard format. The directory path should be directly 
+#                        to the loactions of the data 
+# observations_root    : A string naming the directory where netCDF observation files can 
+#                        be found if they were not specifically specified in the plot or the
+#                        obs dictionary. To be found the files in the directory can be within 
+#                        subdirectories, but the filenames must begin with the variable
+#                        name followed by an underscore: 'var_*'
+#            
+#                        example:
+#                            obsroot = '/raid/ra40/data/ncs/obs4comp/'                        
+# cmip5_root           : A string naming the directory containing the cmip5_data
+# cmip5_means          : A string naming the the loactions of the cmip5 ensemble means
+# output_root          : The directory to output the tar logs and plots files
+# processed_cmip5_root : The location of a cache containing already partially processed
+#                        netcdf files to increase performance                         
+
+
+
+run: 'CanESM2'
+experiment: 'historical'
+
+defaults:
+          dates:
+              start_date: '1980-01'
+              end_date: '2005-01'
+          png: True
+plots:
+
+        - variable: 'chl'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          scale: 1000000
+          units: mg m-3
+          comp_obs:
+            - observations
+          data1:
+              pcolor_args: 
+                  norm: lognorm
+          data2:
+              pcolor_args: 
+                  norm: lognorm
+                  
+        - variable: 'chl'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+          scale: 1000000
+          units: mg m-3/decade
+
+        - variable: 'chl'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_cmips: 'all'
+
+        - variable: 'fgco2'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          scale: 8600727000
+          comp_scale: -31536000000 
+          units: 'g m-2 y-1'
+          divergent: True
+          comp_obs:
+            - landschuetzer
+
+        - variable: 'fgco2'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+          scale: 8600727000
+          units: 'g m-2 y-1/decade'
+          divergent: True
+
+        - variable: 'fgco2'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          scale: 8600727000
+          comp_scale: -31536000000 
+          comp_obs:
+            - landschuetzer
+          comp_cmips: 'all'
+
+        - variable: 'fgco2'
+          plot_projection: 'time_series'
+          data_type: 'climatology'
+          external_function: 'field_integral'
+          scale: 0.2728
+          comp_scale: -1
+          data1:
+              ax_args:
+                  ylabel: 'kg s-1'
+          frequency: 'mon'
+          comp_obs:
+            - landschuetzer
+
+        - variable: 'epc100'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          scale: 31536000
+          units: 'mol m-2 y-1'
+          comp_obs:
+            - observations
+
+        - variable: 'epc100'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+          scale: 31536000
+          units: 'mol m-2 y-1/decade'
+
+        - variable: 'epc100'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          scale: 31536000
+          comp_obs:
+            - observations
+          comp_cmips: 'all'
+          
+        - variable: 'epcalc100'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          scale: 31536000
+          units: 'mol m-2 y-1'
+
+        - variable: 'epcalc100'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+          scale: 31536000
+          units: 'mol m-2 y-1/decade'
+
+        - variable: 'intpp'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          scale: 31536000
+          units: 'mol m-2 y-1'
+
+        - variable: 'intpp'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+          scale: 31536000
+          units: 'mol m-2 y-1/decade'
+        
+        - variable: 'frc'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          scale: 31536000
+          units: 'mol m-2 y-1'
+   
+        - variable: 'frc'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+          scale: 31536000
+          units: 'mol m-2 y-1/decade'
+   
+        - variable: 'intdic'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'intdic'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+
+        - variable: 'dpco2'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          comp_obs:
+            - landschuetzer
+
+        - variable: 'dpco2'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+
+        - variable: 'dpco2'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+            - landschuetzer
+          comp_cmips: 'all'
+
+        - variable: 'spco2'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+          comp_obs:
+            - landschuetzer
+
+        - variable: 'spco2'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+
+        - variable: 'spco2'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+            - landschuetzer
+          comp_cmips: 'all'
+                    
+        - variable: 'dissic'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+
+        - variable: 'dissic'
+          plot_projection: 'mercator'
+          data_type: 'trends'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          units: 'mmol m-3/decade'
+          scale: 1000
+          
+        - variable: 'dissic'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          frequency: 'yr'
+          comp_obs:
+            - observations          
+          set_yscale: 'linear'
+          
+        - variable: 'dissic'
+          plot_projection: 'section'
+          data_type: 'trends'
+          frequency: 'yr'
+          set_yscale: 'linear'
+          units: 'mmol m-3/decade'
+          scale: 1000
+                      
+        - variable: 'dissic'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_cmips: 'all'
+          frequency: 'yr'       
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+            
+        - variable: 'no3'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+          scale: 1000
+          units: 'mmol m-3'
+
+        - variable: 'no3'
+          plot_projection: 'mercator'
+          data_type: 'trends'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          scale: 1000
+          units: 'mmol m-3/decade'
+
+        - variable: 'no3'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          frequency: 'yr'
+          scale: 1000
+          units: 'mmol m-3'
+          set_yscale: 'linear'
+          comp_obs:
+            - observations
+          
+        - variable: 'no3'
+          plot_projection: 'section'
+          data_type: 'trends'
+          frequency: 'yr'
+          scale: 1000
+          units: 'mmol m-3'
+          set_yscale: 'linear'
+          
+        - variable: 'no3'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_cmips: 'all'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+            
+        - variable: 'ph'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          units: ''
+
+        - variable: 'ph'
+          plot_projection: 'mercator'
+          data_type: 'trends'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          units: '/decade'
+          
+        - variable: 'ph'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          frequency: 'yr'
+          units: ''
+          set_yscale: 'linear'
+                    
+        - variable: 'ph'
+          plot_projection: 'section'
+          data_type: 'trends'
+          frequency: 'yr'
+          units: '/decade'
+          set_yscale: 'linear'  
+
+        - variable: 'talk'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+      
+        - variable: 'talk'
+          plot_projection: 'mercator'
+          data_type: 'trends'
+          frequency: 'yr'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+            
+        - variable: 'talk'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          frequency: 'yr'
+          comp_obs:
+            - observations          
+          set_yscale: 'linear'
+          
+        - variable: 'talk'
+          plot_projection: 'section'
+          data_type: 'trends'
+          frequency: 'yr'
+          set_yscale: 'linear'
+         
+        - variable: 'talk'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_cmips: 'all'
+          frequency: 'yr' 
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+            
+delete:
+          del_netcdf: False
+          del_mask: True
+          del_ncstore: True
+          del_cmipfiles: False
+
+#direct_data_root: '/raid/rc40/data/ncs/historical-edr/'
+direct_data_root: '/fs/cetus/fs2/crb/CCCma_Output/CMIP5/output/CCCma/CanESM2/historical/'
+#observations_root: '/raid/rc40/data/ncs/obs4comp/'
+observations_root: '/fs/cetus/fs2/crb/users/acrn004/obs4comp/'
+#cmip5_root: '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
+cmip5_root: '/fs/cetus/fs2/crb/users/acrn004/cmip5/'
+#cmip5_means: '/home/004/david_fallis_sept2015/meanstorage/'
+cmip5_means: '/fs/cetus/fs2/crb/users/acrn004/cmip5_means/'
+#output_root: '/home/004/david_fallis_sept2015/output'
+output_root: '/fs/cava/dev/crb/sata/ccrna03/data/utmp/dwf/standard/realms/ocnbgchem/'
+processed_cmip5_root: '/fs/cetus/fs2/crb/users/acrn004/netcdf/'

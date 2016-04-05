@@ -72,7 +72,7 @@ class TaylorDiagram(object):
         self.ax = ax.get_aux_axes(tr)   # Polar coordinates
 
         # Add reference point and stddev contour
-        l, = self.ax.plot([0], self.refstd, 'k*',
+        l, = self.ax.plot([0], self.refstd, 'b*', mec='b',
                           ls='', ms=10, label=label)
         t = np.linspace(0, np.pi/2)
         r = np.zeros_like(t) + self.refstd
@@ -94,7 +94,7 @@ class TaylorDiagram(object):
     def add_grid(self, *args, **kwargs):
         """Add a grid."""
 
-        self.ax.grid(*args, **kwargs)
+        self._ax.grid(*args, **kwargs)
 
     def add_contours(self, levels=5, **kwargs):
         """Add constant centered RMS difference contours, defined by

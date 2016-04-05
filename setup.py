@@ -21,9 +21,11 @@ setup(
         'brewer2mpl >=1.4.1',
         'cdo >=1.2.5',
         'netCDF4 >=1.1.6',
-        'numpy >=1.9.2',
+        'numpy >=1.10.4',
         'matplotlib >=1.4.3',
         'pyyaml >=3.11',
+        'basemap >=1.0.7',
+        'scipy >=0.16.0',
     ],
 )
 

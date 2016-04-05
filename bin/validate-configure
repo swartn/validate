@@ -6,16 +6,55 @@ import shutil
 import subprocess
 
 
-def copy_configuration_file():
-    path = os.path.join('configure', 'conf.yaml')
+def copy_configuration_file(confile):
+    path = os.path.join('configure', confile)
     confile = pkg_resources.resource_filename('validate', path)
-    shutil.copy(confile, '.')
+    shutil.copy(confile, './conf.yaml')
 
 def args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-s', '--simple',
+                        action='store_true',
+                        default=False,
+                        help='gets configuration for simple plot only')
+    parser.add_argument('-a', '--atmosphere',
+                        action='store_true',
+                        default=False,
+                        help='gets configuration for atmosphere plots only')
+    parser.add_argument('-o', '--ocean',
+                        action='store_true',
+                        default=False,
+                        help='gets configuration for ocean plots only')
+    parser.add_argument('-d', '--land',
+                        action='store_true',
+                        default=False,
+                        help='gets configuration for land plots only') 
+    parser.add_argument('-c', '--ocnbgchem',
+                        action='store_true',
+                        default=False,
+                        help='gets configuration for ocnbgchem plots only')
+    parser.add_argument('-i', '--seaice',
+                        action='store_true',
+                        default=False,
+                        help='gets configuration for seaice plots only')
+                         
     args = parser.parse_args()
+    opts = vars(args)
+    confile = 'conf.yaml'
+    if opts['simple']:
+        confile = 'conf_simple.yaml'
+    if opts['atmosphere']:
+        confile = 'conf_atmos.yaml'
+    if opts['ocean']:
+        confile = 'conf_ocean.yaml'
+    if opts['land']:
+        confile = 'conf_land.yaml'  
+    if opts['ocnbgchem']:
+        confile = 'conf_ocnbgchem.yaml'  
+    if opts['seaice']:
+        confile = 'conf_seaice.yaml'                
     if not os.path.isfile('conf.yaml'):
-        copy_configuration_file()
+        copy_configuration_file(confile)
     try:
         p = subprocess.Popen(['kwrite', 'conf.yaml'])
     except:

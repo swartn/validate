@@ -144,7 +144,8 @@
 # cmip5_means          : A string naming the the loactions of the cmip5 ensemble means
 # output_root          : The directory to output the tar logs and plots files
 # processed_cmip5_root : The location of a cache containing already partially processed
-#                        netcdf files to increase performance 
+#                        netcdf files to increase performance                        
+
 
 
 run: 'CanESM2'
@@ -152,14 +153,250 @@ experiment: 'historical'
 
 defaults:
           dates:
-              start_date: '1986-01'
+              start_date: '1980-01'
               end_date: '2005-01'
           png: True
 plots:
 
-        - variable: 'tas'
+        - variable: 'tos'
           plot_projection: 'global_map'
           data_type: 'climatology'
+          comp_obs:
+            - observations
+
+        - variable: 'tos'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+          comp_obs:
+            - observations
+
+        - variable: 'tos'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_cmips: 'all'
+
+        - variable: 'sos'
+          plot_projection: 'global_map'
+          data_type: 'climatology'
+
+        - variable: 'sos'
+          plot_projection: 'global_map'
+          data_type: 'trends'
+
+        - variable: 'thetao'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+          shift: -273.15
+          comp_shift: 0
+          units: 'C'
+
+        - variable: 'thetao'
+          plot_projection: 'mercator'
+          data_type: 'trends'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          units: 'C/decade'
+
+        - variable: 'thetao'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          comp_obs:
+            - observations
+          set_yscale: 'linear'
+          shift: -273.15
+          comp_shift: 0
+          units: 'C'          
+
+        - variable: 'thetao'
+          plot_projection: 'section'
+          data_type: 'trends'
+          set_yscale: 'linear'
+          units: 'C/decade'  
+
+        - variable: 'thetao'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_cmips: 'all'
+          shift: -273.15
+          comp_shift: 0
+          units: 'C'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+
+        - variable: 'so'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          comp_obs:
+            - observations
+
+        - variable: 'so'
+          plot_projection: 'mercator'
+          data_type: 'trends'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+
+        - variable: 'so'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          comp_obs:
+            - observations
+          set_yscale: 'linear'
+
+        - variable: 'so'
+          plot_projection: 'section'
+          data_type: 'trends'
+          set_yscale: 'linear'
+
+        - variable: 'so'
+          plot_projection: 'taylor'
+          data_type: 'climatology'
+          comp_obs:
+             - observations
+          comp_cmips: 'all'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+            
+        - variable: 'uo'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          divergent: True
+
+        - variable: 'uo'
+          plot_projection: 'mercator'
+          data_type: 'trends'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          divergent: True
+          scale: 1000
+          
+        - variable: 'uo'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          set_yscale: 'linear'
+          divergent: True
+
+                 
+        - variable: 'uo'
+          plot_projection: 'section'
+          data_type: 'trends'
+          set_yscale: 'linear'
+          divergent: True
+          scale: 1000
+                  
+        - variable: 'vo'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          divergent: True
+      
+        - variable: 'vo'
+          plot_projection: 'mercator'
+          data_type: 'trends'
+          depths:
+            - 100
+            - 500
+            - 1000
+            - 2000
+            - 4000
+          divergent: True
+          scale: 1000
+          
+        - variable: 'vo'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          set_yscale: 'linear'
+          divergent: True
+                    
+        - variable: 'vo'
+          plot_projection: 'section'
+          data_type: 'trends'
+          set_yscale: 'linear'
+          divergent: True
+          scale: 1000
+          
+        - variable: 'msftbarot'
+          plot_projection: 'mercator'
+          data_type: 'climatology'
+          plot_args:
+              draw_contour: True
+          scale: 0.000000001
+          units: 'Sv'
+
+        - variable: 'msftbarot'
+          plot_projection: 'mercator'
+          data_type: 'trends'
+          plot_args:
+              draw_contour: True
+          scale: 0.000000001
+          units: 'Sv/decade'
+          
+        - variable: 'msftmyz'
+          plot_projection: 'section'
+          data_type: 'climatology'
+          basin: 2
+          set_yscale: 'linear'
+          scale: 0.000000001
+          units: 'Sv'
+          divergent: True
+
+        - variable: 'msftmyz'
+          plot_projection: 'section'
+          data_type: 'trends'
+          basin: 2
+          set_yscale: 'linear'
+          scale: 0.000000001
+          units: 'Sv/decade'
+
+
 
 delete:
           del_netcdf: False
@@ -167,9 +404,8 @@ delete:
           del_ncstore: True
           del_cmipfiles: False
 
-
-#data_root: '/raid/rc40/data/ncs/historical-edr/'
-data_root: '/fs/cetus/fs2/crb/CCCma_Output/CMIP5/output/CCCma/CanESM2/historical/'
+#direct_data_root: '/raid/rc40/data/ncs/historical-edr/'
+direct_data_root: '/fs/cetus/fs2/crb/CCCma_Output/CMIP5/output/CCCma/CanESM2/historical/'
 #observations_root: '/raid/rc40/data/ncs/obs4comp/'
 observations_root: '/fs/cetus/fs2/crb/users/acrn004/obs4comp/'
 #cmip5_root: '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
@@ -177,4 +413,5 @@ cmip5_root: '/fs/cetus/fs2/crb/users/acrn004/cmip5/'
 #cmip5_means: '/home/004/david_fallis_sept2015/meanstorage/'
 cmip5_means: '/fs/cetus/fs2/crb/users/acrn004/cmip5_means/'
 #output_root: '/home/004/david_fallis_sept2015/output'
-output_root: '/fs/cava/dev/crb/sata/ccrna03/data/utmp/dwf/standard/realms/'
+output_root: '/fs/cava/dev/crb/sata/ccrna03/data/utmp/dwf/standard/realms/ocean/'
+processed_cmip5_root: '/fs/cetus/fs2/crb/users/acrn004/netcdf/'
