@@ -24,6 +24,8 @@ Several external packages are required:
 
 `brewer2mpl <https://github.com/jiffyclub/palettable/wiki/brewer2mpl/>`_
 
+'cmipdata <https://cmipdata.readthedocs.org/en/latest/>'_
+
 validate has primarily been developed and tested within the 
 `anaconda <http://docs.continuum.io/anaconda/index.html>`_ python distribution on 
 Linux x86/x64 and Mac OSX. Windows is not supported.
