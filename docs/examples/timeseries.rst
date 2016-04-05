@@ -23,7 +23,6 @@ Then edit the conf.yaml file to the following:
     experiment: 'historical'
 
     defaults:
-                compare_climatology: True
                 climatology_dates:
                   start_date: '1990-01'
                   end_date: '2000-01'
@@ -32,28 +31,19 @@ Then edit the conf.yaml file to the following:
     plots:
             - variable: 'psl'
               plot_projection: 'time_series'
-              compare:
-                  cmip5: True
-                  model: True
-                  obs: True
-                  runid: True
-              comp_models:
-                - CanCM4
-                - NorESM1-M
+              comp_obs:
+                - 20CR
+              comp_cmips: 'all'
               comp_ids:
                 - cvu
 
     delete:
-              del_fldmeanfiles: True
+              del_netcdf: False
               del_mask: True
               del_ncstore: True
-              del_remapfiles: True
-              del_trendfiles: True
-              del_zonalfiles: True
-              del_ENS_MEAN_cmipfiles: True
-              del_ENS_STD_cmipfiles: True
               del_cmipfiles: False
-
+    
+    direct_data_root: '/raid/rc40/data/ncs/historical-edr/'
     observations_root: '/raid/rc40/data/ncs/obs4comp'
     cmip5_root: '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
 

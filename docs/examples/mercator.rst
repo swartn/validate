@@ -31,24 +31,18 @@ Then edit the conf.yaml file to the following:
     plots:    
             - variable: 'tas'
               plot_projection: 'mercator'
-              climatology: False
+              data_type: 'climatology'
               compare_climatology: True
-              compare: 
-                  model: True
               comp_models: 
                 - CanESM2
 
     delete:
-              del_fldmeanfiles: True
+              del_netcdf: False
               del_mask: True
               del_ncstore: True
-              del_remapfiles: True
-              del_trendfiles: True
-              del_zonalfiles: True
-              del_ENS_MEAN_cmipfiles: True
-              del_ENS_STD_cmipfiles: True
               del_cmipfiles: False
-             
+    
+    direct_data_root: '/raid/rc40/data/ncs/historical-edr'      
     observations_root: '/raid/rc40/data/ncs/obs4comp'
     cmip5_root: '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
 
