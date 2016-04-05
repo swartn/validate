@@ -519,14 +519,14 @@ def _trend_units(data, units, plot):
     numpy array
     string
     """
-    if plot['frequency'] == 'day':
+    if plot['frequency'] == 'yr' or plot['yearmean']:
+        data = data * 10        
+    elif plot['frequency'] == 'day':
         data = data * 3650
         data = data * len(plot['seasons']) / 4
-    if plot['frequency'] == 'mon':
+    elif plot['frequency'] == 'mon':
         data = data * 120
         data = data * len(plot['seasons']) / 4
-    if plot['frequency'] == 'year':
-        data = data * 10
     units = units + '/decade'
     return data, units
 
@@ -566,6 +566,7 @@ def _histogram_data(plot, compfile):
                               scale=plot['comp_scale'], shift=plot['comp_shift'], 
                               remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                               seasons=plot['comp_seasons'], datatype=plot['data_type'],
+                              yearmean=plot['yearmean'],
                               fieldmean=True, cdostring=plot['cdostring'],
                               external_function=plot['external_function'],
                               external_function_args=plot['external_function_args'],
@@ -580,6 +581,7 @@ def histogram(plot):
                               scale=plot['comp_scale'], shift=plot['comp_shift'], 
                               remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                               seasons=plot['comp_seasons'], datatype=plot['data_type'],
+                              yearmean=plot['yearmean'],
                               cdostring=plot['cdostring'], fieldmean=True,
                               external_function=plot['external_function'],
                               external_function_args=plot['external_function_args'])
@@ -634,6 +636,7 @@ def _timeseries_data(plot, compfile):
                                          remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                          seasons=plot['comp_seasons'], fieldmean=True,
                                          cdostring=plot['cdostring'],
+                                         yearmean=plot['yearmean'],
                                          external_function=plot['external_function'],
                                          external_function_args=plot['external_function_args'],
                                          depthneeded=[plot['plot_depth']])
@@ -649,6 +652,7 @@ def timeseries(plot):
                                          scale=plot['scale'], shift=plot['shift'], 
                                          remapf=plot['remap'], remapgrid=plot['remap_grid'], 
                                          seasons=plot['seasons'], fieldmean=True,
+                                         yearmean=plot['yearmean'],
                                          cdostring=plot['cdostring'],
                                          external_function=plot['external_function'],
                                          external_function_args=plot['external_function_args'])

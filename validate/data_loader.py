@@ -190,7 +190,7 @@ def get_external_function(name):
 def dataload(ifile, var, dates, realm='atmos', scale=1, shift=0, 
              remapf='remapdis', remapgrid='r360x180', seasons=None,
              datatype='full', depthneeded=None, section=False, fieldmean=False, gridweights=False,
-             cdostring=None, external_function=None, external_function_args={}):
+             cdostring=None, yearmean=False, external_function=None, external_function_args={}):
     time_averaged_bool = _check_dates(ifile, dates)
 
     sel_var_file = sel_var(ifile, var)
@@ -206,7 +206,10 @@ def dataload(ifile, var, dates, realm='atmos', scale=1, shift=0,
 
     if external_function is not None:
         ofile = get_external_function(external_function)(ofile, **external_function_args)        
-            
+    
+    if yearmean:
+        ofile = year_mean(ofile)
+    
     if datatype == 'climatology':
         ofile = time_mean(ofile, time_averaged_bool)
     elif datatype == 'trends':
@@ -444,6 +447,16 @@ def grid_weights(name):
     else:
         cdo.gridweights(input=name, output=out)
     return out
+
+def year_mean(name):
+    out = 'netcdf/yearmean_' + split(name)
+    already_exists = already_calculated(out)
+    if already_exists is not None:
+        return already_exists
+    else:
+        cdo.yearmean(input=name, output=out)
+    return out
+
 
 def already_calculated(name):
     if os.path.isfile(name):
