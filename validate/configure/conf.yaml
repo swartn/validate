@@ -90,8 +90,8 @@
 #          log_depth_axis : boolean
 #                           switches the y-axis on sections to a log scale
 #          yearmean : boolean
-                      Uses the yearly mean for time series plots even if 
-                      daily or monthly frequency is specified
+#                      Uses the yearly mean for time series plots even if 
+#                      daily or monthly frequency is specified
 #          extra_variables : list of variables to be used by certain plots such as
 #                            multivariable_taylor and scatter
 #          extra_scales : list of scales to be used by extra_variables
