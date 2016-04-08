@@ -469,7 +469,7 @@ plots:
             - SON              
           comp_obs:
             - piomass
-           comp:
+          comp:
               pcolor_args:
                   vmin: -3
                   vmax: 3
