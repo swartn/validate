@@ -248,6 +248,7 @@ def dataload(ifile, var, dates, realm='atmos', scale=1, shift=0,
 def split(name):
     """ Returns the name of a file without the directory path
     """
+    print name
     path, filename = os.path.split(name)
     return filename
 

@@ -779,7 +779,7 @@ def zonalmean(plot):
     handles = [mpatches.Patch(color='r', label=plot['model_ID'])] 
     
     # plot comparison data on the same axis
-    if plot['comp_cmips']:
+    if plot['cmip5_file']:
         plot['comp_model'] = 'cmip5'
         data = zonalmeandata(plot, plot['cmip5_file'])
         pr.zonalmean(lat, data, plot=plot, ax=ax, label=plot['comp_model'], color='k', zorder=4)
