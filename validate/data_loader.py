@@ -22,6 +22,8 @@ cdo = cdo.Cdo()
 preprocessed_data_root = ''
 
 def silent_remove(name):
+    """ Removes a file if it exists and does nothing if it doesn't exist    
+    """    
     try: 
         os.remove(name)
     except OSError:
@@ -181,6 +183,8 @@ def _time(ds, time_averaged):
     return x
 
 def get_external_function(name):
+    """ Returns a function from the external module based on the function name.
+    """
     def external_functions(function_name):
         return {'sample': external.sample,
                 'field_integral': external.field_integral,
@@ -191,6 +195,74 @@ def dataload(ifile, var, dates, realm='atmos', scale=1, shift=0,
              remapf='remapdis', remapgrid='r360x180', seasons=None,
              datatype='full', depthneeded=None, section=False, fieldmean=False, gridweights=False,
              cdostring=None, yearmean=False, external_function=None, external_function_args={}):
+    """ Manipulates a file used a series of cdo commands which produce intermediate files,
+        and returns data about the the final file produced based on the specified parameters.
+        
+    Parameters
+    ----------
+    ifile : string
+            the name of the original input file
+    var : string 
+          variable name
+    dates : dictionary of the date range as strings of the form 'yyyy-mm'
+            start_date and end_date keys should be specified
+    realm : string
+            realm category (used for masking data)
+            default : 'atmos'
+    scale : float
+            scales the data by this value
+            default : 1
+    shift : float
+            shifts the data by this valee 
+            default : 0
+    remapf : string
+             name of the cdo remapping
+             default : remapdis
+    remapgrid : string
+                grid to remap the data to
+                default : 'r360x180
+    seasons : list of strings
+              seasons to be selected out of ['DJF', 'MAM', 'JJA', 'SON']
+              None will select all of the seasons
+              default : None
+    datatype : string
+               cdo operation to perform all the time axis
+               options are 'climatology', 'trends', 'detrend'
+               anything else not perform any cdo operation
+               default 'full'
+    depthneeded : list of floats
+                  list of the depths to interpolate the data to in z-axis
+                  default : None
+    section : boolean
+              set to True to take a zonal mean of the data
+              default : False
+    fieldmean : boolean
+                set to True to take a fieldmean of the data
+                default : False
+    gridweights : boolean
+                  set to True to calculate the area weights of each grid cell
+    cdostring : string
+                custom to cdo string to be applied to the input file
+                default : None
+    yearmean : boolean
+               take an annual mean of the data before manipulating
+               default : False
+    external_function : string
+                        name of external function to call
+                        default : None
+    external_function_args : dictionary
+                             keyword arguments to pass to the external function
+    
+    Returns
+    -------
+    numpy array of final data
+    numpy array of longitudinal cooridinates
+    numpy array of latitudinal coordinates
+    numpy array of depths
+    string of the units
+    numpy array of the time axis
+    numpy area of the area weights of the grid cells 
+    """
     time_averaged_bool = _check_dates(ifile, dates)
 
     sel_var_file = sel_var(ifile, var)
@@ -252,8 +324,7 @@ def split(name):
     return filename
 
 def sel_date(name, start_date, end_date, time_average=False):
-    if time_average:
-        
+    if time_average:     
         return name
     out = 'netcdf/seldate_' + start_date + '_' + end_date + '_' + split(name)
     already_exists = already_calculated(out)

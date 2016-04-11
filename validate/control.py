@@ -40,7 +40,7 @@ def execute(options, **kwargs):
         constants.cmip5_means = cmip5_means
         constants.debugging = debugging
 
-
+#        check_inputs() needs to be updated to match the latest changes to the configuration
 #        if not ignorecheck:
 #            # check that the configuartion is valid
 #            check_inputs(plots, run, experiment, observations_root, cmip5_root, obs, defaults, delete)
