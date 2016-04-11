@@ -837,19 +837,12 @@ def weighted_correlation(obs, data, weights=None):
     if weights is None:
         print 'weights are None'
         weights = np.ones(obs.shape)
-    print '----'
-    print obs.shape
-    print data.shape
-    print weights.shape
     new_order = [obs.shape.index(i) for i in data.shape]
     redata = data.transpose(new_order)
     new_order = [obs.shape.index(i) for i in weights.shape]
     reweights = weights.transpose(new_order)    
 #    redata = data.reshape(obs.shape)
 #    reweights = weights.reshape(obs.shape)
-    print obs.shape
-    print redata.shape
-    print reweights.shape
     
     obsf = obs#.flatten()
     
