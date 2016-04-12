@@ -206,7 +206,7 @@ def dataload(ifile, var, dates, realm='atmos', scale=1, shift=0,
           variable name
     dates : dictionary of the date range as strings of the form 'yyyy-mm'
             start_date and end_date keys should be specified
-    realm : string
+    realm : string
             realm category (used for masking data)
             default : 'atmos'
     scale : float
