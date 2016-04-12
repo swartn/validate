@@ -125,6 +125,7 @@ def fill(plots, run, experiment, defaults={}):
     """
     if not defaults:
         defaults = {}
+        
     for p in plots:
 
         # fill plots with the defaults given in conf.yaml
