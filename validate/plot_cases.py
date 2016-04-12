@@ -779,7 +779,7 @@ def zonalmean(plot):
     handles = [mpatches.Patch(color='r', label=plot['model_ID'])] 
     
     # plot comparison data on the same axis
-    if plot['comp_cmips']:
+    if plot['cmip5_file']:
         plot['comp_model'] = 'cmip5'
         data = zonalmeandata(plot, plot['cmip5_file'])
         pr.zonalmean(lat, data, plot=plot, ax=ax, label=plot['comp_model'], color='k', zorder=4)
@@ -837,19 +837,12 @@ def weighted_correlation(obs, data, weights=None):
     if weights is None:
         print 'weights are None'
         weights = np.ones(obs.shape)
-    print '----'
-    print obs.shape
-    print data.shape
-    print weights.shape
     new_order = [obs.shape.index(i) for i in data.shape]
     redata = data.transpose(new_order)
     new_order = [obs.shape.index(i) for i in weights.shape]
     reweights = weights.transpose(new_order)    
 #    redata = data.reshape(obs.shape)
 #    reweights = weights.reshape(obs.shape)
-    print obs.shape
-    print redata.shape
-    print reweights.shape
     
     obsf = obs#.flatten()
     

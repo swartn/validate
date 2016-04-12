@@ -112,12 +112,12 @@ def fill(plots, run, experiment, defaults={}):
     Parameters
     ----------
     plots : list of dictionaries
-    defaults : dictionary
-               values to fill plots
     model_run : string
                 run ID
     experiment : string
                  experiment name
+    defaults : dictionary
+               values to fill plots
 
     Returns
     -------
@@ -125,6 +125,7 @@ def fill(plots, run, experiment, defaults={}):
     """
     if not defaults:
         defaults = {}
+        
     for p in plots:
 
         # fill plots with the defaults given in conf.yaml
