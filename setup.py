@@ -9,14 +9,16 @@ from validate import __version__
 setup(
     name = 'validate',
     version = __version__,
-    author = 'David W. Fallis',
-    author_email = 'davidwfallis@gmail.com',
+    author = 'David W. Fallis, Neil Swart',
+    author_email = 'davidwfallis@gmail.com; neil.swart@canada.ca',
     packages = ['validate'],
     include_package_data = True,
     scripts = ['bin/validate-configure', 'bin/validate-execute'],
-    url = '',
-    description = 'Model validation package.',
+    url = 'https://github.com/swartn/validate',
+    download_url ='https://github.com/swartn/validate/archive/master.zip',
+    description = 'Climate Model validation package',
     long_description = open('README.rst').read(),
+    keywords = ['Climate model', 'validation', 'plots', 'CMIP5', 'CMIP6', 'analysis']
     install_requires = [
         'brewer2mpl >=1.4.1',
         'cdo >=1.2.5',

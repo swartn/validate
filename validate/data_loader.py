@@ -14,7 +14,7 @@ import os
 from netCDF4 import Dataset, num2date, date2num
 import numpy as np
 import datetime
-from functions import external
+from .functions import external
 import constants
 import cdo
 cdo = cdo.Cdo()
