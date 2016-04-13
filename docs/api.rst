@@ -6,52 +6,52 @@ The validate API
 This section describes the :program:`validate` Application Programming Interface 
 (API). 
 
-.. automodule:: control
+.. automodule:: validate.control
    :members:
    :undoc-members:
    :show-inheritance:
    
-.. automodule:: data_loader
+.. automodule:: validate.data_loader
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: defaults
+.. automodule:: validate.defaults
    :members:
    :undoc-members:
    :show-inheritance:
    
-.. automodule:: directory_tools
+.. automodule:: validate.directory_tools
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: pdf_organizer
+.. automodule:: validate.pdf_organizer
    :members:
    :undoc-members:
    :show-inheritance:
    
-.. automodule:: plot_cases
+.. automodule:: validate.plot_cases
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: plot_iterator
+.. automodule:: validate.plot_iterator
    :members:
    :undoc-members:
    :show-inheritance:
    
-.. automodule:: projections
+.. automodule:: validate.projections
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: taylor
+.. automodule:: validate.taylor
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: yamllog
+.. automodule:: validate.yamllog
    :members:
    :undoc-members:
    :show-inheritance:
