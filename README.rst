@@ -27,8 +27,8 @@ plots at the conclusion of each model run.
 Documentation
 -------------
 .. image:: http://readthedocs.org/projects/validate-climate-model-validation/badge/?version=latest
-:target: http://validate-climate-model-validation.readthedocs.org/en/latest/?badge=latest
-:alt: Documentation Status
+   :target: http://validate-climate-model-validation.readthedocs.org/en/latest/?badge=latest
+   :alt: Documentation Status
 
 Documentation is included in the docs/ directory and rendered at 
 http://validate-climate-model-validation.readthedocs.org/en/latest
