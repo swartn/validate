@@ -23,7 +23,7 @@ Then edit the conf.yaml file to the following:
     experiment: 'historical'
 
     defaults:
-                climatology_dates:
+                dates:
                   start_date: '1980-01'
                   end_date: '1995-01'
                 png: True
@@ -32,7 +32,6 @@ Then edit the conf.yaml file to the following:
             - variable: 'tas'
               plot_projection: 'mercator'
               data_type: 'climatology'
-              compare_climatology: True
               comp_models: 
                 - CanESM2
 

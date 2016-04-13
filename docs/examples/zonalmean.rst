@@ -23,8 +23,7 @@ Then edit the conf.yaml file to the following:
     experiment: 'historical'
 
     defaults:
-                climatology: True
-                climatology_dates:
+                dates:
                   start_date: '1980-01'
                   end_date: '2000-01'
                 png: True
