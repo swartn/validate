@@ -18,7 +18,7 @@ setup(
     download_url ='https://github.com/swartn/validate/archive/master.zip',
     description = 'Climate Model validation package',
     long_description = open('README.rst').read(),
-    keywords = ['Climate model', 'validation', 'plots', 'CMIP5', 'CMIP6', 'analysis']
+    keywords = ['Climate model', 'validation', 'plots', 'CMIP5', 'CMIP6', 'analysis'],
     install_requires = [
         'brewer2mpl >=1.4.1',
         'cdo >=1.2.5',
