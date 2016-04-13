@@ -9,7 +9,6 @@ data from the netCDF file format such as those used in the Coupled Model
 Intercomparison Project (CMIP). 
 
 
-
 Documentation
 -------------
 Documentation is included in the docs/ directory.
@@ -17,6 +16,8 @@ Documentation is included in the docs/ directory.
 Contributors
 ------------
 David Fallis:  davidwfallis@gmail.com
+
+Neil Swart : neil.swart@canada.ca
 
 LICENSE
 -------

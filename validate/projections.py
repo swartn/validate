@@ -243,22 +243,7 @@ def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=N
     else:
         tl = fig.add_axes([box.x1 + box.width * 0.05, box.y0, 0.02, box.height])
         fig.colorbar(cot, cax=tl, label=cblabel)
-    """
-    if rmse:
-        vals = [str(np.round(data.min(), 1)), str(np.round(data.max(), 1)), str(np.round(sqrt(mean(square(data))), 1))]
-        plot['stats'] = {'rmse': float(vals[2]),
-                         'min': float(vals[0]),
-                         'max': float(vals[1]),
-                         }
-        snam = ['min: ', 'max: ', 'rmse: '] 
-    else:
-        vals = [str(np.round(data.min(), 1)), str(np.round(data.max(), 1)), str(np.round(data.mean(), 1))]
-        plot['stats'] = {'mean': float(vals[2]),
-                         'min': float(vals[0]),
-                         'max': float(vals[1]),
-                         }
-        snam = ['min: ', 'max: ', 'mean: ']
-    """
+
     vals = [str(np.round(data.min(), 1)), str(np.round(data.max(), 1))]
     plot['stats'] = {'min': float(vals[0]),
                      'max': float(vals[1]),

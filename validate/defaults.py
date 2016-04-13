@@ -5,8 +5,10 @@ This module fills the plots with values specified in defaults
 and fills the remaining options with placeholders so that
 existence checks will not be needed later.
 
-.. moduleauthor:: David Fallis
+..moduleauthor:: David Fallis
+
 """
+
 import numpy as np
 import constants
 from matplotlib.colors import LogNorm
@@ -107,24 +109,27 @@ norms = {'lognorm': LogNorm()}
 
 
 def fill(plots, run, experiment, defaults={}):
-    """ Fills the blank spaces in plots with default values and returns the list
-
+    """   
+    Fills the blank spaces in plots with default values.
+         
     Parameters
     ----------
     plots : list of dictionaries
-    defaults : dictionary
-               values to fill plots
     model_run : string
                 run ID
     experiment : string
                  experiment name
+    defaults : dictionary
+               values to fill plots
 
     Returns
     -------
     list of dictionaries
+    
     """
     if not defaults:
         defaults = {}
+        
     for p in plots:
 
         # fill plots with the defaults given in conf.yaml

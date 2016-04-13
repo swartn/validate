@@ -414,8 +414,16 @@ def getfiles(plots, directroot, root, run, experiment):
     filedict = _cat_file_slices(filedict)
     for p in plots:
         if 'ifile' not in p:
-            p['ifile'] = filedict[(p['frequency'], p['variable'], str(p['realization']))]
-        p['realm'] = realms[p['variable']]
+            try:
+                p['ifile'] = filedict[(p['frequency'], p['variable'], str(p['realization']))]
+            except:
+                with open('logs/log.txt', 'a') as outfile:
+                    outfile.write('No file was found for ' + p['variable'] + '\n\n')
+                print 'No file was found for ' + p['variable']
+        if 'ifile' not in p:
+            continue
+        p['realm'] = getrealm(p['ifile'])
+        #p['realm'] = realms[p['variable']]
         p['realm_cat'] = getrealmcat(p['realm'])
         p['extra_ifiles'] = {}
         p['extra_realms'] = {}
@@ -428,7 +436,9 @@ def getfiles(plots, directroot, root, run, experiment):
         if 'fill_continents' not in p['plot_args']:
             if p['realm_cat'] == 'ocean':
                 p['plot_args']['fill_continents'] = True
-
+    for p in plots[:]:
+        if 'ifile' not in p:
+            plots.remove(p)
       
 
 

@@ -6,22 +6,12 @@ The validate API
 This section describes the :program:`validate` Application Programming Interface 
 (API). 
 
-.. automodule:: check
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   
-.. automodule:: cmip
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 .. automodule:: control
    :members:
    :undoc-members:
    :show-inheritance:
    
-.. automodule:: dataload
+.. automodule:: data_loader
    :members:
    :undoc-members:
    :show-inheritance:
@@ -36,31 +26,26 @@ This section describes the :program:`validate` Application Programming Interface
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: pdforganize
+.. automodule:: pdf_organizer
    :members:
    :undoc-members:
    :show-inheritance:
    
-.. automodule:: plotcase
+.. automodule:: plot_cases
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: plotload
+.. automodule:: plot_iterator
    :members:
    :undoc-members:
    :show-inheritance:
    
-.. automodule:: plotregions
+.. automodule:: projections
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: plotter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   
 .. automodule:: taylor
    :members:
    :undoc-members:
@@ -70,3 +55,4 @@ This section describes the :program:`validate` Application Programming Interface
    :members:
    :undoc-members:
    :show-inheritance:
+   
