@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 import brewer2mpl
 from discrete_cmap import discrete_cmap
 from netCDF4 import Dataset
-from colormaps import viridis
+from colormaps import viridis, magma, inferno, plasma
 from taylor import TaylorDiagram
 from operator import itemgetter
 from math import ceil
@@ -181,7 +181,6 @@ def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None,
     if draw_parallels:
         m.drawparallels(np.arange(-80, 81, 20), labels=parallel_labels, ax=ax, fontsize=9)
     if draw_meridians:
-        print 'here'
         m.drawmeridians(np.arange(0, 360, 90), labels=meridian_labels, yoffset=0.5e6, ax=ax, fontsize=9)
 
     if pvalues is not None:

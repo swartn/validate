@@ -23,7 +23,12 @@ from matplotlib import gridspec
 import defaults as dft
 import datetime
 from projections import default_pcolor_args
+from colormaps import viridis, magma, inferno, plasma
 
+colormaps = {'viridis': viridis, 
+             'magma':magma, 
+             'inferno': inferno, 
+             'plasma': plasma}
 
 def _1d_depth_data(data, depth, plot):
     if not type(data) == 'numpy.ndarray':
@@ -104,6 +109,8 @@ def _pcolor(data, plot, anom=False):
         dpa = default_pcolor_args(data, anom)
         for key in dpa:
             plot['data1']['pcolor_args'][key] = dpa[key]
+    
+    _fill_colormap(plot)
 
 def _comp_pcolor(data, obs, plot, anom=False):
     """ Gives the data and observations the same colorbar
@@ -131,8 +138,26 @@ def _comp_pcolor(data, obs, plot, anom=False):
         for key in d1pca:
             plot['data1']['pcolor_args'][key] = d1pca[key]
         for key in d1pca:
-            plot['data2']['pcolor_args'][key] = d1pca[key]        
+            plot['data2']['pcolor_args'][key] = d1pca[key]
 
+    _fill_colormap(plot)  
+
+def _fill_colormap(plot):
+    try:
+        if plot['data1']['colormap'] in colormaps:
+            plot['data1']['pcolor_args']['cmap'] = colormaps[plot['data1']['colormap']]
+    except KeyError:
+        pass
+    try:
+        if plot['data2']['colormap'] in colormaps:
+            plot['data2']['pcolor_args']['cmap'] = colormaps[plot['data2']['colormap']]
+    except KeyError:
+        pass     
+    try:
+        if plot['comp']['colormap'] in colormaps:
+            plot['comp']['pcolor_args']['cmap'] = colormaps[plot['comp']['colormap']]
+    except KeyError:
+        pass   
 
 def savefigures(plotname, png=False, pdf=False, **kwargs):
     pdfname = plotname + '.pdf'
@@ -1024,8 +1049,7 @@ def multivariable_taylor(plot):
                                       external_function=plot['external_function'],
                                       external_function_args=plot['external_function_args'],
                                       depthneeded=[plot['depth']])
-        print data.shape
-        print refdata.shape
+
         corrcoef, _, std = weighted_correlation(refdata, data, weights)
         labelled_stats.append({'name': var,
                                'corrcoef': corrcoef,

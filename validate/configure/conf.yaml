@@ -84,6 +84,8 @@
 #          data1 : A dictionary specifying the arguments for the model data plot
 #                  pcolor_args : A dictionary for manually setting arguments for the colorbar
 #                  ax_args : A dictionary for manually setting matplotlib arguments for the axes
+#                  colormap : string 
+#                             name of colormap selceted from viridis, plasma, inferno, or magma
 #          data2 : A dictionary specifying the arguments for the observations data plot.
 #                      It uses the came keys as 'data1'
 #          comp : A dictionary specifying the arguments for the comparsson plot of
