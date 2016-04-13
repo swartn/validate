@@ -19,10 +19,10 @@ import mock
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath('../validate/'))
-sys.path.insert(0, os.path.abspath('./examples/'))
-sys.path.insert(0, os.path.abspath('../validate/functions/'))
+sys.path.insert(0, os.path.abspath('..'))
+#sys.path.insert(0, os.path.abspath('../validate/'))
+#sys.path.insert(0, os.path.abspath('./examples/'))
+#sys.path.insert(0, os.path.abspath('../validate/functions/'))
 # -- General configuration ------------------------------------------------
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -45,11 +45,15 @@ MOCK_MODULES = [
     'matplotlib.pyplot',
     'matplotlib.colors',
     'matplotlib.ticker',
+    'matplotlib.basemap',
+    'matplotlib.patches',
+    'mpl_toolkits.basemap',
     'netCDF4',
     'numpy',
     'pandas',
     'cdo',
     'scipy',
+    'basemap',
 ]
 
 for mod_name in MOCK_MODULES:
