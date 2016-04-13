@@ -141,7 +141,7 @@ def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None,
                     lon_0=-180, resolution='c', ax=ax)
         a, b = (9000000, -1000000)
         parallel_labels = [1, 0, 0, 0]
-        meridian_labels = [0, 0, 0, 1]
+        meridian_labels = [0, 0, 0, 0]
     if projection == 'mercator':
         m = Basemap(projection='merc', llcrnrlat=latmin, urcrnrlat=latmax, 
                     llcrnrlon=lonmin, urcrnrlon=lonmax, 
@@ -179,9 +179,10 @@ def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None,
     if fill_continents:
         m.fillcontinents(color='0.8', ax=ax, zorder=2)
     if draw_parallels:
-        m.drawparallels(np.arange(-80, 81, 20), labels=parallel_labels, linewidth=0, ax=ax, fontsize=9)
+        m.drawparallels(np.arange(-80, 81, 20), labels=parallel_labels, ax=ax, fontsize=9)
     if draw_meridians:
-        m.drawmeridians(np.arange(0, 360, 90), labels=meridian_labels, linewidth=0, yoffset=0.5e6, ax=ax, fontsize=9)
+        print 'here'
+        m.drawmeridians(np.arange(0, 360, 90), labels=meridian_labels, yoffset=0.5e6, ax=ax, fontsize=9)
 
     if pvalues is not None:
         draw_stipple(pvalues, lon, lat, m, alpha)

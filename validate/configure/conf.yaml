@@ -45,6 +45,10 @@
 #                                to the dates to use in the plots.
 #                                Should be of the form 'yyyy-mm-dd' or 'yyyy-mm'
 #                                ex. {'start_date': '1970-01-01', 'end_date': '1990-01'}
+#          sigma: float
+#                 sigma value for trend significance
+#          alpha: float
+#                 alpha value for climatology comparison significance
 #          comp_dates : A dictionary mapping
 #                           'start_date'
 #                           'end_date'
@@ -147,7 +151,7 @@
 #                        netcdf files to increase performance 
 
 
-run: 'CanESM2'
+run: 'edr'
 experiment: 'historical'
 
 defaults:
@@ -168,8 +172,8 @@ delete:
           del_cmipfiles: False
 
 
-data_root: '/raid/rc40/data/ncs/historical-edr/'
+data_root: '/raid/rc40/data/ncs/'
 observations_root: '/raid/rc40/data/ncs/obs4comp/'
 cmip5_root: '/raid/ra40/CMIP5_OTHER_DOWNLOADS/'
-cmip5_means: '/home/004/david_fallis_sept2015/meanstorage/'
+cmip5_means: '/raid/rc40/data/dwf/cmipmeans/'
 output_root: '/home/004/david_fallis_sept2015/output'
