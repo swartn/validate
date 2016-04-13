@@ -1,5 +1,5 @@
 """
-check
+syntax_check
 ===============
 This module is used to check to the validity of the options setup
 in configure.py. Exceptions will be raised if the options are

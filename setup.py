@@ -18,16 +18,16 @@ setup(
     download_url ='https://github.com/swartn/validate/archive/master.zip',
     description = 'Climate Model validation package',
     long_description = open('README.rst').read(),
-    keywords = ['Climate model', 'validation', 'plots', 'CMIP5', 'CMIP6', 'analysis']
+    keywords = ['Climate model', 'validation', 'plots', 'CMIP5', 'CMIP6', 'analysis'],
     install_requires = [
         'brewer2mpl >=1.4.1',
         'cdo >=1.2.5',
         'netCDF4 >=1.1.6',
-        'numpy >=1.10.4',
         'matplotlib >=1.4.3',
         'pyyaml >=3.11',
         'basemap >=1.0.7',
-        'scipy >=0.16.0',
+        'scipy >=0.15.1',
+        'numpy >=1.10.4',
         'cmipdata >=0.6',
     ],
 )
