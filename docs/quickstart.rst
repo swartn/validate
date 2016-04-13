@@ -27,7 +27,8 @@ http://conda.pydata.org/docs/faq.html#env.
 **Dependencies**
 
 The external package `Climate Data Operators (cdo) <https://code.zmaw.de/projects/cdo>`_ v1.6 or later
-is required. Python dependencies are handled automatically by pip, but include 
+is required. Python dependencies are in theory handled automatically by pip, but often things go
+smoother if you have these items available: 
 
   - `Python 2.7x <http://www.python.org/download/>`_
 
@@ -47,7 +48,8 @@ is required. Python dependencies are handled automatically by pip, but include
 
 validate has primarily been developed and tested within the 
 `anaconda <http://docs.continuum.io/anaconda/index.html>`_ python distribution on 
-Linux x86/x64 and Mac OSX. Windows is not supported.
+Linux x86/x64 and Mac OSX, where dependencies were installed with conda. 
+Windows is not supported.
 
 Using validate
 ==============
@@ -56,22 +58,16 @@ After a succesful installation, you should move to a working directory (preferab
 Be careful working in populated directories as validate may remove or modify files or 
 directories with particular names.
 
-To create a standard set of plots use the command 
-
-.. code-block:: bash
-    
-    validate-execute -r [runID]
-
-Where [runID] is the three letter runId for the experiment.
-
-To make modifications to the standard plots use the command:
+To setup the configuration file use the command:
 
 .. code-block:: bash
 
     validate-configure
-    
-Once the changes have been made, save the conf.yaml file in your working directory
-and once again use the command:
+
+which will provide a conf.yaml file. Follow the examples in this file to specify the 
+plots you desire, and make sure to modify the "data_root" variable to point to the 
+data on your system. Once the changes have been made, save the conf.yaml file 
+in your working directory and once use the command:
 
 .. code-block:: bash
     

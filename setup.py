@@ -27,7 +27,7 @@ setup(
         'pyyaml >=3.11',
         'basemap >=1.0.7',
         'scipy >=0.15.1',
-        'numpy >=1.10.4',
+        'numpy >=1.9.2',
         'cmipdata >=0.6',
     ],
 )
