@@ -11,7 +11,7 @@ setup(
     version = __version__,
     author = 'David W. Fallis, Neil Swart',
     author_email = 'davidwfallis@gmail.com; neil.swart@canada.ca',
-    packages = ['validate'],
+    packages = ['validate', 'validate.functions'],
     include_package_data = True,
     scripts = ['bin/validate-configure', 'bin/validate-execute'],
     url = 'https://github.com/swartn/validate',
