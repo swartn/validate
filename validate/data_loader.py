@@ -1,5 +1,5 @@
 """
-plotload
+data_loader
 ===============
 
 THis module contains functions that will load data from

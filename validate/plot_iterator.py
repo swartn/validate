@@ -1,5 +1,5 @@
 """
-plotter
+plot_iterator
 ===============
 
 This module contains functions needed to efficiently loop

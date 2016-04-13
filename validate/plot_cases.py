@@ -1,5 +1,5 @@
 """
-plotcase
+plot_cases
 ===============
 
 This module contains functinos for different cases of
