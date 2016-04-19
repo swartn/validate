@@ -309,12 +309,19 @@ def getfrequency(f):
     string of frequency
     """
     nc = Dataset(f, 'r')
-    return str(nc.__getattribute__('frequency'))
+    try: 
+        frequency = str(nc.__getattribute__('frequency'))
+    except:
+        frequency = 'unknown'
+    return frequency
 
 def getexperiment(f):
     nc = Dataset(f, 'r')
-    return str(nc.__getattribute__('experiment'))    
-    
+    try:
+        experiment = str(nc.__getattribute__('experiment'))
+    except:
+        experiment = ''
+    return experiment
     
 def getrealization(f):
     """ Returns the realization from a filename and directory path.
@@ -329,7 +336,11 @@ def getrealization(f):
     string of realization number
     """
     nc = Dataset(f, 'r')
-    return str(nc.__getattribute__('realization'))
+    try:
+        realization = str(nc.__getattribute__('realization'))
+    except:
+        realization = 'r1i1p1'
+    return realization
 
 
 def getrealm(f):
@@ -345,7 +356,10 @@ def getrealm(f):
     string of realm
     """
     nc = Dataset(f, 'r')
-    realm = str(nc.__getattribute__('modeling_realm'))
+    try:
+        realm = str(nc.__getattribute__('modeling_realm'))
+    except:
+        realm = 'atmos' # set realm to atmos, so nothing will be masked
     if 'seaIce' in realm:
         realm = 'seaIce'
     return realm
@@ -393,7 +407,7 @@ def getfiles(plots, directroot, root, run, experiment):
 
     realms = {}
     for f in files:
-        realms[getvariable(f)] = getrealm(f)
+       realms[getvariable(f)] = getrealm(f)
 
     vf = {}
     fvr = []
@@ -422,15 +436,16 @@ def getfiles(plots, directroot, root, run, experiment):
                 print 'No file was found for ' + p['variable']
         if 'ifile' not in p:
             continue
-        p['realm'] = getrealm(p['ifile'])
-        #p['realm'] = realms[p['variable']]
+        if 'realm' not in p:        
+            p['realm'] = getrealm(p['ifile'])
         p['realm_cat'] = getrealmcat(p['realm'])
         p['extra_ifiles'] = {}
         p['extra_realms'] = {}
         p['extra_realm_cats'] = {}
         for evar in p['extra_variables']:
             p['extra_ifiles'][evar] = filedict[(p['frequency'], evar, str(p['realization']))]
-            p['extra_realms'][evar] = realms[evar]
+            if evar not in p['extra_realms']:
+                p['extra_realms'][evar] = realms[evar]
             p['extra_realm_cats'][evar] = getrealmcat(p['extra_realms'][evar])
         
         if 'fill_continents' not in p['plot_args']:
