@@ -9,6 +9,7 @@ import yaml
 
 OUTPUT_ORDER = ['plot_name',
                 'variable',
+                'ifile',
                 'depth',
                 'plot_projection',
                 'plot_type',
@@ -25,6 +26,7 @@ def convert(plot):
     yamplot = {}
     yamplot['plot_name'] = plot['plot_name']
     yamplot['variable'] = plot['variable']
+    yamplot['ifile'] = plot['ifile']
     yamplot['depth'] = str(plot['plot_depth'])
     yamplot['plot_projection'] = plot['plot_projection']
     yamplot['plot_type'] = plot['plot_type']
