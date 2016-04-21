@@ -50,7 +50,7 @@ def convert(plot):
 
 
 def output(yamplot):
-    with open('logs/log.yml', 'a') as outfile:
+    with open('logs/log.yml', 'w') as outfile:
         outfile.write('\n-----\n\n')
     for name in OUTPUT_ORDER:
         printer = {name: yamplot[name]}

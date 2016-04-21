@@ -22,3 +22,4 @@ def field_integral(ifile, **kwargs):
     cdo.fldsum(input=mout, output=out)
     cdo.yearmean(input=out, output=ymean)
     return ymean
+

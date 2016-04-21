@@ -431,7 +431,10 @@ def remap(name, remapname, remapgrid):
     if already_exists is not None:
         return already_exists
     else:
-        remap = get_remap_function(remapname)
+        try:
+            remap = get_remap_function(remapname)
+        except:
+            return name
         try:
             remap(remapgrid, input=name, output=out)
         except:

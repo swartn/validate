@@ -161,7 +161,10 @@ def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None,
         a, b = m(-135, -20) 
         parallel_labels = [0, 0, 0, 0]
         meridian_labels = [0, 0, 0, 0]  
-
+    print lon
+    print lon.shape
+    print lat.shape
+    print type(lon)
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
     cot = m.pcolormesh(x, y, data, **pcolor_args)
