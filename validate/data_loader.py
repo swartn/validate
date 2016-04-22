@@ -357,7 +357,7 @@ def mask(name, realm):
     else:
         if realm == 'ocean':
             try:
-                cdo.ifthen(input='mask/ocean ' + name, output=out)
+                cdo.ifthen(options='-s', input='mask/ocean ' + name, output=out)
             except:
                 with open('logs/log.txt', 'a') as outfile:
                     outfile.write('WARNING: Land data was not masked\n')
@@ -365,7 +365,7 @@ def mask(name, realm):
                 return name
         elif realm == 'land':
             try:
-                cdo.ifthen(input='mask/land ' + name, output=out) 
+                cdo.ifthen(options='-s', input='mask/land ' + name, output=out) 
             except:
                 with open('logs/log.txt', 'a') as outfile:
                     outfile.write('WARNING: Ocean data was not masked\n')
@@ -489,7 +489,7 @@ def intlevel(name, depthlist):
             return already_exists
         else:
             try:
-                cdo.intlevelx(str(depth), input=name, output=out)
+                cdo.intlevelx(str(depth), options='-s', input=name, output=out)
             except:
                 return name
     else:
