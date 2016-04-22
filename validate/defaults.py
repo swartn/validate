@@ -170,6 +170,12 @@ def fill(plots, run, experiment, defaults={}):
             p['seasons'] = ['DJF', 'MAM', 'JJA', 'SON']
         if 'comp_seasons' not in p:
             p['comp_seasons'] = p['seasons']
+        if 'months' not in p:
+            p['months'] = [1,2,3,4,5,6,7,8,9,10,11,12]
+        if 'comp_months' not in p:
+            p['comp_months'] = p['months']
+        p['months'] = [str(i) for i in p['months']]
+        p['comp_months'] = [str(i) for i in p['comp_months']]
         if 'cmip5_file' not in p:
             p['cmip5_file'] = None 
         if 'cmip5_files' not in p:

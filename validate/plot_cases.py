@@ -176,6 +176,8 @@ def plotname(plot):
     plotname += '_' + plot['dates']['start_date'] + plot['dates']['end_date']
     season = ''.join(plot['seasons'])
     plotname += season
+    month = ''.join(plot['months'])
+    plotname += month
 
     try: 
         plotname += '_' + str(plot['basin'])
@@ -242,7 +244,8 @@ def colormap(plot):
                                           plot['dates'], realm=plot['realm_cat'], 
                                           scale=plot['scale'], shift=plot['shift'], 
                                           remapf=plot['remap'], remapgrid=plot['remap_grid'], 
-                                          seasons=plot['seasons'], datatype=plot['data_type'],
+                                          seasons=plot['seasons'], months=plot['months'],
+                                          datatype=plot['data_type'],
                                           cdostring=plot['cdostring'],
                                           gridweights = True,
                                           external_function=plot['external_function'],
@@ -260,7 +263,8 @@ def colormap(plot):
                                          plot['dates'], realm=plot['realm_cat'],
                                          scale=plot['scale'], shift=plot['shift'],
                                          remapf=plot['remap'], remapgrid=plot['remap_grid'],
-                                         seasons=plot['seasons'], datatype='detrend')
+                                         seasons=plot['seasons'], months=plot['months'],
+                                         datatype='detrend')
         detrenddata = _full_depth_data(detrenddata, depth, plot)
         siggrid = trend_significance(detrenddata, plot['sigma'])
         cvalues, _ = _trend_units(siggrid, units, plot)
