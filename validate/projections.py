@@ -121,7 +121,7 @@ def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None,
               ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
               latmin=-80, latmax=80, lonmin=0, lonmax=360, lon_0=180, draw_contour=False,
               label=None,
-              fill_continents=False, draw_parallels=True, draw_meridians=False,
+              fill_continents=False, draw_parallels=False, draw_meridians=False,
               plot={}):
     if not ax:
         fig, ax = plt.subplots(1, 1, figsize=(8, 8))
