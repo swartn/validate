@@ -183,8 +183,6 @@ def _load_masks(files):
                   'sftgif',
                   ]
         if var in fxvars:
-            print f
-            print 'found ' + var
             os.system('ln -s ' + f + ' ./mask/' + var)          
 
 #    used to be hard coded for known directory path

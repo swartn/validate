@@ -35,9 +35,11 @@ def arrange(plotnames):
                 (name of plot, plot dictionary, plot type)
     """
     dictionary = orderplots(plotnames)
-
+    for p in plotnames:
+        outname = 'plots/' + p['model_ID'] + '_joined.pdf' 
+        break
     pstring = pdfmarks(dictionary)
-    combine_str = 'gs -sDEVICE=pdfwrite -sOutputFile=plots/joined.pdf -dQUIET -dNOPAUSE -dBATCH -dAutoRotatePages=/None -f ' + pstring + ' plots/pdfmarks\n'
+    combine_str = 'gs -sDEVICE=pdfwrite -sOutputFile=' + outname + ' -dQUIET -dNOPAUSE -dBATCH -dAutoRotatePages=/None -f ' + pstring + ' plots/pdfmarks\n'
 
     os.system(combine_str)
     os.system('rm -f plots/pdfmarks')

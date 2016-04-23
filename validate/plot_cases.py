@@ -169,6 +169,7 @@ def savefigures(plotname, png=False, pdf=False, **kwargs):
 
 def plotname(plot):
     plotname = 'plots/'
+    plotname += plot['model_ID']
     plotname += plot['variable']
     plotname += plot['data_type']
     plotname += '_' + plot['plot_projection']
