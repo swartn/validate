@@ -348,6 +348,7 @@ plots:
           comp_obs:
             - ERA-Int
           comp_cmips: 'all'
+          yearmean: True
 
         - variable: 'tas'
           plot_projection: 'zonal_mean'
