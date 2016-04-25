@@ -13,6 +13,7 @@ import datetime
 import itertools
 import tarfile
 import cmipdata as cd
+import validate
 import cdo
 cdo = cdo.Cdo()
 
@@ -144,10 +145,12 @@ def _mkdir():
 
 def _logfile(run, experiment):
     with open('logs/log.txt', 'w') as outfile:
+        outfile.write('Validate version: ' + validate.__version__ + '\n')
         outfile.write('Run ID: ' + run + '\n')
         outfile.write('Experiment: ' + experiment + '\n\n')
 
     with open('logs/log.yml', 'w') as outfile:
+        outfile.write('Validate version: ' + validate.__version__ + '\n')
         outfile.write('Run ID: ' + run + '\n')
         outfile.write('Experiment: ' + experiment + '\n\n')
 
