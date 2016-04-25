@@ -156,19 +156,19 @@ def _comp_pcolor(data, obs, compdata, plot, anom=False):
     _make_discrete(plot, 'comp')  
   
 
-def savefigures(plotname, png=False, pdf=False, **kwargs):
+def savefigures(plotname, png=False, pdf=False, ps=False, eps=False, **kwargs):
     pdfname = plotname + '.pdf'
     pngname = plotname + '.png'
     psname = plotname + '.ps'
     epsname = plotname + '.eps'
-    svgname = plotname + '.svg'
     if png:
         plt.savefig(pngname, bbox_inches='tight')
     if pdf:
         plt.savefig(pdfname, bbox_inches='tight')
-    plt.savefig(psname, bbox_inches='tight')
-    plt.savefig(epsname, bbox_inches='tight')
-    plt.savefig(svgname, bbox_inches='tight')
+    if ps:
+        plt.savefig(psname, bbox_inches='tight')
+    if eps:
+        plt.savefig(epsname, bbox_inches='tight')
 
 def plotname(plot):
     plotname = 'plots/'

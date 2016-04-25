@@ -63,8 +63,12 @@ def _remove_plots():
     old_plots = glob.glob('plots/*.png')
     for f in old_plots:
         os.remove(f)
-
-
+    old_plots = glob.glob('plots/*.ps')
+    for f in old_plots:
+        os.remove(f)
+    old_plots = glob.glob('plots/*.eps')
+    for f in old_plots:
+        os.remove(f)
 def makeplot(p, plotnames, func):
     p['plot_type'] = func.__name__
     try:
