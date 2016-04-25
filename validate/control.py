@@ -93,6 +93,7 @@ def execute(options, **kwargs):
         confile = pkg_resources.resource_filename('validate', path)
         with open(confile, 'r') as f:
             settings = yaml.load(f)
+        print 'WARNING: No configuration file was found in the current directory. Using default.'
     
     # overwrite the configuration with input given in the execution arguments
     for key in options:
