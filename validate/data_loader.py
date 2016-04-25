@@ -16,6 +16,7 @@ import numpy as np
 import datetime
 from validate.functions import external
 import constants
+import decorators
 import cdo
 cdo = cdo.Cdo()
 
@@ -192,6 +193,7 @@ def get_external_function(name):
     def external_functions(function_name):
         return {'sample': external.sample,
                 'field_integral': external.field_integral,
+                'external': external.external,
                }[function_name]
     return external_functions(name)
     
