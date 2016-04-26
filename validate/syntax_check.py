@@ -52,7 +52,7 @@ def check_data_type(dt):
                        'external'
                        ]
     if dt not in possible_values:
-        raise ValueError ("'data_type' must be None, climatology, or trends')
+        raise ValueError ("'data_type' must be None, climatology, or trends")
     
 
 def check_bool(thebool, thekey):
@@ -180,7 +180,7 @@ def check_dict(dargs, data):
     if type(dargs) is not dict:
         raise TypeError("'" + data + "' must be 'dict' type")
 
-def check_int(theint, name)
+def check_int(theint, name):
     if type(theint) is not int:
         raise TypeError("{} must be 'int' type".format(name))
 
@@ -476,7 +476,7 @@ def check_inputs(run, experiment, direct_data_root, data_root, observations_root
     check_run(run)
     check_experiment(experiment)
     if direct_data_root:
-        check_root('direct_data_root', direct_data_root):
+        check_root('direct_data_root', direct_data_root)
     if data_root:
         check_root('data_root', data_root)
     if observations_root:
