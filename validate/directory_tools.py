@@ -569,7 +569,7 @@ def getobs(plots, obsroot, o):
                     print 'No ' + o + ' file was found for ' + p['variable']
                     p['comp_obs'].remove(o)
             else:
-                p['obsfiles_for_log'][o] = p['obsfile'][o]
+                p['obsfiles_for_log'][o] = p['obs_file'][o]
             
         if o in p['extra_obs']:
             if 'extra_obs_files' not in p:

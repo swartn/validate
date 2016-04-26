@@ -35,11 +35,25 @@ def check_plot_projection(pp):
                        'time_series',
                        'zonal_mean',
                        'taylor',
+                       'multivariable_taylor',
+                       'histogram'
                        ]
     if pp not in possible_values:
         raise ValueError("plot_projection: " + pp +
                          " is not a valid 'plot_projection'")
 
+def check_data_type(dt):
+    if dt is None:
+        return
+    if type(dt) is not str:
+        raise TypeError("data_type must be a 'str' type")
+    possible_values = ['climatology',
+                       'trends',
+                       'external'
+                       ]
+    if dt not in possible_values:
+        raise ValueError ("'data_type' must be None, climatology, or trends')
+    
 
 def check_bool(thebool, thekey):
     """ Raises TypeError exception if the argument is not a boolean. 
@@ -166,29 +180,9 @@ def check_dict(dargs, data):
     if type(dargs) is not dict:
         raise TypeError("'" + data + "' must be 'dict' type")
 
-
-def check_projection_args(pargs, data):
-    """ Raises TypeError if the first argument is not a dictionary.
-        Raises TypeError if the keys in the dictionary are not strings.
-        Raises ValueError if the keys are not in the list of 
-        possible keys.
-        Raises exception if the items in the dictionary are not valid.
-    """
-    if type(pargs) is not dict:
-        raise TypeError("'" + data + "' must be 'dict' type")
-    possible_keys = ['pcolor_args',
-                     'ax_args',
-                     ]
-    for key in pargs:
-        if type(key) is not str:
-            raise TypeError("'" + data + "' keys must be 'str' type")
-        if key not in possible_keys:
-            raise ValueError("'" + data + "' keys must be either 'pcolor_args' or 'ax_args'")
-    if 'pcolor_args' in pargs:
-        check_dict(pargs['pcolor_args'], 'pcolor_args')
-    if 'ax_args' in pargs:
-        check_dict(pargs['ax_args'], 'ax_args')
-
+def check_int(theint, name)
+    if type(theint) is not int:
+        raise TypeError("{} must be 'int' type".format(name))
 
 def check_data_args(dargs, data):
     """ Raises TypeError if the first argument is not a dictionary.
@@ -200,17 +194,20 @@ def check_data_args(dargs, data):
     if type(dargs) is not dict:
         raise TypeError("'" + data + "' must be 'dict' type")
     possible_keys = ['climatology_args',
-                     'trends_args']
+                     'trends_args',
+                     'ncols',
+                     ]
     for key in dargs:
         if type(key) is not str:
             raise TypeError("'" + data + "' keys must be 'str' type")
         if key not in possible_keys:
-            raise ValueError("'" + data + "' keys must be either 'climatology_args' or 'trends_args'")
-    if 'climatology_args' in dargs:
-        check_projection_args(dargs['climatology_args'], 'climatology_args')
+            raise ValueError("'" + data + "' keys must be either 'pcolor_args', 'ax_args', or 'ncols'")
+    if 'pcolor_args' in dargs:
+        check_dict(dargs['pcolor_args'], 'pcolor_args')
     if 'trends_args' in dargs:
-        check_projection_args(dargs['trends_args'], 'trends_args')
-
+        check_dict(dargs['ax_args'], 'ax_args')
+    if 'ncols' in dargs:
+        check_int(dargs['ncols'], 'ncols')
 
 def check_compare(comp):
     """ Raises TypeError if the argument is not a dictionary.
@@ -308,29 +305,48 @@ def check_plot(plot):
     """   
     possible_keys = ['variable',
                      'plot_projection',
-                     'climatology',
-                     'compare_climatology',
-                     'trends',
-                     'compare_trends',
-                     'climatology_dates',
-                     'trends_dates',
+                     'data_type',
+                     'dates',
+                     'comp_dates',
+                     'data1',
+                     'data2',
+                     'comp',
+                     'plot_args',
+                     'comp_models',
+                     'comp_cmips',
+                     'comp_ids',
+                     'comp_obs',
                      'realization',
-                     'depths',
                      'frequency',
                      'scale',
-                     'data1_args',
-                     'data2_args',
-                     'comp_args',
-                     'plot_args',
-                     'pdf',
-                     'png',
-                     'compare',
-                     'comp_models',
-                     'obs_file',
-                     'ifile',
-                     'comp_ids',
+                     'comp_scale',
+                     'shift',
+                     'comp_shift',
+                     'months',
+                     'comp_months',
+                     'seasons',
+                     'comp_seasons',
+                     'log_depth_axis',
+                     'divergent',
+                     'depths',
                      'remap',
                      'remap_grid',
+                     'extra_variables',
+                     'extra_ifiles',
+                     'extra_realms',
+                     'extra_scales',
+                     'extra_comp_scales',
+                     'extra_shifts',
+                     'extra_comp_shifts',
+                     'ifile',
+                     'id_file',
+                     'obs_file',
+                     'model_files',
+                     'cmip5_file',
+                     'pdf',
+                     'png',
+                     'ps',
+                     'eps',
                      ]
     for key in plot:
         if key not in possible_keys:
@@ -339,18 +355,20 @@ def check_plot(plot):
         check_variable(plot['variable'])
     if 'plot_projection' in plot:
         check_plot_projection(plot['plot_projection'])
-    if 'climatology' in plot:
-        check_bool(plot['climatology'], 'climatology')
-    if 'compare_climatology' in plot:
-        check_bool(plot['compare_climatology'], 'compare_climatology')
-    if 'trends' in plot:
-        check_bool(plot['trends'], 'trends')
-    if 'compare_trends' in plot:
-        check_bool(plot['compare_trends'], 'compare_trends')
-    if 'climatology_dates' in plot:
-        check_dates(plot['climatology_dates'], 'climatology_dates')
-    if 'trends_dates' in plot:
-        check_dates(plot['trends_dates'], 'trends_dates')
+    if 'data_type' in plot:
+        check_data_type(plot['data_type'])
+    if 'dates' in plot:
+        check_dates(plot['dates'], 'dates')
+    if 'comp_dates' in plot:
+        check_dates(plot['comp_dates'], 'comp_dates')
+
+    if 'data1' in plot:
+        check_data_args(plot['data1'], 'data1')
+    if 'data2' in plot:
+        check_data_args(plot['data2'], 'data2')
+    if 'comp' in plot:
+        check_data_args(plot['comp'], 'comp')
+    ##here
     if 'realization' in plot:
         check_realization(plot['realization'])
     if 'depths' in plot:
@@ -400,7 +418,7 @@ def check_plots(plots):
         check_plot(plot)
 
 
-def check_model_run(model_run):
+def check_run(model_run):
     """ Raises TypeError if the argument is not a string.
     """
     if type(model_run) is not str:
@@ -413,42 +431,14 @@ def check_experiment(exp):
     if type(exp) is not str:
         raise TypeError("'experiment' needs to be 'str' type")
 
-
-def check_obsroot(obsroot):
-    """ Raises TypeError if the argument is not a string.
-        Raises ValueError if the argument is not a valid directory.
-    """    
-    if type(obsroot) is not str:
-        raise TypeError("'obs_root' needs to be 'str' type")
-    if not os.path.exists(obsroot):
-        raise ValueError("obsroot: " + obsroot + " does not exist")
-
-
-def check_cmiproot(cmiproot):
-    """ Raises TypeError if the argument is not a string.
-        Raises ValueError if the argument is not a valid directory.
+def check_root(name, root):
+    """ Raises TypeError if root is not a string.
+        Raises ValueError if root is not a valid directory path.
     """ 
-    if type(cmiproot) is not str:
-        raise TypeError("'cmiproot_root' needs to be 'str' type")
+    if type(root) is not str:
+        raise TypeError("{} needs to be 'str' type".format(name))
     if not os.path.exists(cmiproot):
-        raise ValueError("cmiproot: " + cmiproot + " does not exist")
-
-def check_obs(obs):
-    """ Raises TypeError if the argument is not a dictionary.
-        Raises TypeError if the keys in the dictionary are not strings.
-        Raises TypeError if the items in the dictionary are not strings.
-        Raises ValueError if the items in the dictionary are not valid files.
-    """ 
-    if type(obs) is not dict:
-        raise TypeError("'obs' needs to be 'dict' type")
-    for key in obs:
-        if type(key) is not str:
-            raise TypeError("obs key '" + str(key) + "' needs to be 'str' type")
-        if type(obs[key]) is not str:
-            raise TypeError("obs[" + key + "] needs to be 'str' type")
-        if not os.path.isfile(obs[key]):
-            raise ValueError("obs[" + key + "] '" + obs[key] + "' does not exist")
-
+        raise ValueError("{}: {} is not a valid directory path".format(name, root))
 
 def check_delete(delete):
     """ Raises TypeError if the argument is not a dictionary.
@@ -458,19 +448,14 @@ def check_delete(delete):
     """
     if type(delete) is not dict:
         raise TypeError("'delete' needs to be 'dict' type")
-    possible_keys = ['del_fldmeanfiles',
+    possible_keys = ['del_netcdf',
                      'del_mask',
                      'del_ncstore',
-                     'del_remapfiles',
-                     'del_trendfiles',
-                     'del_zonalfiles',
                      'del_cmipfiles',
-                     'del_ENS_MEAN_cmipfiles',
-                     'del_ENS_STD_cmipfiles',
                      ]
     for key in delete:
         if key not in possible_keys:
-            raise ValueError(str(key) + ' is not a valid key for delete{}')
+            raise ValueError('{} is not a valid key for delete'.format(key))
         if type(delete[key]) is not bool:
             raise TypeError('delete[' + key + "] needs to be 'bool' type")
 
@@ -484,20 +469,34 @@ def check_defaults(defaults):
     check_plot(defaults)
 
 
-def check_inputs(plots, model_run, experiment, obsroot, cmiproot, obs, defaults, delete):
+def check_inputs(run, experiment, direct_data_root, data_root, observations_root, cmip5_root, processed_cmip5_root, output_root, cmip5_means, external_root, plots, defaults, delete, **kwargs):
     """ Checks the configuration inputs and 
         raises exceptions if they do not make sense.
     """
-    check_plots(plots)
-    check_model_run(model_run)
+    check_run(run)
     check_experiment(experiment)
-    if obsroot:
-        check_obsroot(obsroot)
-    if cmiproot:
-        check_cmiproot(cmiproot)
-    check_obs(obs)
-    check_defaults(defaults)
+    if direct_data_root:
+        check_root('direct_data_root', direct_data_root):
+    if data_root:
+        check_root('data_root', data_root)
+    if observations_root:
+        check_root('observations_root', observations_root)
+    if cmip5_root:
+        check_root('cmip5_root', cmip5_root)
+    if processed_cmip5_root:
+        check_root('processed_cmip5_root', processed_cmip5_root)
+    if output_root:
+        check_root('output_root', output_root)
+    if cmip5_means:
+        check_root('cmip5_means', cmip5means)
+    if external_root:
+        check_root('external_root', external_root)
     check_delete(delete)
+
+    check_plots(plots)
+
+    check_defaults(defaults)
+
 
 
 if __name__ == "__main__":
