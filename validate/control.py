@@ -25,7 +25,7 @@ def execute(options, **kwargs):
         process the data, and output the plots and figures.
 
     """
-    def plot(run=None, experiment='historical', direct_data_root= "", data_root="", observations_root="", cmip5_root="", processed_cmip5_root="", output_root=None, cmip5_means='', ignorecheck=False, external_root="", debugging=False, plots=[], defaults={}, delete={}, obs={}, **kwargs):
+    def plot(run=None, experiment='historical', direct_data_root= "", data_root="", observations_root=".", cmip5_root="", processed_cmip5_root="", output_root=None, cmip5_means='', ignorecheck=False, external_root="", debugging=False, plots=[], defaults={}, delete={}, obs={}, **kwargs):
         """Calls modules required to find the data,
            process the data, and output the plots and figures
         """

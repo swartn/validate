@@ -555,10 +555,10 @@ def getobs(plots, obsroot, o):
         if var in variables:
             variables[var].append(f)
     for p in plots:
+        if 'obs_file' not in p:
+            p['obs_file'] = {}
         p['obsfiles_for_log'] = {}
         if o in p['comp_obs']:
-            if 'obs_file' not in p:
-                p['obs_file'] = {}
             if o not in ['obs_file']:
                 try:
                     p['obs_file'][o] = variables[p['variable']][0]
@@ -588,6 +588,7 @@ def getobs(plots, obsroot, o):
                        p['extra_shifts'].pop(i)
                        p['extra_comp_shifts'].pop(i)                       
                        p['extra_obs'].pop(i)
+        
                                           
 def model_files(var, model, expname, frequency, cmipdir):
     prefix = cmipdir + '/' + var + '/'

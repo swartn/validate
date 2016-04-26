@@ -115,7 +115,7 @@ def calltheplot(plot, plotnames, ptype):
 
 def comp_loop(plot, plotnames, ptype):
     plot['comp_flag'] = 'obs'
-    for o in plot['comp_obs']:
+    for o in plot['obs_file']:
         plot['comp_model'] = o
         plot['comp_file'] = plot['obs_file'][o]
         calltheplot(plot, plotnames, ptype)
