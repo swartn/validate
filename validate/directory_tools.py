@@ -760,19 +760,25 @@ def make_ensemble(files):
     ens = cd.mkensemble()
 
 
+def datetime_string():
+    return datetime.datetime.now().strftime("%Y_%m_%d_%H-%M-%S")
+
 def make_tarfile(output_filename, source_dir):
     with tarfile.open(output_filename, "w:gz") as tar:
         tar.add(source_dir, arcname=os.path.basename(source_dir))
  
         
-def move_tarfile(location):
+def move_tarfile(location, run='', experiment=''):
     if location is not None:
-        make_tarfile('plots.tar.gz', 'plots')
-        make_tarfile('logs.tar.gz', 'logs')
-        plots_new_name = os.path.join(location, 'plots.tar.gz')
-        logs_new_name = os.path.join(location, 'logs.tar.gz')
-        os.system('scp plots.tar.gz "%s"' % plots_new_name)
-        os.system('scp logs.tar.gz "%s"' % logs_new_name)        
+        date = datetime_string()
+        plot_tar_name = ('{}-{}_plots_{}.tar.gz').format(experiment, run, date)
+        log_tar_name = ('{}-{}_logs_{}.tar.gz').format(experiment, run, date) 
+        make_tarfile(plot_tar_name, 'plots')
+        make_tarfile(log_tar_name, 'logs')
+        plots_new_name = os.path.join(location, plot_tar_name)
+        logs_new_name = os.path.join(location, log_tar_name)
+        os.system('scp {} {}'.format(plot_tar_name, plots_new_name))
+        os.system('scp {} {}'.format(log_tar_name, logs_new_name))      
             
 
 if __name__ == "__main__":

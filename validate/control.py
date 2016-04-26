@@ -79,7 +79,7 @@ def execute(options, **kwargs):
         arrange(plotnames)
         
         #create tarfile and move to output
-        move_tarfile(output_root)
+        move_tarfile(output_root, run, experiment)
 
 
     # if conf.yaml exists in the current directory use that for the configuration
