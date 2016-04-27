@@ -13,7 +13,7 @@ setup(
     author_email = 'davidwfallis@gmail.com; neil.swart@canada.ca',
     packages = ['validate', 'validate.functions'],
     include_package_data = True,
-    scripts = ['bin/validate-configure', 'bin/validate-execute'],
+    scripts = ['bin/validate-configure', 'bin/validate-execute', 'bin/val'],
     url = 'https://github.com/swartn/validate',
     download_url ='https://github.com/swartn/validate/archive/master.zip',
     description = 'Climate Model validation package',

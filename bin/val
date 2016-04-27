@@ -1,5 +1,4 @@
 #!/bin/python
-
 import ttk
 import Tkinter as tk
 import yaml
@@ -9,6 +8,25 @@ import sys
 import tempfile
 import time
 
+
+default_lxwrk2_roots = {'data_root': '/raid/rc40/data/ncs/',
+                        'direct_data_root': '',
+                        'observations_root': '/raid/rc40/data/ncs/obs4comp/',
+                        'cmip5_root': '/raid/ra40/CMIP5_OTHER_DOWNLOADS/',
+                        'cmip5_means': '/raid/rc40/data/dwf/cmipmeans/',
+                        'output_root': '',
+                        'processed_cmip5_root': '',
+                        'external_root': '',
+                        }
+default_pollux_roots = {'data_root': '',
+                        'direct_data_root': '/fs/cetus/fs2/crb/CCCma_Output/CMIP5/output/CCCma/CanESM2/historical/',
+                        'observations_root': '/fs/cetus/fs2/crb/users/acrn004/obs4comp/',
+                        'cmip5_root': '/fs/cetus/fs2/crb/users/acrn004/cmip5/',
+                        'cmip5_means': '',
+                        'output_root': '',
+                        'processed_cmip5_root': '',
+                        'external_root': '',
+                        }
 
 def listbox_value(listbox):
     idx = listbox.curselection()
@@ -33,17 +51,6 @@ class Listbox(tk.Listbox):
             if self.winfo_reqwidth() >= pixels:
                 break
             self.config(width=width+w)
-
-
-class NoWriteFile(object):
-    def write(self, ): pass
-    
-@contextlib.contextmanager
-def nostdout():
-    save_stdout = sys.stdout
-    sys.stdout = NoWriteFile()
-    yield
-    sys.stdout = save_stdout
 
 class Args(tk.Frame):
     def __init__(self, parent, name='args'):
@@ -742,7 +749,7 @@ class Plots(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.parent = parent
         self.grid()
-        self.set_location()
+        #self.set_location()
         self.initUI()
     
     def set_location(self):
@@ -916,51 +923,88 @@ class Roots(tk.Frame):
         self.data_root_label = tk.Label(self, text='data_root:')
         self.data_root_label.grid(column=0, row=0)
         self.data_root_ = tk.StringVar()
-        self.data_root_entry = tk.Entry(self, bg='white', textvariable=self.data_root)
+        self.data_root_entry = tk.Entry(self, bg='white', textvariable=self.data_root_)
         self.data_root_entry.insert(tk.END, '/fs/cetus/fs2/crb/CCCma_Output/CMIP5/output/CCCma/CanESM2/historical/')
         self.data_root_entry.grid(column=1, row=0)
 
         self.direct_data_root_label = tk.Label(self, text='direct_data_root:')
         self.direct_data_root_label.grid(column=0, row=1)
         self.direct_data_root_ = tk.StringVar()
-        self.direct_data_root_entry = tk.Entry(self, bg='white', textvariable=self.direct_data_root)
+        self.direct_data_root_entry = tk.Entry(self, bg='white', textvariable=self.direct_data_root_)
         self.direct_data_root_entry.insert(tk.END, '')
         self.direct_data_root_entry.grid(column=1, row=1)
         
         self.observations_root_label = tk.Label(self, text='observations_root:')
         self.observations_root_label.grid(column=0, row=2)
         self.observations_root_ = tk.StringVar()
-        self.observations_root_entry = tk.Entry(self, bg='white', textvariable=self.observations_root)
+        self.observations_root_entry = tk.Entry(self, bg='white', textvariable=self.observations_root_)
         self.observations_root_entry.insert(tk.END, '/fs/cetus/fs2/crb/users/acrn004/obs4comp/')
         self.observations_root_entry.grid(column=1, row=2)
         
         self.cmip5_root_label = tk.Label(self, text='cmip5_root:')
         self.cmip5_root_label.grid(column=0, row=3)
         self.cmip5_root_ = tk.StringVar()
-        self.cmip5_root_entry = tk.Entry(self, bg='white', textvariable=self.cmip5_root)
+        self.cmip5_root_entry = tk.Entry(self, bg='white', textvariable=self.cmip5_root_)
         self.cmip5_root_entry.insert(tk.END, '/fs/cetus/fs2/crb/users/acrn004/cmip5/')
         self.cmip5_root_entry.grid(column=1, row=3)
         
         self.cmip5_means_label = tk.Label(self, text='cmip5_means:')
         self.cmip5_means_label.grid(column=0, row=4)
         self.cmip5_means_ = tk.StringVar()
-        self.cmip5_means_entry = tk.Entry(self, bg='white', textvariable=self.cmip5_means)
+        self.cmip5_means_entry = tk.Entry(self, bg='white', textvariable=self.cmip5_means_)
         self.cmip5_means_entry.insert(tk.END, '/fs/cetus/fs2/crb/users/acrn004/cmip5/')
         self.cmip5_means_entry.grid(column=1, row=4)
         
         self.output_root_label = tk.Label(self, text='output_root:')
         self.output_root_label.grid(column=0, row=5)
         self.output_root_ = tk.StringVar()
-        self.output_root_entry = tk.Entry(self, bg='white', textvariable=self.output_root)
+        self.output_root_entry = tk.Entry(self, bg='white', textvariable=self.output_root_)
         self.output_root_entry.insert(tk.END, '')
         self.output_root_entry.grid(column=1, row=5)
         
         self.processed_cmip5_root_label = tk.Label(self, text='processed_cmip5_root:')
         self.processed_cmip5_root_label.grid(column=0, row=6)
         self.processed_cmip5_root_ = tk.StringVar()
-        self.processed_cmip5_root_entry = tk.Entry(self, bg='white', textvariable=self.processed_cmip5_root)
+        self.processed_cmip5_root_entry = tk.Entry(self, bg='white', textvariable=self.processed_cmip5_root_)
         self.processed_cmip5_root_entry.insert(tk.END, '/fs/cetus/fs2/crb/users/acrn004/netcdf/')
         self.processed_cmip5_root_entry.grid(column=1, row=6)
+        
+        self.external_root_label = tk.Label(self, text='external_root:')
+        self.external_root_label.grid(column=0, row=7)
+        self.external_root_ = tk.StringVar()
+        self.external_root_entry = tk.Entry(self, bg='white', textvariable=self.external_root_)
+        self.external_root_entry.grid(column=1, row=7)
+        
+        self.pollux_defaults_button = tk.Button(self, command=self.restore_pollux_defaults, text='Pollux Defaults')
+        self.pollux_defaults_button.grid(column=1, row=8)
+        
+        self.lxwrk2_defaults_button = tk.Button(self, command=self.restore_lxwrk2_defaults, text='lxwrk2 Defaults')
+        self.lxwrk2_defaults_button.grid(column=1, row=9)
+      
+    def restore_pollux_defaults(self):
+        self.data_root_.set(default_pollux_roots['data_root'])
+        self.direct_data_root_.set(default_pollux_roots['direct_data_root'])
+        self.observations_root_.set(default_pollux_roots['observations_root'])
+        self.cmip5_root_.set(default_pollux_roots['cmip5_root'])
+        self.cmip5_means_.set(default_pollux_roots['cmip5_means'])
+        self.output_root_.set(default_pollux_roots['output_root'])
+        self.processed_cmip5_root_.set(default_pollux_roots['processed_cmip5_root'])
+        self.external_root_.set(default_pollux_roots['external_root'])
+    
+    def restore_lxwrk2_defaults(self):
+        self.data_root_.set(default_lxwrk2_roots['data_root'])
+        self.direct_data_root_.set(default_lxwrk2_roots['direct_data_root'])
+        self.observations_root_.set(default_lxwrk2_roots['observations_root'])
+        self.cmip5_root_.set(default_lxwrk2_roots['cmip5_root'])
+        self.cmip5_means_.set(default_lxwrk2_roots['cmip5_means'])
+        self.output_root_.set(default_lxwrk2_roots['output_root'])
+        self.processed_cmip5_root_.set(default_lxwrk2_roots['processed_cmip5_root'])
+        self.external_root_.set(default_lxwrk2_roots['external_root'])
+    
+    @property
+    def external_root(self):
+        self._external_root = self.external_root_.get()
+        return self._external_root
             
     @property
     def processed_cmip5_root(self):
@@ -1016,7 +1060,7 @@ class Ids(tk.Frame):
         self.experiment_label.grid(column=0, row=1)
 
 
-        experiments = ['historical','rcp26','rcp45','rcp85']
+        experiments = ['historical','rcp26','rcp45','rcp85', 'amip']
         self.experiment_ = tk.StringVar()
         self.experiment_.set('historical')
         self.experiment_drop = tk.OptionMenu(self, self.experiment_, *experiments)
@@ -1117,7 +1161,6 @@ class Batch(tk.Frame):
             ofile.write('end_of_data\n')
             ofile.write('. endjcl.cdk\n')
             
-            
     
     def submit(self):
         stime = datetime.now().strftime('%Y%m%d-%H%M%S')
@@ -1125,6 +1168,8 @@ class Batch(tk.Frame):
         location = os.path.join('pollux:~', 'tmp')
         self.store_file = os.path.join(location, filename)
         self.create_batch_file()
+        os.system('scp {} {}'.format('conf.yaml', self.store_file))
+        os.system('rsub pollux validate_batch')
         
     def preview(self):
         self.create_batch_file()
@@ -1168,6 +1213,20 @@ class Batch(tk.Frame):
         self._username = self.username_.get()
         return self._username
 
+class PopUp(tk.Toplevel):
+    def __init__(self, parent, message=''):
+        tk.Toplevel.__init__(self, parent)
+        self.parent = parent
+        self.message = message
+        self.initUI()
+    
+    def initUI(self):
+        self.message_label = tk.Label(self, text=self.message)
+        self.message_label.grid()
+        
+        self.ok_button = tk.Button(self, command=self.destroy, text='OK')
+        self.ok_button.grid()
+        
 class Buttons(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
@@ -1188,19 +1247,51 @@ class Buttons(tk.Frame):
 
         self.submit_batch_button = tk.Button(self, command=self.batch_window.deiconify, text='Submit Batch')
         self.submit_batch_button.grid()        
-     
+    
+    def make_conf(self):
+        output_order = ['run',
+                        'experiment',
+                        'data_root',
+                        'direct_data_root',
+                        'observations_root',
+                        'cmip5_root',
+                        'output_root',
+                        'processed_cmip5_root',
+                        'external_root',
+                        'plots',
+                        ]
+        full_file = {}
+        full_file['plots'] = self.parent.plots
+        full_file['run'] = self.parent.ids.runid
+        full_file['experiment'] = self.parent.ids.experiment
+        full_file['data_root'] = self.parent.roots.data_root
+        full_file['direct_data_root'] = self.parent.roots.direct_data_root
+        full_file['observations_root'] = self.parent.roots.observations_root
+        full_file['cmip5_root'] = self.parent.roots.cmip5_root
+        full_file['output_root'] = self.parent.roots.output_root
+        full_file['processed_cmip5_root'] = self.parent.roots.processed_cmip5_root
+        full_file['external_root'] = self.parent.roots.external_root
+        yaml.Dumper.ignore_aliases = lambda *args: True
+        with open('conf.yaml', 'w'): pass
+        for name in output_order:
+            printer = {name: full_file[name]}
+            with open('conf.yaml', 'a') as pfile:
+                pfile.write(yaml.dump(printer, default_flow_style=False))
+          
     def submit(self):
+        self.make_conf()
         execfile(validate-execute)
     
     def preview(self):
-        plots = self.parent.plots
-        yaml.Dumper.ignore_aliases = lambda *args : True         
-        with open('conf.yaml', 'w') as preview_file:
-            preview_file.write(yaml.dump(plots, default_flow_style=False))
-        try:
+        self.make_conf()     
+        try:           
             p = subprocess.Popen(['kwrite', 'conf.yaml'])
         except:
-            pass
+            meassage = """
+                Unable to display file.\n
+                File stored as conf.yaml
+                """
+            self.preview_popup = PopUp(self, 'message')
         
 class MainWindow(tk.Frame):
     def __init__(self, parent):
@@ -1270,8 +1361,7 @@ class MainWindow(tk.Frame):
     def capture(self):
         self.plots.append(self.plot.get_dictionary())
         self.updateUI()
-        
-               
+
 
 def main():
     root = tk.Tk()
