@@ -361,6 +361,54 @@ class PlotArgs(tk.Frame):
         self.draw_meridians_cb = tk.Checkbutton(self, text='draw meridians', variable=self.draw_meridians_)
         self.draw_meridians_cb.grid(column=0, row=2)
         
+        self.lonmin_label = tk.Label(self, text='lonmin')
+        self.lonmin_label.grid(column=0, row=3)
+        
+        self.lonmin_ = tk.StringVar()
+        self.lonmin_entry = tk.Entry(self, bg='white', textvariable=self.lonmin_)
+        self.lonmin_entry.grid(column=1, row= 3)
+        
+        self.lonmax_label = tk.Label(self, text='lonmax')
+        self.lonmax_label.grid(column=0, row=4)
+
+        self.lonmax_ = tk.StringVar()
+        self.lonmax_entry = tk.Entry(self, bg='white', textvariable=self.lonmax_)
+        self.lonmax_entry.grid(column=1, row= 4)
+        
+        self.latmin_label = tk.Label(self, text='latmin')
+        self.latmin_label.grid(column=0, row=5)
+        
+        self.latmin_ = tk.StringVar()
+        self.latmin_entry = tk.Entry(self, bg='white', textvariable=self.latmin_)
+        self.latmin_entry.grid(column=1, row=5)
+        
+        self.latmax_label = tk.Label(self, text='latmax')
+        self.latmax_label.grid(column=0, row=6)
+        
+        self.latmax_ = tk.StringVar()
+        self.latmax_entry = tk.Entry(self, bg='white', textvariable=self.latmax_)
+        self.latmax_entry.grid(column=1, row=6)
+        print self.args     
+    
+    @property
+    def lonmin(self):
+        self._lonmin = self.lonmin_.get()
+        return self._lonmin
+    
+    @property
+    def lonmax(self):
+        self._lonmax = self.lonmax_.get()
+        return self._lonmax
+    
+    @property
+    def latmin(self):
+        self._latmin = self.latmin_.get()
+        return self._latmin
+    
+    @property
+    def latmax(self):
+        self._latmax = self.latmax_.get()
+        return self._latmax
         
     @property
     def draw_meridians(self):
@@ -383,6 +431,14 @@ class PlotArgs(tk.Frame):
         self._args['draw_meridians'] = self.draw_meridians
         self._args['draw_parallels'] = self.draw_parallels
         self._args['fill_continents'] = self.fill_continents
+        if self.lonmin != '':
+            self._args['lonmin'] = int(self.lonmin)
+        if self.lonmax != '':
+            self._args['lonmax'] = int(self.lonmax)
+        if self.latmin != '':
+            self._args['latmin'] = int(self.latmin)
+        if self.latmax != '':
+            self._args['latmax'] = int(self.latmax)
         return self._args
         
 class CompOptions(tk.Frame):
@@ -1362,7 +1418,7 @@ class MainWindow(tk.Frame):
 def main():
     root = tk.Tk()
     root.geometry("800x500+300+300")
-    app = MainWindow(root)
+    app = PlotArgs(root)
     root.mainloop()
 
 
