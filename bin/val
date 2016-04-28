@@ -1418,7 +1418,7 @@ class MainWindow(tk.Frame):
 def main():
     root = tk.Tk()
     root.geometry("800x500+300+300")
-    app = PlotArgs(root)
+    app = MainWindow(root)
     root.mainloop()
 
 
