@@ -54,11 +54,12 @@ class Listbox(tk.Listbox):
             self.config(width=width+w)
 
 class Args(tk.Frame):
-    def __init__(self, parent, name='args'):
+    def __init__(self, parent, name='args', optional_keys=['','']):
         tk.Frame.__init__(self, parent)
         self.parent = parent
         self.grid()
         self.parent.title(name)
+        self.optional_keys = optional_keys
         self.keys = []
         self.values = []
         self.initUI()
@@ -80,6 +81,17 @@ class Args(tk.Frame):
         
         self.add_key_button = tk.Button(self, command=self.add_key_value, text='Add Key')
         self.add_key_button.grid(column=2, row=1)
+         
+        self.optional_key_ = tk.StringVar()
+        self.optional_key_drop = tk.OptionMenu(self, self.optional_key_, *self.optional_keys)
+        self.optional_key_drop.grid(column=0, row=2)
+        
+        self.optional_value_ = tk.StringVar()
+        self.optional_value_entry = tk.Entry(self, bg='white', textvariable=self.optional_value_)
+        self.optional_value_entry.grid(column=1, row=2)
+        
+        self.add_optional_key_button = tk.Button(self, command=self.add_optional_key_value, text='Add_Key')
+        self.add_optional_key_button.grid(column=2, row=2)     
         
         self.display_frame = tk.Frame(self)
         self.display_frame.grid(column=3, row=0)
@@ -123,9 +135,37 @@ class Args(tk.Frame):
             self.values.append(value)
         self.updateUI()
     
+    def add_optional_key_value(self):
+        key = self.optional_key
+        value = self.optional_value
+        if key in self.keys:
+            self.values[self.keys.index(key)] = value
+        else:
+            self.keys.append(key)
+            self.values.append(value)
+        self.updateUI()
+    
+    @property
+    def optional_key(self):
+        self._optional_key = self.optional_key_.get()
+        return self._optional_key
+    
+    @property
+    def optional_value(self):
+        self._optional_value = self.optional_value_.get()
+        try:
+            self._optional_value = float(self._optional_value)
+        except:
+            pass
+        return self._optional_value
+    
     @property
     def value(self):
         self._value = self.value_.get()
+        try:
+            self._value = float(self._value)
+        except:
+            pass
         return self._value
         
     @property
@@ -151,12 +191,14 @@ class DataArguments(tk.Frame):
         self.ax_args_window = tk.Toplevel(self)
         self.ax_args_window.protocol('WM_DELETE_WINDOW', self.ax_args_window.withdraw)
         self.ax_args_window.withdraw()
-        self.ax_args = Args(self.ax_args_window, name='ax_args')
+        ax_keys = ['title', 'xlabel', 'ylabel']
+        self.ax_args = Args(self.ax_args_window, name='ax_args', optional_keys=ax_keys)
         
         self.pcolor_args_window = tk.Toplevel(self)
         self.pcolor_args_window.protocol('WM_DELETE_WINDOW', self.pcolor_args_window.withdraw)
         self.pcolor_args_window.withdraw()
-        self.pcolor_args = Args(self.pcolor_args_window, name='pcolor_args')
+        pcolor_keys = ['vmin', 'vmax', 'cmap']
+        self.pcolor_args = Args(self.pcolor_args_window, name='pcolor_args', optional_keys=pcolor_keys)
         
         self.ax_args_button = tk.Button(self, command=self.ax_args_window.deiconify, text='ax_args')
         self.ax_args_button.grid(column=0, row=0)
