@@ -98,10 +98,13 @@ def _section_data(data, plot):
 
 def _make_discrete(plot, data):
     if 'ncols' in plot[data]:
-        plot[data]['pcolor_args']['cmap'] = plt.cm.get_cmap(plot[data]['pcolor_args']['cmap'], plot[data]['ncols'])
-        plot[data]['cbbounds'] = np.linspace(plot[data]['pcolor_args']['vmin'],
+        if plot[data]['ncols']:
+            plot[data]['pcolor_args']['cmap'] = plt.cm.get_cmap(plot[data]['pcolor_args']['cmap'], plot[data]['ncols'])
+            plot[data]['cbbounds'] = np.linspace(plot[data]['pcolor_args']['vmin'],
                                              plot[data]['pcolor_args']['vmax'],
                                              plot[data]['ncols']+1)
+        else:
+            plot[data]['cbbounds'] = None 
     else:
         plot[data]['cbbounds'] = None
 
@@ -203,7 +206,7 @@ def plotname(plot):
 def weighted_mean(data, weights=None):
     if weights is None:
         weights = np.ones(data.shape)
-
+    
     flattened_data = data.flatten()
     flattened_weights = weights.flatten()    
 

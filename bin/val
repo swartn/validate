@@ -1,6 +1,7 @@
 #!/bin/python
 import ttk
 import Tkinter as tk
+import os
 import yaml
 import subprocess
 import contextlib
@@ -23,8 +24,8 @@ default_pollux_roots = {'data_root': '',
                         'observations_root': '/fs/cetus/fs2/crb/users/acrn004/obs4comp/',
                         'cmip5_root': '/fs/cetus/fs2/crb/users/acrn004/cmip5/',
                         'cmip5_means': '',
-                        'output_root': '',
-                        'processed_cmip5_root': '',
+                        'output_root': 'ftp1.cccma.ec.gc.ca:/raid/rc40/data/val/',
+                        'processed_cmip5_root': '/fs/cetus/fs2/crb/users/acrn004/netcdf/',
                         'external_root': '',
                         }
 
@@ -145,7 +146,7 @@ class DataArguments(tk.Frame):
         self.grid()
         self.parent.title(name)
         self.initUI()
-    
+   
     def initUI(self):
         self.ax_args_window = tk.Toplevel(self)
         self.ax_args_window.protocol('WM_DELETE_WINDOW', self.ax_args_window.withdraw)
@@ -162,12 +163,26 @@ class DataArguments(tk.Frame):
         
         self.pcolor_args_button = tk.Button(self, command=self.pcolor_args_window.deiconify, text='pcolor_args')
         self.pcolor_args_button.grid(column=0, row=1)
-    
+        
+        self.ncols_label = tk.Label(self, text='ncols')
+        self.ncols_label.grid(column=0, row=2)
+        
+        self.ncols_ = tk.IntVar()
+        self.ncols_.set(0)
+        self.ncols_entry = tk.Entry(self, bg='white', textvariable=self.ncols_)
+        self.ncols_entry.grid(column=1, row=2)
+
+    @property
+    def ncols(self):
+        self._ncols = self.ncols_.get()
+        return self._ncols    
+        
     @property
     def data_args(self):
         self._data_args = {}
         self._data_args['pcolor_args'] = self.pcolor_args.args
         self._data_args['ax_args'] = self.ax_args.args
+        self._data_args['ncols'] = self.ncols
         return self._data_args    
 
 class ExtraVariableOptions(tk.Frame):
@@ -416,12 +431,16 @@ class CompOptions(tk.Frame):
         for season in seasons:
             self.seasons_lb.insert(tk.END, season)
         self.seasons_lb.grid(column=1, row=4)
+        
+
 
     @property
     def dates(self):
         self._dates = {}
-        self._dates['start_date'] = self.start_date
-        self._dates['end_date'] = self.end_date
+        if self.start_date:
+            self._dates['start_date'] = self.start_date
+        if self.end_date:        
+            self._dates['end_date'] = self.end_date       
         return self._dates
         
     @property
@@ -538,12 +557,23 @@ class Options(tk.Frame):
         self.remap_grid_.set('r360x180')
         self.remap_grid_entry = tk.Entry(self, bg='white', textvariable=self.remap_grid_)
         self.remap_grid_entry.grid(column=1, row=8)
-    
+
+        self.divergent_ = tk.IntVar()
+        self.divergent_cb = tk.Checkbutton(self, text='divergent', variable=self.divergent_)
+        self.divergent_cb.grid(column=0, row=9)    
+
+    @property
+    def divergent(self):
+        self._divergent = self.divergent_.get()
+        return self._divergent
+
     @property
     def dates(self):
         self._dates = {}
-        self._dates['start_date'] = self.start_date
-        self._dates['end_date'] = self.end_date
+        if self.start_date:
+            self._dates['start_date'] = self.start_date
+        if self.end_date:        
+            self._dates['end_date'] = self.end_date       
         return self._dates
     
     @property
@@ -882,7 +912,7 @@ class Plots(tk.Frame):
     def get_dictionary(self):
         plot = {}
         plot['variable'] = self.variable
-        plot['projection'] = self.projection
+        plot['plot_projection'] = self.projection
         plot['data_type'] = self.data_type
         plot['dates'] = self.options.dates
         plot['comp_dates'] = self.comp_options.dates
@@ -904,11 +934,12 @@ class Plots(tk.Frame):
         plot['comp_seasons'] = self.comp_options.seasons
         plot['remap'] = self.options.remap
         plot['remap_grid'] = self.options.remap_grid
+        plot['divergent'] = self.options.divergent
         plot['extra_variables'] = self.extra_variables.extra_variables
         plot['extra_scales'] = self.extra_variables.extra_scales
         plot['exta_shifts'] = self.extra_variables.extra_shifts
         plot['extra_obs'] = self.extra_variables.extra_obs
-        
+        plot = {key: value for key, value in plot.iteritems() if value or value == 0}
         return plot
 
 class Roots(tk.Frame):
@@ -924,7 +955,6 @@ class Roots(tk.Frame):
         self.data_root_label.grid(column=0, row=0)
         self.data_root_ = tk.StringVar()
         self.data_root_entry = tk.Entry(self, bg='white', textvariable=self.data_root_)
-        self.data_root_entry.insert(tk.END, '/fs/cetus/fs2/crb/CCCma_Output/CMIP5/output/CCCma/CanESM2/historical/')
         self.data_root_entry.grid(column=1, row=0)
 
         self.direct_data_root_label = tk.Label(self, text='direct_data_root:')
@@ -938,21 +968,18 @@ class Roots(tk.Frame):
         self.observations_root_label.grid(column=0, row=2)
         self.observations_root_ = tk.StringVar()
         self.observations_root_entry = tk.Entry(self, bg='white', textvariable=self.observations_root_)
-        self.observations_root_entry.insert(tk.END, '/fs/cetus/fs2/crb/users/acrn004/obs4comp/')
         self.observations_root_entry.grid(column=1, row=2)
         
         self.cmip5_root_label = tk.Label(self, text='cmip5_root:')
         self.cmip5_root_label.grid(column=0, row=3)
         self.cmip5_root_ = tk.StringVar()
         self.cmip5_root_entry = tk.Entry(self, bg='white', textvariable=self.cmip5_root_)
-        self.cmip5_root_entry.insert(tk.END, '/fs/cetus/fs2/crb/users/acrn004/cmip5/')
         self.cmip5_root_entry.grid(column=1, row=3)
         
         self.cmip5_means_label = tk.Label(self, text='cmip5_means:')
         self.cmip5_means_label.grid(column=0, row=4)
         self.cmip5_means_ = tk.StringVar()
         self.cmip5_means_entry = tk.Entry(self, bg='white', textvariable=self.cmip5_means_)
-        self.cmip5_means_entry.insert(tk.END, '/fs/cetus/fs2/crb/users/acrn004/cmip5/')
         self.cmip5_means_entry.grid(column=1, row=4)
         
         self.output_root_label = tk.Label(self, text='output_root:')
@@ -966,7 +993,6 @@ class Roots(tk.Frame):
         self.processed_cmip5_root_label.grid(column=0, row=6)
         self.processed_cmip5_root_ = tk.StringVar()
         self.processed_cmip5_root_entry = tk.Entry(self, bg='white', textvariable=self.processed_cmip5_root_)
-        self.processed_cmip5_root_entry.insert(tk.END, '/fs/cetus/fs2/crb/users/acrn004/netcdf/')
         self.processed_cmip5_root_entry.grid(column=1, row=6)
         
         self.external_root_label = tk.Label(self, text='external_root:')
@@ -1280,7 +1306,7 @@ class Buttons(tk.Frame):
           
     def submit(self):
         self.make_conf()
-        execfile(validate-execute)
+        os.system('validate-execute -b')
     
     def preview(self):
         self.make_conf()     
@@ -1348,7 +1374,7 @@ class MainWindow(tk.Frame):
     def updateUI(self):
         self.plots_lb = tk.Listbox(self, selectmode=tk.MULTIPLE, exportselection=0)
         for plot in self.plots:
-            pstring = '{} {} {}'.format(plot['variable'], plot['projection'], plot['data_type'])
+            pstring = '{} {} {}'.format(plot['variable'], plot['plot_projection'], plot['data_type'])
             self.plots_lb.insert(tk.END, pstring)
         self.plots_lb.grid(column=3, row=0, rowspan=2)
 
