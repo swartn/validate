@@ -118,6 +118,12 @@ def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None,
     else:
         fig = plt.gcf()
     
+    if 'polar' in projection:
+        try:
+            data, lon = addcyclic(data, lon)
+        except:
+            pass
+   
     if not pcolor_args:
         pcolor_args = default_pcolor_args(data, anom)
 
