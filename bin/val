@@ -7,7 +7,7 @@ import subprocess
 import contextlib
 import sys
 import tempfile
-import time
+from datetime import datetime
 
 
 default_lxwrk2_roots = {'data_root': '/raid/rc40/data/ncs/',
@@ -360,6 +360,7 @@ class PlotArgs(tk.Frame):
         self.draw_meridians_ = tk.IntVar()
         self.draw_meridians_cb = tk.Checkbutton(self, text='draw meridians', variable=self.draw_meridians_)
         self.draw_meridians_cb.grid(column=0, row=2)
+        
         
     @property
     def draw_meridians(self):
@@ -1119,40 +1120,12 @@ class Batch(tk.Frame):
         self.username_entry = tk.Entry(self, bg='white', textvariable=self.username_)
         self.username_entry.grid(column=1, row=0)
         
-        self.user_label = tk.Label(self, text='User:')
-        self.user_label.grid(column=0, row=1)
-        
-        self.user_ = tk.StringVar()
-        self.user_entry = tk.Entry(self, bg='white', textvariable=self.user_)
-        self.user_entry.grid(column=1, row=1)
-        
-        self.account_label = tk.Label(self, text='Account:')
-        self.account_label.grid(column=0, row=2)
-        
-        self.account_ = tk.StringVar()
-        self.account_entry = tk.Entry(self, bg='white', textvariable=self.account_)
-        self.account_entry.grid(column=1, row=2)
-        
         self.memory1_label = tk.Label(self, text='Memory1: (mb)')
         self.memory1_label.grid(column=0, row=3)
         
         self.memory1_ = tk.StringVar()
         self.memory1_entry = tk.Entry(self, bg='white', textvariable=self.memory1_)
         self.memory1_entry.grid(column=1, row=3)
-        
-        self.jobname_label = tk.Label(self, text='Jobname:')
-        self.jobname_label.grid(column=0, row=4)
-        
-        self.jobname_ = tk.StringVar()
-        self.jobname_entry = tk.Entry(self, bg='white', textvariable=self.jobname_)
-        self.jobname_entry.grid(column=1, row=4)
-        
-        self.store_file_label = tk.Label(self, text='Store File:')
-        self.store_file_label.grid(column=0, row=5)
-        
-        self.store_file_ = tk.StringVar()
-        self.store_file_entry = tk.Entry(self, bg='white', textvariable=self.store_file_)
-        self.store_file_entry.grid(column=1, row=5)
         
         self.time_label = tk.Label(self, text='stime (s):')
         self.time_label.grid(column=0, row=6)
@@ -1161,11 +1134,14 @@ class Batch(tk.Frame):
         self.time_entry = tk.Entry(self, bg='white', textvariable=self.time_)
         self.time_entry.grid(column=1, row=6)
         
+        
         self.preview_button = tk.Button(self, command=self.preview, text='Preview')
         self.preview_button.grid(column=1, row=7)
         
         self.submit_button = tk.Button(self, command=self.submit, text='Submit')
         self.submit_button.grid(column=1, row=8)
+        
+        
     
     def create_batch_file(self):
         with open('validate_batch', 'w') as ofile:
@@ -1174,16 +1150,19 @@ class Batch(tk.Frame):
             ofile.write('. betapath2\n')
             ofile.write('stime="{}";\n'.format(self.time))
             ofile.write('username="{}";\n'.format(self.username))
-            ofile.write('user="{}"; account="{}"; up="xxxxxx";\n'.format(self.user, self.account))
+            ofile.write('user="{}"; account="{}"; up="xxxxxx";\n'.format(self.username, self.username))
             ofile.write('lopgm="LOPGM";\n')
             ofile.write('memory1="{}mb";\n'.format(self.memory1))
             ofile.write('jobname={}_validate ; time=$stime ; memory=$memory1\n'.format(self.username))
             ofile.write('.   comjcl.cdk\n')
             ofile.write("cat > Execute_Script <<'end_of_script'\n")
-            ofile.write('validate-configure -m {}\n'.format(self.store_file))
-            ofile.write('validate-execute\n')
+            ofile.write('anaconda validate-configure -m {}\n'.format(self.store_file))
+            ofile.write('anaconda validate-execute -b\n')
             ofile.write('end_of_script\n')
-            ofile.write('cat > Input_Cards <<end_of_data\n')
+            ofile.write('cat > Input_Cards <<end_of_data\n\n')
+            ofile.write('+   .    :    .    :    .    :    .    :    .    :    .    :    .    :    .    :\n')
+            ofile.write(' DAVID BOX = 1105\n')
+            ofile.write('+   .    :    .    :    .    :    .    :    .    :    .    :    .    :    .    :\n')
             ofile.write('end_of_data\n')
             ofile.write('. endjcl.cdk\n')
             
@@ -1193,9 +1172,11 @@ class Batch(tk.Frame):
         filename = 'validate_{}'.format(stime)
         location = os.path.join('pollux:~', 'tmp')
         self.store_file = os.path.join(location, filename)
-        self.create_batch_file()
         os.system('scp {} {}'.format('conf.yaml', self.store_file))
+        self.store_file = self.store_file.replace('pollux:', '')
+        self.create_batch_file()
         os.system('rsub pollux validate_batch')
+        self.parent.deiconify()
         
     def preview(self):
         self.create_batch_file()
@@ -1213,26 +1194,11 @@ class Batch(tk.Frame):
     def store_file(self):
         self._store_file = self.store_file_.get()
         return self._store_file
-    
-    @property
-    def jobname(self):
-        self._jobname = self.jobname_.get()
-        return self._jobname
         
     @property
     def memory1(self):
         self._memory1 = self.memory1_.get()
         return self._memory1
-    
-    @property
-    def account(self):
-        self._account = self.user_.get()
-        return self._account
-        
-    @property
-    def user(self):
-        self._user = self.user_.get()
-        return self._user
         
     @property
     def username(self):
@@ -1271,8 +1237,12 @@ class Buttons(tk.Frame):
         self.batch_window.withdraw()
         self.batch = Batch(self.batch_window)
 
-        self.submit_batch_button = tk.Button(self, command=self.batch_window.deiconify, text='Submit Batch')
-        self.submit_batch_button.grid()        
+        self.submit_batch_button = tk.Button(self, command=self.open_batch_window, text='Submit Batch')
+        self.submit_batch_button.grid()
+    
+    def open_batch_window(self):
+        self.make_conf()
+        self.batch_window.deiconify()     
     
     def make_conf(self):
         output_order = ['run',
