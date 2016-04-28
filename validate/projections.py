@@ -148,13 +148,13 @@ def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None,
     if projection == 'polar_map':
         m = Basemap(projection='npstere', boundinglat=latmin, 
                     lon_0=lon_0, resolution='c', round=True, ax=ax)
-        a, b = m(135, 20)
+        a, b = (10000, -10000)
         parallel_labels = [0, 0, 0, 0]
         meridian_labels = [0, 0, 0, 0]
     if projection == 'polar_map_south':
         m = Basemap(projection='spstere', boundinglat=latmax, 
                     lon_0=lon_0, resolution='c', round=True, ax=ax)
-        a, b = m(-135, -20) 
+        a, b = (10000, -10000)
         parallel_labels = [0, 0, 0, 0]
         meridian_labels = [0, 0, 0, 0]  
     lons, lats = np.meshgrid(lon, lat)
