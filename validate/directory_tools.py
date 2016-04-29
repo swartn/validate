@@ -661,52 +661,27 @@ def get_cmip_average(plots, directory):
                     p['cmipmeanfile_for_log'] = cfile
                     break
             else:
-                p['cmip5_file'] = None
-                p['cmipmeanfile_for_log'] = None
+                try:
+                    p['cmip5_file'] = cmip_average(p['cmip5_files'], p['variable'])
+                except:
+                    p['cmip5_file'] = None
+                    p['cmipmeanfile_for_log'] = None
         
     
-
-    
-def cmip_average(var, frequency, files, sd, ed, expname):
+def cmip_average(files, var):
     """ Creates and stores a netCDF file with the average data
         across all the models provided.
         Returns the name of the created file.
     """
-    averagefiles = traverse(MEANDIR)
-    
-    out = 'ENS-MEAN_cmipfiles/' + var + '_' + 'cmip5.nc'
+    ens = cd.mkensemble('', filenames=files)
+    out = 'netcdf/' + var + '_' + 'cmip5.nc'
     # skip if the new file was already made
     if not os.path.isfile(out):
-        newfilelist = []
-        newerfilelist = []
-        for f in files:
-            time = f.replace('.nc', '_time.nc')
-            # try to select the date range
-#            try:
-            os.system('cdo -L seldate,' + sd + ',' + ed + ' -selvar,' + var + ' ' + f + ' ' + time)
-#            cdo.seldate(sd+','+ed, options = '-L', input='-selvar,' + var + ' ' + f, output=time)
-#            except:
-                # don't append filename to the list if it was not in the date range
-#                pass
-#            else:
-            newfilelist.append(time)
-        for f in newfilelist:
-            remap = f.replace('.nc', '_remap.nc')
-            
-            # try to remap the files
-            try:
-                cdo.remapdis('r360x180', input=f, output=remap)
-            except:
-                # don't append the filename if it could not be remapped
-                pass
-            else:
-                newerfilelist.append(remap)
-
-        filestring = ' '.join(newerfilelist)
-        
-        # compute the mean across the models
-        cdo.ensmean(input=filestring, output=out)
+        ens = cd.remap(ens, output_prefix='netcdf/forens-')
+        ensemble_means, _ = cd.ens_stats(ens, var, output_prefix='netcdf/')
+        os.rename(ensemble_means[0], out)
     return out
+
 
 def getcmipfiles(plots, expname, cmipdir):
     """ Loop through the plots and create the comparison files if cdo operations are needed 
@@ -752,8 +727,6 @@ def getcmipfiles(plots, expname, cmipdir):
                         print 'No cmip5 files were found for ' + p['variable'] + ': ' + model
                         # remove the model from the list if no comparison files were found
                         p['comp_cmips'].remove(model)
-
-    get_cmip_average(plots, MEANDIR)
                         
     for p in plots:
         if p['comp_cmips']:
@@ -766,6 +739,8 @@ def getcmipfiles(plots, expname, cmipdir):
 #                p['cmip5_file'] = cmip_average(p['variable'], p['frequency'], p['cmip5_files'], str(startdates[p['variable']]) + '-01', str(enddates[p['variable']]) + '-01', expname)
             except:
                 p['comp_cmips'] = []
+    
+    get_cmip_average(plots, MEANDIR)
 
 
 def cmip(plots, cmipdir, cmipmeandir, expname):
