@@ -13,6 +13,7 @@ import datetime
 import itertools
 import tarfile
 import cmipdata as cd
+import validate
 import cdo
 cdo = cdo.Cdo()
 
@@ -144,10 +145,12 @@ def _mkdir():
 
 def _logfile(run, experiment):
     with open('logs/log.txt', 'w') as outfile:
+        outfile.write('Validate version: ' + validate.__version__ + '\n')
         outfile.write('Run ID: ' + run + '\n')
         outfile.write('Experiment: ' + experiment + '\n\n')
 
     with open('logs/log.yml', 'w') as outfile:
+        outfile.write('Validate version: ' + validate.__version__ + '\n')
         outfile.write('Run ID: ' + run + '\n')
         outfile.write('Experiment: ' + experiment + '\n\n')
 
@@ -183,8 +186,6 @@ def _load_masks(files):
                   'sftgif',
                   ]
         if var in fxvars:
-            print f
-            print 'found ' + var
             os.system('ln -s ' + f + ' ./mask/' + var)          
 
 #    used to be hard coded for known directory path
@@ -239,16 +240,17 @@ def _cat_file_slices(filedict):
     dictionary mapping to new file name
     """
     count = 0
+    cat_file_dict = {}
     for d in filedict:
         if len(filedict[d]) > 1:
             count += 1
             outfile = 'ncstore/merged' + filedict[d][0].rsplit('/', 1)[1]
             infiles = ' '.join(filedict[d])
             os.system('cdo mergetime ' + infiles + ' ' + outfile)
-            filedict[d] = (outfile)
+            cat_file_dict[d] = (outfile)
         else:
-            filedict[d] = filedict[d][0]
-    return filedict
+            cat_file_dict[d] = filedict[d][0]
+    return cat_file_dict
 
 
 def getdates(f):
@@ -309,12 +311,19 @@ def getfrequency(f):
     string of frequency
     """
     nc = Dataset(f, 'r')
-    return str(nc.__getattribute__('frequency'))
+    try: 
+        frequency = str(nc.__getattribute__('frequency'))
+    except:
+        frequency = 'unknown'
+    return frequency
 
 def getexperiment(f):
     nc = Dataset(f, 'r')
-    return str(nc.__getattribute__('experiment'))    
-    
+    try:
+        experiment = str(nc.__getattribute__('experiment'))
+    except:
+        experiment = ''
+    return experiment
     
 def getrealization(f):
     """ Returns the realization from a filename and directory path.
@@ -329,7 +338,11 @@ def getrealization(f):
     string of realization number
     """
     nc = Dataset(f, 'r')
-    return str(nc.__getattribute__('realization'))
+    try:
+        realization = str(nc.__getattribute__('realization'))
+    except:
+        realization = 'r1i1p1'
+    return realization
 
 
 def getrealm(f):
@@ -345,7 +358,10 @@ def getrealm(f):
     string of realm
     """
     nc = Dataset(f, 'r')
-    realm = str(nc.__getattribute__('modeling_realm'))
+    try:
+        realm = str(nc.__getattribute__('modeling_realm'))
+    except:
+        realm = 'atmos' # set realm to atmos, so nothing will be masked
     if 'seaIce' in realm:
         realm = 'seaIce'
     return realm
@@ -393,7 +409,7 @@ def getfiles(plots, directroot, root, run, experiment):
 
     realms = {}
     for f in files:
-        realms[getvariable(f)] = getrealm(f)
+       realms[getvariable(f)] = getrealm(f)
 
     vf = {}
     fvr = []
@@ -410,9 +426,13 @@ def getfiles(plots, directroot, root, run, experiment):
             del vf[key]
     startdates = min_start_dates(plots)
     enddates = max_end_dates(plots)
-    filedict = _remove_files_out_of_date_range(vf, startdates, enddates)
-    filedict = _cat_file_slices(filedict)
+    uncat_filedict = _remove_files_out_of_date_range(vf, startdates, enddates)
+    filedict = _cat_file_slices(uncat_filedict)
     for p in plots:
+        if 'ifile' in p:
+            p['ifiles_for_log'] = [p['ifile']]
+        else:
+            p['ifiles_for_log'] = uncat_filedict[(p['frequency'], p['variable'], str(p['realization']))]    
         if 'ifile' not in p:
             try:
                 p['ifile'] = filedict[(p['frequency'], p['variable'], str(p['realization']))]
@@ -422,15 +442,16 @@ def getfiles(plots, directroot, root, run, experiment):
                 print 'No file was found for ' + p['variable']
         if 'ifile' not in p:
             continue
-        p['realm'] = getrealm(p['ifile'])
-        #p['realm'] = realms[p['variable']]
+        if 'realm' not in p:        
+            p['realm'] = getrealm(p['ifile'])
         p['realm_cat'] = getrealmcat(p['realm'])
         p['extra_ifiles'] = {}
         p['extra_realms'] = {}
         p['extra_realm_cats'] = {}
         for evar in p['extra_variables']:
             p['extra_ifiles'][evar] = filedict[(p['frequency'], evar, str(p['realization']))]
-            p['extra_realms'][evar] = realms[evar]
+            if evar not in p['extra_realms']:
+                p['extra_realms'][evar] = realms[evar]
             p['extra_realm_cats'][evar] = getrealmcat(p['extra_realms'][evar])
         
         if 'fill_continents' not in p['plot_args']:
@@ -473,11 +494,16 @@ def getidfiles(plots, root, experiment):
         for key in vf.keys():
             if key not in fvr:
                 del vf[key]
-        filedict = _remove_files_out_of_date_range(vf, startdates, enddates)
-        filedict = _cat_file_slices(filedict)
+        uncat_filedict = _remove_files_out_of_date_range(vf, startdates, enddates)
+        filedict = _cat_file_slices(uncat_filedict)
         for p in plots:
+            p['idfiles_for_log'] = {}
             if i in p['comp_ids']:
-                p['id_file'][i] = filedict[(p['frequency'], p['variable'], str(p['realization']))]
+                if i in p['id_file']:
+                    p['idfiles_for_log'][i] = p['id_file'][i] 
+                else:
+                    p['id_file'][i] = filedict[(p['frequency'], p['variable'], str(p['realization']))]
+                    p['idfiles_for_log'] = uncat_filedict[(p['frequency'], p['variable'], str(p['realization']))]
 
 
 def remfiles(del_mask=True, del_ncstore=True, del_netcdf=True, del_cmipfiles=True, **kwargs):
@@ -529,16 +555,22 @@ def getobs(plots, obsroot, o):
         if var in variables:
             variables[var].append(f)
     for p in plots:
+        if 'obs_file' not in p:
+            p['obs_file'] = {}
+        p['obsfiles_for_log'] = {}
         if o in p['comp_obs']:
-            if 'obs_file' not in p:
-                p['obs_file'] = {}
-            try:
-                p['obs_file'][o] = variables[p['variable']][0]
-            except:
-                with open('logs/log.txt', 'a') as outfile:
-                    outfile.write('No observations file was found for ' + p['variable'] + '\n\n')
-                print 'No ' + o + ' file was found for ' + p['variable']
-                p['comp_obs'].remove(o)
+            if o not in ['obs_file']:
+                try:
+                    p['obs_file'][o] = variables[p['variable']][0]
+                    p['obsfiles_for_log'][o] = p['obs_file'][o]
+                except:
+                    with open('logs/log.txt', 'a') as outfile:
+                        outfile.write('No observations file was found for ' + p['variable'] + '\n\n')
+                    print 'No ' + o + ' file was found for ' + p['variable']
+                    p['comp_obs'].remove(o)
+            else:
+                p['obsfiles_for_log'][o] = p['obs_file'][o]
+            
         if o in p['extra_obs']:
             if 'extra_obs_files' not in p:
                 p['extra_obs_files'] = {}
@@ -556,6 +588,7 @@ def getobs(plots, obsroot, o):
                        p['extra_shifts'].pop(i)
                        p['extra_comp_shifts'].pop(i)                       
                        p['extra_obs'].pop(i)
+        
                                           
 def model_files(var, model, expname, frequency, cmipdir):
     prefix = cmipdir + '/' + var + '/'
@@ -596,13 +629,19 @@ def get_cmip_average(plots, directory):
         if var in variables:
             variables[var].append(f)
     for p in plots:
+        if 'cmip5_file' in p:
+            p['cmipmeanfile_for_log'] = p['cmip5_file']
+            continue
         if p['comp_cmips']:
             for cfile in variables[p['variable']]:
                 if getfrequency(cfile) == p['frequency'] and getexperiment(cfile) == p['experiment']:
                     p['cmip5_file'] = cfile
+                    p['cmipmeanfile_for_log'] = cfile
                     break
             else:
                 p['cmip5_file'] = None
+                p['cmipmeanfile_for_log'] = None
+    
 
     
 def cmip_average(var, frequency, files, sd, ed, expname):
@@ -662,9 +701,14 @@ def getcmipfiles(plots, expname, cmipdir):
         if p['comp_models'] or p['comp_cmips']:
             # map the file names of the comparison files to the model names
             for model in p['comp_models'][:]:
+                p['modelfiles_for_log'] = {}
                 try:
-                    p['model_files'][model], ens = model_files(p['variable'], model, expname, p['frequency'], cmipdir)
+                    if model not in p['model_files']:
+                        p['model_files'][model], ens = model_files(p['variable'], model, expname, p['frequency'], cmipdir)
+                    else:
+                        ens = cd.mkensemble('', filenames=p['model_files'][model])
                     p['model_file'][model] = model_average(ens, p['variable'], model)
+                    p['modelfiles_for_log'][model] = p['model_files'][model]
                 except:
                     with open('logs/log.txt', 'a') as outfile:
                         outfile.write('No cmip5 files were found for ' + p['variable'] + ': ' + model + '\n\n')
@@ -712,20 +756,29 @@ def cmip(plots, cmipdir, cmipmeandir, expname):
             getcmipfiles(plots, expname, cmipdir)
             break
 
+def make_ensemble(files):
+    ens = cd.mkensemble()
+
+
+def datetime_string():
+    return datetime.datetime.now().strftime("%Y_%m_%d_%H-%M-%S")
 
 def make_tarfile(output_filename, source_dir):
     with tarfile.open(output_filename, "w:gz") as tar:
         tar.add(source_dir, arcname=os.path.basename(source_dir))
  
         
-def move_tarfile(location):
+def move_tarfile(location, run='', experiment=''):
     if location is not None:
-        make_tarfile('plots.tar.gz', 'plots')
-        make_tarfile('logs.tar.gz', 'logs')
-        plots_new_name = os.path.join(location, 'plots.tar.gz')
-        logs_new_name = os.path.join(location, 'logs.tar.gz')
-        os.system('scp plots.tar.gz "%s"' % plots_new_name)
-        os.system('scp logs.tar.gz "%s"' % logs_new_name)        
+        date = datetime_string()
+        plot_tar_name = ('{}-{}_plots_{}.tar.gz').format(experiment, run, date)
+        log_tar_name = ('{}-{}_logs_{}.tar.gz').format(experiment, run, date) 
+        make_tarfile(plot_tar_name, 'plots')
+        make_tarfile(log_tar_name, 'logs')
+        plots_new_name = os.path.join(location, plot_tar_name)
+        logs_new_name = os.path.join(location, log_tar_name)
+        os.system('scp {} {}'.format(plot_tar_name, plots_new_name))
+        os.system('scp {} {}'.format(log_tar_name, logs_new_name))      
             
 
 if __name__ == "__main__":

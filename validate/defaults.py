@@ -22,6 +22,8 @@ DEFAULTS = {'plotprojection': 'mercator',
             'shift': 0,
             'pdf': True,
             'png': False,
+            'ps': False,
+            'eps': False,
             'comp_flag': None,
             'remap': 'remapdis',
             'remap_grid': 'r360x180',
@@ -170,6 +172,12 @@ def fill(plots, run, experiment, defaults={}):
             p['seasons'] = ['DJF', 'MAM', 'JJA', 'SON']
         if 'comp_seasons' not in p:
             p['comp_seasons'] = p['seasons']
+        if 'months' not in p:
+            p['months'] = [1,2,3,4,5,6,7,8,9,10,11,12]
+        if 'comp_months' not in p:
+            p['comp_months'] = p['months']
+        p['months'] = [str(i) for i in p['months']]
+        p['comp_months'] = [str(i) for i in p['comp_months']]
         if 'cmip5_file' not in p:
             p['cmip5_file'] = None 
         if 'cmip5_files' not in p:
@@ -237,6 +245,8 @@ def fill(plots, run, experiment, defaults={}):
                 p['plot_args'][key] = default_pargs[key]
         
         def _fill_args(data):
+            p[data]['pcolor_flags'] = []
+            p[data]['ax_flags'] = {}
             if 'ax_args' not in p[data]:
                 p[data]['ax_args'] = {}
             if 'pcolor_args' not in p[data]:
@@ -245,10 +255,10 @@ def fill(plots, run, experiment, defaults={}):
                 p[data]['title_flag'] = False
             else:
                 p[data]['title_flag'] = True
-            if 'vmin' not in p[data]['pcolor_args']:
-                p[data]['pcolor_flag'] = False
-            else:
-                p[data]['pcolor_flag'] = True
+            
+            for key in p[data]['pcolor_args']:
+                p[data]['pcolor_flags'].append(key)
+
             if 'norm' in p[data]['pcolor_args']:
                 try:
                     p[data]['pcolor_args']['norm'] = norms[p[data]['pcolor_args']['norm']]
@@ -259,6 +269,8 @@ def fill(plots, run, experiment, defaults={}):
         _fill_args('data1')
         _fill_args('data2')
         _fill_args('comp')
+        if 'ncols' not in p['comp']:
+            p['comp']['ncols'] = 11        
          
 
 def _section_labels(datanumber, pl):

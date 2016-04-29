@@ -1,5 +1,5 @@
 """
-plotcase
+plot_cases
 ===============
 
 This module contains functinos for different cases of
@@ -96,16 +96,29 @@ def _section_data(data, plot):
         return data
     return zonmean
 
+def _make_discrete(plot, data):
+    if 'ncols' in plot[data]:
+        if plot[data]['ncols']:
+            plot[data]['pcolor_args']['cmap'] = plt.cm.get_cmap(plot[data]['pcolor_args']['cmap'], plot[data]['ncols'])
+            plot[data]['cbbounds'] = np.linspace(plot[data]['pcolor_args']['vmin'],
+                                             plot[data]['pcolor_args']['vmax'],
+                                             plot[data]['ncols']+1)
+        else:
+            plot[data]['cbbounds'] = None 
+    else:
+        plot[data]['cbbounds'] = None
 
 def _pcolor(data, plot, anom=False):
     if anom or plot['divergent']:
-        anom = True    
-    if not plot['data1']['pcolor_flag']:
-        dpa = default_pcolor_args(data, anom)
-        for key in dpa:
+        anom = True
+    dpa = default_pcolor_args(data, anom)
+    for key in dpa:
+        if key not in plot['data1']['pcolor_flags']:
             plot['data1']['pcolor_args'][key] = dpa[key]
+    _make_discrete(plot, 'data1')
 
-def _comp_pcolor(data, obs, plot, anom=False):
+
+def _comp_pcolor(data, obs, compdata, plot, anom=False):
     """ Gives the data and observations the same colorbar
         for comparison
 
@@ -119,31 +132,50 @@ def _comp_pcolor(data, obs, plot, anom=False):
     """
     if anom or plot['divergent']:
         anom = True  
-    if not plot['data1']['pcolor_flag'] and not plot['data2']['pcolor_flag']:
-        d1pca = default_pcolor_args(data, anom)
-        d2pca = default_pcolor_args(obs, anom)
 
-        vmin = np.min([d1pca['vmin'], d2pca['vmin']])
-        vmax = np.max([d1pca['vmax'], d2pca['vmax']])
+    d1pca = default_pcolor_args(data, anom)
+    d2pca = default_pcolor_args(obs, anom)
 
-        d1pca['vmin'] = vmin
-        d1pca['vmax'] = vmax
-        for key in d1pca:
+    vmin = np.min([d1pca['vmin'], d2pca['vmin']])
+    vmax = np.max([d1pca['vmax'], d2pca['vmax']])
+
+    d1pca['vmin'] = vmin
+    d1pca['vmax'] = vmax
+    
+    for key in d1pca:
+        if key not in plot['data1']['pcolor_flags']:
             plot['data1']['pcolor_args'][key] = d1pca[key]
-        for key in d1pca:
-            plot['data2']['pcolor_args'][key] = d1pca[key]        
+        if key not in plot['data2']['pcolor_flags']:
+            plot['data2']['pcolor_args'][key] = d1pca[key]
+    
+    dpa = default_pcolor_args(compdata, True)
+    for key in dpa:
+        if key not in plot['comp']['pcolor_flags']:
+            plot['comp']['pcolor_args'][key] = dpa[key]
+        plot['data1']['pcolor_args']['cmap']
+    
+    _make_discrete(plot, 'data1')
+    _make_discrete(plot, 'data2')
+    _make_discrete(plot, 'comp')  
+  
 
-
-def savefigures(plotname, png=False, pdf=False, **kwargs):
+def savefigures(plotname, png=False, pdf=False, ps=False, eps=False, **kwargs):
     pdfname = plotname + '.pdf'
     pngname = plotname + '.png'
+    psname = plotname + '.ps'
+    epsname = plotname + '.eps'
     if png:
         plt.savefig(pngname, bbox_inches='tight')
     if pdf:
         plt.savefig(pdfname, bbox_inches='tight')
+    if ps:
+        plt.savefig(psname, bbox_inches='tight')
+    if eps:
+        plt.savefig(epsname, bbox_inches='tight')
 
 def plotname(plot):
     plotname = 'plots/'
+    plotname += plot['model_ID']
     plotname += plot['variable']
     plotname += plot['data_type']
     plotname += '_' + plot['plot_projection']
@@ -151,6 +183,8 @@ def plotname(plot):
     plotname += '_' + plot['dates']['start_date'] + plot['dates']['end_date']
     season = ''.join(plot['seasons'])
     plotname += season
+    month = ''.join(plot['months'])
+    plotname += month
 
     try: 
         plotname += '_' + str(plot['basin'])
@@ -172,7 +206,7 @@ def plotname(plot):
 def weighted_mean(data, weights=None):
     if weights is None:
         weights = np.ones(data.shape)
-
+    
     flattened_data = data.flatten()
     flattened_weights = weights.flatten()    
 
@@ -217,7 +251,8 @@ def colormap(plot):
                                           plot['dates'], realm=plot['realm_cat'], 
                                           scale=plot['scale'], shift=plot['shift'], 
                                           remapf=plot['remap'], remapgrid=plot['remap_grid'], 
-                                          seasons=plot['seasons'], datatype=plot['data_type'],
+                                          seasons=plot['seasons'], months=plot['months'],
+                                          datatype=plot['data_type'],
                                           cdostring=plot['cdostring'],
                                           gridweights = True,
                                           external_function=plot['external_function'],
@@ -235,7 +270,8 @@ def colormap(plot):
                                          plot['dates'], realm=plot['realm_cat'],
                                          scale=plot['scale'], shift=plot['shift'],
                                          remapf=plot['remap'], remapgrid=plot['remap_grid'],
-                                         seasons=plot['seasons'], datatype='detrend')
+                                         seasons=plot['seasons'], months=plot['months'],
+                                         datatype='detrend')
         detrenddata = _full_depth_data(detrenddata, depth, plot)
         siggrid = trend_significance(detrenddata, plot['sigma'])
         cvalues, _ = _trend_units(siggrid, units, plot)
@@ -251,7 +287,8 @@ def colormap(plot):
     _pcolor(data, plot, anom=anom)
     # make plot    
     pr.worldmap(plot['plot_projection'], lon, lat, data, ax_args=plot['data1']['ax_args'], label=label,
-         pcolor_args=plot['data1']['pcolor_args'], cblabel=units, plot=plot, cvalues=cvalues,
+         pcolor_args=plot['data1']['pcolor_args'], cblabel=units, cbbounds=plot['data1']['cbbounds'],
+         plot=plot, cvalues=cvalues,
          **plot['plot_args'])
 
     plot_name = plotname(plot)
@@ -353,7 +390,7 @@ def colormap_comparison(plot):
         data2 = data2.transpose()
         compdata = data - data2
     anom = True if plot['divergent'] or plot['data_type'] == 'trends' else False
-    _comp_pcolor(data, data2, plot, anom=anom)
+    _comp_pcolor(data, data2, compdata,  plot, anom=anom)
 
     label1 = stats(plot, data, weights=weights, rmse=False) 
     label2 = stats(plot, data2, weights=weights, rmse=False) 
@@ -365,14 +402,17 @@ def colormap_comparison(plot):
 
     # make plots of data, comparison data, data - comparison data
     pr.worldmap(plot['plot_projection'], lon, lat, data, plot=plot, ax=axl, ax_args=plot['data1']['ax_args'],
-         pcolor_args=plot['data1']['pcolor_args'], cblabel=units, cvalues=cvalues, label=label1,
+         pcolor_args=plot['data1']['pcolor_args'], cblabel=units, cbbounds=plot['data1']['cbbounds'],
+         cvalues=cvalues, label=label1,
          **plot['plot_args'])
     pr.worldmap(plot['plot_projection'], lon, lat, data2, plot=plot, ax=axm, ax_args=plot['data2']['ax_args'],
-         pcolor_args=plot['data2']['pcolor_args'], cblabel=units, cvalues=c2values, label=label2,
+         pcolor_args=plot['data2']['pcolor_args'], cblabel=units, cbbounds=plot['data2']['cbbounds'],
+         cvalues=c2values, label=label2,
          **plot['plot_args'])
     pr.worldmap(plot['plot_projection'], lon, lat, compdata, pvalues=pvalues, alpha=plot['alpha'], anom=True, 
          rmse=True, plot=plot, ax=axr, ax_args=plot['comp']['ax_args'], label=label3,
-         pcolor_args=plot['comp']['pcolor_args'], cblabel=units, **plot['plot_args'])
+         pcolor_args=plot['comp']['pcolor_args'], cblabel=units, cbbounds=plot['comp']['cbbounds'],
+         **plot['plot_args'])
     
     plot_name = plotname(plot)
     savefigures(plot_name, **plot)
@@ -468,7 +508,7 @@ def section_comparison(plot):
     compdata = data - data2
     dft.filltitle(plot)
     anom = True if plot['divergent'] or plot['data_type'] == 'trends' else False
-    _comp_pcolor(data, data2, plot, anom=anom)
+    _comp_pcolor(data, data2, compdata, plot, anom=anom)
 
     if plot['alpha'] and plot['data_type'] == 'climatology':
         fulldata, _, _, _, _, _, _ = pl.dataload(plot['ifile'], plot['variable'], 
@@ -1024,8 +1064,7 @@ def multivariable_taylor(plot):
                                       external_function=plot['external_function'],
                                       external_function_args=plot['external_function_args'],
                                       depthneeded=[plot['depth']])
-        print data.shape
-        print refdata.shape
+
         corrcoef, _, std = weighted_correlation(refdata, data, weights)
         labelled_stats.append({'name': var,
                                'corrcoef': corrcoef,

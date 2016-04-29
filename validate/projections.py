@@ -1,5 +1,5 @@
 """
-plotregions
+projections
 ===============
 This module contains the functions that will produce the plots
 using matplotlib.
@@ -15,10 +15,8 @@ import numpy as np
 from numpy import mean, sqrt, square
 from mpl_toolkits.basemap import Basemap, addcyclic, maskoceans
 import matplotlib.pyplot as plt
-import brewer2mpl
 from discrete_cmap import discrete_cmap
 from netCDF4 import Dataset
-from colormaps import viridis
 from taylor import TaylorDiagram
 from operator import itemgetter
 from math import ceil
@@ -31,7 +29,7 @@ font = {'size': 9}
 plt.rc('font', **font)
 
 
-def default_pcolor_args(data, anom=False):
+def default_pcolor_args(data, anom=False, ncols=None):
     """Returns a dict with default pcolor params as key:value pairs
 
     Parameters
@@ -51,7 +49,7 @@ def default_pcolor_args(data, anom=False):
         vmin = -1 * anom_max
         vmax = anom_max
         # Anomaly cmap
-        cmap = anom_cmap()
+        cmap = 'bwr'
 
     else:
         mean = data.mean()
@@ -75,8 +73,9 @@ def default_pcolor_args(data, anom=False):
                 vmin = dmin
             vmax = dmax            
         # New mpl, colorblind friendly, continuously varying, default cmap
-        cmap = viridis
+        cmap = 'viridis'
 
+    
     d = {'vmin': vmin,
          'vmax': vmax,
          'cmap': cmap,
@@ -84,15 +83,6 @@ def default_pcolor_args(data, anom=False):
          }
 
     return d
-
-
-def anom_cmap():
-    """return a discrete blue-red cmap from colorbrewer"""
-    ncols = 11
-    cmap_anom = brewer2mpl.get_map('RdBu', 'diverging', ncols,
-                                   reverse=True).mpl_colormap
-    cmap_anom = discrete_cmap(ncols, cmap_anom)
-    return cmap_anom
 
 def draw_stipple(pvalues, lon, lat, m, alpha):
         slons = []
@@ -120,14 +110,20 @@ def draw_trend_stipple(data, cvalues, lon, lat, m):
 def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None, ax=None,
               ax_args=None, pcolor_args=None, cblabel='', anom=False, rmse=False,
               latmin=-80, latmax=80, lonmin=0, lonmax=360, lon_0=180, draw_contour=False,
-              label=None,
-              fill_continents=False, draw_parallels=True, draw_meridians=False,
+              label=None, cbbounds=None,
+              fill_continents=False, draw_parallels=False, draw_meridians=False,
               plot={}):
     if not ax:
         fig, ax = plt.subplots(1, 1, figsize=(8, 8))
     else:
         fig = plt.gcf()
     
+    if 'polar' in projection:
+        try:
+            data, lon = addcyclic(data, lon)
+        except:
+            pass
+   
     if not pcolor_args:
         pcolor_args = default_pcolor_args(data, anom)
 
@@ -141,7 +137,7 @@ def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None,
                     lon_0=-180, resolution='c', ax=ax)
         a, b = (9000000, -1000000)
         parallel_labels = [1, 0, 0, 0]
-        meridian_labels = [0, 0, 0, 1]
+        meridian_labels = [0, 0, 0, 0]
     if projection == 'mercator':
         m = Basemap(projection='merc', llcrnrlat=latmin, urcrnrlat=latmax, 
                     llcrnrlon=lonmin, urcrnrlon=lonmax, 
@@ -152,16 +148,15 @@ def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None,
     if projection == 'polar_map':
         m = Basemap(projection='npstere', boundinglat=latmin, 
                     lon_0=lon_0, resolution='c', round=True, ax=ax)
-        a, b = m(135, 20)
+        a, b = (10000, -10000)
         parallel_labels = [0, 0, 0, 0]
         meridian_labels = [0, 0, 0, 0]
     if projection == 'polar_map_south':
         m = Basemap(projection='spstere', boundinglat=latmax, 
                     lon_0=lon_0, resolution='c', round=True, ax=ax)
-        a, b = m(-135, -20) 
+        a, b = (10000, -10000)
         parallel_labels = [0, 0, 0, 0]
         meridian_labels = [0, 0, 0, 0]  
-
     lons, lats = np.meshgrid(lon, lat)
     x, y = m(lons, lats)
     cot = m.pcolormesh(x, y, data, **pcolor_args)
@@ -179,9 +174,9 @@ def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None,
     if fill_continents:
         m.fillcontinents(color='0.8', ax=ax, zorder=2)
     if draw_parallels:
-        m.drawparallels(np.arange(-80, 81, 20), labels=parallel_labels, linewidth=0, ax=ax, fontsize=9)
+        m.drawparallels(np.arange(-80, 81, 20), labels=parallel_labels, ax=ax, fontsize=9)
     if draw_meridians:
-        m.drawmeridians(np.arange(0, 360, 90), labels=meridian_labels, linewidth=0, yoffset=0.5e6, ax=ax, fontsize=9)
+        m.drawmeridians(np.arange(0, 360, 90), labels=meridian_labels, yoffset=0.5e6, ax=ax, fontsize=9)
 
     if pvalues is not None:
         draw_stipple(pvalues, lon, lat, m, alpha)
@@ -189,12 +184,12 @@ def worldmap(projection, lon, lat, data, pvalues=None, cvalues=None, alpha=None,
     if cvalues is not None:
         draw_trend_stipple(data, cvalues, lon, lat, m)
 
-    cbar = m.colorbar(mappable=cot, location='right', label=cblabel)
+    cbar = m.colorbar(mappable=cot, location='right', spacing='proportional', boundaries=cbbounds, label=cblabel)
     cbar.solids.set_edgecolor("face") 
     if label is not None:
         ax.text(a, b, label, fontsize=7)
 
-def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=None, pcolor_args=None, plot={}, cblabel='', anom=False, cbaxis=None):
+def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=None, pcolor_args=None, plot={}, cblabel='', cbbounds=None, anom=False, cbaxis=None):
     """Pcolor a var in a section, using ax if supplied"""
     if not ax:
         fig, ax = plt.subplots(1, 1, figsize=(8, 8))
@@ -239,10 +234,10 @@ def section(x, z, data, ax=None, rmse=False, pvalues=None, alpha=None, ax_args=N
 
     box = ax.get_position()
     if cbaxis:
-        fig.colorbar(cot, cax=cbaxis, label=cblabel)
+        fig.colorbar(cot, cax=cbaxis, spacing='proportional', boundaries=cbbounds, label=cblabel)
     else:
         tl = fig.add_axes([box.x1 + box.width * 0.05, box.y0, 0.02, box.height])
-        fig.colorbar(cot, cax=tl, label=cblabel)
+        fig.colorbar(cot, cax=tl, spacing='proportional', boundaries=cbbounds,label=cblabel)
 
     vals = [str(np.round(data.min(), 1)), str(np.round(data.max(), 1))]
     plot['stats'] = {'min': float(vals[0]),

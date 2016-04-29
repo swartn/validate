@@ -5,7 +5,6 @@ Produces plots using validate package.
 
 """
 import argparse
-
 import validate.control as control
 #import control
 
@@ -34,6 +33,9 @@ def args():
     parser.add_argument('-t', '--output-root',
                         default=argparse.SUPPRESS,
                         help="directory to output the tar file")
+    parser.add_argument('-x', '--external-root',
+                        default=argparse.SUPPRESS,
+                        help="directory to find external functions")
     parser.add_argument('-i', '--ignorecheck', action='store_false', 
                         default=argparse.SUPPRESS,
                         help="ignore plot checking")      

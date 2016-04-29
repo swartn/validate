@@ -16,10 +16,6 @@ def copy_custom_file(confile):
 
 def args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-s', '--simple',
-                        action='store_true',
-                        default=False,
-                        help='gets configuration for simple plot only')
     parser.add_argument('-a', '--atmosphere',
                         action='store_true',
                         default=False,
@@ -49,8 +45,6 @@ def args():
     confile = 'conf.yaml'
     if 'my_conf' in opts:
         copy_custom_file(opts['my_conf'])
-    if opts['simple']:
-        confile = 'conf_simple.yaml'
     if opts['atmosphere']:
         confile = 'conf_atmos.yaml'
     if opts['ocean']:
