@@ -1,5 +1,5 @@
 """
-pdforganize
+pdf_organizer
 ===============
 This module contains tools to produce a multipage pdf
 in an organized and labelled format specific to model plots.

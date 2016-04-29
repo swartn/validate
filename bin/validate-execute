@@ -5,7 +5,6 @@ Produces plots using validate package.
 
 """
 import argparse
-
 import validate.control as control
 #import control
 

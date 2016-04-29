@@ -1,5 +1,5 @@
 """
-plotload
+data_loader
 ===============
 
 THis module contains functions that will load data from
@@ -14,7 +14,7 @@ import os
 from netCDF4 import Dataset, num2date, date2num
 import numpy as np
 import datetime
-from .functions import external
+from validate.functions import external
 import constants
 import cdo
 cdo = cdo.Cdo()

@@ -45,6 +45,10 @@
 #                                to the dates to use in the plots.
 #                                Should be of the form 'yyyy-mm-dd' or 'yyyy-mm'
 #                                ex. {'start_date': '1970-01-01', 'end_date': '1990-01'}
+#          sigma: float
+#                 sigma value for trend significance
+#          alpha: float
+#                 alpha value for climatology comparison significance
 #          comp_dates : A dictionary mapping
 #                           'start_date'
 #                           'end_date'
@@ -80,6 +84,8 @@
 #          data1 : A dictionary specifying the arguments for the model data plot
 #                  pcolor_args : A dictionary for manually setting arguments for the colorbar
 #                  ax_args : A dictionary for manually setting matplotlib arguments for the axes
+#                  colormap : string 
+#                             name of colormap selceted from viridis, plasma, inferno, or magma
 #          data2 : A dictionary specifying the arguments for the observations data plot.
 #                      It uses the came keys as 'data1'
 #          comp : A dictionary specifying the arguments for the comparsson plot of
@@ -144,7 +150,7 @@
 # cmip5_means          : A string naming the the loactions of the cmip5 ensemble means
 # output_root          : The directory to output the tar logs and plots files
 # processed_cmip5_root : The location of a cache containing already partially processed
-#                        netcdf files to increase performance                         
+#                        netcdf files to increase performance                        
 
 
 
