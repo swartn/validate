@@ -98,5 +98,11 @@ def execute(options, **kwargs):
     # overwrite the configuration with input given in the execution arguments
     for key in options:
         settings[key] = options[key]
+    if 'realization' in options:
+        try:
+            settings['defaults']['realization'] = options['realization']
+        except KeyError:
+            settings['defaults'] = {}
+            settings['defaults']['realization'] = options['realization']
     
     plot(**settings)

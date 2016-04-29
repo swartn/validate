@@ -42,6 +42,9 @@ def args():
     parser.add_argument('-b', '--debugging', action='store_true', 
                         default=argparse.SUPPRESS,
                         help="debugging option")
+    parser.add_argument('-m', '--realization',
+                        default=argparse.SUPPRESS,
+                        help="rip number or ensemble member")
                     
     args = parser.parse_args()
     opts = vars(args)

@@ -154,7 +154,11 @@ def _logfile(run, experiment):
         outfile.write('Run ID: ' + run + '\n')
         outfile.write('Experiment: ' + experiment + '\n\n')
 
-
+    with open('logs/sha_log.txt', 'w') as outfile:
+        outfile.write('Validate version: ' + validate.__version__ + '\n')
+        outfile.write('Run ID: ' + run + '\n')
+        outfile.write('Experiment: ' + experiment + '\n\n')
+        
 def _load_masks(files):
     """Loads the land and sea masks for a specified run
 
@@ -343,7 +347,6 @@ def getrealization(f):
     #    realization = str(nc.__getattribute__('realization'))
     #except:
     #    realization = 'r1i1p1'
-    print realization
     return realization
 
 
@@ -434,7 +437,10 @@ def getfiles(plots, directroot, root, run, experiment):
         if 'ifile' in p:
             p['ifiles_for_log'] = [p['ifile']]
         else:
-            p['ifiles_for_log'] = uncat_filedict[(p['frequency'], p['variable'], str(p['realization']))]    
+            try:
+                p['ifiles_for_log'] = uncat_filedict[(p['frequency'], p['variable'], str(p['realization']))]
+            except:
+                pass    
         if 'ifile' not in p:
             try:
                 p['ifile'] = filedict[(p['frequency'], p['variable'], str(p['realization']))]
@@ -505,7 +511,7 @@ def getidfiles(plots, root, experiment):
                     p['idfiles_for_log'][i] = p['id_file'][i] 
                 else:
                     p['id_file'][i] = filedict[(p['frequency'], p['variable'], str(p['realization']))]
-                    p['idfiles_for_log'] = uncat_filedict[(p['frequency'], p['variable'], str(p['realization']))]
+                    p['idfiles_for_log'][i] = uncat_filedict[(p['frequency'], p['variable'], str(p['realization']))]
 
 
 def remfiles(del_mask=True, del_ncstore=True, del_netcdf=True, del_cmipfiles=True, **kwargs):
