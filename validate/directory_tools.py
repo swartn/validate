@@ -327,7 +327,7 @@ def getexperiment(f):
     
 def getrealization(f):
     """ Returns the realization from a filename and directory path.
-        This is dependant on the cmip naming convention
+        This is dependant on the directory structure
 
     Parameters
     ----------
@@ -337,11 +337,13 @@ def getrealization(f):
     -------
     string of realization number
     """
-    nc = Dataset(f, 'r')
-    try:
-        realization = str(nc.__getattribute__('realization'))
-    except:
-        realization = 'r1i1p1'
+    realization = f.split('/')[-2]
+    #nc = Dataset(f, 'r')
+    #try:
+    #    realization = str(nc.__getattribute__('realization'))
+    #except:
+    #    realization = 'r1i1p1'
+    print realization
     return realization
 
 
