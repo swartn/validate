@@ -63,8 +63,12 @@ def _remove_plots():
     old_plots = glob.glob('plots/*.png')
     for f in old_plots:
         os.remove(f)
-
-
+    old_plots = glob.glob('plots/*.ps')
+    for f in old_plots:
+        os.remove(f)
+    old_plots = glob.glob('plots/*.eps')
+    for f in old_plots:
+        os.remove(f)
 def makeplot(p, plotnames, func):
     p['plot_type'] = func.__name__
     try:
@@ -111,7 +115,7 @@ def calltheplot(plot, plotnames, ptype):
 
 def comp_loop(plot, plotnames, ptype):
     plot['comp_flag'] = 'obs'
-    for o in plot['comp_obs']:
+    for o in plot['obs_file']:
         plot['comp_model'] = o
         plot['comp_file'] = plot['obs_file'][o]
         calltheplot(plot, plotnames, ptype)

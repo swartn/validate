@@ -170,7 +170,7 @@ plots:
           scale: 31536000
           units: 'kg m-2 y-1'
           comp_obs:
-            - 20CR
+            - cmap
 
         - variable: 'pr'
           plot_projection: 'global_map'
@@ -180,7 +180,7 @@ plots:
           scale: 31536000
           units: 'kg m-2 y-1'
           comp_obs:
-            - 20CR 
+            - cmap 
 
         - variable: 'pr'
           plot_projection: 'global_map'
@@ -190,13 +190,13 @@ plots:
           scale: 31536000
           units: 'kg m-2 y-1'
           comp_obs:
-            - 20CR 
+            - cmap 
 
         - variable: 'pr'
           plot_projection: 'global_map'
           data_type: 'trends'
           comp_obs:
-            - 20CR 
+            - cmap 
           scale: 31536000
           units: 'kg m-2 y-1/decade' 
 
@@ -206,7 +206,7 @@ plots:
           seasons:
              - 'DJF'
           comp_obs:
-             - 20CR
+             - cmap
           scale: 31536000
           units: 'kg m-2 y-1/decade'
 
@@ -216,7 +216,7 @@ plots:
           seasons:
              - 'JJA'
           comp_obs:
-             - 20CR
+             - cmap
           scale: 31536000
           units: 'kg m-2 y-1/decade'
 
@@ -224,7 +224,7 @@ plots:
           plot_projection: 'zonal_mean'
           data_type: 'climatology'
           comp_obs:
-             - 20CR
+             - cmap
           comp_cmips: 'all'
           scale: 31536000
           units: 'kg m-2 y-1'
@@ -233,7 +233,7 @@ plots:
           plot_projection: 'taylor'
           data_type: 'climatology'
           comp_obs:
-             - 20CR
+             - cmap
           comp_cmips: 'all'
           scale: 31536000
           units: 'kg m-2 y-1'
@@ -244,7 +244,7 @@ plots:
           plot_projection: 'global_map'
           data_type: 'climatology'
           comp_obs:
-            - 20CR
+            - ERA-Int
 
         - variable: 'psl'
           plot_projection: 'global_map'
@@ -252,7 +252,7 @@ plots:
           seasons:
              - 'DJF'
           comp_obs:
-            - 20CR 
+            - ERA-Int 
 
         - variable: 'psl'
           plot_projection: 'global_map'
@@ -260,13 +260,13 @@ plots:
           seasons:
              - 'JJA'
           comp_obs:
-            - 20CR 
+            - ERA-Int 
 
         - variable: 'psl'
           plot_projection: 'global_map'
           data_type: 'trends'
           comp_obs:
-            - 20CR
+            - ERA-Int
 
         - variable: 'psl'
           plot_projection: 'global_map'
@@ -274,7 +274,7 @@ plots:
           seasons:
              - 'DJF'
           comp_obs:
-             - 20CR
+             - ERA-Int
 
         - variable: 'psl'
           plot_projection: 'global_map'
@@ -282,20 +282,20 @@ plots:
           seasons:
              - 'JJA'
           comp_obs:
-             - 20CR
+             - ERA-Int
 
         - variable: 'psl'
           plot_projection: 'taylor'
           data_type: 'climatology'
           comp_obs:
-            - 20CR
+            - ERA-Int
           comp_cmips: 'all'
 
         - variable: 'tas'
           plot_projection: 'global_map'
           data_type: 'climatology'
           comp_obs:
-            - 20CR
+            - ERA-Int
 
         - variable: 'tas'
           plot_projection: 'global_map'
@@ -303,7 +303,7 @@ plots:
           seasons:
              - 'DJF'
           comp_obs:
-            - 20CR 
+            - ERA-Int 
 
         - variable: 'tas'
           plot_projection: 'global_map'
@@ -311,13 +311,13 @@ plots:
           seasons:
              - 'JJA'
           comp_obs:
-            - 20CR 
+            - ERA-Int 
 
         - variable: 'tas'
           plot_projection: 'global_map'
           data_type: 'trends'
           comp_obs:
-            - 20CR
+            - ERA-Int
             
         - variable: 'tas'
           plot_projection: 'global_map'
@@ -325,7 +325,7 @@ plots:
           seasons:
              - 'DJF'
           comp_obs:
-             - 20CR
+             - ERA-Int
              
         - variable: 'tas'
           plot_projection: 'global_map'
@@ -333,34 +333,35 @@ plots:
           seasons:
              - 'JJA'
           comp_obs:
-             - 20CR             
+             - ERA-Int             
  
         - variable: 'tas'
           plot_projection: 'taylor'
           data_type: 'climatology'
           comp_obs:
-            - 20CR
+            - ERA-Int
           comp_cmips: 'all'
 
         - variable: 'tas'
           plot_projection: 'time_series'
           data_type: 'climatology'
           comp_obs:
-            - 20CR
+            - ERA-Int
           comp_cmips: 'all'
+          yearmean: True
 
         - variable: 'tas'
           plot_projection: 'zonal_mean'
           data_type: 'climatology'
           comp_obs:
-             - 20CR
+             - ERA-Int
           comp_cmips: 'all'
           
         - variable: 'tas'
           plot_projection: 'histogram'
           data_type: 'trends'
           comp_obs:
-            - 20CR
+            - ERA-Int
           comp_cmips: 'all'
                       
         - variable: 'ta'
@@ -410,7 +411,7 @@ plots:
           plot_projection: 'section'
           data_type: 'climatology'
           comp_obs:
-             - 20CR
+             - ERA-Int
              
         - variable: 'ta'
           plot_projection: 'section'
@@ -418,7 +419,7 @@ plots:
           seasons:
              - 'DJF'
           comp_obs:
-            - 20CR             
+            - ERA-Int             
                                    
         - variable: 'ta'
           plot_projection: 'section'
@@ -426,7 +427,7 @@ plots:
           seasons:
              - 'JJA'
           comp_obs:
-            - 20CR              
+            - ERA-Int              
 
         - variable: 'ta'
           plot_projection: 'global_map'
@@ -475,7 +476,7 @@ plots:
           plot_projection: 'section'
           data_type: 'trends'
           comp_obs:
-             - 20CR             
+             - ERA-Int             
              
         - variable: 'ta'
           plot_projection: 'section'
@@ -483,7 +484,7 @@ plots:
           seasons:
              - 'DJF'
           comp_obs:
-             - 20CR
+             - ERA-Int
              
         - variable: 'ta'
           plot_projection: 'section'
@@ -491,13 +492,13 @@ plots:
           seasons:
              - 'JJA'
           comp_obs:
-             - 20CR             
+             - ERA-Int             
              
 #        - variable: 'ta'
 #          plot_projection: 'taylor'
 #          data_type: 'climatology'
 #          comp_obs:
-#             - 20CR
+#             - ERA-Int
 #          comp_cmips: 'all'             
 #          depths:
 #            - 100000
@@ -514,7 +515,7 @@ plots:
           data_type: 'climatology'
           divergent: True
           comp_obs:
-            - 20CR 
+            - ERA-Int 
             
         - variable: 'uas'
           plot_projection: 'global_map'
@@ -523,7 +524,7 @@ plots:
              - 'DJF'
           divergent: True
           comp_obs:
-            - 20CR                      
+            - ERA-Int                      
             
         - variable: 'uas'
           plot_projection: 'global_map'
@@ -532,14 +533,14 @@ plots:
              - 'JJA'
           divergent: True
           comp_obs:
-            - 20CR 
+            - ERA-Int 
                       
         - variable: 'uas'
           plot_projection: 'global_map'
           data_type: 'trends'
           divergent: True
           comp_obs:
-            - 20CR 
+            - ERA-Int 
   
         - variable: 'uas'
           plot_projection: 'global_map'
@@ -548,7 +549,7 @@ plots:
              - 'DJF'
           divergent: True
           comp_obs:
-             - 20CR
+             - ERA-Int
  
         - variable: 'uas'
           plot_projection: 'global_map'
@@ -557,13 +558,13 @@ plots:
              - 'JJA'
           divergent: True
           comp_obs:
-             - 20CR             
+             - ERA-Int             
 
         - variable: 'uas'
           plot_projection: 'zonal_mean'
           data_type: 'climatology'
           comp_obs:
-             - 20CR
+             - ERA-Int
           comp_cmips: 'all'
 
         - variable: 'ua'
@@ -662,7 +663,7 @@ plots:
           plot_projection: 'section'
           data_type: 'climatology'
           comp_obs:
-             - 20CR
+             - ERA-Int
           divergent: True
           
         - variable: 'ua'
@@ -672,7 +673,7 @@ plots:
              - 'DJF'
           divergent: True
           comp_obs:
-            - 20CR 
+            - ERA-Int 
                    
         - variable: 'ua'
           plot_projection: 'section'
@@ -681,13 +682,13 @@ plots:
              - 'JJA'
           divergent: True
           comp_obs:
-            - 20CR 
+            - ERA-Int 
 
         - variable: 'ua'
           plot_projection: 'section'
           data_type: 'trends'
           comp_obs:
-             - 20CR
+             - ERA-Int
           divergent: True
           
         - variable: 'ua'
@@ -696,7 +697,7 @@ plots:
           seasons:
              - 'DJF'
           comp_obs:
-             - 20CR
+             - ERA-Int
  
         - variable: 'ua'
           plot_projection: 'section'
@@ -705,13 +706,13 @@ plots:
              - 'JJA'
           divergent: True
           comp_obs:
-             - 20CR
+             - ERA-Int
 
 #        - variable: 'ua'
 #          plot_projection: 'taylor'
 #          data_type: 'climatology'
 #          comp_obs:
-#             - 20CR
+#             - ERA-Int
 #          comp_cmips: 'all'
 #          depths:
 #            - 100000
@@ -814,7 +815,7 @@ plots:
           plot_projection: 'section'
           data_type: 'climatology'
           comp_obs:
-            - 20CR 
+            - ERA-Int 
   
         - variable: 'zg'
           plot_projection: 'section'
@@ -822,7 +823,7 @@ plots:
           seasons:
              - 'DJF'
           comp_obs:
-            - 20CR 
+            - ERA-Int 
             
         - variable: 'zg'
           plot_projection: 'section'
@@ -830,13 +831,13 @@ plots:
           seasons:
              - 'JJA'
           comp_obs:
-            - 20CR 
+            - ERA-Int 
 
         - variable: 'zg'
           plot_projection: 'section'
           data_type: 'trends'
           comp_obs:
-             - 20CR
+             - ERA-Int
 
         - variable: 'zg'
           plot_projection: 'section'
@@ -844,7 +845,7 @@ plots:
           seasons:
              - 'DJF'
           comp_obs:
-             - 20CR
+             - ERA-Int
  
         - variable: 'zg'
           plot_projection: 'section'
@@ -852,13 +853,13 @@ plots:
           seasons:
              - 'JJA'
           comp_obs:
-             - 20CR
+             - ERA-Int
  
         - variable: 'zg'
           plot_projection: 'taylor'
           data_type: 'climatology'
           comp_obs:
-             - 20CR
+             - ERA-Int
           comp_cmips: 'all'
 
 
@@ -913,9 +914,9 @@ delete:
           del_cmipfiles: False
 
 
-direct_data_root: '/fs/cetus/fs2/crb/CCCma_Output/CMIP5/output/CCCma/CanESM2/historical/'
+#direct_data_root: '/fs/cetus/fs2/crb/CCCma_Output/CMIP5/output/CCCma/CanESM2/historical/'
 observations_root: '/fs/cetus/fs2/crb/users/acrn004/obs4comp/'
 cmip5_root: '/fs/cetus/fs2/crb/users/acrn004/cmip5/'
 cmip5_means: '/fs/cetus/fs2/crb/users/acrn004/cmip5_means/'
-output_root: '/fs/cava/dev/crb/sata/ccrna03/data/utmp/dwf/standard/realms/atmos/'
+output_root: '~/'
 processed_cmip5_root: '/fs/cetus/fs2/crb/users/acrn004/netcdf/'

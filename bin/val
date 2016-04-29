@@ -1,0 +1,1469 @@
+#!/bin/python
+import ttk
+import Tkinter as tk
+import os
+import yaml
+import subprocess
+import contextlib
+import sys
+import tempfile
+from datetime import datetime
+
+
+default_lxwrk2_roots = {'data_root': '/raid/rc40/data/ncs/',
+                        'direct_data_root': '',
+                        'observations_root': '/raid/rc40/data/ncs/obs4comp/',
+                        'cmip5_root': '/raid/ra40/CMIP5_OTHER_DOWNLOADS/',
+                        'cmip5_means': '/raid/rc40/data/dwf/cmipmeans/',
+                        'output_root': '',
+                        'processed_cmip5_root': '',
+                        'external_root': '',
+                        }
+default_pollux_roots = {'data_root': '',
+                        'direct_data_root': '/fs/cetus/fs2/crb/CCCma_Output/CMIP5/output/CCCma/CanESM2/historical/',
+                        'observations_root': '/fs/cetus/fs2/crb/users/acrn004/obs4comp/',
+                        'cmip5_root': '/fs/cetus/fs2/crb/users/acrn004/cmip5/',
+                        'cmip5_means': '',
+                        'output_root': 'ftp1.cccma.ec.gc.ca:/raid/rc40/data/val/',
+                        'processed_cmip5_root': '/fs/cetus/fs2/crb/users/acrn004/netcdf/',
+                        'external_root': '',
+                        }
+
+def listbox_value(listbox):
+    idx = listbox.curselection()
+    return idx.get(idx)
+
+def get_listbox_values(listbox):
+    ids = listbox.curselection()
+    items = [listbox.get(x) for x in ids]
+    return items
+
+
+class Listbox(tk.Listbox):
+    def autowidth(self,maxwidth):
+        f = font.Font(font=self.cget("font"))
+        pixels = 0
+        for item in self.get(0, "end"):
+            pixels = max(pixels, f.measure(item))
+        # bump listbox size until all entries fit
+        pixels = pixels + 10
+        width = int(self.cget("width"))
+        for w in range(0, maxwidth+1, 5):
+            if self.winfo_reqwidth() >= pixels:
+                break
+            self.config(width=width+w)
+
+class Args(tk.Frame):
+    def __init__(self, parent, name='args', optional_keys=['','']):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        self.grid()
+        self.parent.title(name)
+        self.optional_keys = optional_keys
+        self.keys = []
+        self.values = []
+        self.initUI()
+    
+    def initUI(self):
+        self.key_label = tk.Label(self, text='Key')
+        self.key_label.grid(column=0, row=0)
+        
+        self.value_label = tk.Label(self, text='Value')
+        self.value_label.grid(column=1, row=0)
+        
+        self.key_ = tk.StringVar()
+        self.key_entry = tk.Entry(self, bg='white', textvariable=self.key_)
+        self.key_entry.grid(column=0, row=1)
+        
+        self.value_ = tk.StringVar()
+        self.value_entry = tk.Entry(self, bg='white', textvariable=self.value_)
+        self.value_entry.grid(column=1, row=1)
+        
+        self.add_key_button = tk.Button(self, command=self.add_key_value, text='Add Key')
+        self.add_key_button.grid(column=2, row=1)
+         
+        self.optional_key_ = tk.StringVar()
+        self.optional_key_drop = tk.OptionMenu(self, self.optional_key_, *self.optional_keys)
+        self.optional_key_drop.grid(column=0, row=2)
+        
+        self.optional_value_ = tk.StringVar()
+        self.optional_value_entry = tk.Entry(self, bg='white', textvariable=self.optional_value_)
+        self.optional_value_entry.grid(column=1, row=2)
+        
+        self.add_optional_key_button = tk.Button(self, command=self.add_optional_key_value, text='Add_Key')
+        self.add_optional_key_button.grid(column=2, row=2)     
+        
+        self.display_frame = tk.Frame(self)
+        self.display_frame.grid(column=3, row=0)
+        
+        self.updateUI()
+    
+    def updateUI(self):
+        self.display_frame.destroy()
+        self.display_frame = tk.Frame(self)
+        self.display_frame.grid(column=3, row=0, rowspan=len(self.keys) + 1)
+        self.key_labels = []
+        self.value_labels = []
+        self.colon_labels = []
+        self.remove_buttons = []
+        for i, (key, value) in enumerate(zip(self.keys, self.values)):        
+            self.key_labels.append(tk.Label(self.display_frame, text=key))
+            self.key_labels[i].grid(column=0, row=i)
+            
+            self.value_labels.append(tk.Label(self.display_frame, text=value))
+            self.value_labels[i].grid(column=2, row=i)
+            
+            self.colon_labels.append(tk.Label(self.display_frame, text=':'))
+            self.colon_labels[i].grid(column=1, row=i)
+
+            self.remove_buttons.append(tk.Button(self.display_frame, command=lambda i=i:self.remove_key_value(i), text='Remove'))
+            self.remove_buttons[i].grid(column=4, row=i)
+            
+    def remove_key_value(self, index):
+        del self.keys[index]
+        del self.values[index]
+        self.updateUI()
+        
+    
+    def add_key_value(self):
+        key = self.key
+        value = self.value
+        if key in self.keys:
+            self.values[self.keys.index(key)] = value
+        else:
+            self.keys.append(key)
+            self.values.append(value)
+        self.updateUI()
+    
+    def add_optional_key_value(self):
+        key = self.optional_key
+        value = self.optional_value
+        if key in self.keys:
+            self.values[self.keys.index(key)] = value
+        else:
+            self.keys.append(key)
+            self.values.append(value)
+        self.updateUI()
+    
+    @property
+    def optional_key(self):
+        self._optional_key = self.optional_key_.get()
+        return self._optional_key
+    
+    @property
+    def optional_value(self):
+        self._optional_value = self.optional_value_.get()
+        try:
+            self._optional_value = float(self._optional_value)
+        except:
+            pass
+        return self._optional_value
+    
+    @property
+    def value(self):
+        self._value = self.value_.get()
+        try:
+            self._value = float(self._value)
+        except:
+            pass
+        return self._value
+        
+    @property
+    def key(self):
+        self._key = self.key_.get()
+        return self._key
+    
+    @property
+    def args(self):
+        self._args = dict(zip(self.keys, self.values))
+        return self._args
+               
+
+class DataArguments(tk.Frame):
+    def __init__(self, parent, name='data_arguments'):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        self.grid()
+        self.parent.title(name)
+        self.initUI()
+   
+    def initUI(self):
+        self.ax_args_window = tk.Toplevel(self)
+        self.ax_args_window.protocol('WM_DELETE_WINDOW', self.ax_args_window.withdraw)
+        self.ax_args_window.withdraw()
+        ax_keys = ['title', 'xlabel', 'ylabel']
+        self.ax_args = Args(self.ax_args_window, name='ax_args', optional_keys=ax_keys)
+        
+        self.pcolor_args_window = tk.Toplevel(self)
+        self.pcolor_args_window.protocol('WM_DELETE_WINDOW', self.pcolor_args_window.withdraw)
+        self.pcolor_args_window.withdraw()
+        pcolor_keys = ['vmin', 'vmax', 'cmap']
+        self.pcolor_args = Args(self.pcolor_args_window, name='pcolor_args', optional_keys=pcolor_keys)
+        
+        self.ax_args_button = tk.Button(self, command=self.ax_args_window.deiconify, text='ax_args')
+        self.ax_args_button.grid(column=0, row=0)
+        
+        self.pcolor_args_button = tk.Button(self, command=self.pcolor_args_window.deiconify, text='pcolor_args')
+        self.pcolor_args_button.grid(column=0, row=1)
+        
+        self.ncols_label = tk.Label(self, text='ncols')
+        self.ncols_label.grid(column=0, row=2)
+        
+        self.ncols_ = tk.IntVar()
+        self.ncols_.set(0)
+        self.ncols_entry = tk.Entry(self, bg='white', textvariable=self.ncols_)
+        self.ncols_entry.grid(column=1, row=2)
+
+    @property
+    def ncols(self):
+        self._ncols = self.ncols_.get()
+        return self._ncols    
+        
+    @property
+    def data_args(self):
+        self._data_args = {}
+        self._data_args['pcolor_args'] = self.pcolor_args.args
+        self._data_args['ax_args'] = self.ax_args.args
+        self._data_args['ncols'] = self.ncols
+        return self._data_args    
+
+class ExtraVariableOptions(tk.Frame):
+    def __init__(self, parent, name='var'):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        self.grid()
+        self.parent.title(name)
+        self.initUI()
+    
+    def initUI(self):
+        self.scale_label = tk.Label(self, text='Scale:')
+        self.scale_label.grid(column=0, row=0)
+        
+        self.scale_ = tk.DoubleVar()
+        self.scale_.set(1.0)
+        self.scale_entry = tk.Entry(self, bg='white', textvariable=self.scale_)
+        self.scale_entry.grid(column=1, row=0)
+        
+        self.shift_label = tk.Label(self, text='Shift:')
+        self.shift_label.grid(column=0, row=1)
+        
+        self.shift_ = tk.DoubleVar()
+        self.shift_entry = tk.Entry(self, bg='white', textvariable=self.shift_)
+        self.shift_entry.grid(column=1, row=1)
+        
+        self.observations_label = tk.Label(self, text='Observations:')
+        self.observations_label.grid(column=0, row=2)
+        
+        self.observations_ = tk.StringVar()
+        self.observations_.set('20CR')
+        self.observations_entry = tk.Entry(self, bg='white', textvariable=self.observations_)
+        self.observations_entry.grid(column=1, row=2)
+    
+    @property
+    def observations(self):
+        self._observations = self.obervations_.get()
+        return self._observations
+        
+    @property
+    def shift(self):
+        self._shift = self.shift_.get()
+        return self._shift
+            
+    @property
+    def scale(self):
+        self._scale = self.scale_.get()
+        return self._scale        
+        
+class ExtraVariables(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.grid()
+        self.extra_variables = []
+        self.extra_scales = []
+        self.extra_shifts = []
+        self.extra_obs = []
+        self.extra_specs = []
+        self.extra_spec_windows = []
+        self.initUI()
+        self.updateUI()
+          
+    def initUI(self):
+        self.extra_variable_label = tk.Label(self, text='Extra Variable:')
+        self.extra_variable_label.grid(column=0, row=0)
+        
+        self.extra_variable_ = tk.StringVar()
+        self.extra_variable_entry = tk.Entry(self, bg='white', textvariable=self.extra_variable_)
+        self.extra_variable_entry.grid(column=1, row=0)
+
+        self.variable_add_button = tk.Button(self, command=self.add_variable, text='Add')
+        self.variable_add_button.grid(column=2, row=0)
+        
+        self.variable_remove_button = tk.Button(self, command=self.remove_variable, text='Remove')
+        self.variable_remove_button.grid(column=2, row=1)
+        
+        self.options_button = tk.Button(self, command=self.open_options_window, text='Options')
+        self.options_button.grid(column=4, row=0)
+        
+    
+    def updateUI(self):
+        self.variables_lb = tk.Listbox(self, exportselection=0)
+        for var in self.extra_variables:
+            self.variables_lb.insert(tk.END, var)
+        self.variables_lb.grid(column=3, row=0, rowspan=2)
+        
+    
+    def open_options_window(self):
+        try:
+            var = get_listbox_values(self.variables_lb)[0]
+        except IndexError:
+            pass
+        else:
+            index = self.extra_variables.index(var)
+            self.extra_spec_windows[index].deiconify()
+    
+    def append_spec(self):
+        self.extra_spec_windows.append(tk.Toplevel(self))
+        self.extra_spec_windows[-1].protocol('WM_DELETE_WINDOW', self.extra_spec_windows[-1].withdraw)
+        self.extra_spec_windows[-1].withdraw()
+        self.extra_specs.append(ExtraVariableOptions(self.extra_spec_windows[-1]))
+       
+       
+    def add_variable(self):
+        var = self.variable
+        if var and var not in self.extra_variables:
+            self.extra_variables.append(var)
+            self.append_spec()
+            self.updateUI()
+    
+    
+    def remove_variable(self):
+        for ob in get_listbox_values(self.variables_lb):
+            index = self.extra_variables.index(ob)
+            del self.extra_spec_windows[index]
+            del self.extra_specs[index]
+            del self.extra_variables[index]
+        self.updateUI()
+
+
+    @property
+    def variable(self):
+        self._variable = self.extra_variable_.get()
+        return self._variable
+    
+    @property
+    def extra_scales(self):
+        self._extra_scales = []
+        for spec in self.extra_specs:
+            self._extra_scales.append(spec.scale)
+        return self._extra_scales
+    
+    @property
+    def extra_shifts(self):
+        self._extra_shifts = []
+        for spec in self.extra_specs:
+            self._extra_shifts.append(spec.shift)
+        return self._extra_shifts
+    
+    @property
+    def extra_obs(self):
+        self._extra_obs = []
+        for spec in self.extra_specs:
+            self._extra_obs.append(spec.observations)
+        return self._extra_obs        
+
+        
+class DependantOptions(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.grid()
+        self.initUI()
+    
+    def initUI(self):
+        pass
+    
+    def updateUI(self):
+        pass
+
+class PlotArgs(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.grid()
+        self.initUI()
+    
+    def initUI(self):
+        self.fill_continents_ = tk.IntVar()
+        self.fill_continents_cb = tk.Checkbutton(self, text='fill continents', variable=self.fill_continents_)
+        self.fill_continents_cb.grid(column=0, row=0)
+        
+        self.draw_parallels_ = tk.IntVar()
+        self.draw_parallels_cb = tk.Checkbutton(self, text='draw parallels', variable=self.draw_parallels)
+        self.draw_parallels_cb.grid(column=0, row=1)
+    
+        self.draw_meridians_ = tk.IntVar()
+        self.draw_meridians_cb = tk.Checkbutton(self, text='draw meridians', variable=self.draw_meridians_)
+        self.draw_meridians_cb.grid(column=0, row=2)
+        
+        self.lonmin_label = tk.Label(self, text='lonmin')
+        self.lonmin_label.grid(column=0, row=3)
+        
+        self.lonmin_ = tk.StringVar()
+        self.lonmin_entry = tk.Entry(self, bg='white', textvariable=self.lonmin_)
+        self.lonmin_entry.grid(column=1, row= 3)
+        
+        self.lonmax_label = tk.Label(self, text='lonmax')
+        self.lonmax_label.grid(column=0, row=4)
+
+        self.lonmax_ = tk.StringVar()
+        self.lonmax_entry = tk.Entry(self, bg='white', textvariable=self.lonmax_)
+        self.lonmax_entry.grid(column=1, row= 4)
+        
+        self.latmin_label = tk.Label(self, text='latmin')
+        self.latmin_label.grid(column=0, row=5)
+        
+        self.latmin_ = tk.StringVar()
+        self.latmin_entry = tk.Entry(self, bg='white', textvariable=self.latmin_)
+        self.latmin_entry.grid(column=1, row=5)
+        
+        self.latmax_label = tk.Label(self, text='latmax')
+        self.latmax_label.grid(column=0, row=6)
+        
+        self.latmax_ = tk.StringVar()
+        self.latmax_entry = tk.Entry(self, bg='white', textvariable=self.latmax_)
+        self.latmax_entry.grid(column=1, row=6)
+        print self.args     
+    
+    @property
+    def lonmin(self):
+        self._lonmin = self.lonmin_.get()
+        return self._lonmin
+    
+    @property
+    def lonmax(self):
+        self._lonmax = self.lonmax_.get()
+        return self._lonmax
+    
+    @property
+    def latmin(self):
+        self._latmin = self.latmin_.get()
+        return self._latmin
+    
+    @property
+    def latmax(self):
+        self._latmax = self.latmax_.get()
+        return self._latmax
+        
+    @property
+    def draw_meridians(self):
+        self._draw_meridians = self.draw_meridians_.get()
+        return self._draw_meridians
+        
+    @property
+    def draw_parallels(self):
+        self._draw_parallels = self.draw_parallels_.get()
+        return self._draw_parallels
+    
+    @property
+    def fill_continents(self):
+        self._fill_continents = self.fill_continents_.get()
+        return self._fill_continents
+    
+    @property
+    def args(self):      
+        self._args = {}
+        self._args['draw_meridians'] = self.draw_meridians
+        self._args['draw_parallels'] = self.draw_parallels
+        self._args['fill_continents'] = self.fill_continents
+        if self.lonmin != '':
+            self._args['lonmin'] = int(self.lonmin)
+        if self.lonmax != '':
+            self._args['lonmax'] = int(self.lonmax)
+        if self.latmin != '':
+            self._args['latmin'] = int(self.latmin)
+        if self.latmax != '':
+            self._args['latmax'] = int(self.latmax)
+        return self._args
+        
+class CompOptions(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.grid()
+        self.initUI()
+    
+    def initUI(self):
+        self.start_date_label = tk.Label(self, text='Start_Date:')
+        self.start_date_label.grid(column=0, row=0)
+        
+        self.start_date_ = tk.StringVar()
+        self.start_date_entry = tk.Entry(self, bg='white', textvariable=self.start_date_)
+        self.start_date_entry.grid(column=1, row=0)
+ 
+        self.end_date_label = tk.Label(self, text='End_Date:')
+        self.end_date_label.grid(column=0, row=1)
+        
+        self.end_date_ = tk.StringVar()
+        self.end_date_entry = tk.Entry(self, bg='white', textvariable=self.end_date_)
+        self.end_date_entry.grid(column=1, row=1) 
+              
+        self.scale_label = tk.Label(self, text='Scale')
+        self.scale_label.grid(column=0, row=2)
+        
+        self.scale_ = tk.DoubleVar()
+        self.scale_.set(1.0)
+        self.scale_entry = tk.Entry(self, bg='white', textvariable=self.scale_)
+        self.scale_entry.grid(column=1, row=2)
+        
+        self.shift_label = tk.Label(self, text='Shift:')
+        self.shift_label.grid(column=0, row=3)
+        
+        self.shift_ = tk.DoubleVar()
+        self.shift_entry = tk.Entry(self, bg='white', textvariable=self.shift_)
+        self.shift_entry.grid(column=1, row=3)
+        
+        self.seasons_label = tk.Label(self, text='Seasons:')
+        self.seasons_label.grid(column=0, row=4)
+              
+        seasons = ['DJF',
+                   'MAM',
+                   'JJA',
+                   'SON',]
+        self.seasons_lb = tk.Listbox(self, selectmode=tk.MULTIPLE, exportselection=0)
+        for season in seasons:
+            self.seasons_lb.insert(tk.END, season)
+        self.seasons_lb.grid(column=1, row=4)
+        
+
+
+    @property
+    def dates(self):
+        self._dates = {}
+        if self.start_date:
+            self._dates['start_date'] = self.start_date
+        if self.end_date:        
+            self._dates['end_date'] = self.end_date       
+        return self._dates
+        
+    @property
+    def start_date(self):
+        self._start_date = self.start_date_.get()
+        return self._start_date
+    
+    @property
+    def end_date(self):
+        self._end_date = self.end_date_.get()
+        return self._end_date
+        
+    @property
+    def seasons(self):
+        self._seasons = get_listbox_values(self.seasons_lb)
+        return self._seasons   
+    
+    @property
+    def shift(self):
+        self._shift = self.shift_.get()
+        return self._shift
+            
+    @property
+    def scale(self):
+        self._scale = self.scale_.get()
+        return self._scale          
+
+
+class Options(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.grid()
+        self.initUI()
+    
+    def initUI(self):
+        self.start_date_label = tk.Label(self, text='Start_Date:')
+        self.start_date_label.grid(column=0, row=0)
+        
+        self.start_date_ = tk.StringVar()
+        self.start_date_entry = tk.Entry(self, bg='white', textvariable=self.start_date_)
+        self.start_date_entry.grid(column=1, row=0)
+ 
+        self.end_date_label = tk.Label(self, text='End_Date:')
+        self.end_date_label.grid(column=0, row=1)
+        
+        self.end_date_ = tk.StringVar()
+        self.end_date_entry = tk.Entry(self, bg='white', textvariable=self.end_date_)
+        self.end_date_entry.grid(column=1, row=1) 
+        
+        self.realization_label = tk.Label(self, text='Realization:')
+        self.realization_label.grid(column=0, row=2)
+        
+        self.realization_ = tk.StringVar()
+        self.realization_entry = tk.Entry(self, bg='white', textvariable=self.realization_)
+        self.realization_entry.grid(column=1, row=2)
+    
+        self.frequency_label = tk.Label(self, text='Frequency:')
+        self.frequency_label.grid(column=0, row=3)
+        
+        frequencies = ['day',
+                      'mon',
+                      'year',]
+        self.frequency_ = tk.StringVar()
+        self.frequency_.set('mon')
+        self.frequency_drop = tk.OptionMenu(self, self.frequency_, *frequencies) 
+        self.frequency_drop.grid(column=1, row=3)
+        
+        self.scale_label = tk.Label(self, text='Scale')
+        self.scale_label.grid(column=0, row=4)
+        
+        self.scale_ = tk.DoubleVar()
+        self.scale_.set(1.0)
+        self.scale_entry = tk.Entry(self, bg='white', textvariable=self.scale_)
+        self.scale_entry.grid(column=1, row=4)
+        
+        self.shift_label = tk.Label(self, text='Shift:')
+        self.shift_label.grid(column=0, row=5)
+        
+        self.shift_ = tk.DoubleVar()
+        self.shift_entry = tk.Entry(self, bg='white', textvariable=self.shift_)
+        self.shift_entry.grid(column=1, row=5)
+        
+        self.seasons_label = tk.Label(self, text='Seasons:')
+        self.seasons_label.grid(column=0, row=6)
+              
+        seasons = ['DJF',
+                   'MAM',
+                   'JJA',
+                   'SON',]
+        self.seasons_lb = tk.Listbox(self, selectmode=tk.MULTIPLE, exportselection=0)
+        for season in seasons:
+            self.seasons_lb.insert(tk.END, season)
+        self.seasons_lb.grid(column=1, row=6)
+        
+        self.remap_label = tk.Label(self, text='Remap:')
+        self.remap_label.grid(column=0, row=7)
+  
+        remaps = ['remapbil',
+                  'remapbic',
+                  'remapdis',
+                  'remapnn',
+                  'remapcon',
+                  'remapcon2',
+                  'remapplaf',]     
+        self.remap_ = tk.StringVar()
+        self.remap_.set('remapdis')
+        self.remap_drop = tk.OptionMenu(self, self.remap_, *remaps)
+        self.remap_drop.grid(column=1, row=7)
+        
+        self.remap_grid_label = tk.Label(self, text='Remap_grid:')
+        self.remap_grid_label.grid(column=0, row=8)
+        
+        self.remap_grid_ = tk.StringVar()
+        self.remap_grid_.set('r360x180')
+        self.remap_grid_entry = tk.Entry(self, bg='white', textvariable=self.remap_grid_)
+        self.remap_grid_entry.grid(column=1, row=8)
+
+        self.divergent_ = tk.IntVar()
+        self.divergent_cb = tk.Checkbutton(self, text='divergent', variable=self.divergent_)
+        self.divergent_cb.grid(column=0, row=9)    
+
+    @property
+    def divergent(self):
+        self._divergent = self.divergent_.get()
+        return self._divergent
+
+    @property
+    def dates(self):
+        self._dates = {}
+        if self.start_date:
+            self._dates['start_date'] = self.start_date
+        if self.end_date:        
+            self._dates['end_date'] = self.end_date       
+        return self._dates
+    
+    @property
+    def start_date(self):
+        self._start_date = self.start_date_.get()
+        return self._start_date
+    
+    @property
+    def end_date(self):
+        self._end_date = self.end_date_.get()
+        return self._end_date
+    
+    @property
+    def remap_grid(self):
+        self._remap_grid = self.remap_grid_.get()
+        return self._remap_grid
+    
+    @property
+    def remap(self):
+        self._remap = self.remap_.get()
+        return self._remap
+
+    @property
+    def seasons(self):
+        self._seasons = get_listbox_values(self.seasons_lb)
+        return self._seasons   
+    
+    @property
+    def shift(self):
+        self._shift = self.shift_.get()
+        return self._shift
+            
+    @property
+    def scale(self):
+        self._scale = self.scale_.get()
+        return self._scale
+    
+    @property
+    def frequency(self):
+        self._frequency = self.frequency_.get()
+        return self._frequency
+        
+    @property
+    def realization(self):
+        self._realization = self.realization_.get()
+        return self._realization        
+
+class Compare(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        self.grid()
+        self.comp_models = []
+        self.comp_cmips = []
+        self.comp_ids = []
+        self.comp_obs = [] 
+        self.initUI()
+        
+    def initUI(self):      
+        self.comp_obs_label = tk.Label(self, text='comp_obs:')
+        self.comp_obs_label.grid(column=0, row=0)
+      
+        self.comp_ob_ = tk.StringVar()
+        self.comp_ob_entry = tk.Entry(self, bg='white', textvariable=self.comp_ob_)
+        self.comp_ob_entry.grid(column=1, row=0)
+        
+        self.obs_add_button = tk.Button(self, command=self.add_ob, text='Add')
+        self.obs_add_button.grid(column=2, row=0)
+        
+        self.obs_remove_button = tk.Button(self, command=self.remove_ob, text='Remove')
+        self.obs_remove_button.grid(column=2, row=1)
+
+        self.comp_ids_label = tk.Label(self, text='comp_ids:')
+        self.comp_ids_label.grid(column=0, row=2)
+      
+        self.comp_id_ = tk.StringVar()
+        self.comp_id_entry = tk.Entry(self, bg='white', textvariable=self.comp_id_)
+        self.comp_id_entry.grid(column=1, row=2)
+        
+        self.ids_add_button = tk.Button(self, command=self.add_id, text='Add')
+        self.ids_add_button.grid(column=2, row=2)
+        
+        self.ids_remove_button = tk.Button(self, command=self.remove_id, text='Remove')
+        self.ids_remove_button.grid(column=2, row=3)
+
+        self.comp_models_label = tk.Label(self, text='comp_models:')
+        self.comp_models_label.grid(column=0, row=4)
+      
+        self.comp_model_ = tk.StringVar()
+        self.comp_model_entry = tk.Entry(self, bg='white', textvariable=self.comp_model_)
+        self.comp_model_entry.grid(column=1, row=4)
+        
+        self.models_add_button = tk.Button(self, command=self.add_model, text='Add')
+        self.models_add_button.grid(column=2, row=4)
+        
+        self.models_remove_button = tk.Button(self, command=self.remove_model, text='Remove')
+        self.models_remove_button.grid(column=2, row=5)
+
+        self.comp_cmips_label = tk.Label(self, text='comp_cmips:')
+        self.comp_cmips_label.grid(column=0, row=6)
+      
+        self.comp_cmip_ = tk.StringVar()
+        self.comp_cmip_entry = tk.Entry(self, bg='white', textvariable=self.comp_cmip_)
+        self.comp_cmip_entry.grid(column=1, row=6)
+        
+        self.cmips_add_button = tk.Button(self, command=self.add_cmip, text='Add')
+        self.cmips_add_button.grid(column=2, row=6)
+        
+        self.cmips_remove_button = tk.Button(self, command=self.remove_cmip, text='Remove')
+        self.cmips_remove_button.grid(column=2, row=7)
+
+        self.display_current_comparisons()    
+
+    def add_cmip(self):
+        cmip = self.comp_cmip
+        if cmip and cmip not in self.comp_cmips:
+            self.comp_cmips.append(self.comp_cmip)
+            self.display_current_comparisons()
+    
+    def remove_cmip(self):
+        for cmip in get_listbox_values(self.cmips_lb):
+            self.comp_cmips.remove(cmip)
+        self.display_current_comparisons()
+
+    def add_ob(self):
+        ob = self.comp_ob
+        if ob and ob not in self.comp_obs:
+            self.comp_obs.append(self.comp_ob)
+            self.display_current_comparisons()
+    
+    def remove_ob(self):
+        for ob in get_listbox_values(self.obs_lb):
+            self.comp_obs.remove(ob)
+        self.display_current_comparisons()
+
+    
+    def add_model(self):
+        model = self.comp_model
+        if model and model not in self.comp_models:
+            self.comp_models.append(self.comp_model)
+            self.display_current_comparisons()
+    
+    def remove_model(self):
+        for model in get_listbox_values(self.models_lb):
+            self.comp_models.remove(model)
+        self.display_current_comparisons()
+
+    def add_id(self):
+        mid = self.comp_id
+        if mid and mid not in self.comp_ids:
+            self.comp_ids.append(mid)
+            self.display_current_comparisons()
+    
+    def remove_id(self):
+        for id in get_listbox_values(self.ids_lb):
+            self.comp_ids.remove(id)
+        self.display_current_comparisons()        
+    
+    def display_current_comparisons(self):
+        self.obs_lb = tk.Listbox(self, selectmode=tk.MULTIPLE, exportselection=0)
+        for m in self.comp_obs:
+            self.obs_lb.insert(tk.END, m)
+        self.obs_lb.grid(column=3, row=0, rowspan=2)
+
+        self.ids_lb = tk.Listbox(self, selectmode=tk.MULTIPLE, exportselection=0)
+        for m in self.comp_ids:
+            self.ids_lb.insert(tk.END, m)
+        self.ids_lb.grid(column=3, row=2, rowspan=2)  
+
+        self.models_lb = tk.Listbox(self, selectmode=tk.MULTIPLE, exportselection=0)
+        for m in self.comp_models:
+            self.models_lb.insert(tk.END, m)
+        self.models_lb.grid(column=3, row=4, rowspan=2)   
+
+        self.cmips_lb = tk.Listbox(self, selectmode=tk.MULTIPLE, exportselection=0)
+        for m in self.comp_cmips:
+            self.cmips_lb.insert(tk.END, m)
+        self.cmips_lb.grid(column=3, row=6, rowspan=2)
+
+              
+    @property
+    def comp_model(self):
+        self._comp_model = self.comp_model_.get()
+        return self._comp_model
+    
+    @property
+    def comp_ob(self):
+        self._comp_ob = self.comp_ob_.get()
+        return self._comp_ob
+    
+    @property  
+    def comp_cmip(self):
+        self._comp_cmip = self.comp_cmip_.get()
+        return self._comp_cmip
+    
+    @property
+    def comp_id(self):
+        self._comp_id = self.comp_id_.get()
+        return self._comp_id
+
+class Plots(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        self.grid()
+        #self.set_location()
+        self.initUI()
+    
+    def set_location(self):
+        x = self.parent.parent.winfo_rootx()
+        y = self.parent.parent.winfo_rooty()
+        height = self.parent.parent.winfo_height()
+        
+        geom = "+{}+{}" % (x, y + height)
+        self.parent.geometry(geom)
+        
+        
+    def initUI(self):
+        
+        self.variable_label = tk.Label(self, text='variable:')
+        self.variable_label.grid(column=0, row=0)
+        
+        self.variable_ = tk.StringVar()
+        self.variable_entry = tk.Entry(self, bg='white', textvariable=self.variable_)
+        self.variable_entry.grid(column=1, row=0)            
+        
+        self.projection_label = tk.Label(self, text='projection:')
+        self.projection_label.grid(column=0, row=1)
+        projections = ['global_map',
+                       'mercator',
+                       'polar_map',
+                       'polar_map_south',
+                       'mercator',
+                       'section',
+                       'time_series',
+                       'zonal_mean',
+                       'histogram',
+                       'taylor',
+                       'multivariable_taylor',
+                       'scatter']
+        self.projection_ = tk.StringVar()
+        self.projection_.set('global_map')
+        self.projection_drop = tk.OptionMenu(self, self.projection_, *projections)
+        self.projection_drop.grid(column=1, row=1)
+        
+        
+        self.data_type_label = tk.Label(self, text='data_type:')
+        self.data_type_label.grid(column=0, row=2)
+        data_types = ['climatology',
+                      'trends',
+                      'None']
+        self.data_type_ = tk.StringVar()
+        self.data_type_.set('climatology')
+        self.data_type_drop = tk.OptionMenu(self, self.data_type_, *data_types)
+        self.data_type_drop.grid(column=1, row=2)         
+       
+        self.options_window = tk.Toplevel(self)
+        self.options_window.protocol('WM_DELETE_WINDOW', self.options_window.withdraw)
+        self.options_window.withdraw()
+        self.options = Options(self.options_window)
+        
+        self.compare_window = tk.Toplevel(self)
+        self.compare_window.protocol('WM_DELETE_WINDOW', self.compare_window.withdraw)
+        self.compare_window.withdraw()        
+        self.compare = Compare(self.compare_window)
+        
+        self.comp_options_window = tk.Toplevel(self)
+        self.comp_options_window.protocol('WM_DELETE_WINDOW', self.comp_options_window.withdraw)
+        self.comp_options_window.withdraw()
+        self.comp_options = CompOptions(self.comp_options_window)
+        
+        self.plot_args_window = tk.Toplevel(self)
+        self.plot_args_window.protocol('WM_DELETE_WINDOW', self.plot_args_window.withdraw)
+        self.plot_args_window.withdraw()
+        self.plot_args = PlotArgs(self.plot_args_window)
+        
+        self.data1_window = tk.Toplevel(self)
+        self.data1_window.protocol('WM_DELETE_WINDOW', self.data1_window.withdraw)
+        self.data1_window.withdraw()
+        self.data1 = DataArguments(self.data1_window)
+        
+        self.data2_window = tk.Toplevel(self)
+        self.data2_window.protocol('WM_DELETE_WINDOW', self.data2_window.withdraw)
+        self.data2_window.withdraw()
+        self.data2 = DataArguments(self.data2_window)
+        
+        self.comp_window = tk.Toplevel(self)
+        self.comp_window.protocol('WM_DELETE_WINDOW', self.comp_window.withdraw)
+        self.comp_window.withdraw()
+        self.comp = DataArguments(self.comp_window)
+        
+        self.extra_variables_window = tk.Toplevel(self)
+        self.extra_variables_window.protocol('WM_DELETE_WINDOW', self.extra_variables_window.withdraw)
+        self.extra_variables_window.withdraw()
+        self.extra_variables = ExtraVariables(self.extra_variables_window)
+               
+        self.options_button = tk.Button(self, command=self.options_window.deiconify, text='Options')
+        self.options_button.grid(column=0, row=3)
+       
+        self.compare_button = tk.Button(self, command=self.compare_window.deiconify, text='Compare')
+        self.compare_button.grid(column=0, row=4)        
+
+        self.comp_options_button = tk.Button(self, command=self.comp_options_window.deiconify, text='Comp Options')
+        self.comp_options_button.grid(column=0, row=5)
+        
+        self.plot_args_button = tk.Button(self, command=self.plot_args_window.deiconify, text='Plot Args')
+        self.plot_args_button.grid(column=0, row=6)
+        
+        self.data1_button = tk.Button(self, command=self.data1_window.deiconify, text='Data1')
+        self.data1_button.grid(column=1, row=3)
+        
+        self.data2_button = tk.Button(self, command=self.data2_window.deiconify, text='Data2')
+        self.data2_button.grid(column=1, row=4)
+        
+        self.comp_button = tk.Button(self, command=self.comp_window.deiconify, text='Comp')
+        self.comp_button.grid(column=1, row=5)
+        
+        self.extra_variables_button = tk.Button(self, command=self.extra_variables_window.deiconify, text='Extra Variables')
+        self.extra_variables_button.grid(column=1, row=6)
+            
+    @property
+    def variable(self):
+        self._variable = self.variable_.get()
+        return self._variable
+              
+    @property
+    def data_type(self):
+        self._data_type = self.data_type_.get()
+        return self._data_type
+           
+    @property
+    def projection(self):
+        self._projection = self.projection_.get()
+        return self._projection
+    
+    def get_dictionary(self):
+        plot = {}
+        plot['variable'] = self.variable
+        plot['plot_projection'] = self.projection
+        plot['data_type'] = self.data_type
+        plot['dates'] = self.options.dates
+        plot['comp_dates'] = self.comp_options.dates
+        plot['data1'] = self.data1.data_args
+        plot['data2'] = self.data2.data_args
+        plot['comp'] = self.comp.data_args
+        plot['plot_args'] = self.plot_args.args
+        plot['comp_models'] = self.compare.comp_models
+        plot['comp_cmips'] = self.compare.comp_cmips
+        plot['comp_ids'] = self.compare.comp_ids
+        plot['comp_obs'] = self.compare.comp_obs
+        plot['realization'] = self.options.realization
+        plot['frequency'] = self.options.frequency
+        plot['scale'] = self.options.scale
+        plot['shift'] = self.options.shift
+        plot['seasons'] = self.options.seasons
+        plot['comp_scale'] = self.comp_options.scale
+        plot['comp_shift'] = self.comp_options.shift
+        plot['comp_seasons'] = self.comp_options.seasons
+        plot['remap'] = self.options.remap
+        plot['remap_grid'] = self.options.remap_grid
+        plot['divergent'] = self.options.divergent
+        plot['extra_variables'] = self.extra_variables.extra_variables
+        plot['extra_scales'] = self.extra_variables.extra_scales
+        plot['exta_shifts'] = self.extra_variables.extra_shifts
+        plot['extra_obs'] = self.extra_variables.extra_obs
+        plot = {key: value for key, value in plot.iteritems() if value or value == 0}
+        return plot
+
+class Roots(tk.Frame):
+    
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        self.grid()
+        self.initUI()
+    
+    def initUI(self):
+        self.data_root_label = tk.Label(self, text='data_root:')
+        self.data_root_label.grid(column=0, row=0)
+        self.data_root_ = tk.StringVar()
+        self.data_root_entry = tk.Entry(self, bg='white', textvariable=self.data_root_)
+        self.data_root_entry.grid(column=1, row=0)
+
+        self.direct_data_root_label = tk.Label(self, text='direct_data_root:')
+        self.direct_data_root_label.grid(column=0, row=1)
+        self.direct_data_root_ = tk.StringVar()
+        self.direct_data_root_entry = tk.Entry(self, bg='white', textvariable=self.direct_data_root_)
+        self.direct_data_root_entry.insert(tk.END, '')
+        self.direct_data_root_entry.grid(column=1, row=1)
+        
+        self.observations_root_label = tk.Label(self, text='observations_root:')
+        self.observations_root_label.grid(column=0, row=2)
+        self.observations_root_ = tk.StringVar()
+        self.observations_root_entry = tk.Entry(self, bg='white', textvariable=self.observations_root_)
+        self.observations_root_entry.grid(column=1, row=2)
+        
+        self.cmip5_root_label = tk.Label(self, text='cmip5_root:')
+        self.cmip5_root_label.grid(column=0, row=3)
+        self.cmip5_root_ = tk.StringVar()
+        self.cmip5_root_entry = tk.Entry(self, bg='white', textvariable=self.cmip5_root_)
+        self.cmip5_root_entry.grid(column=1, row=3)
+        
+        self.cmip5_means_label = tk.Label(self, text='cmip5_means:')
+        self.cmip5_means_label.grid(column=0, row=4)
+        self.cmip5_means_ = tk.StringVar()
+        self.cmip5_means_entry = tk.Entry(self, bg='white', textvariable=self.cmip5_means_)
+        self.cmip5_means_entry.grid(column=1, row=4)
+        
+        self.output_root_label = tk.Label(self, text='output_root:')
+        self.output_root_label.grid(column=0, row=5)
+        self.output_root_ = tk.StringVar()
+        self.output_root_entry = tk.Entry(self, bg='white', textvariable=self.output_root_)
+        self.output_root_entry.insert(tk.END, '')
+        self.output_root_entry.grid(column=1, row=5)
+        
+        self.processed_cmip5_root_label = tk.Label(self, text='processed_cmip5_root:')
+        self.processed_cmip5_root_label.grid(column=0, row=6)
+        self.processed_cmip5_root_ = tk.StringVar()
+        self.processed_cmip5_root_entry = tk.Entry(self, bg='white', textvariable=self.processed_cmip5_root_)
+        self.processed_cmip5_root_entry.grid(column=1, row=6)
+        
+        self.external_root_label = tk.Label(self, text='external_root:')
+        self.external_root_label.grid(column=0, row=7)
+        self.external_root_ = tk.StringVar()
+        self.external_root_entry = tk.Entry(self, bg='white', textvariable=self.external_root_)
+        self.external_root_entry.grid(column=1, row=7)
+        
+        self.pollux_defaults_button = tk.Button(self, command=self.restore_pollux_defaults, text='Pollux Defaults')
+        self.pollux_defaults_button.grid(column=1, row=8)
+        
+        self.lxwrk2_defaults_button = tk.Button(self, command=self.restore_lxwrk2_defaults, text='lxwrk2 Defaults')
+        self.lxwrk2_defaults_button.grid(column=1, row=9)
+      
+    def restore_pollux_defaults(self):
+        self.data_root_.set(default_pollux_roots['data_root'])
+        self.direct_data_root_.set(default_pollux_roots['direct_data_root'])
+        self.observations_root_.set(default_pollux_roots['observations_root'])
+        self.cmip5_root_.set(default_pollux_roots['cmip5_root'])
+        self.cmip5_means_.set(default_pollux_roots['cmip5_means'])
+        self.output_root_.set(default_pollux_roots['output_root'])
+        self.processed_cmip5_root_.set(default_pollux_roots['processed_cmip5_root'])
+        self.external_root_.set(default_pollux_roots['external_root'])
+    
+    def restore_lxwrk2_defaults(self):
+        self.data_root_.set(default_lxwrk2_roots['data_root'])
+        self.direct_data_root_.set(default_lxwrk2_roots['direct_data_root'])
+        self.observations_root_.set(default_lxwrk2_roots['observations_root'])
+        self.cmip5_root_.set(default_lxwrk2_roots['cmip5_root'])
+        self.cmip5_means_.set(default_lxwrk2_roots['cmip5_means'])
+        self.output_root_.set(default_lxwrk2_roots['output_root'])
+        self.processed_cmip5_root_.set(default_lxwrk2_roots['processed_cmip5_root'])
+        self.external_root_.set(default_lxwrk2_roots['external_root'])
+    
+    @property
+    def external_root(self):
+        self._external_root = self.external_root_.get()
+        return self._external_root
+            
+    @property
+    def processed_cmip5_root(self):
+        self._processed_cmip5_root = self.processed_cmip5_root_.get()
+        return self._processed_cmip5_root 
+            
+    @property
+    def output_root(self):
+        self._output_root = self.output_root_.get()
+        return self._output_root 
+            
+    @property
+    def cmip5_means(self):
+        self._cmip5_means = self.cmip5_means_.get()
+        return self._cmip5_means 
+            
+    @property
+    def cmip5_root(self):
+        self._cmip5_root = self.cmip5_root_.get()
+        return self._cmip5_root 
+            
+    @property
+    def observations_root(self):
+        self._observations_root = self.observations_root_.get()
+        return self._observations_root 
+            
+    @property
+    def data_root(self):
+        self._data_root = self.data_root_.get()
+        return self._data_root    
+        
+    @property
+    def direct_data_root(self):
+        self._direct_data_root = self.direct_data_root_.get()
+        return self._direct_data_root 
+                
+class Ids(tk.Frame):
+    
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        self.grid()
+        self.initUI()
+    
+    def initUI(self):
+        self.runid_label = tk.Label(self, text='Run ID:')
+        self.runid_label.grid(column=0, row=0)
+        self.runid_ = tk.StringVar()
+        self.runid_entry = tk.Entry(self, bg='white', textvariable=self.runid_)
+        self.runid_entry.grid(column=1, row=0)
+        
+        self.experiment_label = tk.Label(self, text='Experiment:')
+        self.experiment_label.grid(column=0, row=1)
+
+
+        experiments = ['historical','rcp26','rcp45','rcp85', 'amip']
+        self.experiment_ = tk.StringVar()
+        self.experiment_.set('historical')
+        self.experiment_drop = tk.OptionMenu(self, self.experiment_, *experiments)
+        self.experiment_drop.grid(column=1, row=1)
+        
+
+    @property
+    def experiment(self):
+        self._experiment = self.experiment_.get()
+        return self._experiment
+    
+    @property
+    def runid(self):
+        self._runid = self.runid_.get()
+        return self._runid
+
+class Batch(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        self.grid()
+        self.store_file = ''
+        self.initUI()
+    
+    def initUI(self):
+        self.username_label = tk.Label(self, text='Username:')
+        self.username_label.grid(column=0, row=0)
+        
+        self.username_ = tk.StringVar()
+        self.username_entry = tk.Entry(self, bg='white', textvariable=self.username_)
+        self.username_entry.grid(column=1, row=0)
+        
+        self.memory1_label = tk.Label(self, text='Memory1: (mb)')
+        self.memory1_label.grid(column=0, row=3)
+        
+        self.memory1_ = tk.StringVar()
+        self.memory1_entry = tk.Entry(self, bg='white', textvariable=self.memory1_)
+        self.memory1_entry.grid(column=1, row=3)
+        
+        self.time_label = tk.Label(self, text='stime (s):')
+        self.time_label.grid(column=0, row=6)
+        
+        self.time_ = tk.StringVar()
+        self.time_entry = tk.Entry(self, bg='white', textvariable=self.time_)
+        self.time_entry.grid(column=1, row=6)
+        
+        
+        self.preview_button = tk.Button(self, command=self.preview, text='Preview')
+        self.preview_button.grid(column=1, row=7)
+        
+        self.submit_button = tk.Button(self, command=self.submit, text='Submit')
+        self.submit_button.grid(column=1, row=8)
+        
+        
+    
+    def create_batch_file(self):
+        with open('validate_batch', 'w') as ofile:
+            ofile.write('#!/bin/sh\n')
+            ofile.write('set -a\n')
+            ofile.write('. betapath2\n')
+            ofile.write('stime="{}";\n'.format(self.time))
+            ofile.write('username="{}";\n'.format(self.username))
+            ofile.write('user="{}"; account="{}"; up="xxxxxx";\n'.format(self.username, self.username))
+            ofile.write('lopgm="LOPGM";\n')
+            ofile.write('memory1="{}mb";\n'.format(self.memory1))
+            ofile.write('jobname={}_validate ; time=$stime ; memory=$memory1\n'.format(self.username))
+            ofile.write('.   comjcl.cdk\n')
+            ofile.write("cat > Execute_Script <<'end_of_script'\n")
+            ofile.write('anaconda validate-configure -m {}\n'.format(self.store_file))
+            ofile.write('anaconda validate-execute -b\n')
+            ofile.write('end_of_script\n')
+            ofile.write('cat > Input_Cards <<end_of_data\n\n')
+            ofile.write('+   .    :    .    :    .    :    .    :    .    :    .    :    .    :    .    :\n')
+            ofile.write(' DAVID BOX = 1105\n')
+            ofile.write('+   .    :    .    :    .    :    .    :    .    :    .    :    .    :    .    :\n')
+            ofile.write('end_of_data\n')
+            ofile.write('. endjcl.cdk\n')
+            
+    
+    def submit(self):
+        stime = datetime.now().strftime('%Y%m%d-%H%M%S')
+        filename = 'validate_{}'.format(stime)
+        location = os.path.join('pollux:~', 'tmp')
+        self.store_file = os.path.join(location, filename)
+        os.system('scp {} {}'.format('conf.yaml', self.store_file))
+        self.store_file = self.store_file.replace('pollux:', '')
+        self.create_batch_file()
+        os.system('rsub pollux validate_batch')
+        self.parent.deiconify()
+        
+    def preview(self):
+        self.create_batch_file()
+        try:
+            p = subprocess.Popen(['emacs', 'validate_batch'])
+        except:
+            pass
+    
+    @property
+    def time(self):
+        self._time = self.time_.get()
+        return self._time
+    
+    @property
+    def store_file(self):
+        self._store_file = self.store_file_.get()
+        return self._store_file
+        
+    @property
+    def memory1(self):
+        self._memory1 = self.memory1_.get()
+        return self._memory1
+        
+    @property
+    def username(self):
+        self._username = self.username_.get()
+        return self._username
+
+class PopUp(tk.Toplevel):
+    def __init__(self, parent, message=''):
+        tk.Toplevel.__init__(self, parent)
+        self.parent = parent
+        self.message = message
+        self.initUI()
+    
+    def initUI(self):
+        self.message_label = tk.Label(self, text=self.message)
+        self.message_label.grid()
+        
+        self.ok_button = tk.Button(self, command=self.destroy, text='OK')
+        self.ok_button.grid()
+        
+class Buttons(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        self.initUI()
+    
+    def initUI(self):
+        self.submit_button = tk.Button(self, command=self.submit, text='Submit')
+        self.submit_button.grid()
+        
+        self.preview_button = tk.Button(self, command=self.preview, text='Preview')
+        self.preview_button.grid()        
+        
+        self.batch_window = tk.Toplevel(self)
+        self.batch_window.protocol('WM_DELETE_WINDOW', self.batch_window.withdraw)
+        self.batch_window.withdraw()
+        self.batch = Batch(self.batch_window)
+
+        self.submit_batch_button = tk.Button(self, command=self.open_batch_window, text='Submit Batch')
+        self.submit_batch_button.grid()
+    
+    def open_batch_window(self):
+        self.make_conf()
+        self.batch_window.deiconify()     
+    
+    def make_conf(self):
+        output_order = ['run',
+                        'experiment',
+                        'data_root',
+                        'direct_data_root',
+                        'observations_root',
+                        'cmip5_root',
+                        'output_root',
+                        'processed_cmip5_root',
+                        'external_root',
+                        'plots',
+                        ]
+        full_file = {}
+        full_file['plots'] = self.parent.plots
+        full_file['run'] = self.parent.ids.runid
+        full_file['experiment'] = self.parent.ids.experiment
+        full_file['data_root'] = self.parent.roots.data_root
+        full_file['direct_data_root'] = self.parent.roots.direct_data_root
+        full_file['observations_root'] = self.parent.roots.observations_root
+        full_file['cmip5_root'] = self.parent.roots.cmip5_root
+        full_file['output_root'] = self.parent.roots.output_root
+        full_file['processed_cmip5_root'] = self.parent.roots.processed_cmip5_root
+        full_file['external_root'] = self.parent.roots.external_root
+        yaml.Dumper.ignore_aliases = lambda *args: True
+        with open('conf.yaml', 'w'): pass
+        for name in output_order:
+            printer = {name: full_file[name]}
+            with open('conf.yaml', 'a') as pfile:
+                pfile.write(yaml.dump(printer, default_flow_style=False))
+          
+    def submit(self):
+        self.make_conf()
+        os.system('validate-execute -b')
+    
+    def preview(self):
+        self.make_conf()     
+        try:           
+            p = subprocess.Popen(['kwrite', 'conf.yaml'])
+        except:
+            meassage = """
+                Unable to display file.\n
+                File stored as conf.yaml
+                """
+            self.preview_popup = PopUp(self, 'message')
+        
+class MainWindow(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        self.plots = []
+        self.centerWindow()
+        
+        self.initUI()
+
+    def centerWindow(self):
+
+        w = 700
+        h = 300
+
+        sw = self.parent.winfo_screenwidth()
+        sh = self.parent.winfo_screenheight()
+
+        x = (sw - w)/2 + 500
+        y = (sh - h)/2
+        self.parent.geometry('%dx%d+%d+%d' % (w, h, x, y))
+
+    def initUI(self):
+        self.parent.title('Validate')
+        self.style = ttk.Style()
+        self.style.theme_use("default")
+        self.grid()  
+                    
+        self.ids = Ids(self)
+        self.ids.grid(column=0, row=0)
+        self.roots = Roots(self)
+        self.roots.grid(column=0, row=1, rowspan=2)
+        
+        self.buttons = Buttons(self)
+        self.buttons.grid(column=3, row=2, columnspan=1)
+
+
+        self.plot_window = tk.Toplevel(self)
+        self.plot_window.protocol('WM_DELETE_WINDOW', self.plot_window.withdraw)
+        self.plot_window.withdraw()
+        self.plot = Plots(self.plot_window)
+
+        self.configure_button = tk.Button(self, command=self.plot_window.deiconify, text='Configure')
+        self.configure_button.grid(column=2, row=0)
+        
+        self.add_plot_button = tk.Button(self, command=self.capture, text='Add Plot')
+        self.add_plot_button.grid(column=2, row=1)
+        
+        self.remove_plot_button = tk.Button(self, command=self.remove_plot, text='Remove Plot')
+        self.remove_plot_button.grid(column=2, row=2)
+        
+        self.updateUI()
+    
+    def updateUI(self):
+        self.plots_lb = tk.Listbox(self, selectmode=tk.MULTIPLE, exportselection=0)
+        for plot in self.plots:
+            pstring = '{} {} {}'.format(plot['variable'], plot['plot_projection'], plot['data_type'])
+            self.plots_lb.insert(tk.END, pstring)
+        self.plots_lb.grid(column=3, row=0, rowspan=2)
+
+    def remove_plot(self):
+        plot_indices = self.plots_lb.curselection()
+        for i in sorted(plot_indices, reverse=True):
+            del self.plots[i]
+        self.updateUI()
+   
+    def capture(self):
+        self.plots.append(self.plot.get_dictionary())
+        self.updateUI()
+
+
+def main():
+    root = tk.Tk()
+    root.geometry("800x500+300+300")
+    app = MainWindow(root)
+    root.mainloop()
+
+
+if __name__ == '__main__':
+    main()
+
