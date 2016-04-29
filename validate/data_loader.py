@@ -512,7 +512,7 @@ def season(name, seasonlist):
     return out
 
 def month(name, monthlist):
-    if monthlist == None or monthlist == [1,2,3,4,5,6,7,8,9,10,11,12]:
+    if monthlist == None or monthlist == ['1','2','3','4','5','6','7','8','9','10','11','12']:
         return name
     monthstring = ','.join(monthlist)
     outputstring = ''.join(monthlist)
