@@ -13,7 +13,7 @@ import glob
 import defaults as dft
 import plot_cases as pc
 import matplotlib.pyplot as plt
-from yamllog import log
+from yamllog import log, reproduce_log
 from copy import deepcopy
 
 DEBUGGING = False
@@ -164,6 +164,7 @@ def loop(plots, debug):
     _remove_plots()
 
     plotnames = []
+    reproduce_log(plots)
     for p in plots:
         if p['depths'] == [""]:
             p['is_depth'] = False
