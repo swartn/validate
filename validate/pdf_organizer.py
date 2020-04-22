@@ -9,6 +9,21 @@ in an organized and labelled format specific to model plots.
 import subprocess
 import os
 
+months_map = {'1': 'Jan',
+              '2': 'Feb',
+              '3': 'Mar',
+              '4': 'Apr',
+              '5': 'May',
+              '6': 'Jun',
+              '7': 'Jul',
+              '8': 'Aug',
+              '9': 'Sep',
+              '10': 'Oct',
+              '11': 'Nov',
+              '12': 'Dec',
+              }
+
+
 
 def arrange(plotnames):
     """ Outputs a pdf named plots/joined.pdf with all of the plots
@@ -20,9 +35,11 @@ def arrange(plotnames):
                 (name of plot, plot dictionary, plot type)
     """
     dictionary = orderplots(plotnames)
-
+    for p in plotnames:
+        outname = 'plots/' + p['model_ID'] + '_joined.pdf' 
+        break
     pstring = pdfmarks(dictionary)
-    combine_str = 'gs -sDEVICE=pdfwrite -sOutputFile=plots/joined.pdf -dQUIET -dNOPAUSE -dBATCH -dAutoRotatePages=/None -f ' + pstring + ' plots/pdfmarks\n'
+    combine_str = 'gs -sDEVICE=pdfwrite -sOutputFile=' + outname + ' -dQUIET -dNOPAUSE -dBATCH -dAutoRotatePages=/None -f ' + pstring + ' plots/pdfmarks\n'
 
     os.system(combine_str)
     os.system('rm -f plots/pdfmarks')
@@ -65,6 +82,9 @@ def orderplots(plotnames):
         p['season'] = ''.join(p['seasons'])
         if p['season'] == 'DJFMAMJJASON':
             p['season'] = 'annual'
+        monthstring = ''.join([months_map[x] for x in p['months']])
+        if monthstring != 'JanFebMarAprMayJunJulAugSepOctNovDec':
+            p['season'] = monthstring
     for p in plotnames:
         plotdict[p['realm']] = {}
     for p in plotnames:
@@ -127,7 +147,16 @@ def pdfmarks(plotdict):
                         
                         for dates in plotdict[realm][var][proj][dt][depth]:
                             f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + dates + ") /Count -" + str(len(plotdict[realm][var][proj][dt][depth][dates].keys())) + " /OUT pdfmark\n")
-                            for season in plotdict[realm][var][proj][dt][depth][dates]:
+                            season_order = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                            ordered_seasons = []
+                            seasons = list(plotdict[realm][var][proj][dt][depth][dates].keys())
+                            for key in season_order:
+                                for seas in seasons[:]:
+                                    if seas.startswith(key):
+                                        ordered_seasons.append(seas)
+                                        seasons.remove(seas)
+                            ordered_seasons.extend(seasons)    
+                            for season in ordered_seasons:
                                 f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + season + ") /Count -" + str(len(plotdict[realm][var][proj][dt][depth][dates][season].keys())) + " /OUT pdfmark\n")                            
                                 for comp in plotdict[realm][var][proj][dt][depth][dates][season]:
                                     f.write("[ /Page " + str(page_count) + " /View [/XYZ null null null] /Title (" + comp + ") /OUT pdfmark\n")

@@ -16,6 +16,7 @@ import numpy as np
 import datetime
 from validate.functions import external
 import constants
+import decorators
 import cdo
 cdo = cdo.Cdo()
 
@@ -88,7 +89,8 @@ def _check_dates_outside(ifile, start_date, end_date):
         return True
     elif compstart > start or compend < end:
         with open('logs/log.txt', 'a') as outfile:
-            outfile.write('WARNING: Comparison data does not cover entire time period... Used subset\n')
+            outfile.write('WARNING: data does not cover entire time period... Used subset\n')
+        print 'WARNING: data does not cover entire time period... Used subset'
     return False
 
 
@@ -99,16 +101,19 @@ def _check_dates(ifile, dates):
     try:
         if _check_averaged(ifile):
             with open('logs/log.txt', 'a') as outfile:
-                outfile.write('WARNING: Comparison data is time averaged\n')
+                outfile.write('WARNING: data is time averaged\n')
+            print 'WARNING: data is time averaged'
             return True
         elif _check_dates_outside(ifile, **dates):
             with open('logs/log.txt', 'a') as outfile:
-                outfile.write('WARNING: Comparison data is not from time period\n')
+                outfile.write('WARNING: data is not from time period\n')
+            print 'WARNING: data is not from time period'
             raise Exception
         return False
     except:
         with open('logs/log.txt', 'a') as outfile:
-            outfile.write('WARNING: Comparison data time period could not be checked\n') 
+            outfile.write('WARNING: data time period could not be checked\n') 
+        print 'WARNING: data time period could not be checked'
         return False       
 
 
@@ -188,11 +193,12 @@ def get_external_function(name):
     def external_functions(function_name):
         return {'sample': external.sample,
                 'field_integral': external.field_integral,
+                'external': external.external,
                }[function_name]
     return external_functions(name)
     
 def dataload(ifile, var, dates, realm='atmos', scale=1, shift=0, 
-             remapf='remapdis', remapgrid='r360x180', seasons=None,
+             remapf='remapdis', remapgrid='r360x180', seasons=None, months=None,
              datatype='full', depthneeded=None, section=False, fieldmean=False, gridweights=False,
              cdostring=None, yearmean=False, external_function=None, external_function_args={}):
     """ Manipulates a file used a series of cdo commands which produce intermediate files,
@@ -274,7 +280,8 @@ def dataload(ifile, var, dates, realm='atmos', scale=1, shift=0,
 
     remapped_file = remap(c_file, remapf, remapgrid)
     seasonal_file = season(remapped_file, seasons)
-    ofile = sel_date(seasonal_file, dates['start_date'], dates['end_date'], time_averaged_bool)
+    month_file = month(seasonal_file, months)
+    ofile = sel_date(month_file, dates['start_date'], dates['end_date'], time_averaged_bool)
 
     if external_function is not None:
         ofile = get_external_function(external_function)(ofile, **external_function_args)        
@@ -352,7 +359,7 @@ def mask(name, realm):
     else:
         if realm == 'ocean':
             try:
-                cdo.ifthen(input='mask/ocean ' + name, output=out)
+                cdo.ifthen(options='-s', input='mask/ocean ' + name, output=out)
             except:
                 with open('logs/log.txt', 'a') as outfile:
                     outfile.write('WARNING: Land data was not masked\n')
@@ -360,7 +367,7 @@ def mask(name, realm):
                 return name
         elif realm == 'land':
             try:
-                cdo.ifthen(input='mask/land ' + name, output=out) 
+                cdo.ifthen(options='-s', input='mask/land ' + name, output=out) 
             except:
                 with open('logs/log.txt', 'a') as outfile:
                     outfile.write('WARNING: Ocean data was not masked\n')
@@ -431,7 +438,10 @@ def remap(name, remapname, remapgrid):
     if already_exists is not None:
         return already_exists
     else:
-        remap = get_remap_function(remapname)
+        try:
+            remap = get_remap_function(remapname)
+        except:
+            return name
         try:
             remap(remapgrid, input=name, output=out)
         except:
@@ -481,7 +491,7 @@ def intlevel(name, depthlist):
             return already_exists
         else:
             try:
-                cdo.intlevelx(str(depth), input=name, output=out)
+                cdo.intlevelx(str(depth), options='-s', input=name, output=out)
             except:
                 return name
     else:
@@ -499,6 +509,19 @@ def season(name, seasonlist):
         return already_exists
     else:
         cdo.selseas(seasonstring, input=name, output=out)
+    return out
+
+def month(name, monthlist):
+    if monthlist == None or monthlist == ['1','2','3','4','5','6','7','8','9','10','11','12']:
+        return name
+    monthstring = ','.join(monthlist)
+    outputstring = ''.join(monthlist)
+    out = 'netcdf/selmon-' + outputstring + '_' + split(name)
+    already_exists = already_calculated(out)
+    if already_exists is not None:
+        return already_exists
+    else:
+        cdo.selmon(monthstring, input=name, output=out)
     return out
 
 def cdos(name, string):

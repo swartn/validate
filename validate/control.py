@@ -25,10 +25,11 @@ def execute(options, **kwargs):
         process the data, and output the plots and figures.
 
     """
-    def plot(run=None, experiment='historical', direct_data_root= "", data_root="", observations_root="", cmip5_root="", processed_cmip5_root="", output_root=None, cmip5_means='', ignorecheck=False, debugging=False, plots=[], defaults={}, delete={}, obs={}, **kwargs):
+    def plot(run=None, experiment='historical', direct_data_root= "", data_root="", observations_root=".", cmip5_root="", processed_cmip5_root="", output_root=None, cmip5_means='', ignorecheck=False, external_root="", debugging=False, plots=[], defaults={}, delete={}, obs={}, **kwargs):
         """Calls modules required to find the data,
            process the data, and output the plots and figures
         """
+        # set module level globals
         constants.run = run
         constants.experiment = experiment
         constants.direct_data_root = direct_data_root
@@ -38,6 +39,7 @@ def execute(options, **kwargs):
         constants.processed_cmip5_root = processed_cmip5_root
         constants.output_root = output_root
         constants.cmip5_means = cmip5_means
+        constants.external_root = external_root
         constants.debugging = debugging
 
 #        check_inputs() needs to be updated to match the latest changes to the configuration
@@ -78,13 +80,14 @@ def execute(options, **kwargs):
         arrange(plotnames)
         
         #create tarfile and move to output
-        move_tarfile(output_root)
+        move_tarfile(output_root, run, experiment)
 
 
     # if conf.yaml exists in the current directory use that for the configuration
     try:
         with open('conf.yaml', 'r') as f:
             settings = yaml.load(f)
+    
     # if it does not exist then use the default file in the package
     except IOError:
         import pkg_resources
@@ -92,9 +95,18 @@ def execute(options, **kwargs):
         confile = pkg_resources.resource_filename('validate', path)
         with open(confile, 'r') as f:
             settings = yaml.load(f)
+        print 'WARNING: No configuration file was found in the current directory. Using default.'
     
     # overwrite the configuration with input given in the execution arguments
     for key in options:
         settings[key] = options[key]
+    
+    # set the realization in the defaults if it was supplied in the terminal
+    if 'realization' in options:
+        try:
+            settings['defaults']['realization'] = options['realization']
+        except KeyError:
+            settings['defaults'] = {}
+            settings['defaults']['realization'] = options['realization']
     
     plot(**settings)

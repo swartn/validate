@@ -13,7 +13,7 @@ import glob
 import defaults as dft
 import plot_cases as pc
 import matplotlib.pyplot as plt
-from yamllog import log
+from yamllog import log, reproduce_log
 from copy import deepcopy
 
 DEBUGGING = False
@@ -63,8 +63,12 @@ def _remove_plots():
     old_plots = glob.glob('plots/*.png')
     for f in old_plots:
         os.remove(f)
-
-
+    old_plots = glob.glob('plots/*.ps')
+    for f in old_plots:
+        os.remove(f)
+    old_plots = glob.glob('plots/*.eps')
+    for f in old_plots:
+        os.remove(f)
 def makeplot(p, plotnames, func):
     p['plot_type'] = func.__name__
     try:
@@ -111,7 +115,7 @@ def calltheplot(plot, plotnames, ptype):
 
 def comp_loop(plot, plotnames, ptype):
     plot['comp_flag'] = 'obs'
-    for o in plot['comp_obs']:
+    for o in plot['obs_file']:
         plot['comp_model'] = o
         plot['comp_file'] = plot['obs_file'][o]
         calltheplot(plot, plotnames, ptype)
@@ -160,6 +164,7 @@ def loop(plots, debug):
     _remove_plots()
 
     plotnames = []
+    reproduce_log(plots)
     for p in plots:
         if p['depths'] == [""]:
             p['is_depth'] = False
