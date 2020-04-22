@@ -84,8 +84,18 @@
 #          data1 : A dictionary specifying the arguments for the model data plot
 #                  pcolor_args : A dictionary for manually setting arguments for the colorbar
 #                  ax_args : A dictionary for manually setting matplotlib arguments for the axes
-#                  colormap : string 
-#                             name of colormap selceted from viridis, plasma, inferno, or magma
+#                  ncols : int 
+#                          if you want to make a discrete colorbar specify the number of intervals here
+#                  ex:
+#                  data1:
+#                       pcolor_args:
+#                           vmin: 10
+#                           vmax: 20
+#                           cmap: BrBG
+#                       ax_args:
+#                           title: 'sample title'
+#                       ncols: 9
+#
 #          data2 : A dictionary specifying the arguments for the observations data plot.
 #                      It uses the came keys as 'data1'
 #          comp : A dictionary specifying the arguments for the comparsson plot of
@@ -110,7 +120,23 @@
 #
 #          ifile : Can be used to specify a netCDF filename, including the directoy path
 #                    to be used for this plot..
-#                        
+#
+#          external_function : string 
+#                              name of external function. If you want to call a function not included
+#                              not included in the validate source code, set this to external.
+#                              External_args must also be set and an external_root must be declared
+#                              if the function is not in the current directory
+#          external_function_args : dict
+#                                   keyword arguments to be passed to external function
+#                                   If calling an external function outside the source code the following
+#                                   keys must be included
+#                                   language : string 
+#                                               the language the external function is in ex. python
+#                                   function : string
+#                                              the name of the function/module to call with the language
+#                                   ofile : string 
+#                                           the name of the netcdf file resulting from the function call
+#
 # defaults : A  dictionary specifying any options to be applied to all of the plots,
 #            using the same keys as plots.
 #            It will not overwrite values declared in plots.          
@@ -150,7 +176,9 @@
 # cmip5_means          : A string naming the the loactions of the cmip5 ensemble means
 # output_root          : The directory to output the tar logs and plots files
 # processed_cmip5_root : The location of a cache containing already partially processed
-#                        netcdf files to increase performance                        
+#                        netcdf files to increase performance
+# external_root        : The location of external functions/scripts the can be called with the external
+#                        function key in plots                          
 
 
 

@@ -29,6 +29,7 @@ def execute(options, **kwargs):
         """Calls modules required to find the data,
            process the data, and output the plots and figures
         """
+        # set module level globals
         constants.run = run
         constants.experiment = experiment
         constants.direct_data_root = direct_data_root
@@ -86,6 +87,7 @@ def execute(options, **kwargs):
     try:
         with open('conf.yaml', 'r') as f:
             settings = yaml.load(f)
+    
     # if it does not exist then use the default file in the package
     except IOError:
         import pkg_resources
@@ -98,5 +100,13 @@ def execute(options, **kwargs):
     # overwrite the configuration with input given in the execution arguments
     for key in options:
         settings[key] = options[key]
+    
+    # set the realization in the defaults if it was supplied in the terminal
+    if 'realization' in options:
+        try:
+            settings['defaults']['realization'] = options['realization']
+        except KeyError:
+            settings['defaults'] = {}
+            settings['defaults']['realization'] = options['realization']
     
     plot(**settings)

@@ -154,7 +154,16 @@ def _logfile(run, experiment):
         outfile.write('Run ID: ' + run + '\n')
         outfile.write('Experiment: ' + experiment + '\n\n')
 
+    with open('logs/sha_log.txt', 'w') as outfile:
+        outfile.write('Validate version: ' + validate.__version__ + '\n')
+        outfile.write('Run ID: ' + run + '\n')
+        outfile.write('Experiment: ' + experiment + '\n\n')
 
+    with open('logs/reproduce.yml', 'w') as outfile:
+        outfile.write('#Validate version: ' + validate.__version__ + '\n')
+        outfile.write('run: ' + run + '\n')
+        outfile.write('experiment: ' + experiment + '\n\n')
+        
 def _load_masks(files):
     """Loads the land and sea masks for a specified run
 
@@ -225,6 +234,14 @@ def _remove_files_out_of_date_range(filedict, start_dates, end_dates):
                             pass
     return filedict
 
+def _cat_files(filelist):
+    if len(filelist) > 1:
+        outfile = 'ncstore/merged' + filelist[0].rsplit('/', 1)[1]
+        infiles = ' '.join(filelist)
+        os.system('cdo mergetime ' + infiles + ' ' + outfile)
+        return outfile
+    else:
+        return filelist[0]
 
 def _cat_file_slices(filedict):
     """ Catenates the list of files under each key
@@ -327,7 +344,7 @@ def getexperiment(f):
     
 def getrealization(f):
     """ Returns the realization from a filename and directory path.
-        This is dependant on the cmip naming convention
+        This is dependant on the directory structure
 
     Parameters
     ----------
@@ -337,11 +354,12 @@ def getrealization(f):
     -------
     string of realization number
     """
-    nc = Dataset(f, 'r')
-    try:
-        realization = str(nc.__getattribute__('realization'))
-    except:
-        realization = 'r1i1p1'
+    realization = f.split('/')[-2]
+    #nc = Dataset(f, 'r')
+    #try:
+    #    realization = str(nc.__getattribute__('realization'))
+    #except:
+    #    realization = 'r1i1p1'
     return realization
 
 
@@ -432,7 +450,10 @@ def getfiles(plots, directroot, root, run, experiment):
         if 'ifile' in p:
             p['ifiles_for_log'] = [p['ifile']]
         else:
-            p['ifiles_for_log'] = uncat_filedict[(p['frequency'], p['variable'], str(p['realization']))]    
+            try:
+                p['ifiles_for_log'] = uncat_filedict[(p['frequency'], p['variable'], str(p['realization']))]
+            except:
+                pass    
         if 'ifile' not in p:
             try:
                 p['ifile'] = filedict[(p['frequency'], p['variable'], str(p['realization']))]
@@ -457,6 +478,8 @@ def getfiles(plots, directroot, root, run, experiment):
         if 'fill_continents' not in p['plot_args']:
             if p['realm_cat'] == 'ocean':
                 p['plot_args']['fill_continents'] = True
+        #p['ifiles_for_log'] = list(p['ifiles_for_log'])
+        print p['ifiles_for_log']
     for p in plots[:]:
         if 'ifile' not in p:
             plots.remove(p)
@@ -499,11 +522,13 @@ def getidfiles(plots, root, experiment):
         for p in plots:
             p['idfiles_for_log'] = {}
             if i in p['comp_ids']:
-                if i in p['id_file']:
-                    p['idfiles_for_log'][i] = p['id_file'][i] 
+                if i in p['id_files']:
+                    p['id_file'][i] = _cat_files(p['id_files'][i])
+                    p['idfiles_for_log'][i] = p['id_files'][i] 
                 else:
                     p['id_file'][i] = filedict[(p['frequency'], p['variable'], str(p['realization']))]
-                    p['idfiles_for_log'] = uncat_filedict[(p['frequency'], p['variable'], str(p['realization']))]
+                    p['idfiles_for_log'][i] = uncat_filedict[(p['frequency'], p['variable'], str(p['realization']))]
+            #p['idfiles_for_log'] = dict(p['idfiles_for_log'])
 
 
 def remfiles(del_mask=True, del_ncstore=True, del_netcdf=True, del_cmipfiles=True, **kwargs):
@@ -557,19 +582,15 @@ def getobs(plots, obsroot, o):
     for p in plots:
         if 'obs_file' not in p:
             p['obs_file'] = {}
-        p['obsfiles_for_log'] = {}
         if o in p['comp_obs']:
             if o not in ['obs_file']:
                 try:
                     p['obs_file'][o] = variables[p['variable']][0]
-                    p['obsfiles_for_log'][o] = p['obs_file'][o]
                 except:
                     with open('logs/log.txt', 'a') as outfile:
                         outfile.write('No observations file was found for ' + p['variable'] + '\n\n')
                     print 'No ' + o + ' file was found for ' + p['variable']
                     p['comp_obs'].remove(o)
-            else:
-                p['obsfiles_for_log'][o] = p['obs_file'][o]
             
         if o in p['extra_obs']:
             if 'extra_obs_files' not in p:
@@ -588,6 +609,7 @@ def getobs(plots, obsroot, o):
                        p['extra_shifts'].pop(i)
                        p['extra_comp_shifts'].pop(i)                       
                        p['extra_obs'].pop(i)
+        #p['obsfiles_for_log'] = dict(p['obsfiles_for_log'])
         
                                           
 def model_files(var, model, expname, frequency, cmipdir):
@@ -639,51 +661,27 @@ def get_cmip_average(plots, directory):
                     p['cmipmeanfile_for_log'] = cfile
                     break
             else:
-                p['cmip5_file'] = None
-                p['cmipmeanfile_for_log'] = None
+                try:
+                    p['cmip5_file'] = cmip_average(p['cmip5_files'], p['variable'])
+                except:
+                    p['cmip5_file'] = None
+                    p['cmipmeanfile_for_log'] = None
+        
     
-
-    
-def cmip_average(var, frequency, files, sd, ed, expname):
+def cmip_average(files, var):
     """ Creates and stores a netCDF file with the average data
         across all the models provided.
         Returns the name of the created file.
     """
-    averagefiles = traverse(MEANDIR)
-    
-    out = 'ENS-MEAN_cmipfiles/' + var + '_' + 'cmip5.nc'
+    ens = cd.mkensemble('', filenames=files)
+    out = 'netcdf/' + var + '_' + 'cmip5.nc'
     # skip if the new file was already made
     if not os.path.isfile(out):
-        newfilelist = []
-        newerfilelist = []
-        for f in files:
-            time = f.replace('.nc', '_time.nc')
-            # try to select the date range
-#            try:
-            os.system('cdo -L seldate,' + sd + ',' + ed + ' -selvar,' + var + ' ' + f + ' ' + time)
-#            cdo.seldate(sd+','+ed, options = '-L', input='-selvar,' + var + ' ' + f, output=time)
-#            except:
-                # don't append filename to the list if it was not in the date range
-#                pass
-#            else:
-            newfilelist.append(time)
-        for f in newfilelist:
-            remap = f.replace('.nc', '_remap.nc')
-            
-            # try to remap the files
-            try:
-                cdo.remapdis('r360x180', input=f, output=remap)
-            except:
-                # don't append the filename if it could not be remapped
-                pass
-            else:
-                newerfilelist.append(remap)
-
-        filestring = ' '.join(newerfilelist)
-        
-        # compute the mean across the models
-        cdo.ensmean(input=filestring, output=out)
+        ens = cd.remap(ens, output_prefix='netcdf/forens-')
+        ensemble_means, _ = cd.ens_stats(ens, var, output_prefix='netcdf/')
+        os.rename(ensemble_means[0], out)
     return out
+
 
 def getcmipfiles(plots, expname, cmipdir):
     """ Loop through the plots and create the comparison files if cdo operations are needed 
@@ -729,8 +727,6 @@ def getcmipfiles(plots, expname, cmipdir):
                         print 'No cmip5 files were found for ' + p['variable'] + ': ' + model
                         # remove the model from the list if no comparison files were found
                         p['comp_cmips'].remove(model)
-
-    get_cmip_average(plots, MEANDIR)
                         
     for p in plots:
         if p['comp_cmips']:
@@ -743,6 +739,8 @@ def getcmipfiles(plots, expname, cmipdir):
 #                p['cmip5_file'] = cmip_average(p['variable'], p['frequency'], p['cmip5_files'], str(startdates[p['variable']]) + '-01', str(enddates[p['variable']]) + '-01', expname)
             except:
                 p['comp_cmips'] = []
+    
+    get_cmip_average(plots, MEANDIR)
 
 
 def cmip(plots, cmipdir, cmipmeandir, expname):

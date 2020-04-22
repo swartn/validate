@@ -396,7 +396,7 @@ class PlotArgs(tk.Frame):
         self.fill_continents_cb.grid(column=0, row=0)
         
         self.draw_parallels_ = tk.IntVar()
-        self.draw_parallels_cb = tk.Checkbutton(self, text='draw parallels', variable=self.draw_parallels)
+        self.draw_parallels_cb = tk.Checkbutton(self, text='draw parallels', variable=self.draw_parallels_)
         self.draw_parallels_cb.grid(column=0, row=1)
     
         self.draw_meridians_ = tk.IntVar()

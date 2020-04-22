@@ -6,6 +6,7 @@ yamllog
 """
 
 import yaml
+import hashlib
 
 OUTPUT_ORDER = ['plot_name',
                 'variable',
@@ -82,30 +83,66 @@ def get_sha(filename):
 def get_files(plot):
     files = {}
     files['ifiles'] = plot['ifiles_for_log']
+    file_list = list(files['ifiles'])
     try:
-        files['id_files'] = plot['idfiles_for_log']
+        files['id_files'] = dict(plot['idfiles_for_log'])
+        for key in files['id_files']:
+            file_list.extend(files['id_files'][key])
     except KeyError:
         pass
     try:
-        files['obs_files'] = plot['obsfiles_for_log']
+        files['obs_file'] = dict(plot['obs_file'])
+        for key in files['obs_file']:
+            file_list.append(files['obs_file'][key])
     except KeyError:
         pass
     try:
         files['model_files'] = plot['modelfiles_for_log']
+        for key in files['model_files']:
+            file_list.extend(files['model_files'][key])
     except KeyError:
         pass
     try:    
         files['cmip5_file'] = plot['cmipmeanfile_for_log']
+        file_list.extend(files['cmip5_files'])
     except KeyError:
-        pass    
-    return files
+        pass
+    return files, file_list
 
+def md5(fname):
+    hash_md5 = hashlib.md5()
+    with open(fname, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
+    
+def sha_log(plotname, files):
+    with open('logs/sha_log.txt', 'a') as ofile:
+        ofile.write('\n------------------------\n')
+        ofile.write(plotname + '\n')
+        for f in files:
+            ofile.write(f + '\t' + md5(f) + '\n')
+  
 def log(plot):
     yamplot = convert(plot)
     output(yamplot, 'logs/log.yml', OUTPUT_ORDER)
     
-#    original_files = get_files(plot)
-#    output(original_files, 'logs/files.yml')
+    original_files, file_list = get_files(plot)   
+    sha_log(plot['plot_name'], file_list)
+
+def reproduce_log(plots):
+    dump_plots = []
+    for plot in plots:
+        plot = dict(plot)
+        original_files, _ = get_files(plot)
+        for key in original_files:
+            plot[key] = original_files[key]
+    dump_plots.append(plot)
+    yaml.Dumper.ignore_aliases = lambda *args: True
+    printer = {'plots': dump_plots}
+    with open('logs/reproduce.yml', 'a') as outfile:
+        outfile.write('\n')        
+        outfile.write(yaml.dump(printer, default_flow_style=False))     
 
 
 if __name__ == "__main__":
